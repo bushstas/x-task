@@ -1,0 +1,33 @@
+.x-task-main-menu {
+	position: absolute;
+	right: 100px;
+	top: 0;
+	font-size: 14px;
+
+	span {
+		position: relative;
+		cursor: pointer;
+		display: inline-block;
+		vertical-align: top;
+		margin-left: 30px;
+		line-height: 50px;
+		color: #ddd;
+
+		&:hover {
+			color: #fff;
+		}
+		&:after {
+			content: '';
+			position: absolute;
+			bottom: 17px;
+			height: 1px;
+			left: 0;
+			right: 0;
+			background-color: #fff;
+			opacity: 0.4;
+		}
+		&:hover:after {
+			opacity: 0.6;
+		}
+	}
+}

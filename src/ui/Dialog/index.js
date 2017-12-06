@@ -13,7 +13,7 @@ export default class Dialog extends React.Component {
 				<div className={classnames('x-task-dialog', classes)}>
 					<div className="x-task-dialog-title">
 						{title}
-						<Icon onClick={onClose}>
+						<Icon onClick={onClose} classes="x-task-dialog-close">
 							close
 						</Icon>
 					</div>
@@ -24,6 +24,4 @@ export default class Dialog extends React.Component {
 			</div>
 		)
 	}
-
-
 }
