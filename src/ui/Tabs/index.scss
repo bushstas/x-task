@@ -1,0 +1,35 @@
+.x-task-tabs {
+	.x-task-tabs-menu {
+		font-size: 0;
+		line-height: 0;
+		letter-spacing: -1px;
+		margin-bottom: 10px;
+	}
+	.x-task-tab {
+		text-align: center;
+		min-width: 100px;
+		letter-spacing: 0;
+		line-height: 16px;
+		font-size: 14px;
+		display: inline-block;
+		vertical-align: top;
+		padding: 10px 14px;
+		margin-right: 1px;
+		background-color: #ddd;
+		cursor: pointer;
+
+		&:first-child {
+			border-radius: 5px 0 0 5px;
+		}
+		&:last-child {
+			border-radius: 0 5px 5px 0;
+		}
+		&:only-child {
+			border-radius: 5px;
+		}
+		&.active {
+			background-color: #555;
+			color: #fff;
+		}
+	}
+}
