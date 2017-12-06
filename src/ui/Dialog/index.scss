@@ -1,0 +1,76 @@
+.x-task-dialog-box {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 9999;
+
+	.x-task-dialog-mask {
+		position: absolute;
+		z-index: 1;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #a6a6a6;
+		opacity: 0.9;
+	}
+
+	.x-task-dialog {
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		z-index: 9991;
+		background-color: #fff;
+		box-shadow: 0 0 2px #333;
+
+		&.x-task-standart-dialog {
+			width: 1000px;
+			margin-left: -500px;
+		}
+	}
+	.x-task-dialog-title {
+		position: relative;
+		background-color: #555;
+		color: #fff;
+		font-size: 18px;
+		line-height: 30px;
+		padding: 10px 20px;
+	}
+	.x-task-dialog-content {
+		position: absolute;
+		top: 50px;
+		left: 0;
+		right: 0;
+		bottom: 60px;
+		font-size: 14px;
+		padding: 15px 0;
+	}
+	.x-task-dialog-close {
+		position: absolute;
+		right: 12px;
+		top: 12px;
+		cursor: pointer;
+	}
+	.x-task-dialog-buttons {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		box-sizing: border-box;
+		min-height: 55px;
+		padding: 12px 20px;
+		border-top: 1px solid #d4d4d4;
+		background-color: #e9e9e9;
+	}
+	.x-task-dialog-buttons * {
+		margin-right: 8px;
+	}
+	.x-task-dialog-buttons .at-right {
+		float: right;
+		margin-right: 0;
+		margin-left: 8px;
+	}
+}

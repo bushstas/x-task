@@ -1,0 +1,62 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v31/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+}
+
+.x-task-main-box {
+	.x-task-icon {
+	  font-family: 'Material Icons';
+	  font-weight: normal;
+	  font-style: normal;
+	  font-size: 24px;
+	  line-height: 1;
+	  letter-spacing: normal;
+	  text-transform: none;
+	  display: inline-block;
+	  white-space: nowrap;
+	  word-wrap: normal;
+	  direction: ltr;
+	  -webkit-font-feature-settings: 'liga';
+	  -webkit-font-smoothing: antialiased;
+	}
+
+	button {
+		line-height: 26px;
+		cursor: pointer;
+		font-family: Segoe UI;
+		padding: 3px 14px;
+	}
+
+	select,
+	input {
+		box-sizing: border-box;
+		background-color: #fff;
+		padding: 10px 12px;
+		border: 1px solid #aaa;
+		border-radius: 2px;
+		font-family: Segoe UI;
+		transition: border-color .3s;
+
+		&:focus {
+			outline: 0;
+			box-shadow: none;
+			border-color: #000;
+		}
+	}
+
+	select {
+		padding: 9px 12px;
+	}
+
+	input::placeholder {
+		color: #888;
+		transition: color .3s;
+	}
+
+	input:focus::placeholder {
+		color: #d1d1d1;
+	}
+	
+}

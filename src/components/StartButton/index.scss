@@ -1,0 +1,18 @@
+.x-task-start-button {
+	position: fixed;
+	z-index: 9990;
+	bottom: 8px;
+	left: 8px;
+	background-color: #e8e8e8;
+	box-shadow: 0 0 2px #333;
+	border-radius: 2px;
+	font-family: Segoe UI;
+	font-size: 14px;
+	user-select: none;
+	height: 40px;
+	line-height: 40px;
+	cursor: pointer;
+	font-size: 20px;
+	padding: 0 10px;
+	font-weight: bold;
+}
