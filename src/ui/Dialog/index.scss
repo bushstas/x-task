@@ -39,6 +39,19 @@
 			right: 0;
 			bottom: 0;
 		}
+		.x-task-tabs-menu {
+			padding-left: 20px;
+		}
+		.x-task-tabs-content {
+			position: absolute;
+			top: 60px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			overflow: auto;
+			box-sizing: border-box;
+			padding: 5px 20px;
+		}
 	}
 	&.x-task-notification-dialog {
 		.x-task-dialog {

@@ -33,7 +33,6 @@ const onLoad = (data) => {
 		}
 	}
 	if (callback instanceof Function) {
-		console.log(callback)
 		callback(isAuthorized());
 	}
 }
