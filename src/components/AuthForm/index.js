@@ -35,7 +35,7 @@ export default class AuthForm extends React.Component {
 	            		<Input type="password" name="password" value={password}/>
 	            	</FormField>
 
-	            	<FormSubmit>
+	            	<FormSubmit classes="mt15">
 	            		Войти
 	            	</FormSubmit>
 				</Form>

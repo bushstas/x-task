@@ -5,7 +5,7 @@ import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
 import Users from '../Users';
 import {dict} from '../../utils/Dictionary';
-import {isAuthorized} from '../../utils/User';
+import {isAuthorized, auth, register} from '../../utils/User';
 
 import '../../index.scss';
 
@@ -13,12 +13,13 @@ export default class App extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      active: false
+      active: false,
+      isAuthorized: isAuthorized()
     };
   }
 
   render() {
-    let {active, title} = this.state;
+    let {active} = this.state;
     if (!active) {
       return <StartButton onClick={this.handleStartClick}/> 
     }
@@ -70,7 +71,9 @@ export default class App extends React.PureComponent {
   }
 
   handleSubmitAuthForm = (data) => {
-
+    auth(data).then((isAuthorized) => {
+      this.setState({isAuthorized});
+    });
   }
 
   handleNavigate = (e) => {

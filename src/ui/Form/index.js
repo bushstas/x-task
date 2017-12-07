@@ -8,7 +8,8 @@ import './index.scss';
 export default class Form extends React.Component {
 	static defaultProps = {
 		onControlChange: () => {},
-		onChange: () => {}
+		onChange: () => {},
+		onSubmit: () => {}
 	}
 
 	constructor() {
@@ -73,6 +74,7 @@ export default class Form extends React.Component {
 	}
 
 	handleSubmit = () => {
-		alert('submit')
+		let {formData} = this.state;
+		this.props.onSubmit(formData);
 	}
 }

@@ -11,7 +11,7 @@ let loaded = false,
 
 const then = (cb) => {
 	if (loaded) {
-		cb();
+		cb(isAuthorized());
 	} else {
 		callback = cb;
 	}
@@ -33,7 +33,8 @@ const onLoad = (data) => {
 		}
 	}
 	if (callback instanceof Function) {
-		callback();
+		console.log(callback)
+		callback(isAuthorized());
 	}
 }
 
@@ -95,13 +96,23 @@ export const getCurrentProject = () => {
 	return currentProject;
 }
 
-export const doAction = (action, data) => {
+const doAction = (action, data) => {
+	loaded = false;
 	var cb = function(data) {
-		loaded = false;
 		StoreKeeper.set(LOCAL_STORAGE_TOKEN, data.token);
 		load();
 	};
 	post(action, data).then(cb);
+}
+
+export const auth = (data) => {
+	doAction('auth', data);
+	return {then}
+}
+
+export const register = (data) => {
+	doAction('register', data);
+	return {then}
 }
 
 export const logout = () => {
@@ -122,6 +133,7 @@ export default {
 	isAdminLike,
 	getData,
 	getCurrentProject,
-	doAction,
+	auth,
+	register,
 	logout
 }

@@ -22,7 +22,6 @@ export default class FormField extends React.PureComponent {
 		)
 	}
 
-
 	get caption() {
 		let {caption} = this.props;
 		if (caption) {
