@@ -65,4 +65,6 @@ class Fetcher {
 	
 }
 
-export default new Fetcher;
+let fetcher = new Fetcher;
+export const get = fetcher.get.bind(fetcher);
+export const post = fetcher.post.bind(fetcher);

@@ -20,15 +20,41 @@
 	.x-task-dialog {
 		position: absolute;
 		left: 50%;
-		top: 0;
-		bottom: 0;
+		top: 50%;
 		z-index: 9991;
 		background-color: #fff;
 		box-shadow: 0 0 2px #333;
 
-		&.x-task-standart-dialog {
+		&.x-task-large-dialog {
 			width: 1000px;
 			margin-left: -500px;
+			top: 0;
+			bottom: 0;
+
+			.x-task-dialog-content {
+				position: absolute;
+				top: 50px;
+				left: 0;
+				right: 0;
+				bottom: 60px;
+			}
+			.x-task-dialog-buttons {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			}
+		}
+		&.x-task-notification-dialog {
+			width: 540px;
+			margin-left: -270px;
+			margin-top: -100px;
+		}
+		&.x-task-narrow-dialog {
+			width: 400px;
+			margin-left: -200px;
+			height: 300px;
+			margin-top: -150px;
 		}
 	}
 	.x-task-dialog-title {
@@ -40,11 +66,7 @@
 		padding: 10px 20px;
 	}
 	.x-task-dialog-content {
-		position: absolute;
-		top: 50px;
-		left: 0;
-		right: 0;
-		bottom: 60px;
+		position: relative;
 		font-size: 14px;
 		padding: 15px 0;
 	}
@@ -55,10 +77,7 @@
 		cursor: pointer;
 	}
 	.x-task-dialog-buttons {
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		position: relative;
 		box-sizing: border-box;
 		min-height: 55px;
 		padding: 12px 20px;

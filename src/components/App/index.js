@@ -1,9 +1,11 @@
 import React from 'react';
 import Dialog from '../../ui/Dialog';
+import AuthForm from '../../components/AuthForm';
 import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
 import Users from '../Users';
 import {dict} from '../../utils/Dictionary';
+import {isAuthorized} from '../../utils/User';
 
 import '../../index.scss';
 
@@ -20,20 +22,26 @@ export default class App extends React.PureComponent {
     if (!active) {
       return <StartButton onClick={this.handleStartClick}/>; 
     }
-    return [
-      <Dialog title={(
-            <div>
-              {this.title}
-              <MainMenu onNavigate={this.handleNavigate}/>
-            </div>
-          )}
-          onClose={this.handleDialogClose}
-          key="dialog"
-          classes="x-task-standart-dialog">   
+    if (isAuthorized()) {
+      return [
+        <Dialog title={(
+              <div>
+                {this.title}
+                <MainMenu onNavigate={this.handleNavigate}/>
+              </div>
+            )}
+            onClose={this.handleDialogClose}
+            key="dialog"
+            classes="x-task-large-dialog">   
 
-          {this.content}
-      </Dialog>
-    ]
+            {this.content}
+        </Dialog>
+      ]
+    }
+    return (
+      <AuthForm 
+        onClose={this.handleDialogClose}/>
+    )
   }
 
   get title() {
