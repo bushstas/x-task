@@ -50,7 +50,7 @@ export default class Team extends React.Component {
 				};
 			}
 			icon = (
-				<Icon {...iconProps}>
+				<Icon classes="x-task-edit-icon" {...iconProps}>
 					create
 				</Icon>
 			);

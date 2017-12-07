@@ -5,10 +5,11 @@
   src: url(https://fonts.gstatic.com/s/materialicons/v31/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
 }
 .x-task-icon {
+	cursor: pointer;
 	font-family: 'Material Icons';
 	font-weight: normal;
 	font-style: normal;
-	font-size: 24px;
+	font-size: 18px;
 	line-height: 1;
 	letter-spacing: normal;
 	text-transform: none;
@@ -18,4 +19,14 @@
 	direction: ltr;
 	-webkit-font-feature-settings: 'liga';
 	-webkit-font-smoothing: antialiased;
+
+	&.x-task-edit-icon {
+		float: left;
+		margin-top: -1px;
+	    color: #555;
+	    
+	    &:hover {
+			color: #000;
+		}
+	}
 }
