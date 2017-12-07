@@ -4,6 +4,9 @@ import Button from '../../ui/Button';
 import './index.scss';
 
 export default class ActionButtons extends React.Component {
+	static defaultProps = {
+		onAction: () => {}
+	}
 
 	render() {
 		let {buttonsShown} = this.props;
@@ -32,11 +35,16 @@ export default class ActionButtons extends React.Component {
 	}
 
 	renderChild(child, i) {
+		let {buttonsShown} = this.props;
 		if (React.isValidElement(child)) {
 			let props = {
 				key: i
 			};
 			if (child.type == Button) {
+				if (buttonsShown instanceof Array &&
+					buttonsShown.indexOf(child.props.value) == -1) {
+					return;
+				}
 				props.onClick = this.handleButtonClick;
 			}
 			return React.cloneElement(
@@ -49,6 +57,6 @@ export default class ActionButtons extends React.Component {
 	}
 
 	handleButtonClick = (e) => {
-		console.log(e.target)
+		this.props.onAction(e.target.getAttribute('value'));
 	}
 }

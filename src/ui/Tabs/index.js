@@ -4,6 +4,10 @@ import classnames from 'classnames';
 import './index.scss';
 
 export class Tabs extends React.Component {
+	static defaultProps = {
+		onSelect: () => {}
+	}
+
 	constructor() {
 		super();
 		this.state = {
@@ -46,15 +50,19 @@ export class Tabs extends React.Component {
 
 	handleSelectTab = (e) => {
 		let index = e.target.getAttribute('data-index');
+		let value = e.target.getAttribute('data-value');
 		if (index) {
 			this.setState({activeTab: index});
+		}
+		if (value) {
+			this.props.onSelect(value);
 		}
 	}
 }
 
-export function Tab({caption, index, onSelect, classes}) {
+export function Tab({caption, index, onSelect, classes, value}) {
 	return (
-		<div className={classnames('x-task-tab', classes)} data-index={index} onClick={onSelect}>
+		<div className={classnames('x-task-tab', classes)} data-index={index} data-value={value} onClick={onSelect}>
 			{caption}
 		</div>
 	)
