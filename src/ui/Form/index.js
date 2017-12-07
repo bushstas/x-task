@@ -1,9 +1,23 @@
 import React from 'react';
 import classnames from 'classnames';
+import FormField from '../FormField';
+import FormSubmit from '../FormSubmit';
 
 import './index.scss';
 
 export default class Form extends React.Component {
+	static defaultProps = {
+		onControlChange: () => {},
+		onChange: () => {}
+	}
+
+	constructor() {
+		super();
+		this.state = {
+			formData: {}
+		};
+	}
+
 	render() {
 		let {classes} = this.props;
 		return (
@@ -14,6 +28,51 @@ export default class Form extends React.Component {
 	}
 
 	get content() {
-		return 1111;
+		let {children} = this.props;
+		if (!(children instanceof Array)) {
+			children = [children];
+		}
+		return this.renderChildren(children);
+	}
+
+	renderChildren(children) {
+		if (children instanceof Array) {
+			return children.map((child, i) => {
+				return this.renderChild(child, i);
+			});
+		}
+		return children;
+	}
+
+	renderChild(child, i) {
+		if (React.isValidElement(child)) {
+			let props = {
+				key: i
+			};
+			if (child.type == FormField) {
+				props.onChange = this.handleControlChange;
+				props.onValidate = this.props.onChange;
+			} else  if (child.type == FormSubmit) {
+				props.onClick = this.handleSubmit;
+			}
+			return React.cloneElement(
+				child,
+				props,
+				this.renderChildren(child.props.children)
+			);
+		}
+		return child;
+	}
+
+	handleControlChange = (name, value) => {
+		let {onControlChange, onChange} = this.props;
+		onControlChange(name, value);
+		let {formData} = this.state;
+		formData[name] = value;
+		onChange(formData);
+	}
+
+	handleSubmit = () => {
+		alert('submit')
 	}
 }

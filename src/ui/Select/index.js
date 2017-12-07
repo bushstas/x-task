@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import './index.scss';
 
-export default class Select extends React.Component {
+export default class Select extends React.PureComponent {
 	static defaultProps = {
 		onChange: () => {}
 	}

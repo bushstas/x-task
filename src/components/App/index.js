@@ -20,7 +20,7 @@ export default class App extends React.PureComponent {
   render() {
     let {active, title} = this.state;
     if (!active) {
-      return <StartButton onClick={this.handleStartClick}/>; 
+      return <StartButton onClick={this.handleStartClick}/> 
     }
     if (isAuthorized()) {
       return [
@@ -40,7 +40,8 @@ export default class App extends React.PureComponent {
     }
     return (
       <AuthForm 
-        onClose={this.handleDialogClose}/>
+        onClose={this.handleDialogClose}
+        onSubmit={this.handleSubmitAuthForm}/>
     )
   }
 
@@ -66,6 +67,10 @@ export default class App extends React.PureComponent {
 
   handleDialogClose = () => {
     this.setActive(false);
+  }
+
+  handleSubmitAuthForm = (data) => {
+
   }
 
   handleNavigate = (e) => {

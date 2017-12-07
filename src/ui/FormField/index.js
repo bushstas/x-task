@@ -10,7 +10,8 @@ const INPUT_TYPES = [
 
 import './index.scss';
 
-export default class FormField extends React.Component {
+export default class FormField extends React.PureComponent {
+
 	render() {
 		let {classes} = this.props;
 		return (
@@ -38,13 +39,13 @@ export default class FormField extends React.Component {
 		if (!(children instanceof Array)) {
 			children = [children];
 		}
-		return renderChildren(children);
+		return this.renderChildren(children);
 	}
 
 	renderChildren(children) {
 		if (children instanceof Array) {
 			return children.map((child, i) => {
-				this.renderChild(child, i);
+				return this.renderChild(child, i);
 			});
 		}
 		return children;
@@ -56,8 +57,8 @@ export default class FormField extends React.Component {
 				key: i
 			};
 			if (INPUT_TYPES.indexOf(child.type) > -1) {
-				props.onChange = this.handleControlChange;
-				props.onValidate = this.handleControlValidate;
+				props.onChange = this.props.onChange;
+				props.onValidate = this.props.onValidate;
 			}
 			return React.cloneElement(
 				child,
@@ -66,13 +67,5 @@ export default class FormField extends React.Component {
 			);
 		}
 		return child;
-	}
-
-	handleControlChange = (name, value) => {
-
-	}
-
-	handleControlValidate = (name, isValid) => {
-
 	}
 }

@@ -1,5 +1,13 @@
 .x-task-form-field {
 	.x-task-form-field-caption {
-		
+		padding-bottom: 6px;
+		color: #555;
+		font-size: 14px;
+	}
+	input,
+	select,
+	textarea {
+		box-sizing: border-box;
+		width: 100%;
 	}
 }

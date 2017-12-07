@@ -6,9 +6,13 @@ import {load} from './utils/Loader';
 import {load as dict} from './utils/Dictionary';
 import {load as user} from './utils/User';
 
+let box = document.createElement('div');
+box.className = 'x-task-main-box';
+document.body.appendChild(box);
+
 load(dict, user).then(() => {
-	let box = document.createElement('div');
-	box.className = 'x-task-main-box';
-	document.body.appendChild(box);
-	render(<App/>, box);
+	render(		
+		<App/>,
+		box
+	);
 });

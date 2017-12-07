@@ -8,9 +8,9 @@ export default class Dialog extends React.Component {
 	render() {
 		let {title, onClose, children, classes} = this.props;
 		return (
-			<div className="x-task-dialog-box">
+			<div className={classnames('x-task-dialog-box', classes)}>
 				<div className="x-task-dialog-mask" onClick={onClose}/>
-				<div className={classnames('x-task-dialog', classes)}>
+				<div className="x-task-dialog">
 					<div className="x-task-dialog-title">
 						{title}
 						<Icon onClick={onClose} classes="x-task-dialog-close">

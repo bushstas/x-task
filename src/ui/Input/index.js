@@ -3,7 +3,11 @@ import classnames from 'classnames';
 
 import './index.scss';
 
-export default class Input extends React.Component {
+export default class Input extends React.PureComponent {
+	static defaultProps = {
+		onChange: () => {}
+	}
+
 	render() {
 		let {classes, name, value, placeholder} = this.props;
 		return (
@@ -11,7 +15,7 @@ export default class Input extends React.Component {
 				<input 
 					type={this.type}
 					name={name}
-					value={value}
+					value={value || ''}
 					placeholder={placeholder}
 					onChange={this.handleChange}/>
 			</div>

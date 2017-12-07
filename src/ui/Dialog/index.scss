@@ -5,6 +5,9 @@
 	right: 0;
 	bottom: 0;
 	z-index: 9999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
 	.x-task-dialog-mask {
 		position: absolute;
@@ -17,46 +20,45 @@
 		opacity: 0.9;
 	}
 
+	&.x-task-large-dialog {
+		.x-task-dialog {
+			width: 1000px;
+			height: 100%;
+		}
+		.x-task-dialog-content {
+			position: absolute;
+			top: 50px;
+			left: 0;
+			right: 0;
+			bottom: 60px;
+			padding: 15px 0;
+		}
+		.x-task-dialog-buttons {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+	}
+	&.x-task-notification-dialog {
+		.x-task-dialog {
+			width: 540px;
+		}
+	}
+	&.x-task-narrow-dialog {
+		.x-task-dialog {
+			width: 360px;
+		}
+	}
+
 	.x-task-dialog {
-		position: absolute;
-		left: 50%;
-		top: 50%;
+		position: relative;
 		z-index: 9991;
 		background-color: #fff;
 		box-shadow: 0 0 2px #333;
-
-		&.x-task-large-dialog {
-			width: 1000px;
-			margin-left: -500px;
-			top: 0;
-			bottom: 0;
-
-			.x-task-dialog-content {
-				position: absolute;
-				top: 50px;
-				left: 0;
-				right: 0;
-				bottom: 60px;
-			}
-			.x-task-dialog-buttons {
-				position: absolute;
-				left: 0;
-				right: 0;
-				bottom: 0;
-			}
-		}
-		&.x-task-notification-dialog {
-			width: 540px;
-			margin-left: -270px;
-			margin-top: -100px;
-		}
-		&.x-task-narrow-dialog {
-			width: 400px;
-			margin-left: -200px;
-			height: 300px;
-			margin-top: -150px;
-		}
 	}
+
+		
 	.x-task-dialog-title {
 		position: relative;
 		background-color: #555;
@@ -68,7 +70,7 @@
 	.x-task-dialog-content {
 		position: relative;
 		font-size: 14px;
-		padding: 15px 0;
+		padding: 15px 20px;
 	}
 	.x-task-dialog-close {
 		position: absolute;

@@ -1,11 +1,22 @@
 import React from 'react';
 import Dialog from '../../ui/Dialog';
 import Form from '../../ui/Form';
+import FormField from '../../ui/FormField';
+import FormSubmit from '../../ui/FormSubmit';
+import Input from '../../ui/Input';
 import {dict} from '../../utils/Dictionary';
 
 export default class AuthForm extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			formData: {}
+		};
+	}
+
 	render() {
-		let {onClose} = this.props;
+		let {onClose, onSubmit} = this.props;
+		let {formData: {login, password}} = this.state;
 		return (
 			 <Dialog 
 			 	title={dict.auth}
@@ -14,18 +25,25 @@ export default class AuthForm extends React.Component {
 	            
 	            <Form 
 	            	onChange={this.handleFormChange}
-	            	onSubmit={this.handleFormSubmit}>
+	            	onSubmit={onSubmit}>
 
+	            	<FormField caption={dict.login}>
+	            		<Input name="login" value={login}/>
+	            	</FormField>
+
+	            	<FormField caption={dict.password} classes="mt15">
+	            		<Input type="password" name="password" value={password}/>
+	            	</FormField>
+
+	            	<FormSubmit>
+	            		Войти
+	            	</FormSubmit>
 				</Form>
 	        </Dialog>
 		)
 	}
 
-	handleFormChange = () => {
-
-	}
-
-	handleFormSubmit = () => {
-		
+	handleFormChange = (formData) => {
+		this.setState({formData});
 	}
 }
