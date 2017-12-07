@@ -1,0 +1,14 @@
+.x-task-action-buttons {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 60px;
+	box-sizing: border-box;
+	padding: 10px 20px;
+	border-top: 1px solid #ddd;
+
+	.x-task-button {
+		float: right;
+	}
+} 

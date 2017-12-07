@@ -3,7 +3,9 @@ import {dict} from '../../utils/Dictionary';
 import {get} from '../../utils/Fetcher';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
+import Button from '../../ui/Button';
 import Team from './Team';
+import ActionButtons from '../ActionButtons';
 
 import './index.scss';
 
@@ -11,7 +13,8 @@ export default class Users extends React.Component {
 	constructor() {
 		super();
 		this.state = {
-			data: {}
+			data: {},
+			buttonsShown: ['add_user']
 		}
 	}
 
@@ -22,7 +25,7 @@ export default class Users extends React.Component {
 	}
 
 	render() {
-		let {data: {users}} = this.state;
+		let {data: {users}, buttonsShown} = this.state;
 	 	return (
 	 		<Loader loaded={!!users} classes="stretched">
 				<div className="x-task-users">
@@ -37,6 +40,11 @@ export default class Users extends React.Component {
 							3
 						</Tab>
 					</Tabs>
+					<ActionButtons buttonsShown={buttonsShown}>
+						<Button value="add_user">
+							{dict.create_user}
+						</Button>
+					</ActionButtons>
 				</div>
 			</Loader>
 		)
