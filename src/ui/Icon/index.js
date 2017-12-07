@@ -3,10 +3,9 @@ import classnames from 'classnames';
 
 import './index.scss';
 
-export default function Icon({children, onClick, classes}) {
+export default function Icon({children, classes, ...others}) {
 	return (
-		<i className={classnames('x-task-icon', classes)}
-		   onClick={onClick}>
+		<i className={classnames('x-task-icon', classes)} {...others}>
 			{children}
 		</i>
 	)

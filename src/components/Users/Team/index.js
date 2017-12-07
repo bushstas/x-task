@@ -3,9 +3,26 @@ import {dict} from '../../../utils/Dictionary';
 import {getToken, hasRight} from '../../../utils/User';
 import Table from '../../../ui/Table';
 import Icon from '../../../ui/Icon';
+import UserForm from '../UserForm';
 
 export default class Team extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			formShown: false,
+			editedUser: null
+		}
+	}
+
 	render() {
+		let {formShown, editedUser} = this.state;
+	 	if (formShown) {
+	 		return (
+	 			<UserForm 
+	 				data={editedUser}
+	 				onSubmit={this.handleUserFormSubmit}/>
+	 		)
+	 	}
 	 	return (
 			<Table
 				headers={this.headers}
@@ -26,8 +43,9 @@ export default class Team extends React.Component {
 		let {users} = this.props,
 			token = getToken(),
 			rows = [], name, canEdit,
-			i, placeholder, icon, iconProps;
+			i, placeholder, iconProps;
 		
+		let index = 0;
 		for (let u of users) {
 			name = u.name;
 			if (!u.projects) {
@@ -38,8 +56,7 @@ export default class Team extends React.Component {
 			
 			if (canEdit) {
 				iconProps = {
-					'data-token': u.token,
-					'data-blocked': u.blockedBy ? 1 : 0,
+					'data-index': index,
 					onClick: this.handleEditUserClick
 				};
 			} else {
@@ -49,11 +66,6 @@ export default class Team extends React.Component {
 					}
 				};
 			}
-			icon = (
-				<Icon classes="x-task-edit-icon" {...iconProps}>
-					create
-				</Icon>
-			);
 			if (u.blockedBy) {
 				name = (
 					<div>
@@ -65,12 +77,29 @@ export default class Team extends React.Component {
 				)
 			}
 			rows.push([
-				icon,
+				<Icon classes="x-task-edit-icon" {...iconProps}>
+					create
+				</Icon>,
 				name,
 				u.roleName,
 				u.projects.split(',').join(', ')
 			]);
+			index++;
 		}
 		return rows;
+	}
+
+	handleEditUserClick = (e) => {
+		let index = e.target.getAttribute('data-index');
+		if (index) {
+			let {users} = this.props;
+			let user = users[index];
+			this.setState({formShown: true});
+			
+		}
+	}
+
+	handleUserFormSubmit = (data) => {
+
 	}
 }
