@@ -1,8 +1,8 @@
 import React from 'react';
-import {dict} from '../../../utils/Dictionary';
-import {getToken, hasRight} from '../../../utils/User';
-import Table from '../../../ui/Table';
-import Icon from '../../../ui/Icon';
+import {dict} from '../../utils/Dictionary';
+import {getToken, hasRight} from '../../utils/User';
+import Table from '../../ui/Table';
+import Icon from '../../ui/Icon';
 import UserForm from '../UserForm';
 import Store from 'xstore';
 
@@ -78,7 +78,7 @@ class Team extends React.Component {
 				)
 			}
 			rows.push([
-				<Icon classes="x-task-edit-icon" {...iconProps}>
+				<Icon classes="x-task-edit-icon x-task-button-icon" {...iconProps}>
 					create
 				</Icon>,
 				name,

@@ -95,6 +95,17 @@ export const getCurrentProject = () => {
 	return currentProject;
 }
 
+export const inProject = (token) => {
+	if (isAdminLike()) {
+		return true;
+	}
+	let {projects} = user;
+	if (projects instanceof Array) {
+		return projects.indexOf(token) > -1;
+	}
+	return false;
+}
+
 const doAction = (action, data) => {
 	loaded = false;
 	let cb = function(data) {
@@ -132,6 +143,7 @@ export default {
 	isAdminLike,
 	getData,
 	getCurrentProject,
+	inProject,
 	auth,
 	register,
 	logout

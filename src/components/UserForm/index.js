@@ -1,12 +1,12 @@
 import React from 'react';
-import Form from '../../../ui/Form';
-import Input from '../../../ui/Input';
-import Select from '../../../ui/Select';
-import FormField from '../../../ui/FormField';
-import Checkboxes from '../../../ui/Checkboxes';
-import {dict} from '../../../utils/Dictionary';
+import Form from '../../ui/Form';
+import Input from '../../ui/Input';
+import Select from '../../ui/Select';
+import FormField from '../../ui/FormField';
+import Checkboxes from '../../ui/Checkboxes';
+import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
-import {isHead, isCurrentUser} from '../../../utils/User';
+import {isHead, isCurrentUser} from '../../utils/User';
 
 class UserForm extends React.Component {
 	render() {

@@ -3,13 +3,12 @@ import {dict} from '../../utils/Dictionary';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
-import Team from '../Team';
 import ActionButtons from '../ActionButtons';
 import Store from 'xstore'
 
 import './index.scss';
 
-class Users extends React.Component {
+class Account extends React.Component {
 
 	componentDidMount() {
 		this.props.doAction('USERS_LOAD');
@@ -19,7 +18,7 @@ class Users extends React.Component {
 		let {fetching} = this.props;
 	 	return (
 	 		<Loader loaded={!fetching} classes="stretched">
-				<div className="x-task-users">
+				<div className="x-task-account">
 					{this.tabs}
 					{this.actionButtons}
 				</div>
@@ -30,32 +29,25 @@ class Users extends React.Component {
 	get tabs() {		
 		return (
 			<Tabs onSelect={this.handleSelectTab}>
-				<Tab caption={dict[this.teamTabCaption]} value="users">
-					{this.team}
-				</Tab>
-				<Tab caption={dict.invitations} value="invitations">
+				<Tab caption={dict.my_tasks} value="tasks">
 					2
 				</Tab>
-				<Tab caption={dict.roles} value="roles">
-					3
+				<Tab caption={dict.info} value="users">
+					{this.info}
+				</Tab>
+				<Tab caption={dict.settings} value="users">
+					{this.settings}
 				</Tab>
 			</Tabs>
 		)
 	}
 
-	get teamTabCaption() {
-		let {userFormShown} = this.props;
-		if (userFormShown == 'edit') {
-			return 'user_editing';
-		}
-		if (userFormShown == 'add') {
-			return 'user_adding';
-		}
-		return 'team';
+	get info() {
+		return 11111
 	}
 
-	get team() {
-		return <Team/>
+	get settings() {
+		return 11111
 	}
 
 	get actionButtons() {
@@ -69,17 +61,6 @@ class Users extends React.Component {
 					{dict.create_user}
 				</Button>
 
-				<Button data-value="add_user" width="100">
-					{dict.add}
-				</Button>
-
-				<Button data-value="save_user" data-token={editedUserToken} width="100">
-					{dict.save}
-				</Button>
-
-				<Button classes="x-task-cancel-button" data-value="cancel" width="100">
-					{dict.cancel}
-				</Button>
 			</ActionButtons>
 		)
 	}
@@ -88,13 +69,6 @@ class Users extends React.Component {
 		let {activeTab} = this.props;
 		switch (activeTab) {
 			case 'users': {
-				let {userFormShown} = this.props;
-				if (userFormShown == 'edit') {
-					return ['save_user', 'cancel'];
-				}
-				if (userFormShown == 'add') {
-					return ['add_user', 'cancel'];
-				}
 				return ['create_user'];
 			}
 		}
@@ -124,4 +98,4 @@ const params = {
   has: 'users',
   flat: true
 }
-export default Store.connect(Users, params);
+export default Store.connect(Account, params);

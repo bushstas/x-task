@@ -3,8 +3,11 @@ import Dialog from '../../ui/Dialog';
 import AuthForm from '../../components/AuthForm';
 import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
+
 import Users from '../Users';
 import Projects from '../Projects';
+import Account from '../Account';
+
 import {dict} from '../../utils/Dictionary';
 import {isAuthorized, auth, register, logout} from '../../utils/User';
 
@@ -49,22 +52,28 @@ export default class App extends React.PureComponent {
 
   get title() {
     switch (this.state.activeTab) {
+      case 'users':
+        return dict.users;
+      
       case 'projects':
         return dict.projects;
 
       default: {
-        return dict.users;
+        return dict.my_account;
       }
     }
   }
 
   get content() {
     switch (this.state.activeTab) {
+      case 'users':
+        return <Users/>
+
       case 'projects':
         return <Projects/>
 
       default: {
-        return <Users/>
+        return <Account/>
       }
     }
   }
@@ -87,7 +96,12 @@ export default class App extends React.PureComponent {
 
   handleNavigate = ({target: {dataset: {name}}}) => {
     if (name == 'logout') {
-      logout().then(this.handleAuthStatusChanged);
+      logout()
+      .then((isAuthorized) => {
+        alert('logout');
+        console.log({isAuthorized})
+        this.handleAuthStatusChanged(isAuthorized);
+      });
     } else if (name) {
       this.setState({activeTab: name});
     }
