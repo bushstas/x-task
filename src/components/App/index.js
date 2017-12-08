@@ -29,12 +29,9 @@ export default class App extends React.PureComponent {
     }
     if (isAuthorized()) {
       return [
-        <Dialog title={(
-              <div>
-                {this.title}
-                <MainMenu onNavigate={this.handleNavigate}/>
-              </div>
-            )}
+        <Dialog 
+            title={this.title}
+            titleContent={<MainMenu onNavigate={this.handleNavigate}/>}
             onClose={this.handleDialogClose}
             key="dialog"
             classes="x-task-large-dialog">   

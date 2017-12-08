@@ -1,15 +1,15 @@
 .x-task-main-menu {
 	position: absolute;
-	right: 100px;
+	right: 65px;
 	top: 0;
 	font-size: 14px;
 
-	span {
+	& > span {
 		position: relative;
 		cursor: pointer;
 		display: inline-block;
 		vertical-align: top;
-		margin-left: 30px;
+		margin-left: 44px;
 		line-height: 50px;
 		color: #ddd;
 
@@ -24,10 +24,18 @@
 			left: 0;
 			right: 0;
 			background-color: #fff;
-			opacity: 0.4;
+			opacity: 0;
 		}
 		&:hover:after {
-			opacity: 0.6;
+			opacity: 0.3;
+		}
+
+		& > div {
+			position: absolute;
+			left: -20px;
+			top: 3px;
+			color: #fff;
+			opacity: 0.3;
 		}
 	}
 }

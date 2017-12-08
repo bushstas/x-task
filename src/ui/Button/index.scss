@@ -1,16 +1,28 @@
 .x-task-button {
-	line-height: 40px;
+	line-height: 36px;
 	border-radius: 3px;
-	padding: 0 20px;
+	padding: 0 16px;
 	text-align: center;
 	display: inline-block;
 	vertical-align: top;
 	color: #fff;
 	background-color: #555;
-	font-size: 14px;
+	font-size: 13px;
 	cursor: pointer;
+	border: 1px solid #555;
+	user-select: none;
 
 	&:hover {
 		background-color: #333;
+		border-color: #333;
+	}
+
+	&.x-task-white-button {
+		background-color: transparent;
+		color: #555;
+		&:hover {
+			color: #333;
+			background-color: #f1f1f1;
+		}
 	}
 }
