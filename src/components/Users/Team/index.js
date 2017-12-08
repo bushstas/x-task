@@ -4,26 +4,27 @@ import {getToken, hasRight} from '../../../utils/User';
 import Table from '../../../ui/Table';
 import Icon from '../../../ui/Icon';
 import UserForm from '../UserForm';
+import Store from 'xstore';
 
-export default class Team extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			formShown: false,
-			editedUser: null
-		}
+class Team extends React.Component {
+	static defaultProps = {
+		onStartEdit: () => {}
 	}
 
 	render() {
-		let {formShown, editedUser} = this.state;
-	 	if (formShown) {
-	 		return (
-	 			<UserForm 
-	 				data={editedUser}
-	 				onSubmit={this.handleUserFormSubmit}/>
-	 		)
+		let {userFormShown} = this.props;
+	 	if (userFormShown) {
+	 		return this.form;
 	 	}
-	 	return (
+	 	return this.table;
+	}
+
+	get form() {
+		return <UserForm/>
+	}
+
+	get table() {
+		return (
 			<Table
 				headers={this.headers}
 				widths={this.widths}
@@ -94,11 +95,15 @@ export default class Team extends React.Component {
 		if (index) {
 			let {users} = this.props;
 			let user = users[index];
-			this.setState({formShown: true});			
+			if (user instanceof Object && user.token) {			
+				this.props.doAction('USERS_SHOW_EDITING_USER_FORM', user.token);
+			}
 		}
 	}
-
-	handleUserFormSubmit = (data) => {
-		console.log(data)
-	}
 }
+
+const params = {
+  has: 'users',
+  flat: true
+}
+export default Store.connect(Team, params);

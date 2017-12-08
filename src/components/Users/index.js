@@ -1,75 +1,127 @@
 import React from 'react';
 import {dict} from '../../utils/Dictionary';
-import {get} from '../../utils/Fetcher';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
 import Team from './Team';
 import ActionButtons from '../ActionButtons';
+import Store from 'xstore'
 
 import './index.scss';
 
-export default class Users extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			data: {},
-			buttonsShown: ['create_user']
-		}
-	}
+class Users extends React.Component {
 
 	componentDidMount() {
-		get('load_users').then((data) => {
-			this.setState({data});
-		});
+		this.props.doAction('USERS_LOAD');
 	}
 
 	render() {
-		let {data: {users}, buttonsShown, addingUser} = this.state;
+		let {fetching} = this.props;
 	 	return (
-	 		<Loader loaded={!!users} classes="stretched">
+	 		<Loader loaded={!fetching} classes="stretched">
 				<div className="x-task-users">
-					<Tabs onSelect={this.handleSelectTab}>
-						<Tab caption={dict.team} value="users">
-							<Team 
-								adding={addingUser}
-								users={users}/>
-						</Tab>
-						<Tab caption={dict.invitations} value="invitations">
-							2
-						</Tab>
-						<Tab caption={dict.roles} value="roles">
-							3
-						</Tab>
-					</Tabs>
-					<ActionButtons 
-						buttonsShown={buttonsShown}
-						onAction={this.handleAction}>
-						
-						<Button value="create_user">
-							{dict.create_user}
-						</Button>
-					</ActionButtons>
+					{this.tabs}
+					{this.actionButtons}
 				</div>
 			</Loader>
 		)
 	}
 
-	handleSelectTab = (value) => {
-		let buttonsShown = [];
-		switch (value) {
-			case 'users':
-				buttonsShown.push('create_user');
-			break;
-		}
-		this.setState({buttonsShown});
+	get tabs() {		
+		return (
+			<Tabs onSelect={this.handleSelectTab}>
+				<Tab caption={dict[this.teamTabCaption]} value="users">
+					{this.team}
+				</Tab>
+				<Tab caption={dict.invitations} value="invitations">
+					2
+				</Tab>
+				<Tab caption={dict.roles} value="roles">
+					3
+				</Tab>
+			</Tabs>
+		)
 	}
 
-	handleAction = (action) => {
-		switch (action) {
-			case 'create_user': {
-				this.setState({addingUser: true});
+	get teamTabCaption() {
+		let {userFormShown} = this.props;
+		if (userFormShown == 'edit') {
+			return 'user_editing';
+		}
+		if (userFormShown == 'add') {
+			return 'user_adding';
+		}
+		return 'team';
+	}
+
+	get team() {
+		return <Team/>
+	}
+
+	get actionButtons() {
+		let {editedUserToken} = this.props;
+		return (
+			<ActionButtons 
+				buttonsShown={this.shownButtons}
+				onAction={this.handleAction}>
+				
+				<Button data-value="create_user">
+					{dict.create_user}
+				</Button>
+
+				<Button data-value="add_user">
+					{dict.add}
+				</Button>
+
+				<Button data-value="save_user" data-token={editedUserToken}>
+					{dict.save}
+				</Button>
+
+				<Button classes="x-task-cancel-button" data-value="cancel">
+					{dict.cancel}
+				</Button>
+			</ActionButtons>
+		)
+	}
+
+	get shownButtons() {
+		let {activeTab} = this.props;
+		switch (activeTab) {
+			case 'users': {
+				let {userFormShown} = this.props;
+				if (userFormShown == 'edit') {
+					return ['save_user', 'cancel'];
+				}
+				if (userFormShown == 'add') {
+					return ['add_user', 'cancel'];
+				}
+				return ['create_user'];
 			}
+		}
+		return [];
+	}
+
+	handleSelectTab = (activeTab) => {
+		this.props.dispatch('USERS_TAB_CHANGED', activeTab);
+	}
+
+	handleAction = (action, data) => {
+		switch (action) {
+			case 'cancel': 
+				return this.props.dispatch('USERS_CANCELED');
+
+			case 'create_user': 
+				return this.props.dispatch('USERS_ADDING_USER_FORM_SHOWN');
+			
+			case 'save_user': 
+				return this.props.doAction('USERS_SAVE_USER', data);
+			
 		}
 	}
 }
+
+const params = {
+  has: 'users',
+  flat: true
+}
+export default Store.connect(Users, params);

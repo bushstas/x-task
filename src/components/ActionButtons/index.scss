@@ -10,5 +10,9 @@
 
 	.x-task-button {
 		float: right;
+
+		&.x-task-cancel-button {
+			float: left;
+		}
 	}
 } 

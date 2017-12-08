@@ -12,10 +12,10 @@ export default class Form extends React.Component {
 		onSubmit: () => {}
 	}
 
-	constructor() {
+	constructor(props) {
 		super();
 		this.state = {
-			formData: {}
+			formData: props.data || {}
 		};
 	}
 

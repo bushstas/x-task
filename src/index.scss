@@ -24,7 +24,9 @@
 	}
 
 	select,
-	input {
+	input[type="text"],
+	input[type="password"],
+	textarea {
 		box-sizing: border-box;
 		background-color: #fff;
 		padding: 10px 12px;
@@ -56,5 +58,9 @@
 	.mt15 {
 		margin-top: 15px;
 	}
+	.pt10 {
+		padding-top: 10px;
+	}
+
 	
 }

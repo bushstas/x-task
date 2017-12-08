@@ -26,9 +26,12 @@ export default class Select extends React.PureComponent {
 		let {options} = this.props;
 		if (options instanceof Array) {
 			return options.map((o, i) => {
+				let {value, name, title, id} = o;
+				value = typeof value != 'undefined' ? value : id || '';
+				title = typeof title != 'undefined' ? title : name || '';
 				return (
-					<option value={o.value}>
-						{o.title}
+					<option value={value} key={value}>
+						{title}
 					</option>
 				)
 			})

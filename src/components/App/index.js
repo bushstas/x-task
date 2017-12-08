@@ -5,7 +5,7 @@ import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
 import Users from '../Users';
 import {dict} from '../../utils/Dictionary';
-import {isAuthorized, auth, register} from '../../utils/User';
+import {isAuthorized, auth, register, logout} from '../../utils/User';
 
 import '../../index.scss';
 
@@ -70,16 +70,19 @@ export default class App extends React.PureComponent {
     this.setActive(false);
   }
 
-  handleSubmitAuthForm = (data) => {
-    auth(data).then((isAuthorized) => {
-      this.setState({isAuthorized});
-    });
+  handleAuthStatusChanged = (isAuthorized) => {
+    this.setState({isAuthorized});
   }
 
-  handleNavigate = (e) => {
-    let activeTab = e.target.getAttribute('data-name');
-    if (activeTab) {
-      this.setState({activeTab});
+  handleSubmitAuthForm = (data) => {
+    auth(data).then(this.handleAuthStatusChanged);
+  }
+
+  handleNavigate = ({target: {dataset: {name}}}) => {
+    if (name == 'logout') {
+      logout().then(this.handleAuthStatusChanged);
+    } else if (name) {
+      this.setState({activeTab: name});
     }
   }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
+import Store from 'xstore'
 
 import App from './components/App';
 import {load} from './utils/Loader';
@@ -15,4 +16,10 @@ load(dict, user).then(() => {
 		<App/>,
 		box
 	);
+});
+
+import users from './store_handlers/users'
+
+Store.addHandlers({
+  users
 });

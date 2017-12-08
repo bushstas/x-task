@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import './index.scss';
 
-export class Tabs extends React.Component {
+export class Tabs extends React.PureComponent {
 	static defaultProps = {
 		onSelect: () => {}
 	}
@@ -52,10 +52,11 @@ export class Tabs extends React.Component {
 		let index = e.target.getAttribute('data-index');
 		let value = e.target.getAttribute('data-value');
 		if (index) {
-			this.setState({activeTab: index});
-		}
-		if (value) {
-			this.props.onSelect(value);
+			let {activeTab} = this.state;
+			if (activeTab != index) {
+				this.setState({activeTab: index});
+				this.props.onSelect(value || index);
+			}			
 		}
 	}
 }

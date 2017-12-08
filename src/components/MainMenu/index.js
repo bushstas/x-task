@@ -18,6 +18,9 @@ export default function MainMenu({onNavigate}) {
 			<span data-name="tasks">
 				{dict.tasks}
 			</span>
+			<span data-name="logout">
+				{dict.logout}
+			</span>
 		</div>
 	)
 }

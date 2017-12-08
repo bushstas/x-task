@@ -2,10 +2,12 @@ import React from 'react';
 import classnames from 'classnames';
 import Input from '../Input';
 import Select from '../Select';
+import Checkboxes from '../Checkboxes';
 
 const INPUT_TYPES = [
 	Input,
-	Select
+	Select,
+	Checkboxes
 ];
 
 import './index.scss';

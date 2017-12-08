@@ -42,7 +42,7 @@ export default class ActionButtons extends React.Component {
 			};
 			if (child.type == Button) {
 				if (buttonsShown instanceof Array &&
-					buttonsShown.indexOf(child.props.value) == -1) {
+					buttonsShown.indexOf(child.props['data-value']) == -1) {
 					return;
 				}
 				props.onClick = this.handleButtonClick;
@@ -56,7 +56,7 @@ export default class ActionButtons extends React.Component {
 		return child;
 	}
 
-	handleButtonClick = (e) => {
-		this.props.onAction(e.target.getAttribute('value'));
+	handleButtonClick = ({target: {dataset: {value, ...data}}}) => {
+		this.props.onAction(value, data);
 	}
 }

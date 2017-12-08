@@ -97,7 +97,7 @@ export const getCurrentProject = () => {
 
 const doAction = (action, data) => {
 	loaded = false;
-	var cb = function(data) {
+	let cb = function(data) {
 		StoreKeeper.set(LOCAL_STORAGE_TOKEN, data.token);
 		load();
 	};
@@ -115,11 +115,17 @@ export const register = (data) => {
 }
 
 export const logout = () => {
-	let promise = post('logout');
-	user = null;
-	currentProject = null;
-	StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
-	return promise;
+	loaded = false;
+	let cb = function(data) {
+		user = null;
+		currentProject = null;
+		StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
+		if (callback instanceof Function) {
+			callback(isAuthorized());
+		}
+	};
+	post('logout').then(cb);
+	return {then}
 }
 
 export default {
