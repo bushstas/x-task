@@ -41,7 +41,7 @@ class Projects extends React.Component {
 		const headers = [
 			dict.open_tasks,
 			dict.participants,
-			dict.domains,
+			dict.main_page,
 			dict.title			
 		];
 		if (hasRight('add_project')) {
@@ -53,9 +53,9 @@ class Projects extends React.Component {
 
 	get widths() {
 		if (hasRight('add_project')) {
-			return [2.5, 32.5, 29, 18, 18];
+			return [2.5, 40, 33.5, 12, 12];
 		}
-		return [34, 30, 18, 18];
+		return [40, 36, 12, 12];
 	}
 
 	get rows() {
@@ -100,7 +100,11 @@ class Projects extends React.Component {
 						</Icon>
 					)}
 				</div>,
-				p.domain,
+				p.main_page || (
+					<span className="x-task-gray">
+						{dict.not_available}
+					</span>
+				),
 				p.users_count,
 				''
 			);

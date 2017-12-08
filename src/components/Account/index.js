@@ -29,6 +29,9 @@ class Account extends React.Component {
 	get tabs() {		
 		return (
 			<Tabs onSelect={this.handleSelectTab}>
+				<Tab caption={dict.home} value="home">
+					2
+				</Tab>
 				<Tab caption={dict.my_tasks} value="tasks">
 					2
 				</Tab>
