@@ -42,6 +42,10 @@ class UserForm extends React.Component {
 					<Select name="role" value={data.role} options={this.roles}/>
 				</FormField>
 
+				<FormField caption={dict.spec} classes="mt15" isPresent={!editingOneself && data.role == 6}>
+					<Select name="spec" value={data.spec} options={this.specs}/>
+				</FormField>
+
 				<FormField caption={dict.projects} classes="mt15" isPresent={!editingOneself}>
 					<Checkboxes name="projects" value={data.projects} items={this.projects}/>
 				</FormField>
@@ -65,7 +69,7 @@ class UserForm extends React.Component {
 	}
 
 	get projects() {
-		let items = [];
+		const items = [];
 		let {projects} = this.props;
 		if (projects instanceof Array) {
 			for (let p of projects) {
@@ -73,6 +77,17 @@ class UserForm extends React.Component {
 			}
 		}
 		return items;
+	}
+
+	get specs() {
+		const options = [
+			{value: 1, title: 'Frontend'},
+			{value: 2, title: 'Backend'},
+			{value: 3, title: 'Full-stack'},
+			{value: 4, title: 'Верстальщик'},
+			{value: 5, title: 'Дизайнер'}
+		];
+		return options;
 	}
 
 	handleFormChange = (data) => {

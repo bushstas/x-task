@@ -18,8 +18,10 @@ load(dict, user).then(() => {
 	);
 });
 
-import users from './store_handlers/users'
+import users from './store_handlers/users';
+import projects from './store_handlers/projects';
 
 Store.addHandlers({
-  users
+  users,
+  projects
 });

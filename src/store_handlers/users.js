@@ -1,7 +1,6 @@
 import {get, post} from '../utils/Fetcher';
  
 const DEFAULT_STATE = {
-  data: {},
   activeTab: 'users',
   fetching: true,
   userFormShown: null,

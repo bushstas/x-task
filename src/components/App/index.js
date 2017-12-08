@@ -4,6 +4,7 @@ import AuthForm from '../../components/AuthForm';
 import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
 import Users from '../Users';
+import Projects from '../Projects';
 import {dict} from '../../utils/Dictionary';
 import {isAuthorized, auth, register, logout} from '../../utils/User';
 
@@ -48,6 +49,9 @@ export default class App extends React.PureComponent {
 
   get title() {
     switch (this.state.activeTab) {
+      case 'projects':
+        return dict.projects;
+
       default: {
         return dict.users;
       }
@@ -56,8 +60,11 @@ export default class App extends React.PureComponent {
 
   get content() {
     switch (this.state.activeTab) {
+      case 'projects':
+        return <Projects/>
+
       default: {
-        return <Users/> 
+        return <Users/>
       }
     }
   }
