@@ -6,6 +6,7 @@ let loaded = false,
 	callback,
 	currentProject = null,
 	user = null,
+	projects = [],
 	rights = [];
 
 
@@ -27,6 +28,9 @@ const onLoad = (data) => {
 		}
 		if (data.user instanceof Object) {
 			user = data.user;
+		}
+		if (data.projects instanceof Array) {
+			projects = data.projects;
 		}
 		if (data.rights instanceof Array) {
 			rights = data.rights;
@@ -51,7 +55,7 @@ export const load = () => {
 }
 
 export const isAuthorized = () => {
-	return user instanceof Object;
+	return !!user && user instanceof Object;
 }
 
 export const isCurrentUser = (u) => {
@@ -91,19 +95,12 @@ export const getData = () => {
 	return user;
 }
 
-export const getCurrentProject = () => {
-	return currentProject;
+export const isCurrentProject = (token) => {
+	return token == currentProject.token;
 }
 
 export const inProject = (token) => {
-	if (isAdminLike()) {
-		return true;
-	}
-	let {projects} = user;
-	if (projects instanceof Array) {
-		return projects.indexOf(token) > -1;
-	}
-	return false;
+	return isAdminLike() || projects.indexOf(token) > -1;
 }
 
 const doAction = (action, data) => {
@@ -142,7 +139,7 @@ export default {
 	isHead,
 	isAdminLike,
 	getData,
-	getCurrentProject,
+	isCurrentProject,
 	inProject,
 	auth,
 	register,

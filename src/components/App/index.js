@@ -100,6 +100,7 @@ export default class App extends React.PureComponent {
       .then((isAuthorized) => {
         alert('logout');
         console.log({isAuthorized})
+        console.log(this.state)
         this.handleAuthStatusChanged(isAuthorized);
       });
     } else if (name) {

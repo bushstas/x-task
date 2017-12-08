@@ -5,7 +5,7 @@ import Store from 'xstore';
 import Table from '../../ui/Table';
 import Button from '../../ui/Button';
 import Icon from '../../ui/Icon';
-import {hasRight, inProject} from '../../utils/User';
+import {hasRight, inProject, isCurrentProject} from '../../utils/User';
 import ActionButtons from '../ActionButtons';
 
 import './index.scss';
@@ -78,11 +78,25 @@ class Projects extends React.Component {
 			row.push(
 				<div>
 					{p.name}
-					{inProject(p.token) && (
+					{isCurrentProject(p.token) ? (
+						<Icon 
+							classes="x-task-activate-icon x-task-button-icon" 
+							style={{opacity: 0.2}}
+							title={dict.current_project}>
+							system_update_alt
+						</Icon>
+					) : (
+					inProject(p.token) ? (
 						<Icon 
 							classes="x-task-activate-icon x-task-button-icon"
 							title={dict.activate_project}>
 							system_update_alt
+						</Icon>
+					) : 
+						<Icon 
+							classes="x-task-activate-icon x-task-button-icon"
+							title={dict.request_access}>
+							add_circle_outline
 						</Icon>
 					)}
 				</div>,
