@@ -51,6 +51,9 @@ export default class Form extends React.Component {
 				key: i
 			};
 			if (child.type == FormField) {
+				if (child.props.isPresent === false) {
+					return;
+				}
 				props.onChange = this.handleControlChange;
 				props.onValidate = this.props.onChange;
 			} else  if (child.type == FormSubmit) {

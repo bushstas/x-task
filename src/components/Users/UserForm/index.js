@@ -6,11 +6,12 @@ import FormField from '../../../ui/FormField';
 import Checkboxes from '../../../ui/Checkboxes';
 import {dict} from '../../../utils/Dictionary';
 import Store from 'xstore';
-import {isHead} from '../../../utils/User';
+import {isHead, isCurrentUser} from '../../../utils/User';
 
 class UserForm extends React.Component {
 	render() {
-		let {userFormData: data} = this.props;
+		let {userFormData: data, editedUserToken} = this.props;
+		let editingOneself = isCurrentUser(editedUserToken);
 		return (
 			<Form 
 				data={data}
@@ -37,11 +38,11 @@ class UserForm extends React.Component {
 					<Input name="email" value={data.email}/>
 				</FormField>
 
-				<FormField caption={dict.role} classes="mt15">
+				<FormField caption={dict.role} classes="mt15" isPresent={!editingOneself}>
 					<Select name="role" value={data.role} options={this.roles}/>
 				</FormField>
 
-				<FormField caption={dict.projects} classes="mt15">
+				<FormField caption={dict.projects} classes="mt15" isPresent={!editingOneself}>
 					<Checkboxes name="projects" value={data.projects} items={this.projects}/>
 				</FormField>
 			</Form>

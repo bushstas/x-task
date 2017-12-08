@@ -102,8 +102,7 @@ const load = ({dispatch}) => {
 }
 
 const save_user = ({dispatch, state}, {token}) => {
-  dispatch('USERS_FETCHING'); 
-
+  dispatch('USERS_FETCHING');
   let {userFormData} = state;
   post('save_user', {userToken: token, ...userFormData})
   .then(() => {

@@ -69,15 +69,15 @@ class Users extends React.Component {
 					{dict.create_user}
 				</Button>
 
-				<Button data-value="add_user">
+				<Button data-value="add_user" width="100">
 					{dict.add}
 				</Button>
 
-				<Button data-value="save_user" data-token={editedUserToken}>
+				<Button data-value="save_user" data-token={editedUserToken} width="100">
 					{dict.save}
 				</Button>
 
-				<Button classes="x-task-cancel-button" data-value="cancel">
+				<Button classes="x-task-cancel-button" data-value="cancel" width="100">
 					{dict.cancel}
 				</Button>
 			</ActionButtons>

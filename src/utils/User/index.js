@@ -115,16 +115,10 @@ export const register = (data) => {
 }
 
 export const logout = () => {
-	loaded = false;
-	let cb = function(data) {
-		user = null;
-		currentProject = null;
-		StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
-		if (callback instanceof Function) {
-			callback(isAuthorized());
-		}
-	};
-	post('logout').then(cb);
+	post('logout');
+	user = null;
+	currentProject = null;
+	StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
 	return {then}
 }
 
