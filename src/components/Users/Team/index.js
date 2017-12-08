@@ -32,7 +32,7 @@ export default class Team extends React.Component {
 	}
 
 	get headers() {
-		return ['', 'Имя', 'Роль', 'Проекты'];
+		return ['', dict.name, dict.role, dict.projects];
 	}
 
 	get widths() {
@@ -99,6 +99,6 @@ export default class Team extends React.Component {
 	}
 
 	handleUserFormSubmit = (data) => {
-
+		console.log(data)
 	}
 }
