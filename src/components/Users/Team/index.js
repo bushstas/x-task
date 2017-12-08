@@ -94,8 +94,7 @@ export default class Team extends React.Component {
 		if (index) {
 			let {users} = this.props;
 			let user = users[index];
-			this.setState({formShown: true});
-			
+			this.setState({formShown: true});			
 		}
 	}
 
