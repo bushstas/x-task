@@ -22,9 +22,14 @@ const then = (cb) => {
 	}
 }
 
+const getKey = () => {
+	let lang = window.XTaskLang ? window.XTaskLang + '_' : '';
+	return lang + LOCAL_STORAGE_DICTIONARY;
+}
+
 const onLoad = (data) => {
 	setDict(data.data);
-	StoreKeeper.set(LOCAL_STORAGE_DICTIONARY, data.data);
+	StoreKeeper.set(getKey(), data.data);
 	if (callback instanceof Function) {
 		callback();
 	}
@@ -32,11 +37,11 @@ const onLoad = (data) => {
 
 export const load = () => {
 	if (!loaded) {
-		let dataInStorage = StoreKeeper.getActual(LOCAL_STORAGE_DICTIONARY, '1hour');
+		let dataInStorage = StoreKeeper.getActual(getKey(), '1hour');
 		if (dataInStorage) {
 			setDict(dataInStorage);
 		} else {
-			get('dictionary').then(onLoad);
+			get('dictionary', {lang: window.XTaskLang}).then(onLoad);
 		}
 	}
 	return {then};
