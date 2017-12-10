@@ -33,16 +33,21 @@ const removed = (state, data) => {
 }
 
 
-const add = ({dispatch}, data) => {
-  dispatch('NOTIFICATIONS_ADDED', data);
+const add = ({dispatch}, {message, classes}) => {
+  dispatch('NOTIFICATIONS_ADDED', {message, classes});
   setTimeout(() => {
     dispatch('NOTIFICATIONS_REMOVED');
-  }, 3000);
+  }, 30000);
+}
+
+const add_success = ({doAction}, message) => {
+  doAction('NOTIFICATIONS_ADD', {message, classes: 'x-task-success'})
 }
  
 export default {
   actions: {
-    add
+    add,
+    add_success
   },
   reducers: {
     init,

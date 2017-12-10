@@ -18,8 +18,8 @@ class Notifications extends React.Component {
 		if (items instanceof Array) {
 			return items.map((item, i) => {
 				return (
-					<Notification key={i}>
-						{item}
+					<Notification key={i} classes={item.classes}>
+						{item.message}
 					</Notification>
 				)
 			});

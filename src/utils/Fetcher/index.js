@@ -55,8 +55,8 @@ class Fetcher {
 		    }
 		    throw new Error('Неизвестная ошибка операции ' + action);
 		})
-		.catch(function(err) {  
-		    Store.doAction('NOTIFICATIONS_ADD', err.message);
+		.catch(function({message}) {  
+		    Store.doAction('NOTIFICATIONS_ADD', {message});
 		    return Promise.reject();
 		});
 	}

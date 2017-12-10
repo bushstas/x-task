@@ -97,7 +97,7 @@ class UserForm extends React.Component {
 	}
 
 	handleFormChange = (data) => {
-		this.props.dispatch('USERS_USER_FORM_DATA_CHANGED', data);
+		this.props.dispatch('TEAM_FORM_DATA_CHANGED', data);
 	}
 }
 

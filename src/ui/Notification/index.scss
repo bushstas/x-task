@@ -7,4 +7,9 @@
 	padding: 10px 14px;
 	margin-bottom: 10px;
 	font-size: 13px;
+
+	&.x-task-success {
+		border: 1px solid #4e9200;
+		background-color: #6bc305;
+	}
 }

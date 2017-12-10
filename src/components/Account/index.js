@@ -30,6 +30,9 @@ class Account extends React.Component {
 				<Tab caption={dict.home} value="home">
 					2
 				</Tab>
+				<Tab caption={dict.notifications} value="notifications">
+					2
+				</Tab>
 				<Tab caption={dict.my_tasks} value="tasks">
 					2
 				</Tab>

@@ -5,6 +5,7 @@ import Store from 'xstore';
 import Table from '../../ui/Table';
 import Button from '../../ui/Button';
 import Icon from '../../ui/Icon';
+import ProjectForm from '../ProjectForm';
 import {hasRight, inProject, isCurrentProject} from '../../utils/User';
 import ActionButtons from '../ActionButtons';
 
@@ -17,13 +18,23 @@ class Projects extends React.Component {
 	}
 
 	render() {
-		let {fetching} = this.props;
+		let {fetching, formShown} = this.props;
+		if (formShown) {
+			return [
+				this.form,
+				this.actionButtons
+			]
+		}
 	 	return (
 	 		<Loader fetching={fetching} classes="x-task-projects">
 				{this.table}
 				{this.actionButtons}
 			</Loader>
 		)
+	}
+
+	get form() {
+		return <ProjectForm key="form"/>
 	}
 
 	get table() {		
@@ -76,29 +87,9 @@ class Projects extends React.Component {
 			row.push(
 				<div>
 					{p.name}
-					{isCurrentProject(p.token) ? (
-						<Icon 
-							classes="x-task-activate-icon x-task-button-icon" 
-							style={{opacity: 0.2}}
-							title={dict.current_project}>
-							system_update_alt
-						</Icon>
-					) : (
-					inProject(p.token) ? (
-						<Icon 
-							classes="x-task-activate-icon x-task-button-icon"
-							title={dict.activate_project}>
-							system_update_alt
-						</Icon>
-					) : 
-						<Icon 
-							classes="x-task-activate-icon x-task-button-icon"
-							title={dict.request_access}>
-							add_circle_outline
-						</Icon>
-					)}
+					{this.renderActionIcon(index, p)}
 				</div>,
-				p.main_page || (
+				p.homepage || (
 					<span className="x-task-gray">
 						{dict.not_available}
 					</span>
@@ -112,9 +103,52 @@ class Projects extends React.Component {
 		return rows;
 	}
 
+	renderActionIcon(index, data) {
+		return	isCurrentProject(data.token) ? (
+			<Icon 
+				classes="x-task-activate-icon x-task-button-icon" 
+				style={{opacity: 0.2}}
+				title={dict.current_project}>
+				system_update_alt
+			</Icon>
+		) : (
+		inProject(data.token) ? (
+			<Icon 
+				classes="x-task-activate-icon x-task-button-icon"
+				title={dict.activate_project}
+				data-index={index}
+				onClick={this.handleActivateButtonClick}>
+				system_update_alt
+			</Icon>
+		) : 
+			this.renderRequestAccessIcon(index, data)
+		)
+	}
+
+	renderRequestAccessIcon(index, data) {
+		let props = {
+			classes: 'x-task-activate-icon x-task-button-icon'
+		};
+		if (data.requested == 1) {
+			props.title = dict.access_requested;
+			props.style = {opacity: 0.2};
+		} else {
+			props.title = dict.request_access;
+			props['data-index'] = index;
+			props.onClick = this.handleRequestAccessClick;
+		}
+		return (
+			<Icon {...props}>
+				add_circle_outline
+			</Icon>
+		)
+	}
+
 	get actionButtons() {
+		let {editedProject} = this.props;
 		return (
 			<ActionButtons 
+				key="actionButtons"
 				buttonsShown={this.shownButtons}
 				onAction={this.handleAction}>
 				
@@ -126,7 +160,7 @@ class Projects extends React.Component {
 					{dict.add}
 				</Button>
 
-				<Button data-value="save"width="100">
+				<Button data-value="save" width="100" data-token={editedProject}>
 					{dict.save}
 				</Button>
 
@@ -148,9 +182,53 @@ class Projects extends React.Component {
 		return ['create'];
 	}
 
-	handleEditProjectClick = () => {
+	getProject(e) {
+		let index = e.target.getAttribute('data-index');
+		let {projects} = this.props;
+		let project = projects[index];
+		if (project instanceof Object && project.token) {
+			return project.token;
+		}
+	}
 
-	}	
+	handleEditProjectClick = (e) => {
+		let token = this.getProject(e);
+		if (token) {
+			this.props.doAction('PROJECTS_SHOW_EDIT_FORM', token);
+		}
+	}
+
+	handleRequestAccessClick = (e) => {
+		let token = this.getProject(e);
+		if (token) {
+			this.props.doAction('PROJECTS_REQUEST_ACCESS', token);
+		}
+	}
+
+	handleActivateButtonClick = (e) => {
+		let token = this.getProject(e);
+		if (token) {
+			this.props.doAction('PROJECTS_ACTIVATE', token);
+		}
+	} 
+
+	handleAction = (action, data) => {
+		switch (action) {
+			case 'cancel': 
+				return this.props.dispatch('PROJECTS_CANCELED');
+
+			case 'create': 
+				return this.props.dispatch('PROJECTS_ADD_FORM_SHOWN');
+			
+			case 'save': 
+				return this.props.doAction('PROJECTS_SAVE', data);
+
+			case 'add': 
+				let {formData} = this.props;
+				return this.props.doAction('PROJECTS_ADD', userFormData);
+			
+		}
+	}
 }
 
 const params = {

@@ -100,17 +100,21 @@ class Users extends React.Component {
 	handleAction = (action, data) => {
 		switch (action) {
 			case 'cancel': 
-				return this.props.dispatch('TEAM_CANCELED');
+				let {userFormShown} = this.props;
+				if (userFormShown) {
+					return this.props.dispatch('TEAM_CANCELED');
+				}
+				return;
 
 			case 'create_user': 
 				return this.props.dispatch('TEAM_ADD_FORM_SHOWN');
 			
 			case 'save_user': 
-				return this.props.doAction('TEAM_SAVE_USER', data);
+				return this.props.doAction('TEAM_SAVE', data);
 
 			case 'add_user': 
 				let {userFormData} = this.props;
-				return this.props.doAction('TEAM_ADD_USER', userFormData);
+				return this.props.doAction('TEAM_ADD', userFormData);
 			
 		}
 	}
