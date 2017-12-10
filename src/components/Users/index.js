@@ -18,11 +18,9 @@ class Users extends React.Component {
 	render() {
 		let {fetching} = this.props;
 	 	return (
-	 		<Loader loaded={!fetching} classes="stretched">
-				<div className="x-task-users">
-					{this.tabs}
-					{this.actionButtons}
-				</div>
+	 		<Loader fetching={fetching} classes="x-task-users">
+				{this.tabs}
+				{this.actionButtons}
 			</Loader>
 		)
 	}

@@ -13,6 +13,14 @@
 		line-height: 50px;
 		color: #ddd;
 
+		&.active {
+			color: #ffd638 !important;
+			& > div {			
+				color: inherit;
+				opacity: 0.5;
+			}
+		}
+
 		&:hover {
 			color: #fff;
 		}
@@ -33,9 +41,11 @@
 		& > div {
 			position: absolute;
 			left: -20px;
-			top: 3px;
+			top: 50%;
+    		margin-top: -8px;
 			color: #fff;
 			opacity: 0.3;
+			line-height: 16px;
 		}
 	}
 }

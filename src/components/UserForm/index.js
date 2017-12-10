@@ -8,6 +8,8 @@ import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import {isHead, isCurrentUser} from '../../utils/User';
 
+import './index.scss';
+
 class UserForm extends React.Component {
 	render() {
 		let {userFormData: data, editedUserToken} = this.props;
@@ -16,7 +18,7 @@ class UserForm extends React.Component {
 			<Form 
 				data={data}
 				onChange={this.handleFormChange}
-				classes="pt10">
+				classes="x-task-user-form pt10">
 
 				<FormField caption={dict.login}>
 					<Input name="login" value={data.login}/>
@@ -46,7 +48,7 @@ class UserForm extends React.Component {
 					<Select name="spec" value={data.spec} options={this.specs}/>
 				</FormField>
 
-				<FormField caption={dict.projects} classes="mt15" isPresent={!editingOneself}>
+				<FormField caption={dict.projects} classes="mt15" isPresent={!editingOneself && data.role > 2}>
 					<Checkboxes name="projects" value={data.projects} items={this.projects}/>
 				</FormField>
 			</Form>
@@ -54,13 +56,15 @@ class UserForm extends React.Component {
 	}
 
 	get roles() {
-		const options = [];
+		const options = [
+			{value: '', name: dict.pick_role}
+		];
 		let {roles} = this.props;
 		if (roles instanceof Array) {
 			let idx = 0;
 			for (let role of roles) {
 				if (idx > 1 || (idx == 1 && isHead())) {
-					options.push(role);
+					options.push({value: role.id, name: dict[role.code]});
 				}
 				idx++;
 			}
@@ -81,12 +85,14 @@ class UserForm extends React.Component {
 
 	get specs() {
 		const options = [
-			{value: 1, title: 'Frontend'},
-			{value: 2, title: 'Backend'},
-			{value: 3, title: 'Full-stack'},
-			{value: 4, title: 'Верстальщик'},
-			{value: 5, title: 'Дизайнер'}
+			{value: '', name: dict.pick_spec}
 		];
+		let {specs} = this.props;
+		if (specs instanceof Array) {
+			for (let spec of specs) {
+				options.push({value: spec.id, name: dict[spec.code]});
+			}
+		}
 		return options;
 	}
 

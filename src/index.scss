@@ -29,11 +29,12 @@
 
 .x-task-main-box {
 	font-family: Roboto;
+	color: #111;
 
 	button {
 		line-height: 26px;
 		cursor: pointer;
-		font-family: Segoe UI;
+		font-family: Roboto;
 		padding: 3px 14px;
 	}
 
@@ -46,8 +47,9 @@
 		padding: 8px 12px;
 		border: 1px solid #aaa;
 		border-radius: 2px;
-		font-family: Segoe UI;
+		font-family: Roboto;
 		transition: border-color .3s;
+		font-size: 14px;
 
 		&:focus {
 			outline: 0;

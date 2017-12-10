@@ -1,14 +1,25 @@
 .x-task-loader {
-	position: relative;
-	
-	&.stretched {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 10;
+
+	&:before {
+		content: '';
 		position: absolute;
 		left: 0;
 		right: 0;
 		top: 0;
 		bottom: 0;
+		z-index: 1;
+		background-color: #fff;
+		opacity: 0.8;
 	}
-	.cssload-container{
+	
+	.cssload-container {
+		z-index: 2;
 		position: absolute;
 		left: 50%;
 		top: 50%;

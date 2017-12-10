@@ -9,8 +9,9 @@
   "scripts": {
     "server": "SET NODE_ENV=server&&webpack-dev-server",
     "dev": "webpack --watch --progress",
-    "winbuild": "webpack --progress --watch",
+    "windev": "webpack --progress --watch",
     "build": "NODE_ENV=production webpack --progress",
+    "winbuild": "SET NODE_ENV=production&&webpack --progress",
     "create-handler": "node node_modules/xstore/bin/exec.js"
   },
   "author": "Thisman",

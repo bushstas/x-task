@@ -1,13 +1,14 @@
 import React from 'react';
 import {dict} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
+import classnames from 'classnames';
 
 import './index.scss';
 
-export default function MainMenu({onNavigate}) {
+export default function MainMenu({active, onNavigate}) {
 	return (
 		<div className="x-task-main-menu" onClick={onNavigate}>
-			<span data-name="my_account">
+			<span className={classnames(active == 'my_account' ? 'active' : '')} data-name="my_account">
 				{dict.my_account}
 				<div>
 					<Icon size="16">
@@ -15,7 +16,7 @@ export default function MainMenu({onNavigate}) {
 					</Icon>
 				</div>
 			</span>			
-			<span data-name="tasks">
+			<span className={classnames(active == 'tasks' ? 'active' : '')} data-name="tasks">
 				{dict.tasks}
 				<div>
 					<Icon size="16">
@@ -23,7 +24,7 @@ export default function MainMenu({onNavigate}) {
 					</Icon>
 				</div>
 			</span>
-			<span data-name="projects">
+			<span className={classnames(active == 'projects' ? 'active' : '')} data-name="projects">
 				{dict.projects}
 				<div>
 					<Icon size="16">
@@ -31,7 +32,7 @@ export default function MainMenu({onNavigate}) {
 					</Icon>
 				</div>
 			</span>
-			<span data-name="users">
+			<span className={classnames(active == 'users' ? 'active' : '')} data-name="users">
 				{dict.users}
 				<div>
 					<Icon size="16">

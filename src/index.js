@@ -20,8 +20,10 @@ load(dict, user).then(() => {
 
 import users from './store_handlers/users';
 import projects from './store_handlers/projects';
+import notifications from './store_handlers/notifications';
 
 Store.addHandlers({
   users,
-  projects
+  projects,
+  notifications
 });

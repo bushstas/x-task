@@ -1,5 +1,6 @@
 import {PATH_TO_API, LOCAL_STORAGE_TOKEN} from '../../consts';
 import StoreKeeper from '../StoreKeeper';
+import Store from 'xstore';
 
 class Fetcher {
 	getPathToApi(action) {
@@ -48,18 +49,15 @@ class Fetcher {
 		.then(function(data) {
 			if (data.success === true) {
 		   		return data;
-		    } else if (data.error) {
-		    	alert(data.error);
-		    	if (data.errcode) {
-		    		return data;
-		    	}
-		    } else {
-		    	alert('Неизвестная ошибка операции ' + action);
 		    }
-		 return data;
+		    if (data.error) {
+		    	throw new Error(data.error);
+		    }
+		    throw new Error('Неизвестная ошибка операции ' + action);
 		})
 		.catch(function(err) {  
-		    alert(err);
+		    Store.doAction('NOTIFICATIONS_ADD', err.message);
+		    return Promise.reject();
 		});
 	}
 	

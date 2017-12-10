@@ -19,11 +19,9 @@ class Projects extends React.Component {
 	render() {
 		let {fetching} = this.props;
 	 	return (
-	 		<Loader loaded={!fetching} classes="stretched">
-				<div className="x-task-projects">
-					{this.table}
-					{this.actionButtons}
-				</div>
+	 		<Loader fetching={fetching} classes="x-task-projects">
+				{this.table}
+				{this.actionButtons}
 			</Loader>
 		)
 	}

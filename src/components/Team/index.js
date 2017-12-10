@@ -82,7 +82,7 @@ class Team extends React.Component {
 					create
 				</Icon>,
 				name,
-				u.roleName,
+				dict[u.role],
 				u.projects.split(',').join(', ')
 			]);
 			index++;

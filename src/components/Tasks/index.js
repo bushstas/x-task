@@ -3,53 +3,48 @@ import {dict} from '../../utils/Dictionary';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
+import Task from '../Task';
 import ActionButtons from '../ActionButtons';
 import Store from 'xstore'
 
 import './index.scss';
 
-class Account extends React.Component {
+class Tasks extends React.Component {
 
 	componentDidMount() {
-		this.props.doAction('USERS_LOAD');
+		this.props.doAction('TASKS_LOAD');
 	}
 
 	render() {
 		let {fetching} = this.props;
 	 	return (
-	 		<Loader fetching={fetching} classes="x-task-account">
-				{this.tabs}
+	 		<Loader fetching={fetching} classes="x-task-tasks">
+				{this.tasks}
 				{this.actionButtons}
 			</Loader>
 		)
 	}
 
-	get tabs() {		
+	get tasks() {
+		let {tasks} = this.props;
+		if (tasks instanceof Array && tasks.length > 0) {
+			return tasks.map((task, i) => {
+				return (
+					<Task data={task} key={i}/>
+				)
+			});
+		}
+		return this.noTasks;
+	}
+
+	get noTasks() {
 		return (
-			<Tabs onSelect={this.handleSelectTab}>
-				<Tab caption={dict.home} value="home">
-					2
-				</Tab>
-				<Tab caption={dict.my_tasks} value="tasks">
-					2
-				</Tab>
-				<Tab caption={dict.info} value="users">
-					{this.info}
-				</Tab>
-				<Tab caption={dict.settings} value="users">
-					{this.settings}
-				</Tab>
-			</Tabs>
+			<div className="x-task-no-tasks">
+				{dict.no_tasks}
+			</div>
 		)
 	}
 
-	get info() {
-		return 11111
-	}
-
-	get settings() {
-		return 11111
-	}
 
 	get actionButtons() {
 		let {editedUserToken} = this.props;
@@ -77,7 +72,7 @@ class Account extends React.Component {
 	}
 
 	handleSelectTab = (activeTab) => {
-		this.props.dispatch('USERS_TAB_CHANGED', activeTab);
+		
 	}
 
 	handleAction = (action, data) => {
@@ -96,7 +91,7 @@ class Account extends React.Component {
 }
 
 const params = {
-  has: 'users',
+  has: 'tasks',
   flat: true
 }
-export default Store.connect(Account, params);
+export default Store.connect(Tasks, params);

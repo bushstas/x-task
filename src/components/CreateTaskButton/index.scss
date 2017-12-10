@@ -1,12 +1,12 @@
-.x-task-start-button {
+.x-task-create-task-button {
 	position: fixed;
 	z-index: 9990;
-	bottom: 6px;
-	left: 8px;
+	bottom: 11px;
+	left: 55px;
 	cursor: pointer;
-	color: #444;
+	color: #999;
 	background-color: #fff;
-	padding: 4px 2px 2px 4px;
+	padding: 3px;
 	border-radius: 3px;
 
 	&:hover {
@@ -14,8 +14,8 @@
 	}
 
 	.x-task-icon {
-		font-size: 40px;
-		line-height: 40px;
+		font-size: 26px;
+		line-height: 26px;
 		float: left;
 	}
 }

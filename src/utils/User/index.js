@@ -41,12 +41,16 @@ const onLoad = (data) => {
 	}
 }
 
+const onFail = () => {
+	StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
+}
+
 
 export const load = () => {
 	if (!loaded) {
 		var storedToken = StoreKeeper.get(LOCAL_STORAGE_TOKEN);
 		if (storedToken) {
-			get('load_user').then(onLoad);
+			get('load_user').then(onLoad, onFail);
 		} else {
 			loaded = true;
 		}
@@ -96,7 +100,7 @@ export const getData = () => {
 }
 
 export const isCurrentProject = (token) => {
-	return token == currentProject.token;
+	return currentProject instanceof Object && token == currentProject.token;
 }
 
 export const inProject = (token) => {
