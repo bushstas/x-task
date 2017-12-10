@@ -7,7 +7,7 @@ export default function CreateTaskButton({onClick}) {
 	return (
 		<div className="x-task-create-task-button" onClick={onClick}>
 			<Icon>
-				add_circle_outline
+				add_to_photos
 			</Icon>
 		</div>
 	)

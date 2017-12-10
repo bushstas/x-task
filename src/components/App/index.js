@@ -5,6 +5,7 @@ import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
 import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
+import QuickTask from '../QuickTask';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -13,10 +14,11 @@ import Account from '../Account';
 
 import {dict} from '../../utils/Dictionary';
 import {isAuthorized, auth, register, logout} from '../../utils/User';
+import Store from 'xstore';
 
 import '../../index.scss';
 
-export default class App extends React.PureComponent {
+class App extends React.PureComponent {
   constructor() {
     super();
     this.state = {
@@ -28,11 +30,16 @@ export default class App extends React.PureComponent {
 
   render() {
     let {active} = this.state;
-    let elements = [this.notifications];
+    let {quicktask_active} = this.props;
+
+    let elements = [
+      this.notifications,
+      this.quicktask
+    ];
     if (!active) {
       elements.push(
         this.startButton,
-        this.createTaskButton
+        !quicktask_active ? this.createTaskButton : null
       );
     } else if (isAuthorized()) {
       elements.push(this.dialog);
@@ -40,6 +47,10 @@ export default class App extends React.PureComponent {
       elements.push(this.authForm);
     }
     return elements;
+  }
+
+  get quicktask() {
+    return <QuickTask key="quicktask"/>
   }
 
   get notifications() {
@@ -57,7 +68,8 @@ export default class App extends React.PureComponent {
   get createTaskButton() {
     return (
       <CreateTaskButton
-        key="createTaskButton"/>
+        key="createTaskButton"
+        onClick={this.handleAddTaskClick}/>
     )
   }
 
@@ -125,6 +137,10 @@ export default class App extends React.PureComponent {
     this.setActive(true);
   }
 
+  handleAddTaskClick = () => {
+    this.props.dispatch('QUICKTASK_ACTIVATED', true);
+  }
+
   handleDialogClose = () => {
     this.setActive(false);
   }
@@ -152,5 +168,11 @@ export default class App extends React.PureComponent {
   setActive(active) {
     this.setState({active});
   }
-
 }
+
+const params = {
+  has: 'quicktask:active',
+  flat: true,
+  withPrefix: true
+}
+export default Store.connect(App, params);

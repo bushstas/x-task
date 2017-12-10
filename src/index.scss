@@ -58,15 +58,20 @@
 		}
 	}
 
+	textarea {
+		resize: none !important;
+	}
+
 	select {
 		padding: 7px 12px;
 	}
 
+	textarea::placeholder,
 	input::placeholder {
-		color: #888;
+		color: #aaa;
 		transition: color .3s;
 	}
-
+	textarea:focus::placeholder,
 	input:focus::placeholder {
 		color: #d1d1d1;
 	}

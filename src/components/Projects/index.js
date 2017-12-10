@@ -6,7 +6,7 @@ import Table from '../../ui/Table';
 import Button from '../../ui/Button';
 import Icon from '../../ui/Icon';
 import ProjectForm from '../ProjectForm';
-import {hasRight, inProject, isCurrentProject} from '../../utils/User';
+import {hasRight, inProject} from '../../utils/User';
 import ActionButtons from '../ActionButtons';
 
 import './index.scss';
@@ -104,7 +104,7 @@ class Projects extends React.Component {
 	}
 
 	renderActionIcon(index, data) {
-		return	isCurrentProject(data.token) ? (
+		return data.current ? (
 			<Icon 
 				classes="x-task-activate-icon x-task-button-icon" 
 				style={{opacity: 0.2}}
@@ -185,30 +185,34 @@ class Projects extends React.Component {
 	getProject(e) {
 		let index = e.target.getAttribute('data-index');
 		let {projects} = this.props;
-		let project = projects[index];
+		return projects[index];
+	}
+
+	getProjectToken(e) {
+		let project = this.getProject(e);
 		if (project instanceof Object && project.token) {
 			return project.token;
 		}
 	}
 
 	handleEditProjectClick = (e) => {
-		let token = this.getProject(e);
+		let token = this.getProjectToken(e);
 		if (token) {
 			this.props.doAction('PROJECTS_SHOW_EDIT_FORM', token);
 		}
 	}
 
 	handleRequestAccessClick = (e) => {
-		let token = this.getProject(e);
+		let token = this.getProjectToken(e);
 		if (token) {
 			this.props.doAction('PROJECTS_REQUEST_ACCESS', token);
 		}
 	}
 
 	handleActivateButtonClick = (e) => {
-		let token = this.getProject(e);
-		if (token) {
-			this.props.doAction('PROJECTS_ACTIVATE', token);
+		let project = this.getProject(e);
+		if (project instanceof Object && project.token) {
+			this.props.doAction('PROJECTS_ACTIVATE', project);
 		}
 	} 
 

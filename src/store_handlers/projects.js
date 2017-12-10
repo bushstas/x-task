@@ -104,10 +104,16 @@ const request_access = ({doAction}, projectToken) => {
     });   
 }
 
-const activate = ({doAction}, projectToken) => {
-    post('activate_project', {projectToken})
+const activate = ({doAction}, {token, homepage}) => {
+    post('activate_project', {projectToken: token})
     .then(
-        () => doAction('PROJECTS_LOAD')
+        () => {
+          if (homepage) {
+            location.href = homepage;
+          } else {
+            doAction('PROJECTS_LOAD');
+          }
+        }
     ); 
 } 
  

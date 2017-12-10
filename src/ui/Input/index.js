@@ -9,15 +9,28 @@ export default class Input extends React.PureComponent {
 	}
 
 	render() {
-		let {classes, name, value, placeholder} = this.props;
+		let {textarea, classes, name, value = '', placeholder} = this.props;
+		let props = {
+			name,
+			value,
+			placeholder,
+			onChange: this.handleChange
+		}
+		if (!textarea) {
+			props.type = this.type;
+			props.value = value;
+		} else {
+			props.spellCheck = 'false';
+		}
 		return (
 			<div className={classnames('x-task-input', classes)}>
-				<input 
-					type={this.type}
-					name={name}
-					value={value || ''}
-					placeholder={placeholder}
-					onChange={this.handleChange}/>
+				{textarea ? (
+					<textarea {...props}>
+						{value}
+					</textarea>
+				) : (
+					<input {...props}/>
+				)}
 			</div>
 		)
 	}
