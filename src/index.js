@@ -18,12 +18,14 @@ load(dict, user).then(() => {
 	);
 });
 
-import users from './store_handlers/users';
+import userpage from './store_handlers/userpage';
+import team from './store_handlers/team';
 import projects from './store_handlers/projects';
 import notifications from './store_handlers/notifications';
 
 Store.addHandlers({
-  users,
+  userpage,
+  team,
   projects,
   notifications
 });

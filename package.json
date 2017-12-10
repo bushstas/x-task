@@ -20,7 +20,7 @@
     "classnames": "^2.2.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "xstore": "^1.6.9"
+    "xstore": "^1.7.0"
   },
   "devDependencies": {
     "args": "^2.0.0",

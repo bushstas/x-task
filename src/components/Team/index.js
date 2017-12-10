@@ -5,18 +5,27 @@ import Table from '../../ui/Table';
 import Icon from '../../ui/Icon';
 import UserForm from '../UserForm';
 import Store from 'xstore';
+import Loader from '../../ui/Loader';
 
 class Team extends React.Component {
 	static defaultProps = {
 		onStartEdit: () => {}
 	}
 
+	componentDidMount() {
+		this.props.doAction('TEAM_LOAD');
+	}
+
 	render() {
-		let {userFormShown} = this.props;
+		let {userFormShown, teamFetching} = this.props;
 	 	if (userFormShown) {
 	 		return this.form;
 	 	}
-	 	return this.table;
+	 	return (
+	 		<Loader fetching={teamFetching}>
+	 			{this.table}
+	 		</Loader>
+	 	)
 	}
 
 	get form() {
@@ -37,7 +46,7 @@ class Team extends React.Component {
 	}
 
 	get widths() {
-		return [2.5, 32.5, 25, 40];
+		return [4, 31, 25, 40];
 	}
 
 	get rows() {
@@ -96,14 +105,14 @@ class Team extends React.Component {
 			let {users} = this.props;
 			let user = users[index];
 			if (user instanceof Object && user.token) {			
-				this.props.doAction('USERS_SHOW_EDITING_USER_FORM', user.token);
+				this.props.doAction('TEAM_SHOW_EDIT_FORM', user.token);
 			}
 		}
 	}
 }
 
 const params = {
-  has: 'users',
+  has: 'team',
   flat: true
 }
 export default Store.connect(Team, params);

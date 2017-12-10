@@ -1,11 +1,11 @@
 import {get, post} from '../utils/Fetcher';
  
 const DEFAULT_STATE = {
-  activeTab: 'users',
-  fetching: true,
+  users: [],
   userFormShown: null,
   userFormData: {},
-  editedUserToken: null
+  editedUserToken: null,
+  teamFetching: false 
 }
  
 /**
@@ -17,18 +17,11 @@ const DEFAULT_STATE = {
 const init = () => {
   return DEFAULT_STATE;
 }
- 
-const fetching = (state, fetching = 2) => {
-  return {
-    ...state,
-    fetching
-  }
-}
 
-const fetched = (state) => {
+const fetching = (state) => {
   return {
     ...state,
-    fetching: false
+    teamFetching: true
   }
 }
 
@@ -36,18 +29,11 @@ const loaded = (state, data) => {
   return {
     ...state,
     ...data,
-    fetching: false
+    teamFetching: false
   }
 }
 
-const tab_changed = (state, activeTab) => {
-  return {
-    ...state,
-    activeTab
-  }
-}
- 
-const user_form_data_changed = (state, userFormData) => {
+const form_data_changed = (state, userFormData) => {
   return {
     ...state,
     userFormData: {
@@ -56,17 +42,16 @@ const user_form_data_changed = (state, userFormData) => {
   }
 }
 
-const editing_user_form_shown = (state, {user, userToken}) => {
+const edit_form_shown = (state, {user, userToken}) => {
   return {
     ...state,
     editedUserToken: userToken,
     userFormShown: 'edit',
-    userFormData: user,
-    fetching: false    
+    userFormData: user
   }
 }
 
-const adding_user_form_shown = (state) => {
+const add_form_shown = (state) => {
   return {
     ...state,
     userFormShown: 'add'
@@ -82,14 +67,14 @@ const canceled = (state) => {
   }
 }
 
-const user_saved = (state, users) => {
+const changed = (state, users) => {
    return {
     ...state,
     users,
     editedUserToken: null,
     userFormShown: null,
     userFormData: {},
-    fetching: false
+    teamFetching: false
   }
 }
  
@@ -100,35 +85,33 @@ const user_saved = (state, users) => {
 */
 
 const load = ({dispatch}) => {
-  dispatch('USERS_FETCHING', 1);
+  dispatch('TEAM_FETCHING');
   get('load_users')
   .then((data) => {
-    dispatch('USERS_LOADED', data);
+    dispatch('TEAM_LOADED', data);
   });
 }
 
-const save_user = ({dispatch, state, doAction}, {token}) => {
-    dispatch('USERS_FETCHING');
+const save = ({dispatch, state, doAction}, {token}) => {
     let {userFormData} = state;
     post('save_user', {userToken: token, ...userFormData})
     .then(
-        () => doAction('USERS_REFRESH_USERS'),
-        () => dispatch('USERS_FETCHED')
+        () => doAction('TEAM_REFRESH')
     );
 }
 
-const refresh_users = ({dispatch, state}) => {
+const refresh = ({dispatch, state}) => {
+    dispatch('TEAM_FETCHING');
     get('refresh_users')
     .then(({users}) => {
-        dispatch('USERS_USER_SAVED', users);
+        dispatch('TEAM_CHANGED', users);
      });
 }
 
-const show_editing_user_form = ({dispatch}, userToken) => {
-  dispatch('USERS_FETCHING');
+const show_edit_form = ({dispatch}, userToken) => {
   post('get_user_data', {userToken})
     .then(({user}) => {
-      dispatch('USERS_EDITING_USER_FORM_SHOWN', {userToken, user});
+      dispatch('TEAM_EDIT_FORM_SHOWN', {userToken, user});
     });   
 }
  
@@ -136,20 +119,18 @@ const show_editing_user_form = ({dispatch}, userToken) => {
 export default {
   actions: {
     load,
-    save_user,
-    refresh_users,
-    show_editing_user_form
+    save,
+    refresh,
+    show_edit_form
   },
   reducers: {
     init,
     fetching,
-    fetched,
     loaded,
-    tab_changed,
-    user_form_data_changed,
-    adding_user_form_shown,
-    editing_user_form_shown,
+    form_data_changed,
+    add_form_shown,
+    edit_form_shown,
     canceled,
-    user_saved
+    changed
   }
 } 

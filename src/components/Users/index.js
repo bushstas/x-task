@@ -1,7 +1,6 @@
 import React from 'react';
 import {dict} from '../../utils/Dictionary';
 import {Tabs, Tab} from '../../ui/Tabs';
-import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
 import Team from '../Team';
 import ActionButtons from '../ActionButtons';
@@ -11,17 +10,12 @@ import './index.scss';
 
 class Users extends React.Component {
 
-	componentDidMount() {
-		this.props.doAction('USERS_LOAD');
-	}
-
 	render() {
-		let {fetching} = this.props;
 	 	return (
-	 		<Loader fetching={fetching} classes="x-task-users">
+	 		<div className="x-task-users">
 				{this.tabs}
 				{this.actionButtons}
-			</Loader>
+			</div>
 		)
 	}
 
@@ -100,26 +94,30 @@ class Users extends React.Component {
 	}
 
 	handleSelectTab = (activeTab) => {
-		this.props.dispatch('USERS_TAB_CHANGED', activeTab);
+		this.props.dispatch('USERPAGE_TAB_CHANGED', activeTab);
 	}
 
 	handleAction = (action, data) => {
 		switch (action) {
 			case 'cancel': 
-				return this.props.dispatch('USERS_CANCELED');
+				return this.props.dispatch('TEAM_CANCELED');
 
 			case 'create_user': 
-				return this.props.dispatch('USERS_ADDING_USER_FORM_SHOWN');
+				return this.props.dispatch('TEAM_ADD_FORM_SHOWN');
 			
 			case 'save_user': 
-				return this.props.doAction('USERS_SAVE_USER', data);
+				return this.props.doAction('TEAM_SAVE_USER', data);
+
+			case 'add_user': 
+				let {userFormData} = this.props;
+				return this.props.doAction('TEAM_ADD_USER', userFormData);
 			
 		}
 	}
 }
 
 const params = {
-  has: 'users',
+  has: 'userpage, team',
   flat: true
 }
 export default Store.connect(Users, params);

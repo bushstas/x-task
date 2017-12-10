@@ -6,7 +6,7 @@ import './index.scss';
 export default function Loader({fetching, classes, height, children}) {
 	return (
 		<div className={classes}>
-			{!fetching || fetching === '0' || fetching == 2 ? children : null}
+			{children}
 			{fetching && (
 				<div className="x-task-loader">
 					<div className="cssload-container">

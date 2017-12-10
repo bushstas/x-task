@@ -11,7 +11,7 @@ import './index.scss';
 class Account extends React.Component {
 
 	componentDidMount() {
-		this.props.doAction('USERS_LOAD');
+		//this.props.doAction('USERS_LOAD');
 	}
 
 	render() {

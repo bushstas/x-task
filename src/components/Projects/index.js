@@ -51,7 +51,7 @@ class Projects extends React.Component {
 
 	get widths() {
 		if (hasRight('add_project')) {
-			return [2.5, 40, 33.5, 12, 12];
+			return [4, 40, 32, 12, 12];
 		}
 		return [40, 36, 12, 12];
 	}

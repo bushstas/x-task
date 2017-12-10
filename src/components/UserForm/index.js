@@ -102,7 +102,7 @@ class UserForm extends React.Component {
 }
 
 const params = {
-  has: 'users',
+  has: 'team',
   flat: true
 }
 export default Store.connect(UserForm, params);

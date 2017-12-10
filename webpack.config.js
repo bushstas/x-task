@@ -23,23 +23,23 @@ let outputFilename = 'dist/bundle.js';
 if (env === 'server') {
     plugins.push(new webpack.HotModuleReplacementPlugin());
 } else if (env === 'production') {
-    plugins.push(new ExtractTextPlugin('dist/bundle_prod.[hash].css'));
+    plugins.push(new ExtractTextPlugin('dist/bundle_prod.css'));
     plugins.push(new webpack.optimize.UglifyJsPlugin({
         compress: {warnings: false},
         output: {comments: false}
     }));
-    plugins.push(new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        filename: 'dist/vendor.js'
-    }));
-    outputFilename = 'dist/bundle_prod.[hash].js';
+    // plugins.push(new webpack.optimize.CommonsChunkPlugin({
+    //     name: 'vendor',
+    //     filename: 'dist/vendor.js'
+    // }));
+    outputFilename = 'dist/bundle_prod.js';
 } else {
     plugins.push(new ExtractTextPlugin('dist/bundle.css'));
 }
 
 const config = {
     entry: [
-        'babel-polyfill',
+        // 'babel-polyfill',
         pr(__dirname, 'src', 'index.js')
     ],
     output: {
@@ -93,7 +93,7 @@ const config = {
                 test: /\.(jpg|gif|svg|png?)(\S+)?$/,
                 loader: 'file-loader',
                 options: {
-                    name: 'images/[name][hash].[ext]'
+                    name: 'images/[name].[ext]'
                 }
             },
             {
