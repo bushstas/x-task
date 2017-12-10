@@ -35,6 +35,11 @@ class QuickTask extends React.Component {
 						{dict.add_task}
 					</Button>
 				</Form>
+
+				<Icon classes="x-task-add-mark" onClick={this.handleAddMarkClick} title={dict.add_mark}>
+					location_on
+				</Icon>
+
 				<div className="x-task-importance-panel" onClick={this.handleSelectImportance}>
 					<Icon classes="x-task-assign-button" title={dict.assign_executors}>
 						supervisor_account
@@ -170,6 +175,10 @@ class QuickTask extends React.Component {
 
 	handleFormChanged = (data) => {
 		this.props.dispatch('QUICKTASK_FORM_DATA_CHANGED', data);
+	}
+
+	handleAddMarkClick = () => {
+		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_ADDED', {type: 'mark', data: {}});
 	}
 
 

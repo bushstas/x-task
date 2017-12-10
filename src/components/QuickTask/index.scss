@@ -10,6 +10,7 @@
 	display: none;
 	padding: 6px 6px 4px 6px;
 	box-sizing: border-box;
+	user-select: none;
 
 	&.active {
 		display: block;
@@ -94,6 +95,12 @@
 
 		&.x-task-assign-button {
 			margin-bottom: 80px;
+		}
+
+		&.x-task-add-mark {
+			position: absolute;
+			bottom: 1px;
+			right: 7px;
 		}
 
 		&:hover {

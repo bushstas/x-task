@@ -6,6 +6,7 @@ import StartButton from '../StartButton';
 import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
 import QuickTask from '../QuickTask';
+import VisualElements from '../VisualElements';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -30,16 +31,17 @@ class App extends React.PureComponent {
 
   render() {
     let {active} = this.state;
-    let {quicktask_active} = this.props;
+    
 
     let elements = [
       this.notifications,
-      this.quicktask
+      this.quicktask,
+      this.visualElements
     ];
     if (!active) {
       elements.push(
         this.startButton,
-        !quicktask_active ? this.createTaskButton : null
+        this.createTaskButton
       );
     } else if (isAuthorized()) {
       elements.push(this.dialog);
@@ -57,6 +59,10 @@ class App extends React.PureComponent {
     return <Notifications key="notifications"/>
   }
 
+  get visualElements() {
+    return <VisualElements key="visualElements"/> 
+  }
+
   get startButton() {
     return (
       <StartButton 
@@ -66,6 +72,10 @@ class App extends React.PureComponent {
   }
 
   get createTaskButton() {
+    let {quicktask_active, quicktask_visualMode} = this.props;
+    if (quicktask_active || quicktask_visualMode) {
+      return null;
+    }
     return (
       <CreateTaskButton
         key="createTaskButton"
@@ -171,7 +181,7 @@ class App extends React.PureComponent {
 }
 
 const params = {
-  has: 'quicktask:active',
+  has: 'quicktask:active|visualMode',
   flat: true,
   withPrefix: true
 }
