@@ -68,6 +68,12 @@
 		top: 6px;
 		left: 48px;
 		right: 48px;
+		.x-task-icon {
+			display: inline-block;
+			margin-bottom: 0;
+			margin-right: 3px;
+			vertical-align: top;
+		}
 	}
 
 	.x-task-bottom-panel {

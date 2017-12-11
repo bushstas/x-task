@@ -49,10 +49,7 @@ class QuickTask extends React.Component {
 				</div>
 
 				<div className="x-task-element-panel">
-					<Icon icon="mark"
-						data-type="mark"
-						onClick={this.handleAddElementClick}
-						title={dict.add_mark}/>
+					{this.renderElementButtons()}
 				</div>
 
 				<div className="x-task-bottom-panel">
@@ -60,6 +57,22 @@ class QuickTask extends React.Component {
 				</div>
 			</div>
 		)
+	}
+
+	renderElementButtons() {
+		let items = icons.task_el || {};
+		let keys = Object.keys(items);
+		return keys.map((value) => {
+			return  (
+				<Icon 
+					data-type={value}
+					title={dict['add_' + value]}
+					key={value}
+					onClick={this.handleAddElementClick}>
+					{items[value]}
+				</Icon>
+			)
+		})
 	}
 
 	renderButtons(items, param, paramName, title) {
