@@ -26,16 +26,18 @@
 		content: '';
 		position: absolute;
 		left: 0;
-		width: 40%;
+		width: 45%;
 		bottom: 0;
-		height: 40%;
+		height: 45%;
 		background-color: #d40051;
+		border-radius: 0 0 0 2px;
 	}
 
 	&.x-task-loc2 {
 		&:before {
 			bottom: auto;
 			top: 0;
+			border-radius: 2px 0 0 0;
 		}
 	}
 
@@ -44,6 +46,7 @@
 			bottom: auto;
 			left: auto;
 			right: 0;
+			border-radius: 0 2px 0 0;
 		}
 	}
 
@@ -51,6 +54,7 @@
 		&:before {
 			left: auto;
 			right: 0;
+			border-radius: 0 0 2px 0;
 		}
 	}
 }

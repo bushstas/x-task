@@ -19,15 +19,11 @@ const init = () => {
 }
  
 const fetching = (state) => {
-  return {
-    ...state,
-    fetching: true
-  }
+  return {fetching: true}
 }
 
 const loaded = (state, data) => {
   return {
-    ...state,
     ...data,
     fetching: false
   }
@@ -35,7 +31,6 @@ const loaded = (state, data) => {
 
 const edit_form_shown = (state, {project, projectToken}) => {
   return {
-    ...state,
     editedProject: projectToken,
     formShown: 'edit',
     formData: project
@@ -43,15 +38,11 @@ const edit_form_shown = (state, {project, projectToken}) => {
 }
 
 const add_form_shown = (state) => {
-  return {
-    ...state,
-    formShown: 'add'
-  }
+  return {formShown: 'add'}
 }
 
 const canceled = (state) => {
    return {
-    ...state,
     editedProject: null,
     formShown: null,
     formData: {}
@@ -59,12 +50,7 @@ const canceled = (state) => {
 }
 
 const form_data_changed = (state, formData) => {
-  return {
-    ...state,
-    formData: {
-      ...formData
-    }
-  }
+  return {formData}
 }
 
  

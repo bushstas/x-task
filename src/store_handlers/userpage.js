@@ -7,10 +7,7 @@ const init = () => {
 }
  
 const tab_changed = (state, activeTab) => {
-  return {
-    ...state,
-    activeTab
-  }
+  return {activeTab}
 }
   
 export default {

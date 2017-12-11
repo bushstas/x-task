@@ -5,7 +5,9 @@ const DEFAULT_STATE = {
   type: null,
   action: null,
   visualElements: [],
-  visualMode: false
+  visualMode: false,
+  currentElement: null,
+  visualElement: null
 }
  
 const init = () => {
@@ -13,90 +15,89 @@ const init = () => {
 }
  
 const activated = (state, active) => {
-  return {
-    ...state,
-    active
-  }
+  return {active}
 }
 
-const importance_changed = (state, importance) => {
-  return {
-    ...state,
-    importance
+const param_changed = (state, data) => {
+  let {visualElement} = state;
+  if (visualElement instanceof Object) {
+    visualElement.data = {
+      ...visualElement.data,
+      data
+    }
   }
+  return {
+    ...data,
+    visualElement
+  };
 }
 
 const type_changed = (state, type) => {
-  return {
-    ...state,
-    type
-  }
+  return {type}
 }
 
 const action_changed = (state, action) => {
-  return {
-    ...state,
-    action
-  }
+  return {action}
 }
 
 const form_data_changed = (state, formData) => {
-  return {
-    ...state,
-    formData
-  }
+  return {formData}
 }
 
 const visual_element_added = (state, element) => {
-  let {visualElements} = state;
+  let {visualElements, action, type, importance} = state;
+  element.data = {
+    ...element.data,
+    action,
+    type,
+    importance
+  };
   visualElements.push(element);
+  let currentElement = visualElements.length - 1;
   return {
-    ...state,
     visualMode: true,
     active: false,
-    visualElements
+    visualElements,
+    currentElement,
+    visualElement: element
   }
 }
 
-const coords_changed = (state, data) => {
-  let {visualElements} = state;
-  let {index, mx, my} = data;
-  if (visualElements[index] instanceof Object) {
-    visualElements[index].data.mx = mx;
-    visualElements[index].data.my = my;
+const visual_element_changed = (state, data) => {
+  let {visualElements, currentElement} = state;
+  let element = visualElements[currentElement];
+  if (element instanceof Object) {
+    element.data = {
+      ...element.data,
+      ...data
+    }
   }
   return {
-    ...state,
-    visualElements
+    visualElements,
+    visualElement: element
   }
 }
 
-const loc_changed = (state, data) => {
-  let {visualElements} = state;
-  let {index, loc} = data;
-  if (visualElements[index] instanceof Object) {
-    visualElements[index].data.loc = loc;
-  }
-  return {
-    ...state,
-    visualElements
-  }
+const change_param = ({dispatch}, data) => {
+  dispatch('QUICKTASK_PARAM_CHANGED', data);
+}
+
+const change_visual_element = ({dispatch}, data) => {
+  dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
 }
 
 
 export default {
   actions: {
-
+    change_param,
+    change_visual_element
   },
   reducers: {
     init,
-    activated,
-    importance_changed,
-    type_changed,
-    action_changed,
+    activated,    
+    param_changed,
     form_data_changed,
     visual_element_added,
-    coords_changed,
-    loc_changed
+    visual_element_changed
   }
 } 

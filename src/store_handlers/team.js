@@ -19,32 +19,22 @@ const init = () => {
 }
 
 const fetching = (state) => {
-  return {
-    ...state,
-    teamFetching: true
-  }
+  return {teamFetching: true}
 }
 
 const loaded = (state, data) => {
   return {
-    ...state,
     ...data,
     teamFetching: false
   }
 }
 
 const form_data_changed = (state, userFormData) => {
-  return {
-    ...state,
-    userFormData: {
-      ...userFormData
-    }
-  }
+  return {userFormData}
 }
 
 const edit_form_shown = (state, {user, userToken}) => {
   return {
-    ...state,
     editedUserToken: userToken,
     userFormShown: 'edit',
     userFormData: user
@@ -52,15 +42,11 @@ const edit_form_shown = (state, {user, userToken}) => {
 }
 
 const add_form_shown = (state) => {
-  return {
-    ...state,
-    userFormShown: 'add'
-  }
+  return {userFormShown: 'add'}
 }
 
 const canceled = (state) => {
    return {
-    ...state,
     editedUserToken: null,
     userFormShown: null,
     userFormData: {}
@@ -69,7 +55,6 @@ const canceled = (state) => {
 
 const changed = (state, users) => {
    return {
-    ...state,
     users,
     editedUserToken: null,
     userFormShown: null,

@@ -23,15 +23,18 @@ class VisualElements extends React.Component {
 		let {visualElements} = this.props;
 		if (visualElements instanceof Array) {
 			return visualElements.map((element, i) => {
-				switch (element.type) {
+				let {type, data} = element;
+				let props = {
+					key: i,
+					index: i,
+					data,
+					onChangeCoords: this.handleChangeCoords
+				}
+				switch (type) {
 					case 'mark': 
+						props.onLocChange = this.handleLocChange;
 						return (
-							<TaskMark 
-								key={i}
-								index={i}
-								data={element.data}
-								onChangeCoords={this.handleChangeCoords}
-								onLocChange={this.handleLocChange}/>
+							<TaskMark {...props}/>
 						)
 					break;
 				}
@@ -39,12 +42,12 @@ class VisualElements extends React.Component {
 		}
 	}
 
-	handleChangeCoords = (index, mx, my) => {
-		this.props.dispatch('QUICKTASK_COORDS_CHANGED', {index, mx, my});
+	handleChangeCoords = (mx, my) => {
+		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', {mx, my});
 	}
 
-	handleLocChange = (index, loc) => {
-		this.props.dispatch('QUICKTASK_LOC_CHANGED', {index, loc});
+	handleLocChange = (loc) => {
+		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', {loc});
 	}
 }
 

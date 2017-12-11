@@ -3,14 +3,19 @@ import StoreKeeper from '../StoreKeeper';
 import {LOCAL_STORAGE_DICTIONARY} from '../../consts';
 
 export const dict = {};
+export const icons = {};
 
 let loaded = false;
 let callback;
 
-const setDict = (d) => {
+const setDict = ({dict: d, icons: i}) => {
 	loaded = true;
-	for (let k in d) {
+	let k;
+	for (k in d) {
 		dict[k] = d[k];
+	}
+	for (k in i) {
+		icons[k] = i[k];
 	}
 }
 
@@ -28,8 +33,9 @@ const getKey = () => {
 }
 
 const onLoad = (data) => {
-	setDict(data.data);
-	StoreKeeper.set(getKey(), data.data);
+	setDict(data);
+	delete data.success;
+	StoreKeeper.set(getKey(), data);
 	if (callback instanceof Function) {
 		callback();
 	}

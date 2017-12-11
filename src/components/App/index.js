@@ -7,6 +7,7 @@ import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
 import QuickTask from '../QuickTask';
 import VisualElements from '../VisualElements';
+import VisualElementPanel from '../VisualElementPanel';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -30,25 +31,43 @@ class App extends React.PureComponent {
   }
 
   render() {
-    let {active} = this.state;
-    
+    let {active} = this.state;  
 
     let elements = [
-      this.notifications,
-      this.quicktask,
-      this.visualElements
+      this.notifications
     ];
+    
     if (!active) {
-      elements.push(
-        this.startButton,
-        this.createTaskButton
-      );
+      if (!this.taskMode) {
+        elements.push(
+          this.startButton,
+          this.createTaskButton
+        );
+      } else {
+        elements.push(
+          this.quicktask,
+          this.visualElements
+        );
+      }
+      if (this.visualMode) {
+        elements.push(
+          this.visualElementPanel
+        );
+      }
     } else if (isAuthorized()) {
       elements.push(this.dialog);
     } else {
       elements.push(this.authForm);
     }
     return elements;
+  }
+
+  get taskMode() {
+     return this.props.quicktask_active || this.visualMode;
+  }
+
+  get visualMode() {
+    return this.props.quicktask_visualMode;
   }
 
   get quicktask() {
@@ -63,6 +82,10 @@ class App extends React.PureComponent {
     return <VisualElements key="visualElements"/> 
   }
 
+  get visualElementPanel() {
+    return <VisualElementPanel key="visualElementPanel"/>  
+  }
+
   get startButton() {
     return (
       <StartButton 
@@ -71,11 +94,7 @@ class App extends React.PureComponent {
     )
   }
 
-  get createTaskButton() {
-    let {quicktask_active, quicktask_visualMode} = this.props;
-    if (quicktask_active || quicktask_visualMode) {
-      return null;
-    }
+  get createTaskButton() {    
     return (
       <CreateTaskButton
         key="createTaskButton"

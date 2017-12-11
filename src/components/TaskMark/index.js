@@ -9,11 +9,13 @@ import './index.scss';
 export default class TaskMark extends React.Component {
 
 	render() {
-		let {data: {loc = 1}, onChangeCoords, index, classes} = this.props;
+		let {data: {loc = 1, mx = 0, my = 100}, onChangeCoords, index, classes} = this.props;
 	 	return (
 	 		<DraggableElement 
 	 			classes={classnames('x-task-mark', classes, 'x-task-loc' + loc)}
 	 			index={index}
+	 			mx={mx}
+	 			my={my}
 	 			onChangeCoords={onChangeCoords}>
 				<div onWheel={this.handleWheel}>
 					<Icon>
@@ -27,26 +29,20 @@ export default class TaskMark extends React.Component {
 	handleWheel = (e) => {
 		e.preventDefault();
 		let {deltaY} = e;
-		let {data: {loc}, index} = this.props;
+		let {data: {loc}} = this.props;
 		if (!loc) {
-			if (deltaY > 0) {
-				loc = 2;
-			} else {
-				loc = 4;
+			loc = deltaY > 0 ? 2 : 4;
+		} else if (deltaY > 0) {
+			loc++;
+			if (loc > 4) {
+				loc = 1;
 			}
 		} else {
-			if (deltaY > 0) {
-				loc++;
-				if (loc > 4) {
-					loc = 1;
-				}
-			} else {
-				loc--;
-				if (loc < 1) {
-					loc = 4;
-				}
+			loc--;
+			if (loc < 1) {
+				loc = 4;
 			}
 		}
-		this.props.onLocChange(index, loc);
+		this.props.onLocChange(loc);
 	}
 }

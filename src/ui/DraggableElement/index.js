@@ -5,10 +5,14 @@ import './index.scss';
 
 export default class DraggableElement extends React.PureComponent {
 
-	constructor() {
+	static defaultProps = {
+		onChangeCoords: () => {}
+	}
+
+	constructor(props) {
 		super();
-		this.mx = 0;
-		this.my = 100;
+		this.mx = props.mx;
+		this.my = props.my;
 	}
 
 	render() {
@@ -30,11 +34,10 @@ export default class DraggableElement extends React.PureComponent {
 	}
 
 	handleMouseUp = () => {
-		let {index} = this.props;
 		document.body.removeEventListener('mousemove', this.handleMouseMove, false);
 		document.body.removeEventListener('mouseup', this.handleMouseUp, false);
 
-		this.props.onChangeCoords(index, this.mx, this.my);
+		this.props.onChangeCoords(this.mx, this.my);
 	}
 
 	handleMouseMove = ({clientX, clientY}) => {
@@ -46,7 +49,8 @@ export default class DraggableElement extends React.PureComponent {
 		this.mx += sx;
 		this.my += sy;
 
-		this.refs.element.style.marginLeft = this.mx + 'px';
-		this.refs.element.style.marginTop = this.my + 'px';
+		let {element} = this.refs;
+		element.style.marginLeft = this.mx + 'px';
+		element.style.marginTop = this.my + 'px';
 	}
 }
