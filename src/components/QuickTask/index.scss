@@ -90,9 +90,15 @@
 
 	.x-task-bottom-panel {
 		position: absolute;
-		bottom: 2px;
+		bottom: 5px;
 		left: 48px;
 		right: 48px;
+		.x-task-icon {
+			display: inline-block;
+			margin-bottom: 0;
+			margin-right: 3px;
+			vertical-align: top;
+		}
 	}
 
 	.x-task-button {
@@ -110,6 +116,10 @@
 		}
 	}
 
+	
+}
+
+.x-task-quick-task-panel {
 	.x-task-icon {
 		width: 36px;
 		height: 36px;

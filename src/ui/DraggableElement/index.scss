@@ -5,4 +5,8 @@
 	&.active {
 		cursor: move;
 	}
+
+	&.x-task-fixed {
+		position: fixed !important;
+	}
 }

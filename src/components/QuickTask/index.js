@@ -36,27 +36,30 @@ class QuickTask extends React.Component {
 					</Button>
 				</Form>
 
-				<div className="x-task-importance-panel" onClick={this.handleChangeParam}>					
+				<div className="x-task-importance-panel x-task-quick-task-panel" onClick={this.handleChangeParam}>					
 					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
 				</div>
 
-				<div className="x-task-type-panel" onClick={this.handleChangeParam}>
+				<div className="x-task-type-panel x-task-quick-task-panel" onClick={this.handleChangeParam}>
 					{this.renderButtons(icons.task_type, type, 'type', 'category')}
 				</div>
 				
-				<div className="x-task-action-panel" onClick={this.handleChangeParam}>
+				<div className="x-task-action-panel x-task-quick-task-panel" onClick={this.handleChangeParam}>
 					{this.renderButtons(icons.task_act, action, 'action', 'action')}
 				</div>
 
-				<div className="x-task-element-panel">
+				<div className="x-task-element-panel x-task-quick-task-panel">
 					{this.renderElementButtons()}
 					<Icon icon="up"
 						classes="x-task-panel-up"
 						onClick={this.handleExpandClick}/>
 				</div>
 
-				<div className="x-task-bottom-panel">
-					<Icon icon="assign" title={dict.assign_executors}/>
+				<div className="x-task-bottom-panel x-task-quick-task-panel">
+					<Icon icon="assign"
+						title={dict.assign_executors}/>
+					<Icon icon="task_info"
+						title={dict.task_info}/>
 				</div>
 			</div>
 		)

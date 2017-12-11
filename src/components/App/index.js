@@ -7,6 +7,7 @@ import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
 import QuickTask from '../QuickTask';
 import VisualElements from '../VisualElements';
+import VisualElementPanel from '../VisualElementPanel';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -49,6 +50,11 @@ class App extends React.PureComponent {
           this.quicktask,
           this.visualElements
         );
+        if (this.visualMode) {
+          elements.push(
+            this.visualElementPanel
+          );
+        }
       }
     } else if (isAuthorized()) {
       elements.push(this.dialog);
@@ -64,6 +70,10 @@ class App extends React.PureComponent {
 
   get visualMode() {
     return !!this.props.visualMode;
+  }
+
+  get visualElementPanel() {
+    return <VisualElementPanel key="visualElementPanel"/>
   }
 
   get quicktask() {

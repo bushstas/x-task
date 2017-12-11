@@ -14,7 +14,9 @@ export default class TaskMark extends React.Component {
 				loc = 1,
 				mx = 0,
 				my = this.startYPosition,
-				importance
+				importance,
+				fixed,
+				locked
 			},
 			onChangeCoords,
 			index,
@@ -28,7 +30,8 @@ export default class TaskMark extends React.Component {
 	 		classes,
 	 		'x-task-loc' + loc,
 	 		'x-task-color-' + importance,
-	 		active ? 'active' : ''
+	 		active ? 'active' : '',
+	 		fixed ? 'x-task-fixed' : ''
 	 	);
 	 	return (
 	 		<DraggableElement 
