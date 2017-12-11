@@ -50,6 +50,9 @@ class QuickTask extends React.Component {
 
 				<div className="x-task-element-panel">
 					{this.renderElementButtons()}
+					<Icon icon="up"
+						classes="x-task-panel-up"
+						onClick={this.handleExpandClick}/>
 				</div>
 
 				<div className="x-task-bottom-panel">
@@ -60,13 +63,17 @@ class QuickTask extends React.Component {
 	}
 
 	renderElementButtons() {
+		let {markAdded} = this.props;
 		let items = icons.task_el || {};
 		let keys = Object.keys(items);
 		return keys.map((value) => {
+			if (value == 'mark' && markAdded) {
+				return;
+			}
 			return  (
 				<Icon 
 					data-type={value}
-					title={dict['add_' + value]}
+					title={dict.insertion + ': ' + dict[value]}
 					key={value}
 					onClick={this.handleAddElementClick}>
 					{items[value]}
@@ -103,6 +110,10 @@ class QuickTask extends React.Component {
 
 	handleAddElementClick = ({target: {dataset: {type}}}) => {
 		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_ADDED', {type, data: {}});
+	}
+
+	handleExpandClick = () => {
+		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
 	}
 }
 

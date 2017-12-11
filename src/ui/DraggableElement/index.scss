@@ -1,4 +1,8 @@
 .x-task-draggable-element {
-	cursor: move;
 	margin-top: 100px;
+	cursor: pointer;
+
+	&.active {
+		cursor: move;
+	}
 }

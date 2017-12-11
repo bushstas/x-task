@@ -6,7 +6,8 @@ import './index.scss';
 export default class DraggableElement extends React.PureComponent {
 
 	static defaultProps = {
-		onChangeCoords: () => {}
+		onChangeCoords: () => {},
+		onClick: () => {}
 	}
 
 	constructor(props) {
@@ -16,9 +17,17 @@ export default class DraggableElement extends React.PureComponent {
 	}
 
 	render() {
-		let {classes, children} = this.props;
+		let {classes, children, mx, my} = this.props;
+		let style;
+		if (typeof mx == 'number') { 
+			style = {
+				marginLeft: mx + 'px',
+				marginTop: my + 'px'
+			}
+		}
 	 	return (
 	 		<div ref="element"
+	 			style={style}
 	 			className={classnames('x-task-draggable-element', classes)}
 	 			onMouseDown={this.handleMouseDown}>
 				{children}
@@ -26,7 +35,13 @@ export default class DraggableElement extends React.PureComponent {
 		)
 	}
 
+	handleClick = () => {
+		let {onClick, index} = this.props;
+		onClick(index);
+	}
+
 	handleMouseDown = ({clientX, clientY}) => {
+		this.handleClick();
 		this.x = clientX;
 		this.y = clientY;
 		document.body.addEventListener('mousemove', this.handleMouseMove, false);

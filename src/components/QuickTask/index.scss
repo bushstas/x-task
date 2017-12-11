@@ -76,6 +76,18 @@
 		}
 	}
 
+	&.collapsed {
+		.x-task-element-panel {
+			left: 6px;
+			right: 6px;
+		}
+		.x-task-icon {
+			&.x-task-panel-up {
+				display: block;
+			}
+		}
+	}
+
 	.x-task-bottom-panel {
 		position: absolute;
 		bottom: 2px;
@@ -113,6 +125,19 @@
 		cursor: pointer;
 		border: 1px solid #333;
 		box-sizing: border-box;
+
+		&.x-task-panel-up {
+			display: none;
+			float: right;
+			background-image: none !important;
+			background-color: transparent !important;
+			color: #ddd;
+			border: 0;
+			font-size: 30px;
+			&:hover {
+				color: #fff;
+			}
+		}
 
 		&:hover {
 			background-color: #c1c1c1;

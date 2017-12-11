@@ -6,8 +6,9 @@ const DEFAULT_STATE = {
   action: null,
   visualElements: [],
   visualMode: false,
-  currentElement: null,
-  visualElement: null
+  currentElement: -1,
+  visualElement: null,
+  markAdded: false
 }
  
 const init = () => {
@@ -45,7 +46,7 @@ const form_data_changed = (state, formData) => {
 }
 
 const visual_element_added = (state, element) => {
-  let {visualElements, action, type, importance} = state;
+  let {visualElements, action, type, importance, markAdded} = state;
   element.data = {
     ...element.data,
     action,
@@ -54,12 +55,16 @@ const visual_element_added = (state, element) => {
   };
   visualElements.push(element);
   let currentElement = visualElements.length - 1;
+  if (element.type == 'mark') {
+    markAdded = true;
+  }
   return {
     visualMode: true,
     status: 'collapsed',
     visualElements,
     currentElement,
-    visualElement: element
+    visualElement: element,
+    markAdded
   }
 }
 
@@ -75,6 +80,24 @@ const visual_element_changed = (state, data) => {
   return {
     visualElements,
     visualElement: element
+  }
+}
+
+const element_set_active = (state, currentElement) => {
+  let {visualElements} = state;
+  let visualElement = visualElements[currentElement];
+   return {
+    currentElement,
+    visualElement
+  }
+}
+
+const active_element_unset = () => {
+   return {
+    visualMode: false,
+    status: 'active',
+    currentElement: -1,
+    visualElement: null
   }
 }
 
@@ -98,6 +121,8 @@ export default {
     param_changed,
     form_data_changed,
     visual_element_added,
-    visual_element_changed
+    visual_element_changed,
+    element_set_active,
+    active_element_unset
   }
 } 

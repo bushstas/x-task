@@ -20,7 +20,7 @@ class VisualElements extends React.Component {
 	}
 
 	get elements() {
-		let {visualElements} = this.props;
+		let {visualElements, currentElement} = this.props;
 		if (visualElements instanceof Array) {
 			return visualElements.map((element, i) => {
 				let {type, data} = element;
@@ -28,7 +28,9 @@ class VisualElements extends React.Component {
 					key: i,
 					index: i,
 					data,
-					onChangeCoords: this.handleChangeCoords
+					active: i == currentElement,
+					onChangeCoords: this.handleChangeCoords,
+					onClick: this.handleClick
 				}
 				switch (type) {
 					case 'mark': 
@@ -42,12 +44,23 @@ class VisualElements extends React.Component {
 		}
 	}
 
+	handleChange(data) {
+		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
+	}
+
 	handleChangeCoords = (mx, my) => {
-		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', {mx, my});
+		this.handleChange({mx, my});
 	}
 
 	handleLocChange = (loc) => {
-		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', {loc});
+		this.handleChange({loc});
+	}
+
+	handleClick = (index) => {
+		let {currentElement} = this.props;
+		if (currentElement != index) {
+			this.props.dispatch('QUICKTASK_ELEMENT_SET_ACTIVE', index);
+		}
 	}
 }
 

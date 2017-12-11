@@ -9,17 +9,42 @@ import './index.scss';
 export default class TaskMark extends React.Component {
 
 	render() {
-		let {data: {loc = 1, mx = 0, my = 100, importance}, onChangeCoords, index, classes} = this.props;
+		let {
+			data: {
+				loc = 1,
+				mx = 0,
+				my = this.startYPosition,
+				importance
+			},
+			onChangeCoords,
+			index,
+			classes,
+			active,
+			onClick
+		} = this.props;
+	 	
+	 	let className = classnames(
+	 		'x-task-mark',
+	 		classes,
+	 		'x-task-loc' + loc,
+	 		'x-task-color-' + importance,
+	 		active ? 'active' : ''
+	 	);
 	 	return (
 	 		<DraggableElement 
-	 			classes={classnames('x-task-mark', classes, 'x-task-loc' + loc, 'x-task-color-' + importance)}
+	 			classes={className}
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
+	 			onClick={onClick}
 	 			onChangeCoords={onChangeCoords}>
 	 			{this.icon}
 			</DraggableElement>
 		)
+	}
+
+	get startYPosition() {
+		return ~~document.documentElement.scrollTop + 100;
 	}
 
 	get icon() {

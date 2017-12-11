@@ -37,9 +37,11 @@ class App extends React.PureComponent {
     ];
     
     if (!active) {
+      elements.push(
+        this.startButton,
+      );
       if (!this.taskMode) {
         elements.push(
-          this.startButton,
           this.createTaskButton
         );
       } else {
