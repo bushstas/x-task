@@ -38,35 +38,37 @@ class QuickTask extends React.Component {
 
 				<Icon icon="mark"
 					classes="x-task-add-mark"
-					onClick={this.handleAddMarkClick}
+					data-type="mark"
+					onClick={this.handleAddElementClick}
 					title={dict.add_mark}/>
 				
 
-				<div className="x-task-importance-panel" onClick={this.handleSelectImportance}>
+				<div className="x-task-importance-panel" onClick={this.handleChangeParam}>
 					<Icon icon="assign" 
 						classes="x-task-assign-button"
 						title={dict.assign_executors}/>
 
-					{this.renderButtons(icons.task_imp, importance)}
+					{this.renderButtons(icons.task_imp, importance, 'importance')}
 				</div>
 
-				<div className="x-task-type-panel" onClick={this.handleSelectType}>
-					{this.renderButtons(icons.task_type, type)}
+				<div className="x-task-type-panel" onClick={this.handleChangeParam}>
+					{this.renderButtons(icons.task_type, type, 'type')}
 				</div>
 				
-				<div className="x-task-action-panel" onClick={this.handleSelectAction}>
-					{this.renderButtons(icons.task_act, action)}
+				<div className="x-task-action-panel" onClick={this.handleChangeParam}>
+					{this.renderButtons(icons.task_act, action, 'action')}
 				</div>				
 			</div>
 		)
 	}
 
-	renderButtons(items, param) {
+	renderButtons(items, param, paramName) {
 		let keys = Object.keys(items || {});
 		return keys.map((value) => {
 			return  (
 				<Icon 
 					classes={classnames(param == value ? 'active' : '')}
+					data-param={paramName}
 					data-value={value}
 					title={dict[value]}
 					key={value}>
@@ -76,21 +78,9 @@ class QuickTask extends React.Component {
 		})
 	}
 
-	handleSelectImportance = ({target: {dataset: {value}}}) => {
-		if (value) {
-			this.props.doAction('QUICKTASK_CHANGE_PARAM', {importance: value});
-		}
-	}
-
-	handleSelectType = ({target: {dataset: {value}}}) => {
-		if (value) {
-			this.props.doAction('QUICKTASK_CHANGE_PARAM', {type: value});
-		}
-	}
-
-	handleSelectAction = ({target: {dataset: {value}}}) => {
-		if (value) {
-			this.props.doAction('QUICKTASK_CHANGE_PARAM', {action: value});
+	handleChangeParam = ({target: {dataset: {value, param}}}) => {
+		if (param && value) {
+			this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value});
 		}
 	}
 
@@ -98,11 +88,9 @@ class QuickTask extends React.Component {
 		this.props.dispatch('QUICKTASK_FORM_DATA_CHANGED', data);
 	}
 
-	handleAddMarkClick = () => {
-		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_ADDED', {type: 'mark', data: {}});
+	handleAddElementClick = ({target: {dataset: {type}}}) => {
+		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_ADDED', {type, data: {}});
 	}
-
-
 }
 
 const params = {

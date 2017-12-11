@@ -77,11 +77,10 @@ class Projects extends React.Component {
 			if (hasRight('add_project')) {
 				row.push(
 					<Icon 
+						icon="edit"
 						classes="x-task-edit-icon x-task-button-icon" 
 						data-index={index}
-						onClick={this.handleEditProjectClick}>
-						create
-					</Icon>
+						onClick={this.handleEditProjectClick}/>
 				);
 			}
 			row.push(
@@ -106,20 +105,18 @@ class Projects extends React.Component {
 	renderActionIcon(index, data) {
 		return data.current ? (
 			<Icon 
+				icon="activate"
 				classes="x-task-activate-icon x-task-button-icon" 
 				style={{opacity: 0.2}}
-				title={dict.current_project}>
-				system_update_alt
-			</Icon>
+				title={dict.current_project}/>
 		) : (
 		inProject(data.token) ? (
 			<Icon 
+				icon="activate"
 				classes="x-task-activate-icon x-task-button-icon"
 				title={dict.activate_project}
 				data-index={index}
-				onClick={this.handleActivateButtonClick}>
-				system_update_alt
-			</Icon>
+				onClick={this.handleActivateButtonClick}/>
 		) : 
 			this.renderRequestAccessIcon(index, data)
 		)
@@ -127,6 +124,7 @@ class Projects extends React.Component {
 
 	renderRequestAccessIcon(index, data) {
 		let props = {
+			icon: 'access',
 			classes: 'x-task-activate-icon x-task-button-icon'
 		};
 		if (data.requested == 1) {
@@ -138,9 +136,7 @@ class Projects extends React.Component {
 			props.onClick = this.handleRequestAccessClick;
 		}
 		return (
-			<Icon {...props}>
-				add_circle_outline
-			</Icon>
+			<Icon {...props}/>
 		)
 	}
 

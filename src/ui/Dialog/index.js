@@ -19,9 +19,10 @@ export default class Dialog extends React.Component {
 					<div className="x-task-dialog-title">
 						{this.title}
 						{titleContent}
-						<Icon onClick={onClose} classes="x-task-dialog-close">
-							close
-						</Icon>
+						
+						<Icon icon="close" 
+							onClick={onClose}
+							classes="x-task-dialog-close"/>
 					</div>
 					<div className="x-task-dialog-content">
 						{children}
@@ -36,9 +37,7 @@ export default class Dialog extends React.Component {
 		return (
 			<div>
 				<span className="x-task-dialog-title-logo">
-					<Icon size="22">
-						developer_board
-					</Icon>
+					<Icon size="22" icon="logo"/>
 					{dict.logo}
 				</span>
 				{title}

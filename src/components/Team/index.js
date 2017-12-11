@@ -87,9 +87,10 @@ class Team extends React.Component {
 				)
 			}
 			rows.push([
-				<Icon classes="x-task-edit-icon x-task-button-icon" {...iconProps}>
-					create
-				</Icon>,
+				<Icon
+					classes="x-task-edit-icon x-task-button-icon"
+					icon="edit"
+					{...iconProps}/>,
 				name,
 				dict[u.role],
 				u.projects.split(',').join(', ')

@@ -6,9 +6,7 @@ import './index.scss';
 export default function StartButton({onClick}) {
 	return (
 		<div className="x-task-start-button" onClick={onClick}>
-			<Icon>
-				developer_board
-			</Icon>
+			<Icon icon="logo"/>
 		</div>
 	)
 }
