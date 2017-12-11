@@ -7,7 +7,6 @@ import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
 import QuickTask from '../QuickTask';
 import VisualElements from '../VisualElements';
-import VisualElementPanel from '../VisualElementPanel';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -15,7 +14,7 @@ import Tasks from '../Tasks';
 import Account from '../Account';
 
 import {dict} from '../../utils/Dictionary';
-import {isAuthorized, auth, register, logout} from '../../utils/User';
+import {isAuthorized, auth, register, logout, hasRight} from '../../utils/User';
 import Store from 'xstore';
 
 import '../../index.scss';
@@ -49,11 +48,6 @@ class App extends React.PureComponent {
           this.visualElements
         );
       }
-      if (this.visualMode) {
-        elements.push(
-          this.visualElementPanel
-        );
-      }
     } else if (isAuthorized()) {
       elements.push(this.dialog);
     } else {
@@ -63,11 +57,11 @@ class App extends React.PureComponent {
   }
 
   get taskMode() {
-     return this.props.quicktask_active || this.visualMode;
+     return !!this.props.status || this.visualMode;
   }
 
   get visualMode() {
-    return this.props.quicktask_visualMode;
+    return !!this.props.visualMode;
   }
 
   get quicktask() {
@@ -82,10 +76,6 @@ class App extends React.PureComponent {
     return <VisualElements key="visualElements"/> 
   }
 
-  get visualElementPanel() {
-    return <VisualElementPanel key="visualElementPanel"/>  
-  }
-
   get startButton() {
     return (
       <StartButton 
@@ -95,11 +85,13 @@ class App extends React.PureComponent {
   }
 
   get createTaskButton() {    
-    return (
-      <CreateTaskButton
-        key="createTaskButton"
-        onClick={this.handleAddTaskClick}/>
-    )
+    if (hasRight('add_dev_task')) {
+      return (
+        <CreateTaskButton
+          key="createTaskButton"
+          onClick={this.handleAddTaskClick}/>
+      )
+    }
   }
 
   get dialog() {
@@ -167,7 +159,7 @@ class App extends React.PureComponent {
   }
 
   handleAddTaskClick = () => {
-    this.props.dispatch('QUICKTASK_ACTIVATED', true);
+    this.props.dispatch('QUICKTASK_ACTIVATED', 'active');
   }
 
   handleDialogClose = () => {
@@ -200,8 +192,7 @@ class App extends React.PureComponent {
 }
 
 const params = {
-  has: 'quicktask:active|visualMode',
-  flat: true,
-  withPrefix: true
+  has: 'quicktask:status|visualMode',
+  flat: true
 }
 export default Store.connect(App, params);

@@ -1,24 +1,35 @@
 .x-task-quick-task {
 	position: fixed;
 	left: 50%;
-	width: 640px;
-	margin-left: -320px;
+	width: 780px;
+	margin-left: -390px;
 	z-index: 9997;
 	bottom: 0;
 	background-color: #555;
 	border: 1px solid #333;
 	display: none;
-	padding: 6px 6px 4px 6px;
 	box-sizing: border-box;
 	user-select: none;
+	height: 484px;
+	border-radius: 3px 3px 0 0;
+	box-shadow: 0 0 15px #888;
 
+	&.collapsed,
 	&.active {
 		display: block;
 	}
 
-	.x-task-form {
-		text-align: center;
+	&.collapsed {
+		bottom: -435px;
+	}
 
+	.x-task-form {
+		position: absolute;
+		top: 48px;
+		left: 48px;
+		right: 90px;
+		bottom: 0;
+		
 		.x-task-form-field {
 			margin-bottom: 6px;
 		}
@@ -30,48 +41,50 @@
 		}
 		textarea {
 			border-color: #000;
-			height: 344px;
+			height: 347px;
 		}
 	}
 
 	.x-task-importance-panel {
 		position: absolute;
-		top: -1px;
-		right: 100%;
-		background-color: #555;
-		padding: 7px 0 4px 6px;
-		border-radius: 3px 0 0 0;
-		bottom: -1px;
+		top: 48px;
+		left: 6px;
 	}
 
 	.x-task-type-panel {
 		position: absolute;
-		top: -1px;
-		left: 100%;
-		background-color: #555;
-		padding: 7px 6px 4px 0;
-		bottom: -1px;
-		border-radius: 0 3px 0 0;
+		top: 48px;
+		right: 48px;
 	}
 
 	.x-task-action-panel {
 		position: absolute;
-		top: -1px;
-		left: 100%;
-		margin-left: 42px;
-		background-color: #555;
-		padding: 7px 6px 4px 0;
-		bottom: -1px;
-		border-radius: 0 3px 0 0;
+		top: 48px;
+		right: 6px;
+	}
+
+	.x-task-element-panel {
+		position: absolute;
+		top: 6px;
+		left: 48px;
+		right: 48px;
+	}
+
+	.x-task-bottom-panel {
+		position: absolute;
+		bottom: 2px;
+		left: 48px;
+		right: 48px;
 	}
 
 	.x-task-button {
-		width: 50%;
+		width: 200px;
 		line-height: 34px;
 		height: 34px;
 		background-image: linear-gradient(to top, #444, #333);
 		color: #e1e1e1;
 		border: 0 !important;
+		float: right;
 
 		&:hover {
 			color: #fff;
@@ -92,16 +105,8 @@
 		line-height: 36px;
 		display: block;	
 		cursor: pointer;
-
-		&.x-task-assign-button {
-			margin-bottom: 80px;
-		}
-
-		&.x-task-add-mark {
-			position: absolute;
-			bottom: 1px;
-			right: 7px;
-		}
+		border: 1px solid #333;
+		box-sizing: border-box;
 
 		&:hover {
 			background-color: #c1c1c1;
@@ -112,6 +117,7 @@
 			background-color: #555 !important;
 			background-image: linear-gradient(to top, #333, #222) !important;
 			color: #fff !important;
+			border-color: #111;
 		}
 	}
 }

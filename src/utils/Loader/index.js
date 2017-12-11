@@ -14,7 +14,7 @@ const onClassLoad = () => {
 }
 
 const then = (cb) => {
-	if (isLoaded) {
+	if (isLoaded()) {
 		return cb();
 	}
 	callback = cb;

@@ -13,9 +13,9 @@ import './index.scss';
 class QuickTask extends React.Component {
 
 	render() {
-		let {formData, active, importance, type, action} = this.props;
+		let {formData, status, importance, type, action} = this.props;
 	 	return (
-	 		<div className={classnames('x-task-quick-task', active ? 'active' : '')}>
+	 		<div className={classnames('x-task-quick-task', status)}>
 				<Form onChange={this.handleFormChanged}>
 					<FormField>
 						<Input 
@@ -36,33 +36,33 @@ class QuickTask extends React.Component {
 					</Button>
 				</Form>
 
-				<Icon icon="mark"
-					classes="x-task-add-mark"
-					data-type="mark"
-					onClick={this.handleAddElementClick}
-					title={dict.add_mark}/>
-				
-
-				<div className="x-task-importance-panel" onClick={this.handleChangeParam}>
-					<Icon icon="assign" 
-						classes="x-task-assign-button"
-						title={dict.assign_executors}/>
-
-					{this.renderButtons(icons.task_imp, importance, 'importance')}
+				<div className="x-task-importance-panel" onClick={this.handleChangeParam}>					
+					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
 				</div>
 
 				<div className="x-task-type-panel" onClick={this.handleChangeParam}>
-					{this.renderButtons(icons.task_type, type, 'type')}
+					{this.renderButtons(icons.task_type, type, 'type', 'category')}
 				</div>
 				
 				<div className="x-task-action-panel" onClick={this.handleChangeParam}>
-					{this.renderButtons(icons.task_act, action, 'action')}
-				</div>				
+					{this.renderButtons(icons.task_act, action, 'action', 'action')}
+				</div>
+
+				<div className="x-task-element-panel">
+					<Icon icon="mark"
+						data-type="mark"
+						onClick={this.handleAddElementClick}
+						title={dict.add_mark}/>
+				</div>
+
+				<div className="x-task-bottom-panel">
+					<Icon icon="assign" title={dict.assign_executors}/>
+				</div>
 			</div>
 		)
 	}
 
-	renderButtons(items, param, paramName) {
+	renderButtons(items, param, paramName, title) {
 		let keys = Object.keys(items || {});
 		return keys.map((value) => {
 			return  (
@@ -70,7 +70,7 @@ class QuickTask extends React.Component {
 					classes={classnames(param == value ? 'active' : '')}
 					data-param={paramName}
 					data-value={value}
-					title={dict[value]}
+					title={dict[title] + ': ' + dict[value]}
 					key={value}>
 					{items[value]}
 				</Icon>

@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import {dict} from '../../utils/Dictionary';
+import {dict, icons} from '../../utils/Dictionary';
 import DraggableElement from '../../ui/DraggableElement';
 import Icon from '../../ui/Icon';
 
@@ -9,20 +9,33 @@ import './index.scss';
 export default class TaskMark extends React.Component {
 
 	render() {
-		let {data: {loc = 1, mx = 0, my = 100}, onChangeCoords, index, classes} = this.props;
+		let {data: {loc = 1, mx = 0, my = 100, importance}, onChangeCoords, index, classes} = this.props;
 	 	return (
 	 		<DraggableElement 
-	 			classes={classnames('x-task-mark', classes, 'x-task-loc' + loc)}
+	 			classes={classnames('x-task-mark', classes, 'x-task-loc' + loc, 'x-task-color-' + importance)}
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
 	 			onChangeCoords={onChangeCoords}>
-				<div onWheel={this.handleWheel}>
-					<Icon>
-						palette
-					</Icon>
-				</div>
+	 			{this.icon}
 			</DraggableElement>
+		)
+	}
+
+	get icon() {
+		let {data: {importance, type}} = this.props;
+		let icon;
+		if (type) {
+			icon = icons.task_type[type];
+		} else {
+			icon = icons.task_imp[importance];
+		}
+		return (
+			<div onWheel={this.handleWheel}>
+				<Icon>
+					{icon}
+				</Icon>
+			</div>
 		)
 	}
 

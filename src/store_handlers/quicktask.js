@@ -1,5 +1,5 @@
 const DEFAULT_STATE = {
-  active: false,
+  status: null,
   formData: {},
   importance: 'usual',
   type: null,
@@ -14,8 +14,8 @@ const init = () => {
   return DEFAULT_STATE;
 }
  
-const activated = (state, active) => {
-  return {active}
+const activated = (state, status) => {
+  return {status}
 }
 
 const param_changed = (state, data) => {
@@ -56,7 +56,7 @@ const visual_element_added = (state, element) => {
   let currentElement = visualElements.length - 1;
   return {
     visualMode: true,
-    active: false,
+    status: 'collapsed',
     visualElements,
     currentElement,
     visualElement: element

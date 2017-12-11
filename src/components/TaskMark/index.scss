@@ -1,9 +1,9 @@
 .x-task-mark {
 	position: absolute;
 	left: 50%;
-	top: 0;
-	background-color: #d40051;
+	background-color: #00b773;
 	border-radius: 50%;
+	top: 0;
 	cursor: move;
 	z-index: 10;
 	text-align: center;
@@ -13,6 +13,48 @@
 	.x-task-icon {
 		font-size: 26px;
 		line-height: 50px;
+	}
+
+	&.x-task-color-burning {
+		background-color: #ec4c00;
+		&:before {
+			background-color: #ec4c00;
+		}
+	}
+
+	&.x-task-color-urgent {
+		background-color: #ec0016;
+		&:before {
+			background-color: #ec0016;
+		}
+	}
+
+	&.x-task-color-important {
+		background-color: #68b700;
+		&:before {
+			background-color: #68b700;
+		}
+	}
+
+	&.x-task-color-insignificant {
+		background-color: #0084b7;
+		&:before {
+			background-color: #0084b7;
+		}
+	}
+
+	&.x-task-color-future {
+		background-color: #0030b7;
+		&:before {
+			background-color: #0030b7;
+		}
+	}
+
+	&.x-task-color-to_think {
+		background-color: #555;
+		&:before {
+			background-color: #555;
+		}
 	}
 
 	& > div {
@@ -29,7 +71,7 @@
 		width: 45%;
 		bottom: 0;
 		height: 45%;
-		background-color: #d40051;
+		background-color: #00b773;
 		border-radius: 0 0 0 2px;
 	}
 
