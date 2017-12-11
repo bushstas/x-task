@@ -1,18 +1,16 @@
 .x-task-quick-task {
 	position: fixed;
-	left: 50%;
-	width: 780px;
-	margin-left: -390px;
-	z-index: 9997;
-	bottom: 0;
-	background-color: #555;
-	border: 1px solid #333;
-	display: none;
-	box-sizing: border-box;
-	user-select: none;
-	height: 484px;
-	border-radius: 3px 3px 0 0;
-	box-shadow: 0 0 15px #888;
+    left: 50%;
+    width: 780px;
+    margin-left: -390px;
+    z-index: 9997;
+    bottom: 0;
+    background-color: #ececec;
+    border: 1px solid #b7b7b7;
+    display: none;
+    box-sizing: border-box;
+    user-select: none;
+    height: 484px;
 
 	&.collapsed,
 	&.active {
@@ -20,7 +18,7 @@
 	}
 
 	&.collapsed {
-		bottom: -435px;
+		bottom: -442px;
 	}
 
 	.x-task-form {
@@ -37,10 +35,10 @@
 			margin-bottom: 2px;
 		}
 		input[type="text"] {
-			border-color: #000;
+			border-color: #b7bece;
 		}
 		textarea {
-			border-color: #000;
+			border-color: #b7bece;
 			height: 347px;
 		}
 	}
@@ -65,9 +63,13 @@
 
 	.x-task-element-panel {
 		position: absolute;
-		top: 6px;
-		left: 48px;
-		right: 48px;
+    	top: -4px;
+    	left: -1px;
+    	right: -1px;
+    	padding: 5px 7px;
+    	border-radius: 5px 5px 0 0;
+    	background-color: #555;
+		
 		.x-task-icon {
 			display: inline-block;
 			margin-bottom: 0;
@@ -77,10 +79,6 @@
 	}
 
 	&.collapsed {
-		.x-task-element-panel {
-			left: 6px;
-			right: 6px;
-		}
 		.x-task-icon {
 			&.x-task-panel-up {
 				display: block;
@@ -92,7 +90,7 @@
 		position: absolute;
 		bottom: 5px;
 		left: 48px;
-		right: 48px;
+		width: 300px;
 		.x-task-icon {
 			display: inline-block;
 			margin-bottom: 0;
@@ -102,13 +100,13 @@
 	}
 
 	.x-task-button {
-		width: 200px;
-		line-height: 34px;
-		height: 34px;
-		background-image: linear-gradient(to top, #444, #333);
-		color: #e1e1e1;
-		border: 0 !important;
-		float: right;
+		width: 170px;
+	    line-height: 35px;
+	    height: 36px;
+	    background-color: #555555;
+	    color: #e1e1e1;
+	    border: 0 !important;
+	    float: right;
 
 		&:hover {
 			color: #fff;
@@ -122,43 +120,43 @@
 .x-task-quick-task-panel {
 	.x-task-icon {
 		width: 36px;
-		height: 36px;
-		font-size: 24px;
-		margin-bottom: 3px;
-		border-radius: 3px;
-		background-color: #ccc;
-		background-image: linear-gradient(to top, #ddd, #d3d3d3);
-		color: #333;
-		text-align: center;
-		line-height: 36px;
-		display: block;	
-		cursor: pointer;
-		border: 1px solid #333;
-		box-sizing: border-box;
+	    height: 36px;
+	    font-size: 24px;
+	    margin-bottom: 3px;
+	    border-radius: 3px;
+	    background-color: #f1f1f1;
+	    color: #6b6b6b;
+	    text-align: center;
+	    line-height: 36px;
+	    display: block;
+	    cursor: pointer;
+	    border: 1px solid #cecece;
+	    box-sizing: border-box;
 
 		&.x-task-panel-up {
 			display: none;
 			float: right;
+			font-size: 30px;
+		}
+
+		&.x-task-white-icon {
 			background-image: none !important;
 			background-color: transparent !important;
 			color: #ddd;
 			border: 0;
-			font-size: 30px;
 			&:hover {
 				color: #fff;
 			}
 		}
 
 		&:hover {
-			background-color: #c1c1c1;
-			background-image: linear-gradient(to top, #d5d5d5, #b4b4b4);
+			background-color: #ffffff;
 		}
 
 		&.active {
-			background-color: #555 !important;
-			background-image: linear-gradient(to top, #333, #222) !important;
-			color: #fff !important;
-			border-color: #111;
+			background-color: #555555 !important;
+    		color: #e0e0e0 !important;
+    		border-color: #555555;
 		}
 	}
 }

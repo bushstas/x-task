@@ -12,5 +12,15 @@
 	z-index: 9996;
 	user-select: none;
 	background-color: #555;
-	box-shadow: 0 0 15px #888;
+	// box-shadow: 0 0 15px #888;
+
+	.x-task-icon {
+		&.x-task-element-type {
+			margin-bottom: 10px;
+			cursor: default;
+			&:hover {
+				color: #ddd;
+			}
+		}
+	}
 }

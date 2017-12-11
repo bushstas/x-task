@@ -9,9 +9,6 @@ class VisualElements extends React.Component {
 
 	render() {
 		let {active, visualMode} = this.props;
-	 	if (!active && !visualMode) {
-	 		return null;
-	 	}
 	 	return (
 	 		<div className="x-task-visual-elements">
 				{this.elements}
@@ -57,10 +54,7 @@ class VisualElements extends React.Component {
 	}
 
 	handleClick = (index) => {
-		let {currentElement} = this.props;
-		if (currentElement != index) {
-			this.props.dispatch('QUICKTASK_ELEMENT_SET_ACTIVE', index);
-		}
+		this.props.dispatch('QUICKTASK_ELEMENT_SET_ACTIVE', index);
 	}
 }
 

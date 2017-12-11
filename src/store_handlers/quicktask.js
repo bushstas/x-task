@@ -7,8 +7,9 @@ const DEFAULT_STATE = {
   visualElements: [],
   visualMode: false,
   currentElement: -1,
+  currentType: null,
   visualElement: null,
-  markAdded: false
+  markElement: null
 }
  
 const init = () => {
@@ -20,16 +21,17 @@ const activated = (state, status) => {
 }
 
 const param_changed = (state, data) => {
-  let {visualElement} = state;
-  if (visualElement instanceof Object) {
-    visualElement.data = {
-      ...visualElement.data,
-      data
+  let {markElement: m, visualElements: e} = state;
+  if (typeof m == 'number' && e[m] instanceof Object) {
+    let {data: d} = e[m];
+    e[m].data = {
+      ...d,
+      ...data
     }
   }
   return {
-    ...data,
-    visualElement
+    visualElements: e,
+    ...data
   };
 }
 
@@ -46,7 +48,14 @@ const form_data_changed = (state, formData) => {
 }
 
 const visual_element_added = (state, element) => {
-  let {visualElements, action, type, importance, markAdded} = state;
+  let {
+    visualElements,
+    action,
+    type,
+    importance,
+    markElement
+  } = state;
+
   element.data = {
     ...element.data,
     action,
@@ -54,9 +63,11 @@ const visual_element_added = (state, element) => {
     importance
   };
   visualElements.push(element);
-  let currentElement = visualElements.length - 1;
-  if (element.type == 'mark') {
-    markAdded = true;
+  let currentElement = visualElements.length - 1,
+      currentType = element.type;
+  
+  if (currentType == 'mark') {
+    markElement = currentElement;
   }
   return {
     visualMode: true,
@@ -64,7 +75,8 @@ const visual_element_added = (state, element) => {
     visualElements,
     currentElement,
     visualElement: element,
-    markAdded
+    currentType, 
+    markElement
   }
 }
 
@@ -84,20 +96,23 @@ const visual_element_changed = (state, data) => {
 }
 
 const element_set_active = (state, currentElement) => {
-  let {visualElements} = state;
-  let visualElement = visualElements[currentElement];
-   return {
+  let {visualElements} = state,
+      visualElement = visualElements[currentElement],
+      currentType = visualElement.type;
+
+  return {
     currentElement,
-    visualElement
+    visualElement,
+    visualMode: true,
+    status: 'collapsed',
+    currentType
   }
 }
 
 const active_element_unset = () => {
    return {
     visualMode: false,
-    status: 'active',
-    currentElement: -1,
-    visualElement: null
+    status: 'active'
   }
 }
 

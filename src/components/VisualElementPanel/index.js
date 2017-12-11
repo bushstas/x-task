@@ -9,13 +9,24 @@ class VisualElementPanel extends React.Component {
 
 	render() {
 		let {visualElement} = this.props;
-		console.log(visualElement)
 	 	return !!visualElement ? (
 	 		<div className="x-task-visual-element-panel x-task-quick-task-panel"
 	 			onClick={this.handleClick}>
+	 			{this.typeIcon}
 	 			{this.buttons}
 			</div>
 		) : null
+	}
+
+	get typeIcon() {
+		let {visualElement: {type}} = this.props;
+		return  (
+			<Icon 
+				classes="x-task-white-icon x-task-element-type"
+				title={dict[type]}>
+				{icons.task_el[type]}
+			</Icon>
+		)
 	}
 
 	get buttons() {
