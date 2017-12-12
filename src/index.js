@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import Store from 'xstore'
+import Store from 'xstore';
 
 import App from './components/App';
 import {load} from './utils/Loader';
@@ -13,6 +13,11 @@ import projects from './store_handlers/projects';
 import notifications from './store_handlers/notifications';
 import quicktask from './store_handlers/quicktask';
 
+import {cn} from './utils/Cn';
+import cnParams from './cn';
+
+cn.init(cnParams);
+
 Store.addHandlers({
   userpage,
   team,
@@ -22,7 +27,7 @@ Store.addHandlers({
 });
 
 let box = document.createElement('div');
-box.className = 'x-task-main-box';
+box.className = cn(0);
 document.body.appendChild(box);
 
 load(dict, user).then(() => {

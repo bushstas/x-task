@@ -4,6 +4,7 @@ const path = require('path');
 const pr = path.resolve;
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const env = process.env.NODE_ENV;
 const CONFIG = env === 'production' ? require('./prod_config') : require('./local_config');
 
@@ -50,30 +51,47 @@ const config = {
     resolve: {
         modules: ['node_modules', 'src']
     },
+    resolveLoader: {
+        modules: ['node_modules', path.resolve(__dirname, 'loaders')]
+    },
     module: {
         rules: [
             {
                 test: /\.js$/, 
                 exclude: ['node_modules'],
 
-                loader: 'babel-loader',
-                options: {
-                    'compact': false,
-                    'presets': [
-                        'babel-preset-es2015', 
-                        'babel-preset-stage-0',
-                        'babel-preset-react'
-                    ],
-                    'plugins': [
-                        'babel-plugin-transform-decorators-legacy',
-                        'babel-plugin-transform-class-properties',
-                    ],
-                    'env': {
-                        'server': {
-                            'presets': ['babel-preset-react-hot']
+                loaders: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            'compact': false,
+                            'presets': [
+                                'babel-preset-es2015', 
+                                'babel-preset-stage-0',
+                                'babel-preset-react'
+                            ],
+                            'plugins': [
+                                'babel-plugin-transform-decorators-legacy',
+                                'babel-plugin-transform-class-properties',
+                            ],
+                            'env': {
+                                'server': {
+                                    'presets': ['babel-preset-react-hot']
+                                }
+                            }
+                        }
+                    },
+                    {
+                        loader: 'my-js-loader',
+                        options: {
+                            attributeName: 'xcn',
+                            prefixAttributeName: 'xPrefix',
+                            addedPrefixAttributeName: 'xAddedPrefix',
+                            globalPrefix: 'x-task',
+                            delimiter: '-'
                         }
                     }
-                }
+                ]
             },
             {
                 test: /\.(xls(x)?|pdf|doc(x)?)(\S+)?$/,

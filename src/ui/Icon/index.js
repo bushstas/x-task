@@ -4,7 +4,7 @@ import {icons} from '../../utils/Dictionary';
 
 import './index.scss';
 
-export default function Icon({children, classes, size, icon, ...others}) {
+export default function Icon({children, classes, className, size, icon, ...others}) {
 	let style;
 	if (size) {
 		style = {
@@ -16,7 +16,7 @@ export default function Icon({children, classes, size, icon, ...others}) {
 	}
 	return (
 		<i 
-			className={classnames('x-task-icon', classes)}
+			className={classnames('x-task-icon', classes, className)}
 			style={style}
 			{...others}>
 			{children}

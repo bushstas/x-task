@@ -20,7 +20,7 @@
 		opacity: 0.9;
 	}
 
-	&.x-task-large-dialog {
+	&.x-task-dialog-large {
 		.x-task-dialog {
 			width: 1000px;
 			height: 100%;
@@ -80,7 +80,7 @@
 		line-height: 30px;
 		padding: 10px 20px;
 
-		.x-task-dialog-title-logo {
+		.x-task-dialog-logo {
 			color: #999;
 			text-shadow: 0 0 3px #222;
 			font-weight: bold;

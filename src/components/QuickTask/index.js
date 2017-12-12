@@ -50,9 +50,6 @@ class QuickTask extends React.Component {
 
 				<div className="x-task-element-panel x-task-quick-task-panel">
 					{this.renderElementButtons()}
-					<Icon icon="up"
-						classes="x-task-white-icon x-task-panel-up"
-						onClick={this.handleExpandClick}/>
 				</div>
 
 				<div className="x-task-bottom-panel x-task-quick-task-panel">
@@ -60,6 +57,12 @@ class QuickTask extends React.Component {
 						title={dict.assign_executors}/>
 					<Icon icon="task_info"
 						title={dict.task_info}/>
+				</div>
+
+				<div className="x-task-top-panel x-task-quick-task-panel">
+					<Icon icon="up"
+						classes="x-task-white-icon x-task-panel-up"
+						onClick={this.handleExpandClick}/>
 				</div>
 			</div>
 		)
@@ -75,7 +78,7 @@ class QuickTask extends React.Component {
 			}
 			return  (
 				<Icon 
-					classes="x-task-white-icon"
+					classes="x-task-white-icon x-task-inline-icon"
 					data-type={value}
 					title={dict.insertion + ': ' + dict[value]}
 					key={value}
