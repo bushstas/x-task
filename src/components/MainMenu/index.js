@@ -1,18 +1,19 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
-import classnames from 'classnames';
 
 import './index.scss';
+
+with addedPrefix 'main-menu';
 
 export default function MainMenu({active, onNavigate}) {
 	let {menu} = icons;
 	let keys = Object.keys(menu);
 	return (
-		<div className="x-task-main-menu" onClick={onNavigate}>
+		<div class=".self" onClick={onNavigate}>
 			{keys.map((name) => {
 				return (
-					<span className={classnames(active == name ? 'active' : '')} data-name={name} key={name}>
+					<span class="$(active==name)?active" data-name={name} key={name}>
 						{dict[name]}
 						<div>
 							<Icon size="16">

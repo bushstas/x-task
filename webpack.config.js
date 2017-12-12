@@ -51,9 +51,6 @@ const config = {
     resolve: {
         modules: ['node_modules', 'src']
     },
-    resolveLoader: {
-        modules: ['node_modules', path.resolve(__dirname, 'loaders')]
-    },
     module: {
         rules: [
             {
@@ -82,13 +79,10 @@ const config = {
                         }
                     },
                     {
-                        loader: 'my-js-loader',
+                        loader: 'classy-loader',
                         options: {
-                            attributeName: 'xcn',
-                            prefixAttributeName: 'xPrefix',
-                            addedPrefixAttributeName: 'xAddedPrefix',
-                            globalPrefix: 'x-task',
-                            delimiter: '-'
+                            attributeName: 'class',
+                            globalPrefix: 'x-task'
                         }
                     }
                 ]
@@ -140,7 +134,7 @@ if (env !== 'production') {
         hot: true,
         inline: true
     };
-    config.devtool = 'cheap-module-eval-source-map';
+    //config.devtool = 'cheap-module-eval-source-map';
 }
 
 module.exports = config;

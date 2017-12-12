@@ -1,10 +1,10 @@
 import React from 'react';
 import Icon from '../Icon';
 import {dict} from '../../utils/Dictionary';
-import {cn} from '../../utils/Cn';
 
 import './index.scss';
 
+with addedPrefix 'dialog';
 
 export default class Dialog extends React.Component {
 	static defailtProps = {
@@ -12,20 +12,20 @@ export default class Dialog extends React.Component {
 	}
 
 	render() {
-		let {onClose, children, classes, titleContent} = this.props;
+		let {onClose, children, className, titleContent} = this.props;
 		return (
-			<div xPrefix="x-task-dialog" xcn=".box $classes ..fuck">
-				<div xcn=".mask" onClick={this.handleMaskClick}/>
-				<div xcn=".this">
-					<div className=".title">
+			<div class=".box $className">
+				<div class=".mask" onClick={this.handleMaskClick}/>
+				<div class=".self">
+					<div class=".title">
 						{this.title}
 						{titleContent}
 						
 						<Icon icon="close" 
 							onClick={onClose}
-							xcn=".close"/>
+							class=".close"/>
 					</div>
-					<div className=".content">
+					<div class=".content">
 						{children}
 					</div>
 				</div>
@@ -37,7 +37,7 @@ export default class Dialog extends React.Component {
 		let {title} = this.props;
 		return (
 			<div>
-				<span className={cn.dialog(6)}>
+				<span class=".logo">
 					<Icon size="22" icon="logo"/>
 					{dict.logo}
 				</span>
