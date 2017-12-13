@@ -4,7 +4,7 @@ import {icons} from '../../utils/Dictionary';
 
 import './index.scss';
 
-with addedPrefix 'icon';
+//with addedPrefix 'icon';
 
 export default function Icon({children, classes, className, size, icon, ...others}) {
 	let style;
@@ -18,7 +18,7 @@ export default function Icon({children, classes, className, size, icon, ...other
 	}
 	return (
 		<i 
-			class=".self $classes $className"
+			className={"x-task-icon " + classes + " " + className}
 			style={style}
 			{...others}>
 			{children}

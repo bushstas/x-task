@@ -117,7 +117,7 @@ class App extends React.PureComponent {
           )}
           onClose={this.handleDialogClose}
           key="dialog"
-          class="..dialog-large">
+          className="x-task-dialog-large">
 
           {this.content}
       </Dialog>

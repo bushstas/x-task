@@ -4,7 +4,7 @@ import {dict} from '../../utils/Dictionary';
 
 import './index.scss';
 
-with addedPrefix '  dialog   ';
+//with addedPrefix 'dialog';
 
 export default class Dialog extends React.Component {
 	static defailtProps = {
@@ -14,18 +14,18 @@ export default class Dialog extends React.Component {
 	render() {
 		let {onClose, children, className, titleContent} = this.props;
 		return (
-			<div class=".box $className">
-				<div class=".mask" onClick={this.handleMaskClick}/>
-				<div class=".self">
-					<div class=".title">
+			<div className={"x-task-dialog-box " + className}>
+				<div className="x-task-dialog-mask" onClick={this.handleMaskClick}/>
+				<div className="x-task-dialog">
+					<div className="x-task-dialog-title">
 						{this.title}
 						{titleContent}
 						
 						<Icon icon="close" 
 							onClick={onClose}
-							class=".close"/>
+							className="x-task-dialog-close"/>
 					</div>
-					<div class=".content">
+					<div className="x-task-dialog-content">
 						{children}
 					</div>
 				</div>
@@ -37,7 +37,7 @@ export default class Dialog extends React.Component {
 		let {title} = this.props;
 		return (
 			<div>
-				<span class=".logo">
+				<span className="x-task-dialog-logo">
 					<Icon size="22" icon="logo"/>
 					{dict.logo}
 				</span>

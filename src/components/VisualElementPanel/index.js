@@ -2,6 +2,7 @@ import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Store from 'xstore';
 import Icon from '../../ui/Icon';
+import classnames from 'classnames';
 
 import './index.scss';
 
@@ -36,7 +37,7 @@ class VisualElementPanel extends React.Component {
 		return keys.map((value) => {
 			return  (
 				<Icon 
-					classes={this.isActive(data, value) ? 'active' : ''}
+					classes={classnames('x-task-white-icon', this.isActive(data, value) ? 'active' : '')}
 					data-action={value}
 					title={dict[value]}
 					key={value}>

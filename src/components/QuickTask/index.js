@@ -54,14 +54,21 @@ class QuickTask extends React.Component {
 
 				<div className="x-task-bottom-panel x-task-quick-task-panel">
 					<Icon icon="assign"
+						className="x-task-inline-icon"
 						title={dict.assign_executors}/>
+
 					<Icon icon="task_info"
+						className="x-task-inline-icon"
 						title={dict.task_info}/>
 				</div>
 
 				<div className="x-task-top-panel x-task-quick-task-panel">
 					<Icon icon="up"
-						classes="x-task-white-icon x-task-panel-up"
+						classes="x-task-white-icon x-task-panel-up x-task-inline-icon"
+						onClick={this.handleExpandClick}/>
+
+					<Icon icon="close"
+						classes="x-task-white-icon x-task-inline-icon"
 						onClick={this.handleExpandClick}/>
 				</div>
 			</div>

@@ -1,25 +1,22 @@
 .x-task-visual-element-panel {
 	position: fixed;
 	top: 50%;	
-	margin-top: -250px;
-	height: 500px;
-	width: 50px;
-	border-radius: 0 3px 3px 0;
-	border: 1px solid #333;
-	border-left: 0;
-	padding: 6px;
+	transform: translate(0, -50%);
+	border-radius: 0 5px 5px 0;
+	padding: 10px 6px;
 	color: #fff;
 	z-index: 9996;
 	user-select: none;
 	background-color: #555;
-	// box-shadow: 0 0 15px #888;
 
 	.x-task-icon {
 		&.x-task-element-type {
 			margin-bottom: 10px;
 			cursor: default;
+			color: #888;
+			font-size: 35px;
 			&:hover {
-				color: #ddd;
+				color: #888;
 			}
 		}
 	}

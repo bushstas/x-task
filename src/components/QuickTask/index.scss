@@ -65,10 +65,11 @@
 		position: absolute;
     	top: -4px;
     	left: -1px;
-    	width: 400px;
+    	right: -1px;
     	padding: 5px 7px;
     	border-radius: 5px 5px 0 0;
     	background-color: #555;
+    	z-index: 1;
 	}
 
 	.x-task-top-panel {
@@ -78,12 +79,13 @@
 		width: 250px;
 		padding: 5px 7px;
 		text-align: right;
+		z-index: 2;
 	}
 
 	&.collapsed {
 		.x-task-icon {
 			&.x-task-panel-up {
-				display: block;
+				display: inline-block !important;
 			}
 		}
 	}
@@ -93,12 +95,6 @@
 		bottom: 5px;
 		left: 48px;
 		width: 300px;
-		.x-task-icon {
-			display: inline-block;
-			margin-bottom: 0;
-			margin-right: 3px;
-			vertical-align: top;
-		}
 	}
 
 	.x-task-button {
@@ -136,7 +132,7 @@
 	    box-sizing: border-box;
 
 		&.x-task-panel-up {
-			display: none;
+			display: none !important;
 			float: right;
 			font-size: 30px;
 		}

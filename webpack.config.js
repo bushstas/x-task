@@ -78,13 +78,13 @@ const config = {
                             }
                         }
                     },
-                    {
-                        loader: 'classy-loader',
-                        options: {
-                            attributeName: 'class',
-                            globalPrefix: 'x-task'
-                        }
-                    }
+                    // {
+                    //     loader: 'classy-loader',
+                    //     options: {
+                    //         attributeName: 'class',
+                    //         globalPrefix: 'x-task'
+                    //     }
+                    // }
                 ]
             },
             {

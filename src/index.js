@@ -22,8 +22,9 @@ Store.addHandlers({
 });
 
 let box = document.createElement('div');
-let class = '.main-box';
-box.className = className;
+//let class = '.main-box';
+//box.className = className;
+box.className = 'x-task-main-box';
 document.body.appendChild(box);
 
 load(dict, user).then(() => {
