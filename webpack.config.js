@@ -51,6 +51,9 @@ const config = {
     resolve: {
         modules: ['node_modules', 'src']
     },
+    resolveLoader: {
+        modules: ['node_modules', 'loaders']
+    },
     module: {
         rules: [
             {
@@ -78,13 +81,13 @@ const config = {
                             }
                         }
                     },
-                    // {
-                    //     loader: 'classy-loader',
-                    //     options: {
-                    //         attributeName: 'class',
-                    //         globalPrefix: 'x-task'
-                    //     }
-                    // }
+                    {
+                        loader: 'classy-loader',
+                        options: {
+                            attributeName: 'class',
+                            globalPrefix: 'x-task'
+                        }
+                    }
                 ]
             },
             {
