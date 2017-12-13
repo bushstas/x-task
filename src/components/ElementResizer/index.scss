@@ -1,0 +1,39 @@
+.x-task-element-resizer {
+	position: absolute;
+	width: 15px;
+	height: 15px;
+	border-radius: 30%;
+	background-color: #517198;
+	z-index: 2;
+	cursor: ns-resize;
+	opacity: 0;
+
+	&.x-task-dragged {
+		cursor: -moz-grabbing !important;
+    	cursor: -webkit-grabbing !important;
+    	cursor: grabbing !important;
+	}
+
+	&.x-task-resizer-t {
+		left: 50%;
+		margin-left: -7px;
+		top: -7px;
+	}
+	&.x-task-resizer-b {
+		left: 50%;
+		margin-left: -7px;	
+		bottom: -10px;
+	}
+	&.x-task-resizer-l {
+		top: 50%;
+		margin-top: -7px;	
+		left: -7px;
+		cursor: ew-resize;
+	}
+	&.x-task-resizer-r {
+		top: 50%;
+		margin-top: -7px;
+		right: -10px;
+		cursor: ew-resize;
+	}
+}

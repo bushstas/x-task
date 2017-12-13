@@ -35,6 +35,14 @@ class VisualElementPanel extends React.Component {
 		let items = icons.task_elac;
 		let keys = Object.keys(items || {});
 		return keys.map((value) => {
+			switch (value) {
+				case 'bind':
+					if (!this.hasBindButton) {
+						return;
+					}
+				break;
+			}
+			
 			return  (
 				<Icon 
 					classes={classnames('x-task-white-icon', this.isActive(data, value) ? 'active' : '')}
@@ -45,6 +53,11 @@ class VisualElementPanel extends React.Component {
 				</Icon>
 			)
 		})
+	}
+
+	get hasBindButton() {
+		let {markElement, selectionElement} = this.props;
+		return typeof markElement == 'number' && typeof selectionElement == 'number';
 	}
 
 	isActive(data, action) {
@@ -77,7 +90,7 @@ class VisualElementPanel extends React.Component {
 }
 
 const params = {
-  has: 'quicktask:visualElement',
+  has: 'quicktask:visualElement|selectionElement|markElement',
   flat: true
 }
 export default Store.connect(VisualElementPanel, params);

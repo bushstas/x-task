@@ -2,6 +2,7 @@ import React from 'react';
 import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import TaskMark from '../../components/TaskMark';
+import AreaSelection from '../../components/AreaSelection';
 
 import './index.scss';
 
@@ -35,7 +36,12 @@ class VisualElements extends React.Component {
 						return (
 							<TaskMark {...props}/>
 						)
-					break;
+
+
+					case 'selection':
+						return (
+							<AreaSelection {...props}/>
+						)
 				}
 			});
 		}
@@ -54,7 +60,9 @@ class VisualElements extends React.Component {
 	}
 
 	handleClick = (index) => {
-		this.props.dispatch('QUICKTASK_ELEMENT_SET_ACTIVE', index);
+		if (typeof index == 'number') {
+			this.props.dispatch('QUICKTASK_ELEMENT_SET_ACTIVE', index);
+		}
 	}
 }
 

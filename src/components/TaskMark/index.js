@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import {dict, icons} from '../../utils/Dictionary';
-import DraggableElement from '../../ui/DraggableElement';
+import VisualElement from '../VisualElement';
 import Icon from '../../ui/Icon';
 
 import './index.scss';
@@ -34,15 +34,18 @@ export default class TaskMark extends React.Component {
 	 		fixed ? 'x-task-fixed' : ''
 	 	);
 	 	return (
-	 		<DraggableElement 
+	 		<VisualElement 
 	 			classes={className}
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
+	 			onWheel={this.handleWheel}
 	 			onClick={onClick}
+	 			active={active}
+	 			locked={locked}
 	 			onChangeCoords={onChangeCoords}>
 	 			{this.icon}
-			</DraggableElement>
+			</VisualElement>
 		)
 	}
 
@@ -59,7 +62,7 @@ export default class TaskMark extends React.Component {
 			icon = icons.task_imp[importance];
 		}
 		return (
-			<div onWheel={this.handleWheel}>
+			<div>
 				<Icon>
 					{icon}
 				</Icon>

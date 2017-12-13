@@ -1,0 +1,26 @@
+.x-task-visual-element {
+	margin-top: 100px;
+	cursor: pointer;
+
+	&.active {
+		cursor: -moz-grab;
+    	cursor: -webkit-grab;
+    	cursor: grab;
+		.x-task-element-resizer {
+			opacity: 0.7;
+		}
+	}
+
+	&.x-task-dragged {
+		cursor: -moz-grabbing;
+    	cursor: -webkit-grabbing;
+    	cursor: grabbing;
+	}
+
+	&.x-task-fixed {
+		position: fixed !important;
+	}
+	&.x-task-locked {
+		cursor: not-allowed !important;
+	}
+}

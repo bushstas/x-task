@@ -9,7 +9,8 @@ const DEFAULT_STATE = {
   currentElement: -1,
   currentType: null,
   visualElement: null,
-  markElement: null
+  markElement: null,
+  selectionElement: null
 }
  
 const init = () => {
@@ -52,8 +53,7 @@ const visual_element_added = (state, element) => {
     visualElements,
     action,
     type,
-    importance,
-    markElement
+    importance
   } = state;
 
   element.data = {
@@ -66,18 +66,26 @@ const visual_element_added = (state, element) => {
   let currentElement = visualElements.length - 1,
       currentType = element.type;
   
-  if (currentType == 'mark') {
-    markElement = currentElement;
-  }
-  return {
+  
+  let props = {
     visualMode: true,
     status: 'collapsed',
     visualElements,
     currentElement,
     visualElement: element,
-    currentType, 
-    markElement
+    currentType
   }
+
+  switch (currentType) {
+    case 'mark':
+      props.markElement = currentElement;
+    break;
+
+    case 'selection':
+      props.selectionElement = currentElement;
+    break;
+  }
+  return props;
 }
 
 const visual_element_changed = (state, data) => {

@@ -145,12 +145,14 @@
 		}
 
 		&.x-task-white-icon {
-			background-image: none !important;
 			background-color: transparent !important;
 			color: #ddd;
 			border: 0;
 			&:hover {
 				color: #fff;
+			}
+			&.active {
+				background-color: #222 !important;
 			}
 		}
 

@@ -134,7 +134,7 @@ if (env !== 'production') {
         hot: true,
         inline: true
     };
-    //config.devtool = 'cheap-module-eval-source-map';
+    config.devtool = 'cheap-module-eval-source-map';
 }
 
 module.exports = config;

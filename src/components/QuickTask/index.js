@@ -80,20 +80,34 @@ class QuickTask extends React.Component {
 		let items = icons.task_el || {};
 		let keys = Object.keys(items);
 		return keys.map((value) => {
+			let onlyOne;
 			if (value == 'mark' && markElement !== null) {
 				return;
 			}
+			let title = this.getElementButtonTitle(value);
 			return  (
 				<Icon 
 					classes="x-task-white-icon x-task-inline-icon"
 					data-type={value}
-					title={dict.insertion + ': ' + dict[value]}
+					title={title}
 					key={value}
 					onClick={this.handleAddElementClick}>
 					{items[value]}
 				</Icon>
 			)
 		})
+	}
+
+	getElementButtonTitle(value) {
+		let title = dict.insertion + ': ' + dict[value];
+		switch (value) {
+			case 'mark':
+			case 'selection':
+				let one = value == 'mark' ? dict.one1 : dict.one2;
+				title += ' (' + dict.only_one + ' ' + one + ')';
+			break;
+		}
+		return title;
 	}
 
 	renderButtons(items, param, paramName, title) {

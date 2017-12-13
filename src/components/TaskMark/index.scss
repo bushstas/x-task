@@ -4,7 +4,7 @@
 	background-color: #00b773;
 	border-radius: 50%;
 	top: 0;
-	z-index: 10;
+	z-index: 50;
 	text-align: center;
 	line-height: 40px;
 	color: #fff;
@@ -15,9 +15,9 @@
 	}
 
 	&.x-task-color-burning {
-		background-color: #ec4c00;
+		background-color: #ff6a00;
 		&:before {
-			background-color: #ec4c00;
+			background-color: #ff6a00;
 		}
 	}
 
@@ -43,9 +43,9 @@
 	}
 
 	&.x-task-color-future {
-		background-color: #0030b7;
+		background-color: #2f5294;
 		&:before {
-			background-color: #0030b7;
+			background-color: #2f5294;
 		}
 	}
 
