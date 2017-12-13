@@ -56,8 +56,9 @@ class VisualElementPanel extends React.Component {
 	}
 
 	get hasBindButton() {
-		let {markElement, selectionElement} = this.props;
-		return typeof markElement == 'number' && typeof selectionElement == 'number';
+		let {currentType, markElement, selectionElement} = this.props;
+		return (currentType == 'mark' || currentType == 'selection') &&
+			   typeof markElement == 'number' && typeof selectionElement == 'number';
 	}
 
 	isActive(data, action) {
@@ -68,6 +69,8 @@ class VisualElementPanel extends React.Component {
 			case 'fix':
 				return data.fixed;
 
+			case 'bind':
+				return this.props.bent;
 		}
 	}
 
@@ -83,6 +86,10 @@ class VisualElementPanel extends React.Component {
 				case 'fix':
 					props = {fixed: !data.fixed};
 				break;
+
+				case 'bind':
+					return this.props.doAction('QUICKTASK_CHANGE_PARAM', {bent: !this.props.bent});
+				break;
 			}
 			this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', props);
 		}
@@ -90,7 +97,7 @@ class VisualElementPanel extends React.Component {
 }
 
 const params = {
-  has: 'quicktask:visualElement|selectionElement|markElement',
+  has: 'quicktask:visualElement|selectionElement|markElement|bent|currentType',
   flat: true
 }
 export default Store.connect(VisualElementPanel, params);

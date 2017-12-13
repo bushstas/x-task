@@ -8,6 +8,10 @@ import './index.scss';
 
 export default class TaskMark extends React.Component {
 
+	static defaultProps = {
+		onClick: () => {}
+	}
+
 	render() {
 		let {
 			data: {
@@ -40,13 +44,19 @@ export default class TaskMark extends React.Component {
 	 			mx={mx}
 	 			my={my}
 	 			onWheel={this.handleWheel}
-	 			onClick={onClick}
+	 			onClick={this.handleClick}
 	 			active={active}
 	 			locked={locked}
 	 			onChangeCoords={onChangeCoords}>
 	 			{this.icon}
 			</VisualElement>
 		)
+	}
+
+	handleClick = (index) => {
+		if (!this.props.data.bent) {
+			this.props.onClick(index);
+		}
 	}
 
 	get startYPosition() {

@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import DraggableElement from '../DraggableElement';
 import ElementResizer from '../ElementResizer';
+import {MAX_SIZES} from '../../consts/max_sizes';
 
 import './index.scss';
 
@@ -96,26 +97,55 @@ export default class VisualElement extends React.PureComponent {
 		this.setState({mx, my});
 	}
 
-	handleChangeSize = ({l, r, t, b, a}) => {
+	handleChangeSize = ({l, r, t, b, a}, elementType) => {
+		let {maxWidth, minWidth, maxHeight, minHeight} = MAX_SIZES[elementType];
 		let {width, height, mx, my} = this.state;
+		
+		const checkWidth = (param) => {
+			if (width > maxWidth) {
+				param -= width - maxWidth;
+				width = maxWidth;
+			} else if (width < minWidth) {
+				param += minWidth - width;
+				width = minWidth;
+			}
+			return param;
+		}
+		const checkHeight = (param) => {
+			if (height > maxHeight) {
+				param -= height - maxHeight;
+				height = maxHeight;
+			} else if (height < minHeight) {
+				param += minHeight - height;
+				height = minHeight;
+			}
+			return param;
+		}
 		if (l) {
 			width += l;
+			l = checkWidth(l);
 			mx -= l;
 		} else if (r) {
 			width += r;
+			checkWidth(r);
 		} else if (t) {
 			height += t;
+			t = checkHeight(t);
 			my -= t;
 		} else if (b) {
 			height += b;
+			checkHeight(b);
 		} else if (a) {
 			let w = Math.floor(width * a / 100);
 			let h = Math.floor(height * a / 100);
 			width += w;
 			height += h;
+			w = checkWidth(w);
+			h = checkHeight(h);
 			mx -= Math.floor(w / 2);
 			my -= Math.floor(h / 2);
 		}
+
 		this.setState({
 			width,
 			height,

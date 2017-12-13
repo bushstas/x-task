@@ -55,7 +55,8 @@ export default class DraggableElement extends React.PureComponent {
 	handleMouseUp = () => {
 		document.body.removeEventListener('mousemove', this.handleMouseMove, false);
 		document.body.removeEventListener('mouseup', this.handleMouseUp, false);
-		this.props.onDragEnd(this.mx, this.my);
+		let {mx, my} = this.props;
+		this.props.onDragEnd(mx, my);
 	}
 
 	handleMouseMove = ({clientX, clientY}) => {

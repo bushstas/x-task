@@ -68,6 +68,7 @@ class QuickTask extends React.Component {
 						onClick={this.handleExpandClick}/>
 
 					<Icon icon="close"
+						title={dict.cancel_task}
 						classes="x-task-white-icon x-task-inline-icon"
 						onClick={this.handleExpandClick}/>
 				</div>
@@ -76,12 +77,15 @@ class QuickTask extends React.Component {
 	}
 
 	renderElementButtons() {
-		let {markElement} = this.props;
+		let {markElement, selectionElement} = this.props;
 		let items = icons.task_el || {};
 		let keys = Object.keys(items);
 		return keys.map((value) => {
 			let onlyOne;
 			if (value == 'mark' && markElement !== null) {
+				return;
+			}
+			if (value == 'selection' && selectionElement !== null) {
 				return;
 			}
 			let title = this.getElementButtonTitle(value);

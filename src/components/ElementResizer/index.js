@@ -50,7 +50,7 @@ export default class ElementResizer extends React.PureComponent {
 				b = sy;
 			break;
 		}
-		this.props.onChangeSize({l, r, t, b});
+		this.props.onChangeSize({l, r, t, b}, 'selection');
 	}
 
 	handleClick = (e) => {

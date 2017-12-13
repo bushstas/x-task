@@ -18,7 +18,7 @@ class VisualElements extends React.Component {
 	}
 
 	get elements() {
-		let {visualElements, currentElement} = this.props;
+		let {visualElements, currentElement, bent} = this.props;
 		if (visualElements instanceof Array) {
 			return visualElements.map((element, i) => {
 				let {type, data} = element;
@@ -32,13 +32,21 @@ class VisualElements extends React.Component {
 				}
 				switch (type) {
 					case 'mark': 
-						props.onLocChange = this.handleLocChange;
-						return (
-							<TaskMark {...props}/>
-						)
-
+						if (!bent) {
+							props.onLocChange = this.handleLocChange;
+							return (
+								<TaskMark {...props}/>
+							)
+						}
+					break;
 
 					case 'selection':
+						if (bent) {
+							let {markElement} = this.props;
+							props.bent = true;
+							props.markProps = visualElements[markElement];
+							props.markProps.data.loc = 4;
+						}
 						return (
 							<AreaSelection {...props}/>
 						)
