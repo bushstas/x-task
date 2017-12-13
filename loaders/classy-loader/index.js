@@ -208,7 +208,7 @@ const withClassNamesImport = (source) => {
 	return "import " + CLASSNAMES + " from 'classnames';" + source;
 }
 
-module.exports = function(source) {
+function ClassyLoader(source) {
 	if (!wasInited) {
 		init(this);
 	}	
@@ -218,3 +218,5 @@ module.exports = function(source) {
 
 	return removePrefixes(source);
 };
+
+module.exports = ClassyLoader;
