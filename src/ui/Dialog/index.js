@@ -15,17 +15,17 @@ export default class Dialog extends React.Component {
 		let {onClose, children, className, titleContent} = this.props;
 		return (
 			<div class=".box $className">
-				<div className=".mask" onClick={this.handleMaskClick}/>
-				<div className=".self">
-					<div className=".title">
+				<div class=".mask" onClick={this.handleMaskClick}/>
+				<div class=".self">
+					<div class=".title">
 						{this.title}
 						{titleContent}
 						
 						<Icon icon="close" 
 							onClick={onClose}
-							className=".close"/>
+							class=".close"/>
 					</div>
-					<div className=".content">
+					<div class=".content">
 						{children}
 					</div>
 				</div>
@@ -37,7 +37,7 @@ export default class Dialog extends React.Component {
 		let {title} = this.props;
 		return (
 			<div>
-				<span className=".logo">
+				<span class=".logo">
 					<Icon size="22" icon="logo"/>
 					{dict.logo}
 				</span>
