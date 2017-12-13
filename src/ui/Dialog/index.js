@@ -4,7 +4,7 @@ import {dict} from '../../utils/Dictionary';
 
 import './index.scss';
 
-with addedPrefix 'dialog';
+with addedPrefix '  dialog   ';
 
 export default class Dialog extends React.Component {
 	static defailtProps = {
