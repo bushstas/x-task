@@ -1,0 +1,25 @@
+.x-task-dialog-box.x-task-info-form {
+	.x-task-dialog-content {
+		padding: 20px 34px;
+
+
+		.x-task-form {
+			.x-task-form-field {
+				position: relative;
+				padding-left: 80px;
+
+				textarea {
+					height: 80px;
+					margin-bottom: 10px;
+				}
+				.x-task-icon {
+					position: absolute;
+					left: 15px;
+					top: 10px;
+					font-size: 40px;
+					color: #888;
+				}
+			}
+		}
+	}
+}

@@ -7,16 +7,32 @@ import Input from '../../ui/Input';
 import FormField from '../../ui/FormField';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
+import TaskInfoForm from '../TaskInfoForm';
 
 import './index.scss';
 
 class QuickTask extends React.Component {
 
 	render() {
-		let {formData, status, importance, type, action} = this.props;
+		let {
+			formData, 
+			status, 
+			importance, 
+			type, 
+			action, 
+			taskInfoShown,
+			info
+		} = this.props;
 	 	return (
 	 		<div className={classnames('x-task-quick-task', status)}>
 				<Form onChange={this.handleFormChanged}>
+					<FormField>
+						<Input 
+							name="url"
+							value={formData.url}
+							placeholder={dict.taskurl}/>
+					</FormField>
+
 					<FormField>
 						<Input 
 							name="title"
@@ -59,7 +75,9 @@ class QuickTask extends React.Component {
 
 					<Icon icon="task_info"
 						className="x-task-inline-icon"
-						title={dict.task_info}/>
+						title={dict.task_info}
+						data-param="taskInfoShown"
+						onClick={this.handleChange}/>
 				</div>
 
 				<div className="x-task-top-panel x-task-quick-task-panel">
@@ -72,6 +90,13 @@ class QuickTask extends React.Component {
 						classes="x-task-white-icon x-task-inline-icon"
 						onClick={this.handleExpandClick}/>
 				</div>
+
+				{taskInfoShown && (
+					<TaskInfoForm
+						formData={info}
+						onFormChange={this.handleInfoChange}
+						onClose={this.handleInfoClose}/>
+				)}
 			</div>
 		)
 	}
@@ -130,6 +155,12 @@ class QuickTask extends React.Component {
 		})
 	}
 
+	handleChange = ({target: {dataset: {param}}}) => {
+		if (param) {
+			this.props.dispatch('QUICKTASK_CHANGED', {[param]: true});
+		}
+	}
+
 	handleChangeParam = ({target: {dataset: {value, param}}}) => {
 		if (param && value) {
 			this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value});
@@ -146,6 +177,14 @@ class QuickTask extends React.Component {
 
 	handleExpandClick = () => {
 		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+	}
+
+	handleInfoClose = () => {
+		this.props.dispatch('QUICKTASK_CHANGED', {'taskInfoShown': false});
+	}
+
+	handleInfoChange = (info) => {
+		this.props.dispatch('QUICKTASK_CHANGED', {info});
 	}
 }
 

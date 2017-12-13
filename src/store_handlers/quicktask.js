@@ -10,7 +10,9 @@ const DEFAULT_STATE = {
   currentType: null,
   visualElement: null,
   markElement: null,
-  selectionElement: null
+  selectionElement: null,
+  taskInfoShown: false,
+  info: {}
 }
  
 const init = () => {
@@ -19,6 +21,10 @@ const init = () => {
  
 const activated = (state, status) => {
   return {status}
+}
+
+const changed = (state, data) => {
+  return data;
 }
 
 const param_changed = (state, data) => {
@@ -142,6 +148,7 @@ export default {
     init,
     activated,    
     param_changed,
+    changed,
     form_data_changed,
     visual_element_added,
     visual_element_changed,

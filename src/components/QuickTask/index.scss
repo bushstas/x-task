@@ -21,7 +21,7 @@
 		bottom: -442px;
 	}
 
-	.x-task-form {
+	& > .x-task-form {
 		position: absolute;
 		top: 48px;
 		left: 48px;
@@ -31,15 +31,16 @@
 		.x-task-form-field {
 			margin-bottom: 6px;
 		}
-		.x-task-form-field:nth-child(2) {
+		.x-task-form-field:nth-child(3) {
 			margin-bottom: 2px;
 		}
 		input[type="text"] {
 			border-color: #b7bece;
+			padding: 12px;
 		}
 		textarea {
 			border-color: #b7bece;
-			height: 347px;
+			height: 289px;
 		}
 	}
 
@@ -162,7 +163,7 @@
 
 		&.active {
 			background-color: #555555 !important;
-    		color: #e0e0e0 !important;
+    		color: #efefef !important;
     		border-color: #555555;
 		}
 	}
