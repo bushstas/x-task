@@ -51,9 +51,9 @@ const config = {
     resolve: {
         modules: ['node_modules', 'src']
     },
-    resolveLoader: {
-        modules: ['node_modules', 'loaders']
-    },
+    // resolveLoader: {
+    //     modules: ['node_modules', 'loaders']
+    // },
     module: {
         rules: [
             {

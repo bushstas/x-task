@@ -92,6 +92,35 @@ const getWithPrefix = (cl, prefix) => {
 	return getQuotedWrapped(prefix, cl);
 }
 
+const getWithVariables = (cl) => {
+	cl = clean(cl);
+	if (cl.indexOf('_CONDITION_') === 0) {
+		return getWithCondition(cl);
+	}
+	return cl;
+}
+
+const getWithCondition = (cl) => {
+	cl = cl.replace(/^_CONDITION_/, '').trim();
+	let cnd = getNextCondition();
+	if (cl[0] == '?' && cnd) {
+		let parts = clean(cl.split(':')),
+			value = cnd + '?' + getPart(parts[0]) + ':';
+		if (parts[1]) {
+			value += getPart(parts[1]);
+		} else {
+			value += '""';
+		}
+		return value;
+	}
+}
+
+const getNextCondition = () => {
+	conditionIndex++;
+	let c = conditions[conditionIndex];
+	return typeof c == 'string' ? c : null;
+}
+
 const getQuotedWrapped = (cl, cl2 = '') => {
 	let q = varsUsed ? '"' : '',
 		d = !!cl ? delimiter : '';
@@ -108,29 +137,10 @@ const getPart = (cl) => {
 		return getWithPrefix(cl, localPrfx);
 	}
 	if (c == '#') {
-		return getWithPrefix(cl, globalPrfx);	
+		return getWithPrefix(cl, globalPrfx);
 	}
 	if (c == '$') {
-		cl = clean(cl);
-		if (cl[0] == '_' && cl.indexOf('_CONDITION_') == 0) {
-			cl = cl.replace(/^_CONDITION_/, '').trim();
-			if (cl[0] == '?') {									
-				conditionIndex++;
-				if (typeof conditions[conditionIndex] == 'string') {
-					cl = clean(cl);
-					let clp = cl.split(':'),
-						condition = conditions[conditionIndex],
-						value = condition + '?' + getPart(clp[0]) + ':';
-					if (clp[1]) {
-						value += getPart(clp[1]);
-					} else {
-						value += null;
-					}
-					return value;
-				}
-			}
-		}
-		return cl;
+		return getWithVariables(cl);
 	}
 	
 	return getQuotedWrapped(cl);
