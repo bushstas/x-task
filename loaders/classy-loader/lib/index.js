@@ -16,7 +16,9 @@ let conditionIndex,
 	hasAddedPrefix,
 	localPrfx,
 	globalPrfx,
-	varsUsed;
+	varsUsed,
+	parseMode = 'code',
+	varsWereUsed;
 
 
 let wasInited = false;
@@ -42,8 +44,12 @@ const getParts = (source, quote) => {
 	return parts;
 }
 
-const getRegex = (attr) => {
+const getPrefixesRegex = (attr) => {
 	return new RegExp('\\bwith\\s+' + attr + '\\s+[\'"] *([a-z][a-z\\-0-9]*) *[\'"];*', 'i');
+}
+
+const getAttributeRegex = () => {
+	return new RegExp('\\b' + attributeName + "\\s*=\\s*[\"']");
 }
 
 const parsePrefixes = (source) => {
@@ -51,7 +57,7 @@ const parsePrefixes = (source) => {
 	hasAddedPrefix = false;
 	globalPrfx = localPrfx = globalPrefix;
 
-	let matches = source.match(getRegex(PREFIX_ATTR));
+	let matches = source.match(getPrefixesRegex(PREFIX_ATTR));
 	if (matches) {
 		let lp = matches[1];
 		if (lp) {
@@ -60,7 +66,7 @@ const parsePrefixes = (source) => {
 		}
 	}
 
-	matches = source.match(getRegex(ADDED_PREFIX_ATTR));
+	matches = source.match(getPrefixesRegex(ADDED_PREFIX_ATTR));
 	if (matches) {
 		let ap = matches[1];
 		if (ap) {
@@ -72,10 +78,10 @@ const parsePrefixes = (source) => {
 
 const removePrefixes = (source) => {
 	if (hasPrefix) {
-		source = source.replace(getRegex(PREFIX_ATTR), '');
+		source = source.replace(getPrefixesRegex(PREFIX_ATTR), '');
 	}
 	if (hasAddedPrefix) {
-		source = source.replace(getRegex(ADDED_PREFIX_ATTR), '');	
+		source = source.replace(getPrefixesRegex(ADDED_PREFIX_ATTR), '');	
 	}
 	return source;
 }
@@ -87,17 +93,22 @@ const clean = (cl, count = 1) => {
 const getWithPrefix = (cl, prefix) => {
 	cl = clean(cl);
 	if (cl == 'self') {
-		return getQuotedWrapped(prefix);
+		return getWrappedWithQuotes(prefix);
 	}
-	return getQuotedWrapped(prefix, cl);
+	return getWrappedWithQuotes(prefix, cl);
 }
 
-const getWithVariables = (cl) => {
+const getVariables = (cl) => {
 	cl = clean(cl);
 	if (cl.indexOf('_CONDITION_') === 0) {
 		return getWithCondition(cl);
 	}
 	return cl;
+}
+
+const getVariablesWithPrefix = (cl, prefix) => {
+	cl = clean(cl);
+	return getWrappedWithQuotes(prefix, '') + '+' + getVariables(cl);
 }
 
 const getWithCondition = (cl) => {
@@ -121,36 +132,50 @@ const getNextCondition = () => {
 	return typeof c == 'string' ? c : null;
 }
 
-const getQuotedWrapped = (cl, cl2 = '') => {
+const getWrappedWithQuotes = (cl, cl2 = null) => {
 	let q = varsUsed ? '"' : '',
 		d = !!cl ? delimiter : '';
-	if (!cl2) {
+	if (cl2 === null) {
 		return q + cl + q;
 	}	
 	return q + cl + d + cl2 + q;
 }
 
-
 const getPart = (cl) => {
-	let c = cl[0];	
-	if (c == '.') {
-		return getWithPrefix(cl, localPrfx);
+	let c = cl[0],
+		c2 = cl[1];
+	switch (c) {
+		case '.':
+		case '#': {
+			let p = c == '.' ? localPrfx : globalPrfx;
+			if (c2 == '$') {
+				return getVariablesWithPrefix(cl, p);
+			}
+			return getWithPrefix(cl, p);
+		}
+
+		case '$':
+			return getVariables(cl);
 	}
-	if (c == '#') {
-		return getWithPrefix(cl, globalPrfx);
-	}
-	if (c == '$') {
-		return getWithVariables(cl);
-	}
-	
-	return getQuotedWrapped(cl);
+	return getWrappedWithQuotes(cl);	
 }
 
-const parse = (source, quote) => {
+const getAllMatches = (str, reg, idx = 0) => {
+	let found, matches = [];
+	while (found = reg.exec(str)) {
+	    matches.push(found[idx]);
+	    reg.lastIndex = found.index + found[0].length;
+	}
+	return matches;
+}
+
+const parse = (source) => {
+	return parseWithQuote(parseWithQuote(source, '"'), "'");
+}
+ 
+const parseWithQuote = (source, quote) => {
 	let parts = getParts(source, quote);
-	if (parts instanceof Array) {
-		let varsWereUsed;
-		
+	if (parts instanceof Array) {	
 		for (let i = 1; i < parts.length; i++) {
 			let q = quote;
 			let p = parts[i],			
@@ -158,14 +183,9 @@ const parse = (source, quote) => {
 				value = ps[0];
 
 			if (typeof value == 'string') {
-				conditions = [];
-				conditionIndex = -1;
+				conditionIndex = -1;				
+				conditions = getAllMatches(value, /\$\(([^\)]+)\)/g, 1);
 				
-				let found, reg = /\$\(([^\)]+)\)/g;
-				while (found = reg.exec(value)) {
-				    conditions.push(found[1]);
-				    reg.lastIndex = found.index + found[0].length;
-				}
 				if (conditions.length > 0) {
 					value = value.replace(reg, '$_CONDITION_');
 				}
@@ -199,34 +219,62 @@ const parse = (source, quote) => {
 					let q2 = q;
 					if (varsUsed) {
 						className += ')';
-						q = '{';
-						q2 = '}';
+						if (parseMode == 'tag') {
+							q = '{';
+							q2 = '}';
+						} else {
+							q = '';
+							q2 = '';
+						}
 					}
 					parts[i] = 'className=' + q + className + q2 + ps;
 				}
 			}
 		}
 		source = parts.join('');
-		if (varsWereUsed) {
-			source = withClassNamesImport(source);
-		}
 	}
 	return source;
 }
 
-const withClassNamesImport = (source) => {
+const withImportClassMerger = (source) => {
 	return "import " + CLASSNAMES + " from 'classy-loader/classy';" + source;
 }
 
 function ClassyLoader(source) {
 	if (!wasInited) {
 		init(this);
-	}	
-	parsePrefixes(source);	
-	source = parse(source, '"');
-	source = parse(source, "'");
+	}
+	if (!(getAttributeRegex()).test(source)) {
+		return source;
+	}
+	parsePrefixes(source);
+	varsWereUsed = false;
+	let regex = /<[a-z][\w]*\s+[^>]+>/gi;
+	let matches = getAllMatches(source, regex);
+	if (matches.length == 0) {
+		source = parse(source);
+	} else {
+		let parts = source.split(regex);
+		source = '';
+		let index = 0;
+		for (let part of parts) {
+			parseMode = 'code';
+			part = parse(part);
+			source += part;
 
-	return removePrefixes(source);
+			if (typeof matches[index] == 'string') {
+				parseMode = 'tag';
+				source += parse(matches[index]);
+			}
+			index++;
+		}
+	}
+	if (varsWereUsed) {
+		source = withImportClassMerger(source);
+	}
+	source = removePrefixes(source);
+	//console.log(source)
+	return source;
 };
 
 module.exports = ClassyLoader;

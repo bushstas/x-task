@@ -85,6 +85,7 @@ const config = {
                         loader: 'classy-loader',
                         options: {
                             attributeName: 'class',
+                            extraAttributeName: 'classes',
                             globalPrefix: 'x-task'
                         }
                     }

@@ -22,7 +22,8 @@ Store.addHandlers({
 });
 
 let box = document.createElement('div');
-box.class='.main-box';
+let classes = '.main-box';
+box.className = classes;
 document.body.appendChild(box);
 
 load(dict, user).then(() => {
