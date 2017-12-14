@@ -4,7 +4,7 @@ import './index.scss';
 
 export default function Task({data}) {
 	return (
-		<div className="x-task-task">
+		<div class=".task">
 			{data.title}
 		</div>
 	)

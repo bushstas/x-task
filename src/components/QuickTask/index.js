@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import {dict, icons} from '../../utils/Dictionary';
 import Button from '../../ui/Button';
 import Form from '../../ui/Form';
@@ -10,6 +9,8 @@ import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
 
 import './index.scss';
+
+with addedPrefix 'quick-task';
 
 class QuickTask extends React.Component {
 
@@ -23,8 +24,17 @@ class QuickTask extends React.Component {
 			taskInfoShown,
 			info
 		} = this.props;
+		let classes;
+		switch (status) {
+			case 'active':
+				classes = '.active';
+			break;
+			case 'collapsed':
+				classes = '.collapsed';
+			break;
+		}
 	 	return (
-	 		<div className={classnames('x-task-quick-task', status)}>
+	 		<div class=".self $classes">
 				<Form onChange={this.handleFormChanged}>
 					<FormField>
 						<Input 
@@ -52,42 +62,42 @@ class QuickTask extends React.Component {
 					</Button>
 				</Form>
 
-				<div className="x-task-importance-panel x-task-quick-task-panel" onClick={this.handleChangeParam}>					
+				<div class=".importance-panel .panel" onClick={this.handleChangeParam}>					
 					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
 				</div>
 
-				<div className="x-task-type-panel x-task-quick-task-panel" onClick={this.handleChangeParam}>
+				<div class=".type-panel .panel" onClick={this.handleChangeParam}>
 					{this.renderButtons(icons.task_type, type, 'type', 'category')}
 				</div>
 				
-				<div className="x-task-action-panel x-task-quick-task-panel" onClick={this.handleChangeParam}>
+				<div class=".action-panel .panel" onClick={this.handleChangeParam}>
 					{this.renderButtons(icons.task_act, action, 'action', 'action')}
 				</div>
 
-				<div className="x-task-element-panel x-task-quick-task-panel">
+				<div class=".element-panel .panel">
 					{this.renderElementButtons()}
 				</div>
 
-				<div className="x-task-bottom-panel x-task-quick-task-panel">
+				<div class=".bottom-panel .panel">
 					<Icon icon="assign"
-						className="x-task-inline-icon"
+						class=".inline-icon"
 						title={dict.assign_executors}/>
 
 					<Icon icon="task_info"
-						className="x-task-inline-icon"
+						class=".inline-icon"
 						title={dict.task_info}
 						data-param="taskInfoShown"
 						onClick={this.handleChange}/>
 				</div>
 
-				<div className="x-task-top-panel x-task-quick-task-panel">
+				<div class=".top-panel .panel">
 					<Icon icon="up"
-						classes="x-task-white-icon x-task-panel-up x-task-inline-icon"
+						classes=".white-icon .panel-up .inline-icon"
 						onClick={this.handleExpandClick}/>
 
 					<Icon icon="close"
 						title={dict.cancel_task}
-						classes="x-task-white-icon x-task-inline-icon"
+						classes=".white-icon .inline-icon"
 						onClick={this.handleExpandClick}/>
 				</div>
 
@@ -116,7 +126,7 @@ class QuickTask extends React.Component {
 			let title = this.getElementButtonTitle(value);
 			return  (
 				<Icon 
-					classes="x-task-white-icon x-task-inline-icon"
+					classes=".white-icon .inline-icon"
 					data-type={value}
 					title={title}
 					key={value}
@@ -144,7 +154,7 @@ class QuickTask extends React.Component {
 		return keys.map((value) => {
 			return  (
 				<Icon 
-					classes={classnames(param == value ? 'active' : '')}
+					classes="$param==value ?.active"
 					data-param={paramName}
 					data-value={value}
 					title={dict[title] + ': ' + dict[value]}

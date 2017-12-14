@@ -81,18 +81,6 @@ body {
 	input:focus::placeholder {
 		color: #d1d1d1;
 	}
-	.mt10 {
-		margin-top: 10px;
-	}
-	.mt15 {
-		margin-top: 15px;
-	}
-	.mt20 {
-		margin-top: 20px;
-	}
-	.pt10 {
-		padding-top: 10px;
-	}
 	
 }
 
@@ -104,4 +92,16 @@ body {
 }
 ..fr {
 	float: right;
+}
+..mt10 {
+	margin-top: 10px;
+}
+..mt15 {
+	margin-top: 15px;
+}
+..mt20 {
+	margin-top: 20px;
+}
+..pt10 {
+	padding-top: 10px;
 }

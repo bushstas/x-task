@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 export default class DraggableElement extends React.PureComponent {
 
@@ -32,7 +31,7 @@ export default class DraggableElement extends React.PureComponent {
 		}
 	 	return (
 	 		<div ref="element" 
-	 			className={classnames(classes, locked ? 'x-task-locked' : '')}
+	 			class="$classes $locked?.locked"
 	 			style={style}
 	 			onWheel={onWheel}
 	 			onMouseDown={this.handleMouseDown}>

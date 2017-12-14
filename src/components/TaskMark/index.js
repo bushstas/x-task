@@ -28,18 +28,13 @@ export default class TaskMark extends React.Component {
 			active,
 			onClick
 		} = this.props;
+
+		let $locClassName = 'x-task-loc' + loc;
+		let $colorClassName = 'x-task-color' + importance;
 	 	
-	 	let className = classnames(
-	 		'x-task-mark',
-	 		classes,
-	 		'x-task-loc' + loc,
-	 		'x-task-color-' + importance,
-	 		active ? 'active' : '',
-	 		fixed ? 'x-task-fixed' : ''
-	 	);
 	 	return (
 	 		<VisualElement 
-	 			classes={className}
+	 			classes=".mark $classes $locClassName $colorClassName $active?.active $fixed?.fixed"
 	 			index={index}
 	 			mx={mx}
 	 			my={my}

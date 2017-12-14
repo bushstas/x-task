@@ -1,4 +1,4 @@
-.x-task-action-buttons {
+..action-buttons {
 	position: absolute;
 	left: 0;
 	right: 0;
@@ -8,10 +8,10 @@
 	padding: 10px 20px;
 	border-top: 1px solid #ddd;
 
-	.x-task-button {
+	..button {
 		float: right;
 
-		&.x-task-cancel-button {
+		&..cancel-button {
 			float: left;
 		}
 	}

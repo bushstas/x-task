@@ -5,7 +5,7 @@ export default function Alert({title, children, onClose}) {
 	return (
 		 <Dialog title={title}
             onClose={onClose}
-            className="x-task-notification-dialog">
+            classes=".notification-dialog">
             {children}
         </Dialog>
 	)

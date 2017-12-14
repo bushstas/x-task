@@ -26,7 +26,7 @@ class Projects extends React.Component {
 			]
 		}
 	 	return (
-	 		<Loader fetching={fetching} classes="x-task-projects">
+	 		<Loader fetching={fetching} classes=".projects">
 				{this.table}
 				{this.actionButtons}
 			</Loader>
@@ -78,7 +78,7 @@ class Projects extends React.Component {
 				row.push(
 					<Icon 
 						icon="edit"
-						classes="x-task-edit-icon x-task-button-icon" 
+						classes=".edit-icon .button-icon" 
 						data-index={index}
 						onClick={this.handleEditProjectClick}/>
 				);
@@ -89,7 +89,7 @@ class Projects extends React.Component {
 					{this.renderActionIcon(index, p)}
 				</div>,
 				p.homepage || (
-					<span className="x-task-gray">
+					<span class=".gray">
 						{dict.not_available}
 					</span>
 				),
@@ -106,14 +106,14 @@ class Projects extends React.Component {
 		return data.current ? (
 			<Icon 
 				icon="activate"
-				classes="x-task-activate-icon x-task-button-icon" 
+				classes=".activate-icon .button-icon" 
 				style={{opacity: 0.2}}
 				title={dict.current_project}/>
 		) : (
 		inProject(data.token) ? (
 			<Icon 
 				icon="activate"
-				classes="x-task-activate-icon x-task-button-icon"
+				classes=".activate-icon .button-icon"
 				title={dict.activate_project}
 				data-index={index}
 				onClick={this.handleActivateButtonClick}/>
@@ -125,7 +125,7 @@ class Projects extends React.Component {
 	renderRequestAccessIcon(index, data) {
 		let props = {
 			icon: 'access',
-			classes: 'x-task-activate-icon x-task-button-icon'
+			classes: '.activate-icon .button-icon'
 		};
 		if (data.requested == 1) {
 			props.title = dict.access_requested;
@@ -160,7 +160,7 @@ class Projects extends React.Component {
 					{dict.save}
 				</Button>
 
-				<Button classes="x-task-cancel-button" data-value="cancel" width="100">
+				<Button classes=".cancel-button" data-value="cancel" width="100">
 					{dict.cancel}
 				</Button>
 			</ActionButtons>

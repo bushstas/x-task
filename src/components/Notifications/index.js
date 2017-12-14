@@ -7,7 +7,7 @@ import './index.scss';
 class Notifications extends React.Component {
 	render() {
 		return (
-			<div className="x-task-notifications">
+			<div class=".notifications">
 				{this.messages}
 			</div>
 		)	
@@ -17,8 +17,9 @@ class Notifications extends React.Component {
 		let {items} = this.props;
 		if (items instanceof Array) {
 			return items.map((item, i) => {
+				let {classes} = item;
 				return (
-					<Notification key={i} classes={item.classes}>
+					<Notification key={i} classes="$classes">
 						{item.message}
 					</Notification>
 				)

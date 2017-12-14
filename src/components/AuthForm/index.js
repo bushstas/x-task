@@ -22,7 +22,7 @@ export default class AuthForm extends React.Component {
 			 <Dialog 
 			 	title={mode == 'r' ? dict.registration : dict.auth}
 	            onClose={onClose}
-	            classes="x-task-narrow-dialog">	            
+	            classes=".dialog-narrow">	            
 	            
 	            <Form 
 	            	onChange={this.handleFormChange}
@@ -34,44 +34,44 @@ export default class AuthForm extends React.Component {
 
 	            	<FormField 
 	            		caption={dict.password}
-	            		classes="mt10">
+	            		classes=".mt10">
 	            		<Input type="password" name="password" value={formData.password}/>
 	            	</FormField>
 
 	            	<FormField 
 	            		caption={dict.password2} 
-	            		classes="mt10"
+	            		classes=".mt10"
 	            		isPresent={mode == 'r'}>
 	            		<Input type="password" name="password2" value={formData.password2}/>
 	            	</FormField>
 
 	            	<FormField 
 	            		caption={dict.name}
-	            		classes="mt10"
+	            		classes=".mt10"
 	            		isPresent={mode == 'r'}>
 	            		<Input name="name" value={formData.name}/>
 	            	</FormField>
 
 	            	<FormField 
 	            		caption={dict.email}
-	            		classes="mt10"
+	            		classes=".mt10"
 	            		isPresent={mode == 'r'}>
 	            		<Input name="email" value={formData.email}/>
 	            	</FormField>
 
 	            	<FormField 
 	            		caption={dict.invitation}
-	            		classes="mt10"
+	            		classes=".mt10"
 	            		isPresent={mode == 'r'}>
 	            		<Input name="code" value={formData.code}/>
 	            	</FormField>
 
-	            	<FormSubmit classes="mt20 x-task-fr">
+	            	<FormSubmit classes=".mt20 .fr">
 	            		{mode == 'r' ? dict.register : dict.enter}
 	            	</FormSubmit>
 
 	            	<Button 
-	            		classes="x-task-white-button mt20"
+	            		classes=".white-button .mt20"
 	            		onClick={this.changeModeButtonClick}>
 	            		{mode == 'r' ? dict.enter : dict.registration}
 	            	</Button>

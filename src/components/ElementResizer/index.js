@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import DraggableElement from '../DraggableElement';
 
 import './index.scss';
@@ -19,14 +18,14 @@ export default class ElementResizer extends React.PureComponent {
 	}
 
 	render() {
-		let {onClick, position} = this.props;
+		let {onClick, position, classes} = this.props;
 		let {dragged} = this.state;
 	 	return (
 	 		<DraggableElement
 	 			onMove={this.handleMove}
 	 			onClick={this.handleClick}
 	 			onDragEnd={this.handleDragEnd}
-	 			classes={classnames('x-task-element-resizer', 'x-task-resizer-' + position, dragged ? 'x-task-dragged' : '')}/>
+	 			classes=".element-resizer $dragged?.dragged $classes"/>
 		)
 	}
 

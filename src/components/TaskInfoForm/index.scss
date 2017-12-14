@@ -1,10 +1,10 @@
-.x-task-dialog-box.x-task-info-form {
-	.x-task-dialog-content {
+..dialog-box..info-form {
+	..dialog-content {
 		padding: 20px 34px;
 
 
-		.x-task-form {
-			.x-task-form-field {
+		..form {
+			..form-field {
 				position: relative;
 				padding-left: 80px;
 
@@ -12,7 +12,7 @@
 					height: 80px;
 					margin-bottom: 10px;
 				}
-				.x-task-icon {
+				..icon {
 					position: absolute;
 					left: 15px;
 					top: 10px;

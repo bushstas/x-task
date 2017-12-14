@@ -1,4 +1,4 @@
-.x-task-create-task-button {
+..create-task-button {
 	position: fixed;
 	z-index: 9990;
 	bottom: 11px;
@@ -13,7 +13,7 @@
 		color: #111;
 	}
 
-	.x-task-icon {
+	..icon {
 		font-size: 26px;
 		line-height: 26px;
 		float: left;

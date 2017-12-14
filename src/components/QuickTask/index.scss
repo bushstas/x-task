@@ -1,4 +1,6 @@
-.x-task-quick-task {
+.with.addedPrefix.quick-task
+
+..self {
 	position: fixed;
     left: 50%;
     width: 780px;
@@ -12,26 +14,26 @@
     user-select: none;
     height: 484px;
 
-	&.collapsed,
-	&.active {
+	&..collapsed,
+	&..active {
 		display: block;
 	}
 
-	&.collapsed {
+	&..collapsed {
 		bottom: -442px;
 	}
 
-	& > .x-task-form {
+	& > ...form {
 		position: absolute;
 		top: 48px;
 		left: 48px;
 		right: 90px;
 		bottom: 0;
 		
-		.x-task-form-field {
+		...form-field {
 			margin-bottom: 6px;
 		}
-		.x-task-form-field:nth-child(3) {
+		...form-field:nth-child(3) {
 			margin-bottom: 2px;
 		}
 		input[type="text"] {
@@ -44,25 +46,25 @@
 		}
 	}
 
-	.x-task-importance-panel {
+	..importance-panel {
 		position: absolute;
 		top: 48px;
 		left: 6px;
 	}
 
-	.x-task-type-panel {
+	..type-panel {
 		position: absolute;
 		top: 48px;
 		right: 48px;
 	}
 
-	.x-task-action-panel {
+	..action-panel {
 		position: absolute;
 		top: 48px;
 		right: 6px;
 	}
 
-	.x-task-element-panel {
+	..element-panel {
 		position: absolute;
     	top: -4px;
     	left: -1px;
@@ -73,7 +75,7 @@
     	z-index: 1;
 	}
 
-	.x-task-top-panel {
+	..top-panel {
 		position: absolute;
 		top: -4px;
 		right: -1px;
@@ -83,22 +85,22 @@
 		z-index: 2;
 	}
 
-	&.collapsed {
-		.x-task-icon {
-			&.x-task-panel-up {
+	&..collapsed {
+		...icon {
+			&..panel-up {
 				display: inline-block !important;
 			}
 		}
 	}
 
-	.x-task-bottom-panel {
+	..bottom-panel {
 		position: absolute;
 		bottom: 5px;
 		left: 48px;
 		width: 300px;
 	}
 
-	.x-task-button {
+	...button {
 		width: 170px;
 	    line-height: 35px;
 	    height: 36px;
@@ -116,8 +118,8 @@
 	
 }
 
-.x-task-quick-task-panel {
-	.x-task-icon {
+..panel {
+	...icon {
 		width: 36px;
 	    height: 36px;
 	    font-size: 24px;
@@ -132,27 +134,27 @@
 	    border: 1px solid #cecece;
 	    box-sizing: border-box;
 
-		&.x-task-panel-up {
+		&..panel-up {
 			display: none !important;
 			float: right;
 			font-size: 30px;
 		}
 
-		&.x-task-inline-icon {
+		&..inline-icon {
 			display: inline-block;
 			margin-bottom: 0;
 			margin-right: 3px;
 			vertical-align: top;
 		}
 
-		&.x-task-white-icon {
+		&..white-icon {
 			background-color: transparent !important;
 			color: #ddd;
 			border: 0;
 			&:hover {
 				color: #fff;
 			}
-			&.active {
+			&...active {
 				background-color: #222 !important;
 			}
 		}
@@ -161,7 +163,7 @@
 			background-color: #ffffff;
 		}
 
-		&.active {
+		&..active {
 			background-color: #555555 !important;
     		color: #efefef !important;
     		border-color: #555555;

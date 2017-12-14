@@ -1,4 +1,4 @@
-.x-task-area-selection {
+..area-selection {
 	position: absolute;
 	left: 50%;
 	width: 150px;
@@ -17,7 +17,7 @@
 	    border-radius: 3px;
 	    z-index: 1;
 	}
-	.x-task-mark {
+	..mark {
 		left: -45px !important;
 		top: -45px !important;
 		margin-left: 0 !important;

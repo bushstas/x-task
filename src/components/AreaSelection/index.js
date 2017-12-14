@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import VisualElement from '../VisualElement';
 import ElementResizer from '../ElementResizer';
 import TaskMark from '../TaskMark';
@@ -35,16 +34,10 @@ export default class AreaSelection extends React.Component {
 			markProps
 		} = this.props;
 
-	 	let className = classnames(
-	 		'x-task-area-selection',
-	 		classes,
-	 		active ? 'active' : '',
-	 		fixed ? 'x-task-fixed' : ''
-	 	);
 	 	return (
 	 		<VisualElement 
 	 			ref="element"
-	 			classes={className}
+	 			classes=".area-selection $classes $active?.active $fixed?.fixed"
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
@@ -56,10 +49,10 @@ export default class AreaSelection extends React.Component {
 	 			onWheel={this.handleWheel}
 	 			onChangeCoords={onChangeCoords}
 	 			onChangeSize={onChangeSize}>
-	 			<ElementResizer position="t"/>
-	 			<ElementResizer position="b"/>
-	 			<ElementResizer position="l"/>
-	 			<ElementResizer position="r"/>
+	 			<ElementResizer position="t" classes=".resizer-t"/>
+	 			<ElementResizer position="b" classes=".resizer-b"/>
+	 			<ElementResizer position="l" classes=".resizer-l"/>
+	 			<ElementResizer position="r" classes=".resizer-r"/>
 	 			{bent && <TaskMark {...markProps}/>}
 	 		</VisualElement>
 

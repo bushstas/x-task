@@ -3,13 +3,18 @@ var {getOptions} = require('loader-utils');
 const CLASSNAMES = '__classy';
 const DELIMITER = '-';
 const ATTRIBUTE_NAME = 'class';
-const EXTRA_ATTRIBUTE_NAME = '';
+const EXTRA_ATTRIBUTE_NAME = 'classes';
 const GLOBAL_PREFIX = '';
 const PREFIX_ATTR = 'prefix';
 const ADDED_PREFIX_ATTR = 'addedPrefix';
 const TAG_REGEX = /<[a-z][\w]*\s+[^>]+>/gi;
+const TAG_SPLIT_REGEX = /<[a-z][\w]*\s+[^>]+>/i;
 const CONDITIONS_REGEX = /\$\(([^\)]+)\)/g;
 const CONDITION_MARK = '_CONDITION_';
+const CSS_GLOBAL_PREFIX_REGEX = /\.{3}([\w\-]+)/gi;
+const CSS_LOCAL_PREFIX_REGEX = /\.{2}([\w\-]+)/gi;
+const CSS_LOCAL_PREFIX_SPLIT_REGEX = /\.{2}[\w\-]+/i;
+const CSS_GLOBAL_PREFIX_SPLIT_REGEX = /\.{3}[\w\-]+/i;
 
 let obfuscationIndex = {},
 	obfuscationMap = {},
@@ -31,6 +36,8 @@ let obfuscationIndex = {},
 	prefixesParced,
 	isExtraAttr,
 	currentParser,
+	currentSign,
+	currentQuote,
 	wasInited = {
 		js: false,
 		css: false
@@ -61,13 +68,16 @@ const init = (parser, _this) => {
 	obfuscation = o;
 }
 
-const getParts = (source, quote) => {
-	let r = new RegExp('\\b' + currentAttrName + "\\s*=\\s*" + quote, 'g');
-	let parts = source.split(r);
+const getParts = (source) => {	
+	let parts = source.split(getRegex());
 	if (!parts[1]) {
 		return;
 	}
 	return parts;
+}
+
+const getRegex = (quote = currentQuote) => {
+	return new RegExp('\\b' + currentAttrName + "\\s*" + currentSign + "\\s*" + quote, 'g');
 }
 
 const getPrefixesRegex = (attr) => {
@@ -75,7 +85,7 @@ const getPrefixesRegex = (attr) => {
 }
 
 const getAttributeRegex = () => {
-	return new RegExp('\\b' + currentAttrName + "\\s*=\\s*[\"']");
+	return new RegExp('\\b' + currentAttrName + "\\s*" + currentSign + "\\s*[\"']");
 }
 
 const parsePrefixes = (source) => {
@@ -208,7 +218,8 @@ const parse = (source) => {
 }
  
 const parseWithQuote = (source, quote) => {
-	let parts = getParts(source, quote);
+	currentQuote = quote;
+	let parts = getParts(source);
 	if (parts instanceof Array) {	
 		for (let i = 1; i < parts.length; i++) {
 			let q = quote;
@@ -262,7 +273,7 @@ const parseWithQuote = (source, quote) => {
 							q2 = '';
 						}
 					}
-					parts[i] = getRealAttributeName() + '=' + q + className + q2 + ps;
+					parts[i] = getRealAttributeName() + currentSign + q + className + q2 + ps;
 				}
 			}
 		}
@@ -280,15 +291,19 @@ const withImportClassMerger = (source) => {
 }
 
 const generateClassName = () => {
-	let text = "";
-	let possible = "abcdefghijklmnopqrstuvwxyz0123456789";
-	for (let i = 0; i < 8; i++) {
+	let possible = 'abcdefghijklmnopqrstuvwxyz';
+	let text = possible.charAt(Math.floor(Math.random() * possible.length));
+	possible += '0123456789';	
+	for (let i = 0; i < 6; i++) {
 	  text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
 	return text;
 }
 
 const getObfuscatedClassName = (className) => {
+	if (typeof obfuscationMap[className] == 'string') {
+		return obfuscationMap[className];
+	}
 	let randomClassName;
 	while (true) {
 		randomClassName = generateClassName();
@@ -315,7 +330,7 @@ const parseWithAttribute = (name, source) => {
 		parseMode = 'code';		
 		source = parse(source);
 	} else {
-		let parts = source.split(TAG_REGEX);
+		let parts = source.split(TAG_SPLIT_REGEX);
 		source = '';
 		let index = 0;
 		for (let part of parts) {
@@ -336,6 +351,7 @@ const parseJsSource = (source, _this) => {
 	varsWereUsed = false;
 	prefixesParced = false;
 	isExtraAttr = false;
+	currentSign = '=';
 
 	if (!wasInited[currentParser]) {
 		init(currentParser, _this);
@@ -345,6 +361,10 @@ const parseJsSource = (source, _this) => {
 	if (!!extraAttributeName && typeof extraAttributeName == 'string') {
 		isExtraAttr = true;
 		source = parseWithAttribute(extraAttributeName, source);
+		currentSign = ':';
+		if (source.match(getRegex("'")) || source.match(getRegex('"'))) {
+			source = parseWithAttribute(extraAttributeName, source);
+		}
 	}
 	if (varsWereUsed) {
 		source = withImportClassMerger(source);
@@ -384,9 +404,9 @@ const parseCssPrefixes = (source) => {
 	}
 }
 
-const getCssClassPrefix = (prefix) => {
+const getCssClassPrefix = (prefix, className) => {
 	let d = delimiter;
-	if (!prefix) {
+	if (!prefix || !className) {
 		d = '';
 	}
 	return prefix  + d;
@@ -402,16 +422,38 @@ const removeCssPrefixes = (source) => {
 	return source;
 }
 
+const parseCssClasses = (source, prefix, matchRegex, splitRegex) => {
+	let matches = getAllMatches(source, matchRegex, 1);
+	if (matches.length > 0) {
+		let parts = source.split(splitRegex);
+		source = '';
+		let index = 0;
+		for (let part of parts) {
+			source += part;
+			if (typeof matches[index] == 'string') {
+				let m = matches[index] == 'self' ? '' : matches[index];
+				let className = getCssClassPrefix(prefix, m) + m;
+				if (obfuscation) {
+					className = getObfuscatedClassName(className);
+				}
+				source += '.' + className;
+			}
+			index++;
+		}
+
+	}
+	return source;
+}
+
 const parseCssSource = (source, _this) => {
 	if (!wasInited[currentParser]) {
 		init(currentParser, _this);
 	}
 	if (source.match(/\.{2,}[\w\-]+/i)) {
 		parseCssPrefixes(source);
-		source = source.replace(/\.{3}([\w\-]+)/gi, "." + getCssClassPrefix(globalPrfx) + "$1")
-					   .replace(/\.{2}([\w\-]+)/gi, "." + getCssClassPrefix(localPrfx) + "$1");
+		source = parseCssClasses(source, globalPrfx, CSS_GLOBAL_PREFIX_REGEX, CSS_GLOBAL_PREFIX_SPLIT_REGEX);
+		source = parseCssClasses(source, localPrfx, CSS_LOCAL_PREFIX_REGEX, CSS_LOCAL_PREFIX_SPLIT_REGEX);
 	}
-
 	return removeCssPrefixes(source);
 }
 
