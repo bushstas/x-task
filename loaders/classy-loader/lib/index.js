@@ -1,6 +1,6 @@
 var {getOptions} = require('loader-utils');
 
-const CLASSNAMES = '_cn_';
+const CLASSNAMES = 'classy';
 const DELIMITER = '-';
 const ATTR = 'class';
 const GLOBAL_PREFIX = '';
@@ -205,7 +205,7 @@ const parse = (source, quote) => {
 }
 
 const withClassNamesImport = (source) => {
-	return "import " + CLASSNAMES + " from 'classnames';" + source;
+	return "import " + CLASSNAMES + " from 'classy-loader/classy';" + source;
 }
 
 function ClassyLoader(source) {
