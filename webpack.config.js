@@ -86,7 +86,9 @@ const config = {
                         options: {
                             attributeName: 'class',
                             extraAttributeName: 'classes',
-                            globalPrefix: 'x-task'
+                            globalPrefix: 'x-task',
+                            parser: 'js',
+                            obfuscation: true
                         }
                     }
                 ]
@@ -121,7 +123,15 @@ const config = {
                         use: [
                             'css-loader?root=' + pr(__dirname, 'src'), 
                             'resolve-url-loader', 
-                            'sass-loader'
+                            'sass-loader',
+                            {
+                                loader: 'classy-loader',
+                                options: {
+                                    globalPrefix: 'x-task',
+                                    parser: 'css',
+                                    obfuscation: true
+                                }
+                            }
                         ]
                     }
                 ) : `style-loader!css-loader?root=${pr(__dirname, 'src')}!resolve-url-loader!sass-loader`

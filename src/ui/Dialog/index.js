@@ -13,9 +13,8 @@ export default class Dialog extends React.Component {
 
 	render() {
 		let {onClose, children, classes, titleContent} = this.props;
-		let a = 'fucking-shit';
 		return (
-			<div class=".box $classes .$a ..$a">
+			<div class=".box $classes">
 				<div class=".mask" onClick={this.handleMaskClick}/>
 				<div class=".self">
 					<div class=".title">

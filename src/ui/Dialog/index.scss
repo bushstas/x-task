@@ -1,4 +1,6 @@
-.x-task-dialog-box {
+.with.addedPrefix.dialog
+
+..box {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -9,7 +11,7 @@
 	align-items: center;
 	justify-content: center;
 
-	.x-task-dialog-mask {
+	..mask {
 		position: absolute;
 		z-index: 1;
 		left: 0;
@@ -20,12 +22,12 @@
 		opacity: 0.9;
 	}
 
-	&.x-task-dialog-large {
-		.x-task-dialog {
+	&..large {
+		..self {
 			width: 1000px;
 			height: 100%;
 		}
-		.x-task-dialog-content {
+		..content {
 			position: absolute;
 			top: 50px;
 			left: 0;
@@ -33,16 +35,16 @@
 			bottom: 0;
 			padding: 15px 0;
 		}
-		.x-task-dialog-buttons {
+		..buttons {
 			position: absolute;
 			left: 0;
 			right: 0;
 			bottom: 0;
 		}
-		.x-task-tabs-menu {
+		...tabs-menu {
 			padding-left: 20px;
 		}
-		.x-task-tabs-content {
+		...tabs-content {
 			position: absolute;
 			top: 60px;
 			left: 0;
@@ -53,18 +55,18 @@
 			padding: 5px 20px;
 		}
 	}
-	&.x-task-notification-dialog {
-		.x-task-dialog {
+	&...notification-dialog {
+		..self {
 			width: 540px;
 		}
 	}
-	&.x-task-narrow-dialog {
-		.x-task-dialog {
+	&...narrow-dialog {
+		..self {
 			width: 360px;
 		}
 	}
 
-	.x-task-dialog {
+	..self {
 		position: relative;
 		z-index: 9991;
 		background-color: #fff;
@@ -72,7 +74,7 @@
 	}
 
 		
-	.x-task-dialog-title {
+	..title {
 		position: relative;
 		background-color: #555;
 		color: #fff;
@@ -80,7 +82,7 @@
 		line-height: 30px;
 		padding: 10px 20px;
 
-		.x-task-dialog-logo {
+		..logo {
 			color: #999;
 			text-shadow: 0 0 3px #222;
 			font-weight: bold;
@@ -89,7 +91,7 @@
 			display: inline-block;
 			margin-right: 15px;
 			
-			.x-task-icon {
+			...icon {
 				float: left;
 				margin-top: 5px;
     			margin-right: 1px;
@@ -97,19 +99,19 @@
 			}
 		}
 	}
-	.x-task-dialog-content {
+	..content {
 		position: relative;
 		font-size: 14px;
 		padding: 15px 20px;
 	}
-	.x-task-icon.x-task-dialog-close {
+	...icon..close {
 		position: absolute;
 		right: 12px;
 		top: 13px;
 		cursor: pointer;
 		font-size: 24px;
 	}
-	.x-task-dialog-buttons {
+	..buttons {
 		position: relative;
 		box-sizing: border-box;
 		min-height: 55px;

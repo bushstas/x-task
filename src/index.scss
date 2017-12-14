@@ -33,7 +33,7 @@ body {
 	margin: 0;
 }
 
-.x-task-main-box {
+..main-box {
 	font-family: Roboto;
 	color: #111;
 
@@ -96,12 +96,12 @@ body {
 	
 }
 
-.x-task-gray {
+..gray {
 	color: #a1a1a1;
 }
-.x-task-fl {
+..fl {
 	float: left;
 }
-.x-task-fr {
+..fr {
 	float: right;
 }

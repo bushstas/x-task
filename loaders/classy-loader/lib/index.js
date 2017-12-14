@@ -1,16 +1,24 @@
 var {getOptions} = require('loader-utils');
 
-const CLASSNAMES = 'classy';
+const CLASSNAMES = '__classy';
 const DELIMITER = '-';
-const ATTR = 'class';
+const ATTRIBUTE_NAME = 'class';
+const EXTRA_ATTRIBUTE_NAME = '';
 const GLOBAL_PREFIX = '';
 const PREFIX_ATTR = 'prefix';
 const ADDED_PREFIX_ATTR = 'addedPrefix';
+const TAG_REGEX = /<[a-z][\w]*\s+[^>]+>/gi;
+const CONDITIONS_REGEX = /\$\(([^\)]+)\)/g;
+const CONDITION_MARK = '_CONDITION_';
 
-let conditionIndex,
+let obfuscationIndex = {},
+	obfuscationMap = {},
+	obfuscation,
+	conditionIndex,
 	conditions,
 	delimiter,
 	attributeName,
+	extraAttributeName,
 	globalPrefix,
 	hasPrefix,
 	hasAddedPrefix,
@@ -18,25 +26,43 @@ let conditionIndex,
 	globalPrfx,
 	varsUsed,
 	parseMode = 'code',
-	varsWereUsed;
+	varsWereUsed,
+	currentAttrName,
+	prefixesParced,
+	isExtraAttr,
+	currentParser,
+	wasInited = {
+		js: false,
+		css: false
+	};
 
+const getParser = (_this) => {
+	let options = getOptions(_this);
+	if (typeof options.parser == 'string') {
+		options.parser = options.parser.toLowerCase();
+	}
+	return options.parser == 'js' || options.parser == 'css' ? options.parser : 'js';
+}
 
-let wasInited = false;
-const init = (_this) => {
-	wasInited = true;
+const init = (parser, _this) => {
+	wasInited[parser] = true;
 	let {
-		attributeName:a = ATTR,
+		attributeName:a = ATTRIBUTE_NAME,
+		extraAttributeName: e = EXTRA_ATTRIBUTE_NAME,
 		globalPrefix:g = GLOBAL_PREFIX,
-		delimiter:d = DELIMITER
+		delimiter:d = DELIMITER,
+		obfuscation: o = false
 	} = getOptions(_this) || {};
 
 	attributeName = a;
+	extraAttributeName = e;
 	delimiter = d;
 	globalPrefix = g;
+	obfuscation = o;
 }
 
 const getParts = (source, quote) => {
-	let r = new RegExp('\\b' + attributeName + "\\s*=\\s*" + quote, 'g');
+	let r = new RegExp('\\b' + currentAttrName + "\\s*=\\s*" + quote, 'g');
 	let parts = source.split(r);
 	if (!parts[1]) {
 		return;
@@ -49,7 +75,7 @@ const getPrefixesRegex = (attr) => {
 }
 
 const getAttributeRegex = () => {
-	return new RegExp('\\b' + attributeName + "\\s*=\\s*[\"']");
+	return new RegExp('\\b' + currentAttrName + "\\s*=\\s*[\"']");
 }
 
 const parsePrefixes = (source) => {
@@ -100,8 +126,12 @@ const getWithPrefix = (cl, prefix) => {
 
 const getVariables = (cl) => {
 	cl = clean(cl);
-	if (cl.indexOf('_CONDITION_') === 0) {
+	if (cl.indexOf(CONDITION_MARK) === 0) {
 		return getWithCondition(cl);
+	}
+	if (cl.indexOf('?') > -1) {
+		let parts = cl.split('?');
+		return getWithCondition('?' + parts[1], parts[0]);
 	}
 	return cl;
 }
@@ -111,11 +141,11 @@ const getVariablesWithPrefix = (cl, prefix) => {
 	return getWrappedWithQuotes(prefix, '') + '+' + getVariables(cl);
 }
 
-const getWithCondition = (cl) => {
-	cl = cl.replace(/^_CONDITION_/, '').trim();
-	let cnd = getNextCondition();
+const getWithCondition = (cl, cnd = null) => {
+	cl = cl.replace(CONDITION_MARK, '').trim();
+	cnd = cnd || getNextCondition();
 	if (cl[0] == '?' && cnd) {
-		let parts = clean(cl.split(':')),
+		let parts = clean(cl).split(':'),
 			value = cnd + '?' + getPart(parts[0]) + ':';
 		if (parts[1]) {
 			value += getPart(parts[1]);
@@ -135,19 +165,23 @@ const getNextCondition = () => {
 const getWrappedWithQuotes = (cl, cl2 = null) => {
 	let q = varsUsed ? '"' : '',
 		d = !!cl ? delimiter : '';
-	if (cl2 === null) {
-		return q + cl + q;
+	if (cl2 !== null) {
+		cl = cl + d + cl2;	
 	}	
-	return q + cl + d + cl2 + q;
+	return q + (!obfuscation || cl2 === ''  ? cl : getObfuscatedClassName(cl)) + q;
 }
 
 const getPart = (cl) => {
 	let c = cl[0],
 		c2 = cl[1];
 	switch (c) {
-		case '.':
-		case '#': {
-			let p = c == '.' ? localPrfx : globalPrfx;
+		case '.': {
+			let p = localPrfx;
+			if (c2 == '.') {
+				p = globalPrfx;
+				cl = clean(cl);
+				c2 = cl[1];
+			}
 			if (c2 == '$') {
 				return getVariablesWithPrefix(cl, p);
 			}
@@ -182,19 +216,18 @@ const parseWithQuote = (source, quote) => {
 				ps = p.split(q),
 				value = ps[0];
 
-			if (typeof value == 'string') {
+			if (value) {
 				conditionIndex = -1;				
-				conditions = getAllMatches(value, /\$\(([^\)]+)\)/g, 1);
+				conditions = getAllMatches(value, CONDITIONS_REGEX, 1);
 				
 				if (conditions.length > 0) {
-					value = value.replace(reg, '$_CONDITION_');
+					value = value.replace(CONDITIONS_REGEX, '$' + CONDITION_MARK);
 				}
 
 				value = value.replace(/(\w)([\.\$])/gi, "$1 $2")
-							 .replace(/\.{2,}/g, '#')
-							 .replace(/\s*\?\s*/g, '?')
-							 .replace(/\s*:\s*/g, ':')
-							 .replace(/\s{2,}/g, ' ');
+						.replace(/\s*\?\s*/g, '?')
+						.replace(/\s*:\s*/g, ':')
+						.replace(/\!\$/g, '$!');
 
 				if (value) {
 					if (varsUsed = conditions.length > 0 || (/\$/).test(value)) {
@@ -203,7 +236,9 @@ const parseWithQuote = (source, quote) => {
 					let classes = value.split(' ');
 					let classNames = [];
 					for (let cl of classes) {
-						classNames.push(getPart(cl));						
+						if (!!cl) {
+							classNames.push(getPart(cl));
+						}
 					}
 
 					ps[0] = '';
@@ -227,41 +262,66 @@ const parseWithQuote = (source, quote) => {
 							q2 = '';
 						}
 					}
-					parts[i] = 'className=' + q + className + q2 + ps;
+					parts[i] = getRealAttributeName() + '=' + q + className + q2 + ps;
 				}
 			}
 		}
-		source = parts.join('');
+		return parts.join('');
 	}
 	return source;
+}
+
+const getRealAttributeName = () => {
+	return !isExtraAttr || !extraAttributeName ? 'className' : extraAttributeName;
 }
 
 const withImportClassMerger = (source) => {
 	return "import " + CLASSNAMES + " from 'classy-loader/classy';" + source;
 }
 
-function ClassyLoader(source) {
-	if (!wasInited) {
-		init(this);
+const generateClassName = () => {
+	let text = "";
+	let possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+	for (let i = 0; i < 8; i++) {
+	  text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
+	return text;
+}
+
+const getObfuscatedClassName = (className) => {
+	let randomClassName;
+	while (true) {
+		randomClassName = generateClassName();
+		if (!obfuscationIndex[randomClassName]) {
+			break;
+		}
+	}
+	obfuscationIndex[randomClassName] = true;
+	obfuscationMap[className] = randomClassName;
+	return randomClassName;
+}
+
+const parseWithAttribute = (name, source) => {
+	currentAttrName = name;
 	if (!(getAttributeRegex()).test(source)) {
 		return source;
 	}
-	parsePrefixes(source);
-	varsWereUsed = false;
-	let regex = /<[a-z][\w]*\s+[^>]+>/gi;
-	let matches = getAllMatches(source, regex);
+	if (!prefixesParced) {
+		parsePrefixes(source);
+		prefixesParced = true;
+	}
+	let matches = getAllMatches(source, TAG_REGEX);
 	if (matches.length == 0) {
+		parseMode = 'code';		
 		source = parse(source);
 	} else {
-		let parts = source.split(regex);
+		let parts = source.split(TAG_REGEX);
 		source = '';
 		let index = 0;
 		for (let part of parts) {
 			parseMode = 'code';
 			part = parse(part);
 			source += part;
-
 			if (typeof matches[index] == 'string') {
 				parseMode = 'tag';
 				source += parse(matches[index]);
@@ -269,11 +329,100 @@ function ClassyLoader(source) {
 			index++;
 		}
 	}
+	return source;
+}
+
+const parseJsSource = (source, _this) => {
+	varsWereUsed = false;
+	prefixesParced = false;
+	isExtraAttr = false;
+
+	if (!wasInited[currentParser]) {
+		init(currentParser, _this);
+	}
+	source = parseWithAttribute(attributeName, source);
+	
+	if (!!extraAttributeName && typeof extraAttributeName == 'string') {
+		isExtraAttr = true;
+		source = parseWithAttribute(extraAttributeName, source);
+	}
 	if (varsWereUsed) {
 		source = withImportClassMerger(source);
 	}
-	source = removePrefixes(source);
-	//console.log(source)
+	return removePrefixes(source);
+}
+
+
+
+
+
+const getCssPrefixesRegex = (attr) => {
+	return new RegExp('\\.with\\.' + attr + '\\.([a-z][a-z\\-0-9]*) *;*', 'i');
+}
+
+const parseCssPrefixes = (source) => {
+	hasPrefix = false;
+	hasAddedPrefix = false;
+	globalPrfx = localPrfx = globalPrefix;
+
+	let matches = source.match(getCssPrefixesRegex(PREFIX_ATTR));
+	if (matches) {
+		let lp = matches[1];
+		if (lp) {
+			localPrfx = lp;
+			hasPrefix = true;
+		}
+	}
+
+	matches = source.match(getCssPrefixesRegex(ADDED_PREFIX_ATTR));
+	if (matches) {
+		let ap = matches[1];
+		if (ap) {
+			localPrfx = localPrfx + delimiter + ap;
+			hasAddedPrefix = true;
+		}
+	}
+}
+
+const getCssClassPrefix = (prefix) => {
+	let d = delimiter;
+	if (!prefix) {
+		d = '';
+	}
+	return prefix  + d;
+}
+
+const removeCssPrefixes = (source) => {
+	if (hasPrefix) {
+		source = source.replace(getCssPrefixesRegex(PREFIX_ATTR), '');
+	}
+	if (hasAddedPrefix) {
+		source = source.replace(getCssPrefixesRegex(ADDED_PREFIX_ATTR), '');	
+	}
+	return source;
+}
+
+const parseCssSource = (source, _this) => {
+	if (!wasInited[currentParser]) {
+		init(currentParser, _this);
+	}
+	if (source.match(/\.{2,}[\w\-]+/i)) {
+		parseCssPrefixes(source);
+		source = source.replace(/\.{3}([\w\-]+)/gi, "." + getCssClassPrefix(globalPrfx) + "$1")
+					   .replace(/\.{2}([\w\-]+)/gi, "." + getCssClassPrefix(localPrfx) + "$1");
+	}
+
+	return removeCssPrefixes(source);
+}
+
+function ClassyLoader(source) {
+	currentParser = getParser(this);
+	if (currentParser == 'js') {
+		return parseJsSource(source, this);
+	}
+	if (currentParser == 'css') {
+		return parseCssSource(source, this);
+	}
 	return source;
 };
 
