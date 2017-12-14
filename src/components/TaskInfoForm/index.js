@@ -15,7 +15,7 @@ export default class TaskInfoForm extends React.Component {
 			 <Dialog title="Расширенное описание задачи"
 	            onClose={onClose}
 	            clickMaskToClose={true}
-	            class=".dialog-large .info-form">
+	            classes=".dialog-large .info-form">
 	            
 	            <Form onChange={onFormChange}>
 					{this.fields}

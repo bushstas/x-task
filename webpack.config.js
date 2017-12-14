@@ -10,7 +10,7 @@ classy.init({
     attributeName: 'class',
     extraAttributeName: 'classes',
     globalPrefix: 'x-task',
-    obfuscation: false
+    obfuscation: true
 });
 
 const env = process.env.NODE_ENV;

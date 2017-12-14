@@ -34,7 +34,15 @@ export default class TaskMark extends React.Component {
 			3: '.loc3',
 			4: '.loc4'
 		};
-		let colorClassName = 'x-task-color' + importance;
+		let colorClassName = $classyMap(importance) {
+			burning: '.color-burning',
+			urgent: '.color-urgent',
+			important: '.color-important',
+			usual: '.color-usual',
+			insignificant: '.color-insignificant',
+			future: '.color-future',
+			to_think: '.color-think'
+		};
 	 	
 	 	return (
 	 		<VisualElement 
