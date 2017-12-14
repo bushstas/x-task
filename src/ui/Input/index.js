@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
@@ -23,7 +22,7 @@ export default class Input extends React.PureComponent {
 			props.spellCheck = 'false';
 		}
 		return (
-			<div className={classnames('x-task-input', classes)}>
+			<div class=".input $classes">
 				{textarea ? (
 					<textarea {...props}>
 						{value}

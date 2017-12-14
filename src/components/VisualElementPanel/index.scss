@@ -1,4 +1,4 @@
-.x-task-visual-element-panel {
+..visual-element-panel {
 	position: fixed;
 	top: 50%;	
 	transform: translate(0, -50%);
@@ -9,8 +9,8 @@
 	user-select: none;
 	background-color: #555;
 
-	.x-task-icon {
-		&.x-task-element-type {
+	..icon {
+		&..element-type {
 			margin-bottom: 10px;
 			cursor: default;
 			color: #888;

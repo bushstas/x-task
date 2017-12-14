@@ -1,4 +1,6 @@
-..main-menu {
+.with.addedPrefix.main-menu
+
+..self {
 	position: absolute;
 	right: 65px;
 	top: 0;
@@ -13,7 +15,7 @@
 		line-height: 50px;
 		color: #ddd;
 
-		&..active {
+		&...active {
 			color: #ffd638 !important;
 			& > div {			
 				color: inherit;

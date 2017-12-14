@@ -92,12 +92,12 @@ class QuickTask extends React.Component {
 
 				<div class=".top-panel .panel">
 					<Icon icon="up"
-						classes=".white-icon .panel-up .inline-icon"
+						classes="..white-icon .panel-up .inline-icon"
 						onClick={this.handleExpandClick}/>
 
 					<Icon icon="close"
 						title={dict.cancel_task}
-						classes=".white-icon .inline-icon"
+						classes="..white-icon .inline-icon"
 						onClick={this.handleExpandClick}/>
 				</div>
 
@@ -126,7 +126,7 @@ class QuickTask extends React.Component {
 			let title = this.getElementButtonTitle(value);
 			return  (
 				<Icon 
-					classes=".white-icon .inline-icon"
+					classes="..white-icon .inline-icon"
 					data-type={value}
 					title={title}
 					key={value}

@@ -1,11 +1,11 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
 export default function Button({classes, children, href, width, ...others}) {
+	classes = '.button $classes';
 	let props = {
-		className: classnames('x-task-button', classes),
+		className: classes,
 		...others
 	};
 	if (width) {

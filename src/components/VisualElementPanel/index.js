@@ -2,7 +2,6 @@ import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Store from 'xstore';
 import Icon from '../../ui/Icon';
-import classnames from 'classnames';
 
 import './index.scss';
 
@@ -11,7 +10,7 @@ class VisualElementPanel extends React.Component {
 	render() {
 		let {visualElement} = this.props;
 	 	return !!visualElement ? (
-	 		<div className="x-task-visual-element-panel x-task-quick-task-panel"
+	 		<div class=".visual-element-panel .quick-task-panel"
 	 			onClick={this.handleClick}>
 	 			{this.typeIcon}
 	 			{this.buttons}
@@ -23,7 +22,7 @@ class VisualElementPanel extends React.Component {
 		let {visualElement: {type}} = this.props;
 		return  (
 			<Icon 
-				classes="x-task-white-icon x-task-element-type"
+				classes="..white-icon .element-type"
 				title={dict[type]}>
 				{icons.task_el[type]}
 			</Icon>
@@ -42,10 +41,10 @@ class VisualElementPanel extends React.Component {
 					}
 				break;
 			}
-			
+			let isActive = this.isActive(data, value);
 			return  (
 				<Icon 
-					classes={classnames('x-task-white-icon', this.isActive(data, value) ? 'active' : '')}
+					classes="..white-icon $isActive?.active"
 					data-action={value}
 					title={dict[value]}
 					key={value}>

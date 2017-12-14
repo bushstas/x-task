@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
@@ -11,7 +10,7 @@ export default class Select extends React.PureComponent {
 	render() {
 		let {classes, name, value} = this.props;
 		return (
-			<div className={classnames('x-task-select', classes)}>
+			<div class=".select $classes">
 				<select 
 					name={name}
 					value={value}

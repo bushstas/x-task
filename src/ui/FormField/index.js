@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import Input from '../Input';
 import Select from '../Select';
 import Checkboxes from '../Checkboxes';
@@ -17,7 +16,7 @@ export default class FormField extends React.PureComponent {
 	render() {
 		let {classes} = this.props;
 		return (
-			<div className={classnames('x-task-form-field', classes)}>
+			<div class=".form-field $classes">
 				{this.caption}
 				{this.control}
 			</div>
@@ -28,7 +27,7 @@ export default class FormField extends React.PureComponent {
 		let {caption} = this.props;
 		if (caption) {
 			return (
-				<div className="x-task-form-field-caption">
+				<div class=".form-field-caption">
 					{caption}
 				</div>
 			)

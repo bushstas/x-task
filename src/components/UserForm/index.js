@@ -18,37 +18,37 @@ class UserForm extends React.Component {
 			<Form 
 				data={data}
 				onChange={this.handleFormChange}
-				classes="x-task-user-form pt10">
+				classes=".user-form .pt10">
 
 				<FormField caption={dict.login}>
 					<Input name="login" value={data.login}/>
 				</FormField>
 
-				<FormField caption={dict.password} classes="mt15">
+				<FormField caption={dict.password} classes=".mt15">
 					<Input type="password" name="password" value={data.password}/>
 				</FormField>
 
-				<FormField caption={dict.password2} classes="mt15">
+				<FormField caption={dict.password2} classes=".mt15">
 					<Input type="password" name="password2" value={data.password2}/>
 				</FormField>
 
-				<FormField caption={dict.name} classes="mt15">
+				<FormField caption={dict.name} classes=".mt15">
 					<Input name="userName" value={data.userName}/>
 				</FormField>
 
-				<FormField caption={dict.email} classes="mt15">
+				<FormField caption={dict.email} classes=".mt15">
 					<Input name="email" value={data.email}/>
 				</FormField>
 
-				<FormField caption={dict.role} classes="mt15" isPresent={!editingOneself}>
+				<FormField caption={dict.role} classes=".mt15" isPresent={!editingOneself}>
 					<Select name="role" value={data.role} options={this.roles}/>
 				</FormField>
 
-				<FormField caption={dict.spec} classes="mt15" isPresent={!editingOneself && data.role == 6}>
+				<FormField caption={dict.spec} classes=".mt15" isPresent={!editingOneself && data.role == 6}>
 					<Select name="spec" value={data.spec} options={this.specs}/>
 				</FormField>
 
-				<FormField caption={dict.projects} classes="mt15" isPresent={!editingOneself && data.role > 2}>
+				<FormField caption={dict.projects} classes=".mt15" isPresent={!editingOneself && data.role > 2}>
 					<Checkboxes name="projects" value={data.projects} items={this.projects}/>
 				</FormField>
 			</Form>

@@ -12,7 +12,7 @@ class Users extends React.Component {
 
 	render() {
 	 	return (
-	 		<div className="x-task-users">
+	 		<div class=".users">
 				{this.tabs}
 				{this.actionButtons}
 			</div>
@@ -69,7 +69,7 @@ class Users extends React.Component {
 					{dict.save}
 				</Button>
 
-				<Button classes="x-task-cancel-button" data-value="cancel" width="100">
+				<Button classes=".cancel-button" data-value="cancel" width="100">
 					{dict.cancel}
 				</Button>
 			</ActionButtons>

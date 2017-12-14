@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import Checkbox from '../Checkbox';
 
 export default class Checkboxes extends React.PureComponent {
@@ -10,7 +9,7 @@ export default class Checkboxes extends React.PureComponent {
 	render() {
 		let {classes, name, value} = this.props;
 		return (
-			<div className={classnames('x-task-checkboxes', classes)}>
+			<div class=".checkboxes $classes">
 				{this.controls}
 			</div>
 		)

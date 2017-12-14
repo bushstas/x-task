@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
@@ -22,22 +21,22 @@ export class Tabs extends React.PureComponent {
 			children = [children];
 		}
 		return (
-			<div className={classnames('x-task-tabs', classes)}>
-				<div className="x-task-tabs-menu">
+			<div class=".tabs $classes">
+				<div class=".tabs-menu">
 					{children.map((child, i) => {
 						if (child instanceof Object && child.type == Tab) {
 							let props = {
 								key: i,
 								index: i,
 								onSelect: this.handleSelectTab,
-								classes: activeTab == i ? 'active' : '',
+								classes: "$activeTab==i?.active",
 								...child.props
 							};
 							return React.cloneElement(child, props, null);
 						}
 					})}
 				</div>
-				<div className="x-task-tabs-content">
+				<div class=".tabs-content">
 					{children.map((child, i) => {
 						if (activeTab == i && child instanceof Object && child.type == Tab) {
 							return child.props.children;
@@ -63,7 +62,7 @@ export class Tabs extends React.PureComponent {
 
 export function Tab({caption, index, onSelect, classes, value}) {
 	return (
-		<div className={classnames('x-task-tab', classes)} data-index={index} data-value={value} onClick={onSelect}>
+		<div class=".tab $classes" data-index={index} data-value={value} onClick={onSelect}>
 			{caption}
 		</div>
 	)

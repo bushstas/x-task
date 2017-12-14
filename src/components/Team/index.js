@@ -80,7 +80,7 @@ class Team extends React.Component {
 				name = (
 					<div>
 						{name}
-						<div className="x-task-user-blocked">
+						<div class=".user-blocked">
 							Заблокирован: <span>{u.blockedBy}</span>
 						</div>
 					</div>
@@ -88,7 +88,7 @@ class Team extends React.Component {
 			}
 			rows.push([
 				<Icon
-					classes="x-task-edit-icon x-task-button-icon"
+					classes=".edit-icon .button-icon"
 					icon="edit"
 					{...iconProps}/>,
 				name,

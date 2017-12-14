@@ -1,4 +1,4 @@
-.x-task-mark {
+..mark {
 	position: absolute;
 	left: 50%;
 	background-color: #00b773;
@@ -9,47 +9,47 @@
 	line-height: 40px;
 	color: #fff;
 
-	.x-task-icon {
+	..icon {
 		font-size: 26px;
 		line-height: 50px;
 	}
 
-	&.x-task-color-burning {
+	&..color-burning {
 		background-color: #ff6a00;
 		&:before {
 			background-color: #ff6a00;
 		}
 	}
 
-	&.x-task-color-urgent {
+	&..color-urgent {
 		background-color: #ec0016;
 		&:before {
 			background-color: #ec0016;
 		}
 	}
 
-	&.x-task-color-important {
+	&..color-important {
 		background-color: #68b700;
 		&:before {
 			background-color: #68b700;
 		}
 	}
 
-	&.x-task-color-insignificant {
+	&..color-insignificant {
 		background-color: #0084b7;
 		&:before {
 			background-color: #0084b7;
 		}
 	}
 
-	&.x-task-color-future {
+	&..color-future {
 		background-color: #2f5294;
 		&:before {
 			background-color: #2f5294;
 		}
 	}
 
-	&.x-task-color-to_think {
+	&..color-to_think {
 		background-color: #555;
 		&:before {
 			background-color: #555;
@@ -74,7 +74,7 @@
 		border-radius: 0 0 0 2px;
 	}
 
-	&.x-task-loc2 {
+	&..loc2 {
 		&:before {
 			bottom: auto;
 			top: 0;
@@ -82,7 +82,7 @@
 		}
 	}
 
-	&.x-task-loc3 {
+	&..loc3 {
 		&:before {
 			bottom: auto;
 			left: auto;
@@ -91,7 +91,7 @@
 		}
 	}
 
-	&.x-task-loc4 {
+	&..loc4 {
 		&:before {
 			left: auto;
 			right: 0;

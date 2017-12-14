@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import DraggableElement from '../DraggableElement';
 import ElementResizer from '../ElementResizer';
 import {MAX_SIZES} from '../../consts/max_sizes';
@@ -38,7 +37,7 @@ export default class VisualElement extends React.PureComponent {
 	 			width={width}
 	 			height={height}
 	 			locked={locked}
-	 			classes={classnames('x-task-visual-element', classes, dragged ? 'x-task-dragged' : '')}>
+	 			classes=".visual-element $classes $dragged?.dragged">
 				{this.children}
 			</DraggableElement>
 		)

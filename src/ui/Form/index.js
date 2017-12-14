@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import FormField from '../FormField';
 import FormSubmit from '../FormSubmit';
 
@@ -22,7 +21,7 @@ export default class Form extends React.Component {
 	render() {
 		let {classes} = this.props;
 		return (
-			<div className={classnames('x-task-form', classes)}>
+			<div class=".form $classes">
 				{this.content}
 			</div>
 		)

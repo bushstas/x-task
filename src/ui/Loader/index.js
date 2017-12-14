@@ -1,16 +1,15 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
 export default function Loader({fetching, classes, height, children}) {
 	return (
-		<div className={classes}>
+		<div class="$classes">
 			{children}
 			{fetching && (
-				<div className="x-task-loader">
-					<div className="cssload-container">
-						<div className="cssload-whirlpool"/>
+				<div class=".loader">
+					<div class=".container">
+						<div class=".whirlpool"/>
 					</div>
 				</div>
 			)}

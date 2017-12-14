@@ -1,4 +1,4 @@
-.x-task-loader {
+..loader {
 	position: absolute;
 	left: 0;
 	right: 0;
@@ -18,7 +18,7 @@
 		opacity: 0.8;
 	}
 	
-	.cssload-container {
+	..container {
 		z-index: 2;
 		position: absolute;
 		left: 50%;
@@ -26,9 +26,9 @@
 		margin-left: -45px;
 		margin-top: -45px;
 	}		
-	.cssload-whirlpool,
-	.cssload-whirlpool::before,
-	.cssload-whirlpool::after {
+	..whirlpool,
+	..whirlpool::before,
+	..whirlpool::after {
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -40,7 +40,7 @@
 			-webkit-border-radius: 1499px;
 			-moz-border-radius: 1499px;
 	}
-	.cssload-whirlpool {
+	..whirlpool {
 		height: 75px;
 		width: 75px;
 		animation: cssload-rotate 1150ms linear infinite;
@@ -49,7 +49,7 @@
 			-webkit-animation: cssload-rotate 1150ms linear infinite;
 			-moz-animation: cssload-rotate 1150ms linear infinite;
 	}
-	.cssload-whirlpool::before {
+	..whirlpool::before {
 		content: "";
 		margin: -35px 0 0 -35px;
 		height: 66px;
@@ -60,7 +60,7 @@
 			-webkit-animation: cssload-rotate 1150ms linear infinite;
 			-moz-animation: cssload-rotate 1150ms linear infinite;
 	}
-	.cssload-whirlpool::after {
+	..whirlpool::after {
 		content: "";
 		margin: -44px 0 0 -44px;
 		height: 84px;

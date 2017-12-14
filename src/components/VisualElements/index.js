@@ -11,7 +11,7 @@ class VisualElements extends React.Component {
 	render() {
 		let {active, visualMode} = this.props;
 	 	return (
-	 		<div className="x-task-visual-elements">
+	 		<div class=".visual-elements">
 				{this.elements}
 			</div>
 		)

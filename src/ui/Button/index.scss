@@ -1,4 +1,4 @@
-.x-task-button {
+..button {
 	line-height: 36px;
 	border-radius: 3px;
 	padding: 0 16px;
@@ -17,7 +17,7 @@
 		border-color: #333;
 	}
 
-	&.x-task-white-button {
+	&..white-button {
 		background-color: transparent;
 		color: #555;
 		&:hover {

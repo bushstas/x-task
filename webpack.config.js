@@ -5,6 +5,14 @@ const pr = path.resolve;
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const classy = require('classy-loader');
+classy.init({
+    attributeName: 'class',
+    extraAttributeName: 'classes',
+    globalPrefix: 'x-task',
+    obfuscation: false
+});
+
 const env = process.env.NODE_ENV;
 const CONFIG = env === 'production' ? require('./prod_config') : require('./local_config');
 
@@ -82,14 +90,7 @@ const config = {
                         }
                     },
                     {
-                        loader: 'classy-loader',
-                        options: {
-                            attributeName: 'class',
-                            extraAttributeName: 'classes',
-                            globalPrefix: 'x-task',
-                            parser: 'js',
-                            obfuscation: true
-                        }
+                        loader: 'classy-loader?parser=js'
                     }
                 ]
             },
@@ -124,14 +125,7 @@ const config = {
                             'css-loader?root=' + pr(__dirname, 'src'), 
                             'resolve-url-loader', 
                             'sass-loader',
-                            {
-                                loader: 'classy-loader',
-                                options: {
-                                    globalPrefix: 'x-task',
-                                    parser: 'css',
-                                    obfuscation: true
-                                }
-                            }
+                            'classy-loader?parser=css'
                         ]
                     }
                 ) : `style-loader!css-loader?root=${pr(__dirname, 'src')}!resolve-url-loader!sass-loader`

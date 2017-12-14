@@ -18,7 +18,7 @@ class Tasks extends React.Component {
 	render() {
 		let {fetching} = this.props;
 	 	return (
-	 		<Loader fetching={fetching} classes="x-task-tasks">
+	 		<Loader fetching={fetching} classes=".tasks">
 				{this.tasks}
 				{this.actionButtons}
 			</Loader>
@@ -39,7 +39,7 @@ class Tasks extends React.Component {
 
 	get noTasks() {
 		return (
-			<div className="x-task-no-tasks">
+			<div class=".no-tasks">
 				{dict.no_tasks}
 			</div>
 		)

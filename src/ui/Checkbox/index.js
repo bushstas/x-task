@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
@@ -11,7 +10,7 @@ export default class Checkbox extends React.PureComponent {
 	render() {
 		let {classes, checked, children} = this.props;
 		return (
-			<label className={classnames('x-task-checkbox', classes)}>
+			<label class=".checkbox $classes">
 				<input 
 					type="checkbox"
 					checked={checked}

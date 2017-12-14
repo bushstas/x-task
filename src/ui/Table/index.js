@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import './index.scss';
 
@@ -8,7 +7,7 @@ export default class Table extends React.PureComponent {
 	render() {
 		let {classes} = this.props;
 		return (
-			<table className={classnames('x-task-table', classes)}>
+			<table class=".table $classes">
 				<thead>
 					{this.thead}
 				</thead>
