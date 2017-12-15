@@ -81,14 +81,14 @@ class Team extends React.Component {
 					<div>
 						{name}
 						<div class=".user-blocked">
-							Заблокирован: <span>{u.blockedBy}</span>
+							{dict.blocked}: <span>{u.blockedBy}</span>
 						</div>
 					</div>
 				)
 			}
 			rows.push([
 				<Icon
-					classes=".edit-icon .button-icon"
+					classes="icon::edit icon::button"
 					icon="edit"
 					{...iconProps}/>,
 				name,

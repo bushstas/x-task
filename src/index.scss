@@ -29,79 +29,64 @@
 
 html,
 body {
-	height: 100%;
-	margin: 0;
+	var .h.m;
 }
 
 ..main-box {
-	font-family: Roboto;
-	color: #111;
+	var .ff-Roboto.c-111;
 
 	button {
-		line-height: 26px;
-		cursor: pointer;
-		font-family: Roboto;
-		padding: 3px 14px;
+		var .lh26.pntr.ff-Roboto.p3-14;
 	}
 
 	select,
 	input[type="text"],
 	input[type="password"],
 	textarea {
-		box-sizing: border-box;
-		background-color: #fff;
-		padding: 8px 12px;
-		border: 1px solid #aaa;
-		border-radius: 2px;
-		font-family: Roboto;
-		transition: border-color .3s;
-		font-size: 14px;
-
+		var .box.bc-fff.p8-12.bo-aaa.br2.ff-Roboto.tra-boc-3.fs14;
+		
 		&:focus {
-			outline: 0;
-			box-shadow: none;
-			border-color: #000;
+			var .ol.shad.boc-000;
 		}
 	}
 
 	textarea {
-		resize: none !important;
+		var .nor!;
 	}
 
 	select {
-		padding: 7px 12px;
+		var .p7-12;
 	}
 
 	textarea::placeholder,
 	input::placeholder {
-		color: #aaa;
-		transition: color .3s;
+		var .c-aaa.tra-c-3;
 	}
 	textarea:focus::placeholder,
 	input:focus::placeholder {
-		color: #d1d1d1;
+		var .c-d1d1d1;
 	}
 	
 }
 
 ..gray {
-	color: #a1a1a1;
+	var .c-a1a1a1;
 }
 ..fl {
-	float: left;
+	var .fl;
 }
 ..fr {
-	float: right;
+	var .fr;
 }
 ..mt10 {
-	margin-top: 10px;
+	var .mt10;
 }
 ..mt15 {
-	margin-top: 15px;
+	var .mt15;
 }
 ..mt20 {
-	margin-top: 20px;
+	var .mt20;
 }
 ..pt10 {
-	padding-top: 10px;
+	var .pt10;
 }

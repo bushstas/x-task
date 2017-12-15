@@ -11,12 +11,14 @@ const INPUT_TYPES = [
 
 import './index.scss';
 
+with addedPrefix 'form-field';
+
 export default class FormField extends React.PureComponent {
 
 	render() {
 		let {classes} = this.props;
 		return (
-			<div class=".form-field $classes">
+			<div class=".self $classes">
 				{this.caption}
 				{this.control}
 			</div>
@@ -27,7 +29,7 @@ export default class FormField extends React.PureComponent {
 		let {caption} = this.props;
 		if (caption) {
 			return (
-				<div class=".form-field-caption">
+				<div class=".caption">
 					{caption}
 				</div>
 			)

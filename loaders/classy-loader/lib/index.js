@@ -1,37 +1,52 @@
-var {getOptions} = require('loader-utils');
+const {getOptions} = require('loader-utils');
+const path = require('path');
+const cssConsts = require('../cssconsts');
 
-const OPTIONS = {};
-const CLASSNAMES = '__classy';
-const DELIMITER = '-';
-const ATTRIBUTE_NAME = 'class';
-const EXTRA_ATTRIBUTE_NAME = 'classes';
-const GLOBAL_PREFIX = '';
-const PREFIX_ATTR = 'prefix';
-const ADDED_PREFIX_ATTR = 'addedPrefix';
-const TAG_REGEX = /<[a-z][\w]*\s+[^>]+>/gi;
-const TAG_SPLIT_REGEX = /<[a-z][\w]*\s+[^>]+>/i;
-const CONDITIONS_REGEX = /\$\(([^\)]+)\)/g;
-const CONDITION_MARK = '_CONDITION_';
-const CSS_GLOBAL_PREFIX_REGEX = /\.{3}([\w\-]+)/gi;
-const CSS_LOCAL_PREFIX_REGEX = /\.{2}([\w\-]+)/gi;
-const CSS_LOCAL_PREFIX_SPLIT_REGEX = /\.{2}[\w\-]+/i;
-const CSS_GLOBAL_PREFIX_SPLIT_REGEX = /\.{3}[\w\-]+/i;
-const CLASSY_MAP_MATCH_REGEX = /\$classyMap\(\s*(\w+)\s*\)\s*\{/g;
-const CLASSY_MAP_SPLIT_REGEX = /\$classyMap\(\s*\w+\s*\)\s*\{/;
-const CLASSY_MATCH_REGEX = /\$classy\(\s*["']([^"']+)["']\s*\)/g;
-const CLASSY_SPLIT_REGEX = /\$classy\(\s*["'][^"']+["']\s*\)/;
+const OPTIONS = {},
+	  CLASSNAMES = '__classy',
+	  DELIMITER = '-',
+	  OBFUSCATED_LENGTH = 7,
+	  MIN_OBFUSCATED_LENGTH = 3,
+	  MAX_OBFUSCATED_LENGTH = 10,
+	  ATTRIBUTE_NAME = 'class',
+	  EXTRA_ATTRIBUTE_NAME = 'classes',
+	  GLOBAL_PREFIX = '',
+	  PREFIX_ATTR = 'prefix',
+	  ADDED_PREFIX_ATTR = 'addedPrefix',
+	  TAG_REGEX = /<[a-z][\w]*\s+[^>]+>/gi,
+	  TAG_SPLIT_REGEX = /<[a-z][\w]*\s+[^>]+>/i,
+	  CONDITIONS_REGEX = /\$\(([^\)]+)\)/g,
+	  CONDITION_MARK = '_CONDITION_',
+	  CSS_PREFIX_MATCH_REGEX = /\$*\.+[a-z_][\w\-]*/gi,
+	  CSS_PREFIX_SPLIT_REGEX = /\$*\.+[a-z_][\w\-]*/i,
+	  CSS_AUTO_PREFIX_REGEX = /\.with\.auto\.((added)*prefix)\./ig,
+	  CSS_EXACT_AUTO_PREFIX_REGEX = /\.with\.auto\.prefix[;\s]/ig,
+	  CLASSY_MAP_MATCH_REGEX = /\$classy\(\s*(\w+)\s*,\s*\{/g,
+	  CLASSY_MAP_SPLIT_REGEX = /\$classy\(\s*\w+\s*,\s*\{/,
+	  CLASSY_ARR_MAP_MATCH_REGEX = /\$classy\(\s*(\w+\s*,\s*["'][^'"]+["'])\s*,\s*\[/g,
+	  CLASSY_ARR_MAP_SPLIT_REGEX = /\$classy\(\s*\w+\s*,\s*["'][^'"]+["']\s*,\s*\[/,
+	  CLASSY_MATCH_REGEX = /\$classy\(\s*["']([^"']+)["']\s*\)/g,
+	  CLASSY_SPLIT_REGEX = /\$classy\(\s*["'][^"']+["']\s*\)/,
+	  CSS_URLS_REGEX = /url\([^\)]+\)/gi,
+	  OBFUSCATED_URL_KEY = '_OBFUSCATED_URL_',
+	  CSS_STRINGS1_REGEX = /'[^']+'/g,
+	  OBFUSCATED_STRING1_KEY = '_OBFUSCATED_STRING1_',
+	  CSS_STRINGS2_REGEX = /"[^"]+"/g,
+	  OBFUSCATED_STRING2_KEY = '_OBFUSCATED_STRING2_',
+	  CSS_SHORTCUTS_REGEX = /\bvar +\.([^\r\n\t;]+);*/gi,
+	  CSS_SHORTCUTS_SPLIT_REGEX = /\bvar +\.[^\r\n\t;]+;*/i;
 
 let obfuscationIndex = {},
 	obfuscationMap = {},
 	obfuscation,
+	obfuscatedLength,
+	obfuscatedContent,
 	conditionIndex,
 	conditions,
 	delimiter,
 	attributeName,
 	extraAttributeName,
 	globalPrefix,
-	hasPrefix,
-	hasAddedPrefix,
 	localPrfx,
 	globalPrfx,
 	varsUsed,
@@ -43,6 +58,7 @@ let obfuscationIndex = {},
 	currentParser,
 	currentSign,
 	currentQuote,
+	addCssPrefixAutomatically,
 	wasInited = {
 		js: false,
 		css: false
@@ -67,14 +83,23 @@ const init = (parser, _this) => {
 		extraAttributeName: e = EXTRA_ATTRIBUTE_NAME,
 		globalPrefix:g = GLOBAL_PREFIX,
 		delimiter:d = DELIMITER,
+		obfuscatedLength: l = OBFUSCATED_LENGTH,
 		obfuscation: o = false
 	} = options;
+
+	if (typeof l != 'number') {
+		l = OBFUSCATED_LENGTH;
+	} else {
+		l = Math.max(MIN_OBFUSCATED_LENGTH, l);
+		l = Math.min(MAX_OBFUSCATED_LENGTH, l);
+	}
 
 	attributeName = a;
 	extraAttributeName = e;
 	delimiter = d;
 	globalPrefix = g;
 	obfuscation = o;
+	obfuscatedLength = l;
 }
 
 const getParts = (source) => {	
@@ -89,8 +114,11 @@ const getRegex = (quote = currentQuote) => {
 	return new RegExp('\\b' + currentAttrName + "\\s*" + currentSign + "\\s*" + quote, 'g');
 }
 
-const getPrefixesRegex = (attr) => {
-	return new RegExp('\\bwith\\s+' + attr + '\\s+[\'"] *([a-z][a-z\\-0-9]*) *[\'"];*', 'i');
+const getPrefixesRegex = (attr, glbl = '') => {
+	if (glbl) {
+		glbl = 'g';
+	}
+	return new RegExp('\\bwith\\s+' + attr + '\\s+[\'"] *([a-z][a-z\\-0-9]*) *[\'"];*', glbl + 'i');
 }
 
 const getAttributeRegex = () => {
@@ -99,8 +127,6 @@ const getAttributeRegex = () => {
 
 const parsePrefixes = (source) => {
 	if (!prefixesParced) {
-		hasPrefix = false;
-		hasAddedPrefix = false;
 		globalPrfx = localPrfx = globalPrefix;
 
 		let matches = source.match(getPrefixesRegex(PREFIX_ATTR));
@@ -108,7 +134,6 @@ const parsePrefixes = (source) => {
 			let lp = matches[1];
 			if (lp) {
 				localPrfx = lp;
-				hasPrefix = true;
 			}
 		}
 
@@ -116,8 +141,11 @@ const parsePrefixes = (source) => {
 		if (matches) {
 			let ap = matches[1];
 			if (ap) {
-				localPrfx = localPrfx + delimiter + ap;
-				hasAddedPrefix = true;
+				let d = delimiter;
+				if (!localPrfx) {
+					d = '';
+				}
+				localPrfx = localPrfx + d + ap;
 			}
 		}
 		prefixesParced = true;
@@ -125,12 +153,8 @@ const parsePrefixes = (source) => {
 }
 
 const removePrefixes = (source) => {
-	if (hasPrefix) {
-		source = source.replace(getPrefixesRegex(PREFIX_ATTR), '');
-	}
-	if (hasAddedPrefix) {
-		source = source.replace(getPrefixesRegex(ADDED_PREFIX_ATTR), '');	
-	}
+	source = source.replace(getPrefixesRegex(PREFIX_ATTR, true), '');
+	source = source.replace(getPrefixesRegex(ADDED_PREFIX_ATTR, true), '');
 	return source;
 }
 
@@ -213,7 +237,20 @@ const getPart = (cl) => {
 		case '$':
 			return getVariables(cl);
 	}
-	return getWrappedWithQuotes(cl);	
+	if (cl.indexOf('::') > -1) {
+		return getWithGivenPrefix(cl);
+	}
+	return getWrappedWithQuotes(cl);
+}
+
+const getWithGivenPrefix = (cl) => {
+	let ps = cl.split('::');
+	let d = delimiter;
+	if (!globalPrefix) {
+		d = '';
+	}
+	cl = globalPrefix + d + ps[0] + delimiter + ps[1];
+	return getWrappedWithQuotes(cl);
 }
 
 const getAllMatches = (str, reg, idx = 0) => {
@@ -239,6 +276,8 @@ const parseClassNames = (value) => {
 		}
 
 		value = value.replace(/(\w)([\.\$])/gi, "$1 $2")
+				.replace(/\$\?(\.*)(\w+)/g, "$ $2?$1$2")
+				.replace(/\$\s+/g, '$')
 				.replace(/\s*\?\s*/g, '?')
 				.replace(/\s*:\s*/g, ':')
 				.replace(/\!\$/g, '$!');
@@ -311,10 +350,11 @@ const withImportClassMerger = (source) => {
 }
 
 const generateClassName = () => {
+	let len = obfuscatedLength - 1;
 	let possible = 'abcdefghijklmnopqrstuvwxyz';
 	let text = possible.charAt(Math.floor(Math.random() * possible.length));
 	possible += '0123456789';	
-	for (let i = 0; i < 6; i++) {
+	for (let i = 0; i < len; i++) {
 	  text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}
 	return text;
@@ -325,9 +365,16 @@ const getObfuscatedClassName = (className) => {
 		return obfuscationMap[className];
 	}
 	let randomClassName;
+	let count = 0;
+	let maxCount = 99999;
 	while (true) {
 		randomClassName = generateClassName();
 		if (!obfuscationIndex[randomClassName]) {
+			break;
+		}
+		count++;
+		if (count >= maxCount) {
+			throw new Error('Obfuscation error: maximum count of class names reached. Impossible to generate new unique names');
 			break;
 		}
 	}
@@ -383,6 +430,9 @@ const parseJsSource = (source, _this) => {
 			source = parseWithAttribute(extraAttributeName, source);
 		}
 	}
+	if (source.match(CLASSY_ARR_MAP_MATCH_REGEX)) {
+		source = parseClassyArrMap(source);
+	}
 	if (source.match(CLASSY_MAP_MATCH_REGEX)) {
 		source = parseClassyMaps(source);
 	}
@@ -393,6 +443,45 @@ const parseJsSource = (source, _this) => {
 		source = withImportClassMerger(source);
 	}
 	return removePrefixes(source);
+}
+
+const parseClassyArrMap = (source) => {
+	parsePrefixes(source);
+	let matches = getAllMatches(source, CLASSY_ARR_MAP_MATCH_REGEX, 1);
+	if (matches.length > 0) {
+		let parts = source.split(CLASSY_ARR_MAP_SPLIT_REGEX);
+		source = '';
+		let index = 0, part;
+		for (part of parts) {
+			if (index > 0) {
+				let v = matches[index - 1],
+					vs = v.split(/\s*,\s*/),
+					add = vs[1].replace(/['"]/g, ''),
+					ps = part.split(']'),
+					arr = ps[0].split(','),
+					item, mapData = [];
+
+				if (ps[1]) {
+					ps[1] = clean(ps[1]);
+					for (item of arr) {
+						let item2 = item.replace(/['"]/g, '');
+						if (!item.match(/\-/)) {
+							item = item2;
+						}
+						let cl = parseClassNames(add + item2.trim());
+						let q = !varsUsed ? '"' : '';
+						mapData.push(item.trim() + ':' + q + cl + q);
+					}
+					ps[0] = '';
+					let mapContent = '{' + mapData.join(',') + '}[' + vs[0] + ']';
+					part = mapContent + clean(ps.join(']'));
+				}
+			}
+			source += part;
+			index++;
+		}
+	}
+	return source;
 }
 
 const parseClassyMaps = (source) => {
@@ -409,26 +498,29 @@ const parseClassyMaps = (source) => {
 					map = ps[0].split(','),
 					item;
 
-				let mapData = [];
-				for (item of map) {
-					let p = item.split(':');
-					if (p[1]) {
-						let p0 = p[0].trim(),
-							p1 = p[1].trim(),
-							p2 = p1[0];
-							p3 = p1[p1.length - 1];
-						if ((p2 == '"' || p2 == "'") && (p3 == '"' || p3 == "'")) {
-							let cl = parseClassNames(p1.replace(/['"]/g, ''));
-							let q = !varsUsed ? '"' : '';
-							mapData.push(p0 + ':' + q + cl + q);
+				if (ps[1]) {
+					ps[1] = clean(ps[1]);
+					let mapData = [];
+					for (item of map) {
+						let p = item.split(':');
+						if (p[1]) {
+							let p0 = p[0].trim(),
+								p1 = p[1].trim(),
+								p2 = p1[0];
+								p3 = p1[p1.length - 1];
+							if ((p2 == '"' || p2 == "'") && (p3 == '"' || p3 == "'")) {
+								let cl = parseClassNames(p1.replace(/['"]/g, ''));
+								let q = !varsUsed ? '"' : '';
+								mapData.push(p0 + ':' + q + cl + q);
+							}
+						} else {
+							throw new Error('Incorrect code in classyMap context');
 						}
-					} else {
-						throw new Error('Incorrect code in classyMap context');
 					}
+					let mapContent = '{' + mapData.join(',') + '}[' + v + ']';
+					ps[0] = '';
+					part = mapContent + clean(ps.join('}'));
 				}
-				let mapContent = '{' + mapData.join(',') + '}[' + v + ']';
-				ps[0] = '';
-				part = mapContent + clean(ps.join('}'));
 			}
 			source += part;
 			index++;
@@ -466,13 +558,14 @@ const parseClassy = (source) => {
 
 
 
-const getCssPrefixesRegex = (attr) => {
-	return new RegExp('\\.with\\.' + attr + '\\.([a-z][a-z\\-0-9]*) *;*', 'i');
+const getCssPrefixesRegex = (attr, glbl = '') => {
+	if (glbl) {
+		glbl = 'g';
+	}
+	return new RegExp('\\.with\\.' + attr + '\\.([a-z][a-z\\-0-9]*) *;*', glbl + 'i');
 }
 
 const parseCssPrefixes = (source) => {
-	hasPrefix = false;
-	hasAddedPrefix = false;
 	globalPrfx = localPrfx = globalPrefix;
 
 	let matches = source.match(getCssPrefixesRegex(PREFIX_ATTR));
@@ -480,7 +573,6 @@ const parseCssPrefixes = (source) => {
 		let lp = matches[1];
 		if (lp) {
 			localPrfx = lp;
-			hasPrefix = true;
 		}
 	}
 
@@ -488,8 +580,11 @@ const parseCssPrefixes = (source) => {
 	if (matches) {
 		let ap = matches[1];
 		if (ap) {
-			localPrfx = localPrfx + delimiter + ap;
-			hasAddedPrefix = true;
+			let d = delimiter;
+			if (!localPrfx) {
+				d = '';
+			}
+			localPrfx = localPrfx + d + ap;
 		}
 	}
 }
@@ -503,26 +598,45 @@ const getCssClassPrefix = (prefix, className) => {
 }
 
 const removeCssPrefixes = (source) => {
-	if (hasPrefix) {
-		source = source.replace(getCssPrefixesRegex(PREFIX_ATTR), '');
-	}
-	if (hasAddedPrefix) {
-		source = source.replace(getCssPrefixesRegex(ADDED_PREFIX_ATTR), '');	
-	}
+	source = source.replace(getCssPrefixesRegex(PREFIX_ATTR, true), '');
+	source = source.replace(getCssPrefixesRegex(ADDED_PREFIX_ATTR, true), '');
 	return source;
 }
 
-const parseCssClasses = (source, prefix, matchRegex, splitRegex) => {
-	let matches = getAllMatches(source, matchRegex, 1);
-	if (matches.length > 0) {
-		let parts = source.split(splitRegex);
+const parseCssClasses = (source) => {
+	let matches = getAllMatches(source, CSS_PREFIX_MATCH_REGEX);
+	if (matches.length > 0) {		
+		let parts = source.split(CSS_PREFIX_SPLIT_REGEX);
 		source = '';
 		let index = 0;
 		for (let part of parts) {
 			source += part;
 			if (typeof matches[index] == 'string') {
-				let m = matches[index] == 'self' ? '' : matches[index];
-				let className = getCssClassPrefix(prefix, m) + m;
+				let className, prefix;
+				let m = matches[index];
+				if (m[0] == '$') {
+					className = m.replace(/^\$\.+/, '');					
+				} else if (m.indexOf('...') === 0) {
+					m = clean(m, 3);
+					if (m == 'self') {
+						m = '';
+					}
+					className = getCssClassPrefix(globalPrfx, m) + m;
+				} else if (m.indexOf('..') === 0) {
+					m = clean(m, 2);
+					if (m == 'self') {
+						m = '';
+					}
+					prefix = addCssPrefixAutomatically ? globalPrfx : localPrfx;
+					className = getCssClassPrefix(prefix, m) + m;
+				} else {
+					m = clean(m);
+					if (addCssPrefixAutomatically && m == 'self') {
+						m = '';
+					}
+			 		prefix = addCssPrefixAutomatically ? localPrfx : '';
+					className = getCssClassPrefix(prefix, m) + m;
+				}				
 				if (obfuscation) {
 					className = getObfuscatedClassName(className);
 				}
@@ -530,21 +644,119 @@ const parseCssClasses = (source, prefix, matchRegex, splitRegex) => {
 			}
 			index++;
 		}
-
 	}
 	return source;
 }
 
 const parseCssSource = (source, _this) => {
+	obfuscatedContent = {};
 	if (!wasInited[currentParser]) {
 		init(currentParser, _this);
 	}
-	if (source.match(/\.{2,}[\w\-]+/i)) {
-		parseCssPrefixes(source);
-		source = parseCssClasses(source, globalPrfx, CSS_GLOBAL_PREFIX_REGEX, CSS_GLOBAL_PREFIX_SPLIT_REGEX);
-		source = parseCssClasses(source, localPrfx, CSS_LOCAL_PREFIX_REGEX, CSS_LOCAL_PREFIX_SPLIT_REGEX);
+	let s = source.replace(CSS_EXACT_AUTO_PREFIX_REGEX, '');
+	if (addCssPrefixAutomatically = source != s) {
+		source = s;
 	}
-	return removeCssPrefixes(source);
+	if (source.match(CSS_AUTO_PREFIX_REGEX)) {
+		addCssPrefixAutomatically = true;
+		source = source.replace(CSS_AUTO_PREFIX_REGEX, ".with.$1.");
+	}
+	if (source.match(CSS_SHORTCUTS_REGEX)) {
+		source = parseCssShortcuts(source);
+	}
+	parseCssPrefixes(source);
+	source = removeCssPrefixes(source);
+	if (addCssPrefixAutomatically || source.match(/\.{2,}[\w\-]+/i)) {
+		source = obfuscateUrlsAndStrings(source);
+		source = parseCssClasses(source);
+		source = deobfuscate(source, OBFUSCATED_URL_KEY, 'urls');
+		source = deobfuscate(source, OBFUSCATED_STRING1_KEY, 'strings1');
+		source = deobfuscate(source, OBFUSCATED_STRING2_KEY, 'strings2');
+	}
+	return source;
+}
+
+const parseCssShortcuts = (source) => {
+	let matches = getAllMatches(source, CSS_SHORTCUTS_REGEX, 1);
+	if (matches.length > 0) {
+		let parts = source.split(CSS_SHORTCUTS_SPLIT_REGEX);
+		source = '';
+		let index = 0;
+		for (let part of parts) {
+			source += part;
+			if (typeof matches[index] == 'string') {
+				let m = matches[index];
+				let ps = m.split('.');
+				for (let p of ps) {
+					p = p.trim();
+					let im = p.match(/\!/), v;
+					if (im) {
+						p =  p.replace(/\!/g, '');
+					}
+					if (typeof cssConsts[p] == 'string') {
+						v = cssConsts[p];
+					} else {
+						let key = p.match(/^[a-z]+/i);
+						let value = p.replace(/^[a-z]+/i, '');
+						if (typeof cssConsts[key] == 'function') {							
+							v = cssConsts[key](value);
+						} else if (typeof cssConsts['_' + key] == 'function') {
+							v =  cssConsts['_' + key](value);
+						}
+					}
+					if (!!v) {
+						if (im) {
+							let pp = v.split(';');
+							let vv = [];
+							for (let pi of pp) {
+								if (!!pi) {
+									vv.push(pi + ' !important');
+								}
+							}
+							v = vv.join(';') + ';';
+						}
+						source += v + "\n";
+					} else {
+						throw new Error('ClassyLoader css parsing error: unknown css shortcut "' + p + '"');
+					}
+				}
+			}
+			index++;
+		}
+	}
+	return source;
+}
+
+const obfuscateUrlsAndStrings = (source) => {
+	let matches = obfuscatedContent.urls = getAllMatches(source, CSS_URLS_REGEX);
+	if (matches.length > 0) {
+		source = source.split(CSS_URLS_REGEX).join(OBFUSCATED_URL_KEY);
+	}
+	matches = obfuscatedContent.strings1 = getAllMatches(source, CSS_STRINGS1_REGEX);
+	if (matches.length > 0) {
+		source = source.split(CSS_STRINGS1_REGEX).join(OBFUSCATED_STRING1_KEY);
+	}
+	matches = obfuscatedContent.strings2 = getAllMatches(source, CSS_STRINGS2_REGEX);
+	if (matches.length > 0) {
+		source = source.split(CSS_STRINGS2_REGEX).join(OBFUSCATED_STRING2_KEY);
+	}
+	return source;
+}
+
+const deobfuscate = (source, key, name) => {
+	if (obfuscatedContent[name] instanceof Array) {
+		let parts = source.split(key);
+		source = '';
+		let index = 0;
+		for (let part of parts) {
+			source += part;
+			if (typeof obfuscatedContent[name][index] == 'string') {
+				source += obfuscatedContent[name][index];
+			}
+			index++;
+		}
+	}
+	return source;
 }
 
 function ClassyLoader(source) {
@@ -557,6 +769,16 @@ function ClassyLoader(source) {
 	}
 	return source;
 };
+
+const con = (text, a = false) => {
+	if (a) {
+		console.log("\n\n========================");
+	}
+	console.log(text);
+	if (a) {
+		console.log("========================\n\n");
+	}
+}
 
 ClassyLoader.init = (opts) => {
 	if (opts instanceof Object) {

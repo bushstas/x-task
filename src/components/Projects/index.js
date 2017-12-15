@@ -78,7 +78,7 @@ class Projects extends React.Component {
 				row.push(
 					<Icon 
 						icon="edit"
-						classes=".edit-icon .button-icon" 
+						classes="icon::edit icon::button" 
 						data-index={index}
 						onClick={this.handleEditProjectClick}/>
 				);
@@ -106,14 +106,14 @@ class Projects extends React.Component {
 		return data.current ? (
 			<Icon 
 				icon="activate"
-				classes=".activate-icon .button-icon" 
+				classes="icon::activate icon::button" 
 				style={{opacity: 0.2}}
 				title={dict.current_project}/>
 		) : (
 		inProject(data.token) ? (
 			<Icon 
 				icon="activate"
-				classes=".activate-icon .button-icon"
+				classes="icon::activate icon::button"
 				title={dict.activate_project}
 				data-index={index}
 				onClick={this.handleActivateButtonClick}/>
@@ -125,7 +125,7 @@ class Projects extends React.Component {
 	renderRequestAccessIcon(index, data) {
 		let props = {
 			icon: 'access',
-			classes: '.activate-icon .button-icon'
+			classes: 'icon::activate  icon::button'
 		};
 		if (data.requested == 1) {
 			props.title = dict.access_requested;

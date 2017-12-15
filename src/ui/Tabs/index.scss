@@ -1,11 +1,13 @@
-..tabs {
-	..tabs-menu {
+.with.auto.prefix;
+
+.tabs {
+	.tabs-menu {
 		font-size: 0;
 		line-height: 0;
 		letter-spacing: -1px;
 		margin-bottom: 10px;
 	}
-	..tab {
+	.tab {
 		text-align: center;
 		min-width: 80px;
 		letter-spacing: 0;
@@ -29,7 +31,7 @@
 		&:only-child {
 			border-radius: 5px;
 		}
-		&..active {
+		&.active {
 			background-color: #555;
 			color: #fff;
 		}

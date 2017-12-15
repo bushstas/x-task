@@ -1,39 +1,20 @@
 ..element-resizer {
-	position: absolute;
-	width: 15px;
-	height: 15px;
-	border-radius: 30%;
-	background-color: #517198;
-	z-index: 2;
-	cursor: ns-resize;
-	opacity: 0;
+	var .abs.wh15.br30p.bc-517198.z2.cur-ns-resize.o;
 
 	&..dragged {
-		cursor: -moz-grabbing !important;
-    	cursor: -webkit-grabbing !important;
-    	cursor: grabbing !important;
+		var .cur-grabbing!;
 	}
 
 	&..resizer-t {
-		left: 50%;
-		margin-left: -7px;
-		top: -7px;
+		var .l50p.ml-7.t-7;
 	}
 	&..resizer-b {
-		left: 50%;
-		margin-left: -7px;	
-		bottom: -10px;
+		var .l50p.ml-7.b-10;
 	}
 	&..resizer-l {
-		top: 50%;
-		margin-top: -7px;	
-		left: -7px;
-		cursor: ew-resize;
+		var .t50p.mt-7.l-7.cur-ew-resize;
 	}
 	&..resizer-r {
-		top: 50%;
-		margin-top: -7px;
-		right: -10px;
-		cursor: ew-resize;
+		var .t50p.mt-7.r-10.cur-ew-resize;
 	}
 }

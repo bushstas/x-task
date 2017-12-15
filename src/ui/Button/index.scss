@@ -1,4 +1,6 @@
-..button {
+.with.auto.addedPrefix.button;
+
+.self {
 	line-height: 36px;
 	border-radius: 3px;
 	padding: 0 16px;
@@ -17,7 +19,7 @@
 		border-color: #333;
 	}
 
-	&..white-button {
+	&.white {
 		background-color: transparent;
 		color: #555;
 		&:hover {

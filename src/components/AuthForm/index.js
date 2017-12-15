@@ -71,7 +71,7 @@ export default class AuthForm extends React.Component {
 	            	</FormSubmit>
 
 	            	<Button 
-	            		classes=".white-button .mt20"
+	            		classes="button::white .mt20"
 	            		onClick={this.changeModeButtonClick}>
 	            		{mode == 'r' ? dict.enter : dict.registration}
 	            	</Button>

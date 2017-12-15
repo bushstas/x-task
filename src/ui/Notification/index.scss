@@ -1,4 +1,6 @@
-..notification {
+.with.auto.addedPrefix.notification;
+
+.self {
 	border-radius: 3px;
 	border: 1px solid #9a0025;
 	background-color: #d20033;
@@ -8,7 +10,7 @@
 	margin-bottom: 10px;
 	font-size: 13px;
 
-	&..success {
+	&.success {
 		border: 1px solid #4e9200;
 		background-color: #6bc305;
 	}

@@ -10,7 +10,7 @@ class VisualElementPanel extends React.Component {
 	render() {
 		let {visualElement} = this.props;
 	 	return !!visualElement ? (
-	 		<div class=".visual-element-panel .quick-task-panel"
+	 		<div class=".visual-element-panel quick-task::panel"
 	 			onClick={this.handleClick}>
 	 			{this.typeIcon}
 	 			{this.buttons}

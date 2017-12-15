@@ -1,26 +1,16 @@
-..area-selection {
-	position: absolute;
-	left: 50%;
-	width: 150px;
-	height: 120px;
-	top: 0;
-	z-index: 10;
+.with.auto.prefix;
+
+.area-selection {
+	var .abs.l50p.w150.h120.t.z10;
 
 	&:before {
-		content: '';
-	    position: absolute;
-	    width: 100%;
-	    height: 100%;
-	    box-shadow: inset 0 0 40px #29476f;
-	    border: 2px dashed #002d65;
-	    opacity: 0.4;
-	    border-radius: 3px;
-	    z-index: 1;
+		var .cnt.abs.w.h.shad-29476f-40.bo-002d65-2-dashed.o4.br3.z1;
 	}
-	..mark {
-		left: -45px !important;
-		top: -45px !important;
-		margin-left: 0 !important;
-		margin-top: 0 !important;
+	.mark {
+		var .l-45!.t-45!.ml.mt;
+
+		&.fixed {
+			var .abs!;
+		}
 	} 
 }

@@ -1,40 +1,25 @@
-.with.addedPrefix.main-menu
+.with.auto.addedPrefix.main-menu;
 
-..self {
-	position: absolute;
-	right: 65px;
-	top: 0;
-	font-size: 14px;
+.self {
+	var .rel.r65.t.fs14;
 
 	& > span {
-		position: relative;
-		cursor: pointer;
-		display: inline-block;
-		vertical-align: top;
-		margin-left: 44px;
-		line-height: 50px;
-		color: #ddd;
+		var .rel.pntr.inb.vtop.ml44.lh50.c-ddd;
 
-		&...active {
-			color: #ffd638 !important;
-			& > div {			
+		&..active {
+			var .c-ffd638!;
+
+			& > div {
 				color: inherit;
-				opacity: 0.5;
+				var .o5;
 			}
 		}
 
 		&:hover {
-			color: #fff;
+			var .c-fff;
 		}
 		&:after {
-			content: '';
-			position: absolute;
-			bottom: 17px;
-			height: 1px;
-			left: 0;
-			right: 0;
-			background-color: #fff;
-			opacity: 0;
+			var .cnt.abs.b17.h1.l.r.bc-fff.o;
 		}
 		&:hover:after {
 			opacity: 0.3;

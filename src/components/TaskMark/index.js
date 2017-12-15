@@ -29,24 +29,12 @@ export default class TaskMark extends React.Component {
 			onClick
 		} = this.props;
 
-		let locClassName = $classyMap(loc) {
-			2: '.loc2',
-			3: '.loc3',
-			4: '.loc4'
-		};
-		let colorClassName = $classyMap(importance) {
-			burning: '.color-burning',
-			urgent: '.color-urgent',
-			important: '.color-important',
-			usual: '.color-usual',
-			insignificant: '.color-insignificant',
-			future: '.color-future',
-			to_think: '.color-think'
-		};
-	 	
+		let locClassName = $classy(loc, '.loc', [2,3,4]);
+		let colorClassName = $classy(importance, '.color-', ['burning', 'urgent', 'important', 'usual', 'insignificant', 'future', 'to_think']);
+ 	
 	 	return (
 	 		<VisualElement 
-	 			classes=".mark $classes $locClassName $colorClassName $active?.active $fixed?.fixed"
+	 			classes=".mark $classes $locClassName $colorClassName $?.active $?.fixed"
 	 			index={index}
 	 			mx={mx}
 	 			my={my}

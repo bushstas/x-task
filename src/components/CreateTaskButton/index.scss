@@ -1,21 +1,12 @@
-..create-task-button {
-	position: fixed;
-	z-index: 9990;
-	bottom: 11px;
-	left: 55px;
-	cursor: pointer;
-	color: #444;
-	background-color: #fff;
-	padding: 3px;
-	border-radius: 3px;
+.with.auto.prefix;
+
+.create-task-button {
+	var .fix.z9990.b11.l55.pntr.c-444.bc-fff.p3.br3;
 
 	&:hover {
-		color: #111;
+		var .c-111;
 	}
-
-	..icon {
-		font-size: 26px;
-		line-height: 26px;
-		float: left;
+	.icon {
+		var .fs26.lh26.fl;
 	}
 }
