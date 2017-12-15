@@ -106,6 +106,10 @@ const e = (value) => {
 }
 
 const data = {
+	lt: g('text-align', 'left'),
+	rt: g('text-align', 'right'),
+	cen: g('text-align', 'center'),
+	just: g('text-align', 'justify'),
 	bsp: g('border-spacing', 0),
 	vtop: g('vertical-align', 'top'),
 	vmid: g('vertical-align', 'middle'),
@@ -262,7 +266,8 @@ const map = {
 	shad: 'box-shadow',
 	tshad: 'text-shadow',
 	ov: 'overflow',
-	td: 'text-decoration'
+	td: 'text-decoration',
+	ta: 'text-align'
 
 }
 

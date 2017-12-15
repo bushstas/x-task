@@ -1,5 +1,4 @@
 const {getOptions} = require('loader-utils');
-const path = require('path');
 const cssConsts = require('../cssconsts');
 
 const OPTIONS = {},
@@ -59,6 +58,9 @@ let obfuscationIndex = {},
 	currentSign,
 	currentQuote,
 	addCssPrefixAutomatically,
+	autoPrefix,
+	prefixAutoResolving,
+	globalAutoPrefix,
 	wasInited = {
 		js: false,
 		css: false
@@ -84,7 +86,9 @@ const init = (parser, _this) => {
 		globalPrefix:g = GLOBAL_PREFIX,
 		delimiter:d = DELIMITER,
 		obfuscatedLength: l = OBFUSCATED_LENGTH,
-		obfuscation: o = false
+		obfuscation: o = false,
+		autoPrefix: ap,
+		prefixAutoResolving: pr
 	} = options;
 
 	if (typeof l != 'number') {
@@ -100,6 +104,8 @@ const init = (parser, _this) => {
 	globalPrefix = g;
 	obfuscation = o;
 	obfuscatedLength = l;
+	globalAutoPrefix = ap;
+	prefixAutoResolving = pr;
 }
 
 const getParts = (source) => {	
@@ -111,14 +117,17 @@ const getParts = (source) => {
 }
 
 const getRegex = (quote = currentQuote) => {
-	return new RegExp('\\b' + currentAttrName + "\\s*" + currentSign + "\\s*" + quote, 'g');
+	if (currentSign == ':') {
+		return new RegExp('\\b' + currentAttrName + "\\s*:\\s*" + quote, 'g');	
+	}
+	return new RegExp('\\b' + currentAttrName + "\\s*=\\s*\\{*\\s*" + quote, 'g');
 }
 
 const getPrefixesRegex = (attr, glbl = '') => {
 	if (glbl) {
 		glbl = 'g';
 	}
-	return new RegExp('\\bwith\\s+' + attr + '\\s+[\'"] *([a-z][a-z\\-0-9]*) *[\'"];*', glbl + 'i');
+	return new RegExp('\\bwith(\\s+auto)*\\s+' + attr + '\\s+[\'"] *([a-z][a-z\\-0-9]*) *[\'"];*', glbl + 'i');
 }
 
 const getAttributeRegex = () => {
@@ -127,28 +136,72 @@ const getAttributeRegex = () => {
 
 const parsePrefixes = (source) => {
 	if (!prefixesParced) {
+		let prefixDefined = false;
 		globalPrfx = localPrfx = globalPrefix;
 
 		let matches = source.match(getPrefixesRegex(PREFIX_ATTR));
 		if (matches) {
-			let lp = matches[1];
+			if (!!matches[1]) {
+				autoPrefix = true;
+			}
+			let lp = matches[2];
 			if (lp) {
 				localPrfx = lp;
+				prefixDefined = true;
 			}
 		}
 
 		matches = source.match(getPrefixesRegex(ADDED_PREFIX_ATTR));
 		if (matches) {
-			let ap = matches[1];
+			if (!!matches[1]) {
+				autoPrefix = true;
+			}
+			let ap = matches[2];
 			if (ap) {
 				let d = delimiter;
 				if (!localPrfx) {
 					d = '';
 				}
 				localPrfx = localPrfx + d + ap;
+				prefixDefined = true;
 			}
 		}
+		if (prefixAutoResolving && !prefixDefined) {
+			tryToDefinePrefix(source);
+		}
 		prefixesParced = true;
+		autoPrefix = globalAutoPrefix || autoPrefix;
+	}
+}
+
+const tryToDefinePrefix = (source) => {
+	let className;
+	let matches = source.match(/\bexport +default +(class|function) +([a-zA-Z_][\w]*)/);
+	if (matches && matches.length > 0) {
+		className = matches[2];
+	} else {
+		matches = source.match(/\bexport +default +connect *\([^\)]*\)\( *([a-zA-Z_][\w]*) *\)/);
+		if (matches && matches.length > 0) {
+			className = matches[1];
+		} else {
+			matches = source.match(/\bclass +([a-zA-Z_][\w]*)/);
+			if (matches && matches.length > 0) {
+				className = matches[1];
+			} else {
+				matches = source.match(/\bfunction *([a-zA-Z_][\w]*) *\(/);
+				if (matches && matches.length > 0) {
+					className = matches[1];
+				}
+			}
+		}
+	}
+	if (!!className && className.match(/^[A-Z]/)) {
+		let d = delimiter;
+		if (!localPrfx) {
+			d = '';
+		}
+		let p = className.split(/(?=[A-Z])/).join(delimiter).toLowerCase();
+		localPrfx = localPrfx + d + p;
 	}
 }
 
@@ -163,7 +216,6 @@ const clean = (cl, count = 1) => {
 }
 
 const getWithPrefix = (cl, prefix) => {
-	cl = clean(cl);
 	if (cl == 'self') {
 		return getWrappedWithQuotes(prefix);
 	}
@@ -222,13 +274,16 @@ const getPart = (cl) => {
 		c2 = cl[1];
 	switch (c) {
 		case '.': {
-			let p = localPrfx;
+			let p = !autoPrefix ? localPrfx : globalPrfx;
+			cl = clean(cl);
 			if (c2 == '.') {
-				p = globalPrfx;
 				cl = clean(cl);
+				if (autoPrefix) {
+					return getWrappedWithQuotes(cl);
+				}
+				p = globalPrfx;
 				c2 = cl[1];
-			}
-			if (c2 == '$') {
+			} else if (c2 == '$') {
 				return getVariablesWithPrefix(cl, p);
 			}
 			return getWithPrefix(cl, p);
@@ -239,6 +294,9 @@ const getPart = (cl) => {
 	}
 	if (cl.indexOf('::') > -1) {
 		return getWithGivenPrefix(cl);
+	}
+	if (autoPrefix) {
+		return getWithPrefix(cl, localPrfx);
 	}
 	return getWrappedWithQuotes(cl);
 }
@@ -322,6 +380,12 @@ const parseWithQuote = (source, quote) => {
 			let className = parseClassNames(value);
 			if (className) {
 				ps[0] = '';
+				if (currentSign != ':') {
+					ps[1] = ps[1].trim();
+					if (ps[1][0] == '}') {
+						ps[1] = clean(ps[1]);
+					}
+				}
 				ps = clean(ps.join(q));
 				let q2 = q;
 				if (varsUsed) {
@@ -415,6 +479,7 @@ const parseJsSource = (source, _this) => {
 	varsWereUsed = false;
 	prefixesParced = false;
 	isExtraAttr = false;
+	autoPrefix = false;
 	currentSign = '=';
 
 	if (!wasInited[currentParser]) {
@@ -567,12 +632,13 @@ const getCssPrefixesRegex = (attr, glbl = '') => {
 
 const parseCssPrefixes = (source) => {
 	globalPrfx = localPrfx = globalPrefix;
-
+	
 	let matches = source.match(getCssPrefixesRegex(PREFIX_ATTR));
 	if (matches) {
 		let lp = matches[1];
 		if (lp) {
 			localPrfx = lp;
+			autoPrefix = true;
 		}
 	}
 
@@ -585,8 +651,11 @@ const parseCssPrefixes = (source) => {
 				d = '';
 			}
 			localPrfx = localPrfx + d + ap;
+			autoPrefix = true;
 		}
 	}
+
+	autoPrefix = globalAutoPrefix || autoPrefix;
 }
 
 const getCssClassPrefix = (prefix, className) => {
@@ -650,6 +719,7 @@ const parseCssClasses = (source) => {
 
 const parseCssSource = (source, _this) => {
 	obfuscatedContent = {};
+	autoPrefix = false;
 	if (!wasInited[currentParser]) {
 		init(currentParser, _this);
 	}
@@ -666,6 +736,7 @@ const parseCssSource = (source, _this) => {
 	}
 	parseCssPrefixes(source);
 	source = removeCssPrefixes(source);
+	addCssPrefixAutomatically = addCssPrefixAutomatically || autoPrefix;
 	if (addCssPrefixAutomatically || source.match(/\.{2,}[\w\-]+/i)) {
 		source = obfuscateUrlsAndStrings(source);
 		source = parseCssClasses(source);
