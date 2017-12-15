@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './index.scss';
-
 export default class Input extends React.PureComponent {
 	static defaultProps = {
 		onChange: () => {}
@@ -22,7 +20,7 @@ export default class Input extends React.PureComponent {
 			props.spellCheck = 'false';
 		}
 		return (
-			<div class=".input $classes">
+			<div class="self $classes">
 				{textarea ? (
 					<textarea {...props}>
 						{value}

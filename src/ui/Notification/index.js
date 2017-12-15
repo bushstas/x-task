@@ -4,7 +4,7 @@ import './index.scss';
 
 export default function Notification({children, classes}) {
 	return (
-		<div class=".notification $classes">
+		<div class="self $classes">
 			{children}
 		</div>
 	)

@@ -14,7 +14,8 @@ classy.init({
     obfuscatedLength: 4,
     addSuffixToAllNames: false,
     addSuffixToSimpleNames: true,
-    addPrefixToAllNames: false
+    autoPrefix: true,
+    prefixAutoResolving: true
 });
 
 const env = process.env.NODE_ENV;

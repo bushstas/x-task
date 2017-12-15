@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './index.scss';
-
 export default class Select extends React.PureComponent {
 	static defaultProps = {
 		onChange: () => {}
@@ -10,7 +8,7 @@ export default class Select extends React.PureComponent {
 	render() {
 		let {classes, name, value} = this.props;
 		return (
-			<div class=".select $classes">
+			<div class="self $classes">
 				<select 
 					name={name}
 					value={value}

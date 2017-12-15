@@ -4,8 +4,6 @@ import {dict} from '../../utils/Dictionary';
 
 import './index.scss';
 
-with addedPrefix 'dialog';
-
 export default class Dialog extends React.Component {
 	static defailtProps = {
 		onClose: () => {}
@@ -14,18 +12,18 @@ export default class Dialog extends React.Component {
 	render() {
 		let {onClose, children, classes, titleContent} = this.props;
 		return (
-			<div class=".box $classes">
-				<div class=".mask" onClick={this.handleMaskClick}/>
-				<div class=".self">
-					<div class=".title">
+			<div class="box $classes">
+				<div class="mask" onClick={this.handleMaskClick}/>
+				<div class="self">
+					<div class="title">
 						{this.title}
 						{titleContent}
 						
 						<Icon icon="close" 
 							onClick={onClose}
-							class=".close"/>
+							class="close"/>
 					</div>
-					<div class=".content">
+					<div class="content">
 						{children}
 					</div>
 				</div>
@@ -37,7 +35,7 @@ export default class Dialog extends React.Component {
 		let {title} = this.props;
 		return (
 			<div>
-				<span class=".logo">
+				<span class="logo">
 					<Icon size="22" icon="logo"/>
 					{dict.logo}
 				</span>

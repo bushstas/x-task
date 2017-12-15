@@ -22,7 +22,7 @@ export default class AuthForm extends React.Component {
 			 <Dialog 
 			 	title={mode == 'r' ? dict.registration : dict.auth}
 	            onClose={onClose}
-	            classes=".dialog-narrow">	            
+	            classes="dialog::narrow">	            
 	            
 	            <Form 
 	            	onChange={this.handleFormChange}

@@ -9,7 +9,7 @@ export default class Checkboxes extends React.PureComponent {
 	render() {
 		let {classes, name, value} = this.props;
 		return (
-			<div class=".checkboxes $classes">
+			<div class="self $classes">
 				{this.controls}
 			</div>
 		)

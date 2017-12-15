@@ -1,7 +1,7 @@
-.with.auto.addedPrefix.main-menu;
+.with.addedPrefix.main-menu;
 
 .self {
-	var .rel.r65.t.fs14;
+	var .abs.r65.t.fs14;
 
 	& > span {
 		var .rel.pntr.inb.vtop.ml44.lh50.c-ddd;
@@ -22,17 +22,11 @@
 			var .cnt.abs.b17.h1.l.r.bc-fff.o;
 		}
 		&:hover:after {
-			opacity: 0.3;
+			var .o3;
 		}
 
 		& > div {
-			position: absolute;
-			left: -20px;
-			top: 50%;
-    		margin-top: -8px;
-			color: #fff;
-			opacity: 0.3;
-			line-height: 16px;
+			var .abs.l-20.t50p.mt-8.c-fff.o3.lh16;
 		}
 	}
 }

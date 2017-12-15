@@ -21,22 +21,22 @@ export class Tabs extends React.PureComponent {
 			children = [children];
 		}
 		return (
-			<div class=".tabs $classes">
-				<div class=".tabs-menu">
+			<div class="self $classes">
+				<div class="menu">
 					{children.map((child, i) => {
 						if (child instanceof Object && child.type == Tab) {
 							let props = {
 								key: i,
 								index: i,
 								onSelect: this.handleSelectTab,
-								classes: "$activeTab==i?.active",
+								classes: "$activeTab==i?active",
 								...child.props
 							};
 							return React.cloneElement(child, props, null);
 						}
 					})}
 				</div>
-				<div class=".tabs-content">
+				<div class="content">
 					{children.map((child, i) => {
 						if (activeTab == i && child instanceof Object && child.type == Tab) {
 							return child.props.children;
@@ -62,7 +62,7 @@ export class Tabs extends React.PureComponent {
 
 export function Tab({caption, index, onSelect, classes, value}) {
 	return (
-		<div class=".tab $classes" data-index={index} data-value={value} onClick={onSelect}>
+		<div class="tab $classes" data-index={index} data-value={value} onClick={onSelect}>
 			{caption}
 		</div>
 	)
