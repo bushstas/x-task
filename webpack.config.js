@@ -14,8 +14,8 @@ classy.init({
     obfuscatedLength: 4,
     addSuffixToAllNames: false,
     addSuffixToSimpleNames: true,
-    autoPrefix: true,
-    prefixAutoResolving: true
+    autoPrefixMode: true,
+    prefixAutoResolving: 'content' // content | file | folder
 });
 
 const env = process.env.NODE_ENV;

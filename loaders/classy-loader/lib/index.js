@@ -1,5 +1,6 @@
 const {getOptions} = require('loader-utils');
-const cssConsts = require('../cssconsts');
+const path = require('path');
+const cssConsts = require(path.resolve(__dirname, '..', 'cssconsts');
 
 const OPTIONS = {},
 	  CLASSNAMES = '__classy',
@@ -35,7 +36,8 @@ const OPTIONS = {},
 	  CSS_SHORTCUTS_REGEX = /\bvar +\.([^\r\n\t;]+);*/gi,
 	  CSS_SHORTCUTS_SPLIT_REGEX = /\bvar +\.[^\r\n\t;]+;*/i;
 
-let obfuscationIndex = {},
+let loaderContext,
+	obfuscationIndex = {},
 	obfuscationMap = {},
 	obfuscation,
 	obfuscatedLength,
@@ -66,19 +68,19 @@ let obfuscationIndex = {},
 		css: false
 	};
 
-const getParser = (_this) => {
-	let options = getOptions(_this);
+const getParser = () => {
+	let options = getOptions(loaderContext);
 	if (typeof options.parser == 'string') {
 		options.parser = options.parser.toLowerCase();
 	}
 	return options.parser == 'js' || options.parser == 'css' ? options.parser : 'js';
 }
 
-const init = (parser, _this) => {
+const init = (parser) => {
 	wasInited[parser] = true;
 	let options = {
 		...OPTIONS,
-		...getOptions(_this)
+		...getOptions(loaderContext)
 	};
 	let {
 		attributeName:a = ATTRIBUTE_NAME,
@@ -87,7 +89,7 @@ const init = (parser, _this) => {
 		delimiter:d = DELIMITER,
 		obfuscatedLength: l = OBFUSCATED_LENGTH,
 		obfuscation: o = false,
-		autoPrefix: ap,
+		autoPrefixMode: ap,
 		prefixAutoResolving: pr
 	} = options;
 
@@ -166,15 +168,54 @@ const parsePrefixes = (source) => {
 				prefixDefined = true;
 			}
 		}
-		if (prefixAutoResolving && !prefixDefined) {
-			tryToDefinePrefix(source);
+		if (!!prefixAutoResolving && !prefixDefined) {
+			tryToGetPrefix(source);
 		}
 		prefixesParced = true;
 		autoPrefix = globalAutoPrefix || autoPrefix;
 	}
 }
 
-const tryToDefinePrefix = (source) => {
+const tryToGetPrefix = (source) => {
+	switch (prefixAutoResolving) {
+		case 'folder':
+			tryToGetPrefixFromFolderName();
+		break;
+
+		case 'file':
+			tryToGetPrefixFromFileName();
+		break;
+
+		default:
+			tryToGetPrefixFromContent(source);
+	}
+}
+
+const tryToGetPrefixFromFolderName = () => {
+	let r = loaderContext.resourcePath,
+		parts = r.split(/\\|\//),
+		l = parts.length,
+		i = l - 2,
+		folderName = parts[i];
+
+	if (typeof folderName == 'string') {
+		definePrefix(folderName);
+	}
+}
+
+const tryToGetPrefixFromFileName = (source) => {
+	let r = loaderContext.resourcePath,
+		parts = r.split(/\\|\//),
+		l = parts.length,
+		i = l - 1,
+		fileName = parts[i];
+
+	if (typeof fileName == 'string') {
+		definePrefix(fileName);
+	}
+}
+
+const tryToGetPrefixFromContent = (source) => {
 	let className;
 	let matches = source.match(/\bexport +default +(class|function) +([a-zA-Z_][\w]*)/);
 	if (matches && matches.length > 0) {
@@ -196,13 +237,29 @@ const tryToDefinePrefix = (source) => {
 		}
 	}
 	if (!!className && className.match(/^[A-Z]/)) {
-		let d = delimiter;
-		if (!localPrfx) {
-			d = '';
-		}
-		let p = className.split(/(?=[A-Z])/).join(delimiter).toLowerCase();
-		localPrfx = localPrfx + d + p;
+		definePrefix(className);
 	}
+}
+
+const definePrefix = (name) => {
+	let d = delimiter, p;
+	if (!localPrfx) {
+		d = '';
+	}	
+	if (name.match(/_/)) {
+		if (delimiter == '-') {
+			name = name.replace('_', '-');
+		}
+		p = name;
+	} else if (name.match(/-/)) {
+		if (delimiter == '_') {
+			name = name.replace('-', '_');	
+		}
+		p = name;
+	} else {
+		p = name.split(/(?=[A-Z])/).join(delimiter).toLowerCase();
+	}
+	localPrfx = localPrfx + d + p;	
 }
 
 const removePrefixes = (source) => {
@@ -475,7 +532,7 @@ const parseWithAttribute = (name, source) => {
 	return source;
 }
 
-const parseJsSource = (source, _this) => {
+const parseJsSource = (source) => {
 	varsWereUsed = false;
 	prefixesParced = false;
 	isExtraAttr = false;
@@ -483,7 +540,7 @@ const parseJsSource = (source, _this) => {
 	currentSign = '=';
 
 	if (!wasInited[currentParser]) {
-		init(currentParser, _this);
+		init(currentParser);
 	}
 	source = parseWithAttribute(attributeName, source);
 	
@@ -683,9 +740,10 @@ const parseCssClasses = (source) => {
 			if (typeof matches[index] == 'string') {
 				let className, prefix;
 				let m = matches[index];
-				if (m[0] == '$') {
-					className = m.replace(/^\$\.+/, '');					
-				} else if (m.indexOf('...') === 0) {
+				if (m.indexOf('...') === 0 && addCssPrefixAutomatically) {
+					m = clean(m, 2);
+				}
+				if (m.indexOf('...') === 0) {
 					m = clean(m, 3);
 					if (m == 'self') {
 						m = '';
@@ -717,11 +775,11 @@ const parseCssClasses = (source) => {
 	return source;
 }
 
-const parseCssSource = (source, _this) => {
+const parseCssSource = (source) => {
 	obfuscatedContent = {};
 	autoPrefix = false;
 	if (!wasInited[currentParser]) {
-		init(currentParser, _this);
+		init(currentParser);
 	}
 	let s = source.replace(CSS_EXACT_AUTO_PREFIX_REGEX, '');
 	if (addCssPrefixAutomatically = source != s) {
@@ -831,12 +889,13 @@ const deobfuscate = (source, key, name) => {
 }
 
 function ClassyLoader(source) {
-	currentParser = getParser(this);
+	loaderContext = this;
+	currentParser = getParser();
 	if (currentParser == 'js') {
-		return parseJsSource(source, this);
+		return parseJsSource(source);
 	}
 	if (currentParser == 'css') {
-		return parseCssSource(source, this);
+		return parseCssSource(source);
 	}
 	return source;
 };
