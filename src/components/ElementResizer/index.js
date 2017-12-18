@@ -25,7 +25,7 @@ export default class ElementResizer extends React.PureComponent {
 	 			onMove={this.handleMove}
 	 			onClick={this.handleClick}
 	 			onDragEnd={this.handleDragEnd}
-	 			classes=".element-resizer $dragged?.dragged $classes"/>
+	 			classes="self $?dragged $classes"/>
 		)
 	}
 

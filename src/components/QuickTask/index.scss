@@ -1,6 +1,4 @@
-.with.addedPrefix.quick-task
-
-..self {
+.self {
 	position: fixed;
     left: 50%;
     width: 780px;
@@ -14,27 +12,28 @@
     user-select: none;
     height: 484px;
 
-	&..collapsed,
-	&..active {
+	&.collapsed,
+	&.active {
 		display: block;
 	}
 
-	&..collapsed {
+	&.collapsed {
 		bottom: -442px;
 	}
 
-	& > ...form {
+	& > ..form {
 		position: absolute;
 		top: 48px;
 		left: 48px;
 		right: 90px;
 		bottom: 0;
 		
-		...form-field {
+		..form-field {
 			margin-bottom: 6px;
-		}
-		...form-field:nth-child(3) {
-			margin-bottom: 2px;
+			
+			&:nth-child(3) {
+				margin-bottom: 2px;
+			}
 		}
 		input[type="text"] {
 			border-color: #b7bece;
@@ -46,25 +45,25 @@
 		}
 	}
 
-	..importance-panel {
+	.importance-panel {
 		position: absolute;
 		top: 48px;
 		left: 6px;
 	}
 
-	..type-panel {
+	.type-panel {
 		position: absolute;
 		top: 48px;
 		right: 48px;
 	}
 
-	..action-panel {
+	.action-panel {
 		position: absolute;
 		top: 48px;
 		right: 6px;
 	}
 
-	..element-panel {
+	.element-panel {
 		position: absolute;
     	top: -4px;
     	left: -1px;
@@ -75,7 +74,7 @@
     	z-index: 1;
 	}
 
-	..top-panel {
+	.top-panel {
 		position: absolute;
 		top: -4px;
 		right: -1px;
@@ -85,22 +84,22 @@
 		z-index: 2;
 	}
 
-	&..collapsed {
-		...icon {
-			&..panel-up {
+	&.collapsed {
+		..icon {
+			&.panel-up {
 				display: inline-block !important;
 			}
 		}
 	}
 
-	..bottom-panel {
+	.bottom-panel {
 		position: absolute;
 		bottom: 5px;
 		left: 48px;
 		width: 300px;
 	}
 
-	...button {
+	..button {
 		width: 170px;
 	    line-height: 35px;
 	    height: 36px;
@@ -119,7 +118,7 @@
 }
 
 ..panel {
-	...icon {
+	..icon {
 		width: 36px;
 	    height: 36px;
 	    font-size: 24px;
@@ -147,14 +146,14 @@
 			vertical-align: top;
 		}
 
-		&...white-icon {
+		&..white-icon {
 			background-color: transparent !important;
 			color: #ddd;
 			border: 0;
 			&:hover {
 				color: #fff;
 			}
-			&...active {
+			&..active {
 				background-color: #222 !important;
 			}
 		}

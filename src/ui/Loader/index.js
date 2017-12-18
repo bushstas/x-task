@@ -2,8 +2,6 @@ import React from 'react';
 
 import './index.scss';
 
-with addedPrefix 'loader';
-
 export default function Loader({fetching, classes, height, children}) {
 	return (
 		<div class="$classes">

@@ -10,8 +10,6 @@ import TaskInfoForm from '../TaskInfoForm';
 
 import './index.scss';
 
-with addedPrefix 'quick-task';
-
 class QuickTask extends React.Component {
 
 	render() {
@@ -24,17 +22,9 @@ class QuickTask extends React.Component {
 			taskInfoShown,
 			info
 		} = this.props;
-		let classes;
-		switch (status) {
-			case 'active':
-				classes = '.active';
-			break;
-			case 'collapsed':
-				classes = '.collapsed';
-			break;
-		}
+		let className = $classy(status, '', ['active', 'collapsed']);
 	 	return (
-	 		<div class=".self $classes">
+	 		<div class="self $className">
 				<Form onChange={this.handleFormChanged}>
 					<FormField>
 						<Input 
@@ -62,42 +52,42 @@ class QuickTask extends React.Component {
 					</Button>
 				</Form>
 
-				<div class=".importance-panel .panel" onClick={this.handleChangeParam}>					
+				<div class="importance-panel .panel" onClick={this.handleChangeParam}>					
 					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
 				</div>
 
-				<div class=".type-panel .panel" onClick={this.handleChangeParam}>
+				<div class="type-panel .panel" onClick={this.handleChangeParam}>
 					{this.renderButtons(icons.task_type, type, 'type', 'category')}
 				</div>
 				
-				<div class=".action-panel .panel" onClick={this.handleChangeParam}>
+				<div class="action-panel .panel" onClick={this.handleChangeParam}>
 					{this.renderButtons(icons.task_act, action, 'action', 'action')}
 				</div>
 
-				<div class=".element-panel .panel">
+				<div class="element-panel .panel">
 					{this.renderElementButtons()}
 				</div>
 
-				<div class=".bottom-panel .panel">
+				<div class="bottom-panel .panel">
 					<Icon icon="assign"
-						class=".inline-icon"
+						classes=".inline-icon"
 						title={dict.assign_executors}/>
 
 					<Icon icon="task_info"
-						class=".inline-icon"
+						classes=".inline-icon"
 						title={dict.task_info}
 						data-param="taskInfoShown"
 						onClick={this.handleChange}/>
 				</div>
 
-				<div class=".top-panel .panel">
+				<div class="top-panel .panel">
 					<Icon icon="up"
-						classes="..white-icon .panel-up .inline-icon"
+						classes=".white-icon .panel-up .inline-icon"
 						onClick={this.handleExpandClick}/>
 
 					<Icon icon="close"
 						title={dict.cancel_task}
-						classes="..white-icon .inline-icon"
+						classes=".white-icon .inline-icon"
 						onClick={this.handleExpandClick}/>
 				</div>
 
@@ -126,7 +116,7 @@ class QuickTask extends React.Component {
 			let title = this.getElementButtonTitle(value);
 			return  (
 				<Icon 
-					classes="..white-icon .inline-icon"
+					classes=".white-icon .inline-icon"
 					data-type={value}
 					title={title}
 					key={value}
@@ -154,7 +144,7 @@ class QuickTask extends React.Component {
 		return keys.map((value) => {
 			return  (
 				<Icon 
-					classes="$param==value ?.active"
+					classes="$param==value?.active"
 					data-param={paramName}
 					data-value={value}
 					title={dict[title] + ': ' + dict[value]}

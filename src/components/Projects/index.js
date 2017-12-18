@@ -26,7 +26,7 @@ class Projects extends React.Component {
 			]
 		}
 	 	return (
-	 		<Loader fetching={fetching} classes=".projects">
+	 		<Loader fetching={fetching} classes="self">
 				{this.table}
 				{this.actionButtons}
 			</Loader>

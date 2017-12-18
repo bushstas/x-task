@@ -31,7 +31,7 @@ export default class DraggableElement extends React.PureComponent {
 		}
 	 	return (
 	 		<div ref="element" 
-	 			class="$classes $locked?.locked"
+	 			class="$classes $?locked"
 	 			style={style}
 	 			onWheel={onWheel}
 	 			onMouseDown={this.handleMouseDown}>

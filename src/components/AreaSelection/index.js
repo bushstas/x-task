@@ -37,7 +37,7 @@ export default class AreaSelection extends React.Component {
 	 	return (
 	 		<VisualElement 
 	 			ref="element"
-	 			classes=".area-selection $classes $active?.active $fixed?.fixed"
+	 			classes="self $classes $?active $?fixed"
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
@@ -49,10 +49,10 @@ export default class AreaSelection extends React.Component {
 	 			onWheel={this.handleWheel}
 	 			onChangeCoords={onChangeCoords}
 	 			onChangeSize={onChangeSize}>
-	 			<ElementResizer position="t" classes=".resizer-t"/>
-	 			<ElementResizer position="b" classes=".resizer-b"/>
-	 			<ElementResizer position="l" classes=".resizer-l"/>
-	 			<ElementResizer position="r" classes=".resizer-r"/>
+	 			<ElementResizer position="t" classes="element-resizer::t"/>
+	 			<ElementResizer position="b" classes="element-resizer::b"/>
+	 			<ElementResizer position="l" classes="element-resizer::l"/>
+	 			<ElementResizer position="r" classes="element-resizer::r"/>
 	 			{bent && <TaskMark {...markProps}/>}
 	 		</VisualElement>
 

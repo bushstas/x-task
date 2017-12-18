@@ -10,7 +10,7 @@ class VisualElementPanel extends React.Component {
 	render() {
 		let {visualElement} = this.props;
 	 	return !!visualElement ? (
-	 		<div class=".visual-element-panel quick-task::panel"
+	 		<div class="self .panel"
 	 			onClick={this.handleClick}>
 	 			{this.typeIcon}
 	 			{this.buttons}
@@ -22,7 +22,7 @@ class VisualElementPanel extends React.Component {
 		let {visualElement: {type}} = this.props;
 		return  (
 			<Icon 
-				classes="..white-icon .element-type"
+				classes=".white-icon .element-type"
 				title={dict[type]}>
 				{icons.task_el[type]}
 			</Icon>
@@ -44,7 +44,7 @@ class VisualElementPanel extends React.Component {
 			let isActive = this.isActive(data, value);
 			return  (
 				<Icon 
-					classes="..white-icon $isActive?.active"
+					classes=".white-icon $isActive?.active"
 					data-action={value}
 					title={dict[value]}
 					key={value}>
