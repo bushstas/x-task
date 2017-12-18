@@ -7,7 +7,7 @@ import './index.scss';
 export default function CreateTaskButton({onClick}) {
 	return (
 		<div 
-			class=".create-task-button"
+			class="self"
 			onClick={onClick}
 			title={dict.create_task}>
 			<Icon icon="addtask"/>

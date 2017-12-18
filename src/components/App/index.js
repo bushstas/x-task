@@ -18,7 +18,7 @@ import {dict} from '../../utils/Dictionary';
 import {isAuthorized, auth, register, logout, hasRight} from '../../utils/User';
 import Store from 'xstore';
 
-import '../../index.scss';
+import './index.scss';
 
 class App extends React.PureComponent {
   constructor() {

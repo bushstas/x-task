@@ -7,7 +7,7 @@ export default class Table extends React.PureComponent {
 	render() {
 		let {classes} = this.props;
 		return (
-			<table class=".table $classes">
+			<table class="self $classes">
 				<thead>
 					{this.thead}
 				</thead>
