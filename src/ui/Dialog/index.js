@@ -21,7 +21,7 @@ export default class Dialog extends React.Component {
 						
 						<Icon icon="close" 
 							onClick={onClose}
-							class="close"/>
+							classes="close"/>
 					</div>
 					<div class="content">
 						{children}

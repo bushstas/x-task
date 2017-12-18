@@ -7,15 +7,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const classy = require('classy-loader');
 classy.init({
-    attributeName: 'class',
-    extraAttributeName: 'classes',
     globalPrefix: 'x-task',
     obfuscation: false,
-    obfuscatedLength: 4,
-    addSuffixToAllNames: false,
-    addSuffixToSimpleNames: true,
     autoPrefixMode: true,
-    prefixAutoResolving: 'content' // content | file | folder
+    prefixAutoResolving: 'folder'
 });
 
 const env = process.env.NODE_ENV;

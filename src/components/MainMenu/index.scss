@@ -1,12 +1,10 @@
-.with.addedPrefix.main-menu;
-
 .self {
 	var .abs.r65.t.fs14;
 
 	& > span {
 		var .rel.pntr.inb.vtop.ml44.lh50.c-ddd;
 
-		&..active {
+		&.active {
 			var .c-ffd638!;
 
 			& > div {

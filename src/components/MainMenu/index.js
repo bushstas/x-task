@@ -11,7 +11,7 @@ export default function MainMenu({active, onNavigate}) {
 		<div class="self" onClick={onNavigate}>
 			{keys.map((name) => {
 				return (
-					<span class="$active==name?.active" data-name={name} key={name}>
+					<span class="$active==name?active" data-name={name} key={name}>
 						{dict[name]}
 						<div>
 							<Icon size="16">
