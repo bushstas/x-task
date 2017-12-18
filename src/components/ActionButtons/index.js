@@ -11,7 +11,7 @@ export default class ActionButtons extends React.Component {
 	render() {
 		let {buttonsShown} = this.props;
 	 	return (
-	 		<div class=".action-buttons">
+	 		<div class="self">
 	 			{this.content}
 	 		</div>
 	 	)

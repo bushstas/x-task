@@ -2,8 +2,6 @@ import React from 'react';
 import FormField from '../FormField';
 import FormSubmit from '../FormSubmit';
 
-import './index.scss';
-
 export default class Form extends React.Component {
 	static defaultProps = {
 		onControlChange: () => {},
@@ -21,7 +19,7 @@ export default class Form extends React.Component {
 	render() {
 		let {classes} = this.props;
 		return (
-			<div class=".form $classes">
+			<div class="self $classes">
 				{this.content}
 			</div>
 		)

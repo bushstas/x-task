@@ -17,7 +17,7 @@ class Account extends React.Component {
 	render() {
 		let {fetching} = this.props;
 	 	return (
-	 		<Loader fetching={fetching} classes=".account">
+	 		<Loader fetching={fetching} classes="self">
 				{this.tabs}
 				{this.actionButtons}
 			</Loader>

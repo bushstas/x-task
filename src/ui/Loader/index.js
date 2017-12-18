@@ -9,9 +9,9 @@ export default function Loader({fetching, classes, height, children}) {
 		<div class="$classes">
 			{children}
 			{fetching && (
-				<div class=".self">
-					<div class=".container">
-						<div class=".whirlpool"/>
+				<div class="self">
+					<div class="container">
+						<div class="whirlpool"/>
 					</div>
 				</div>
 			)}

@@ -3,7 +3,7 @@ import React from 'react';
 import './index.scss';
 
 export default function Button({classes, children, href, width, ...others}) {
-	classes = '.button $classes';
+	classes = 'self $classes';
 	let props = {
 		className: classes,
 		...others
