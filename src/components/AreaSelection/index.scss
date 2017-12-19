@@ -1,15 +1,13 @@
-.with.auto.prefix;
-
-.area-selection {
+.self {
 	var .abs.l50p.w150.h120.t.z10;
 
 	&:before {
-		var .cnt.abs.w.h.shad-29476f-40.bo-002d65-2-dashed.o4.br3.z1;
+		var .cnt.abs.w.h.shad-in-29476f-40.bo-002d65-2-dashed.o4.br3.z1;
 	}
-	.mark {
-		var .l-45!.t-45!.ml.mt;
+	..task-mark {
+		var .l-45!.t-45!.ml!.mt!;
 
-		&.fixed {
+		&..fixed {
 			var .abs!;
 		}
 	} 

@@ -1,20 +1,20 @@
-..element-resizer {
+.self {
 	var .abs.wh15.br30p.bc-517198.z2.cur-ns-resize.o;
 
-	&..dragged {
+	&.dragged {
 		var .cur-grabbing!;
 	}
 
-	&..resizer-t {
+	&.t {
 		var .l50p.ml-7.t-7;
 	}
-	&..resizer-b {
+	&.b {
 		var .l50p.ml-7.b-10;
 	}
-	&..resizer-l {
+	&.l {
 		var .t50p.mt-7.l-7.cur-ew-resize;
 	}
-	&..resizer-r {
+	&.r {
 		var .t50p.mt-7.r-10.cur-ew-resize;
 	}
 }

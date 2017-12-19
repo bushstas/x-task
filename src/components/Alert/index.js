@@ -3,9 +3,9 @@ import Dialog from '../../ui/Dialog';
 
 export default function Alert({title, children, onClose}) {
 	return (
-		 <Dialog title={title}
+		<Dialog title={title}
             onClose={onClose}
-            classes=".notification-dialog">
+            classes="dialog::small">
             {children}
         </Dialog>
 	)

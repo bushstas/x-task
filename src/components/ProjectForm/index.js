@@ -18,7 +18,7 @@ class ProjectForm extends React.Component {
 			<Form 
 				data={data}
 				onChange={this.handleFormChange}
-				classes=".project-form .pt10">
+				classes="self .pt10">
 
 				<FormField caption={dict.title}>
 					<Input name="name" value={data.name}/>

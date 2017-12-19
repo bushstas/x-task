@@ -1,4 +1,4 @@
-..mark {
+.self {
 	position: absolute;
 	left: 50%;
 	background-color: #00b773;
@@ -14,42 +14,42 @@
 		line-height: 50px;
 	}
 
-	&..color-burning {
+	&.color-burning {
 		background-color: #ff6a00;
 		&:before {
 			background-color: #ff6a00;
 		}
 	}
 
-	&..color-urgent {
+	&.color-urgent {
 		background-color: #ec0016;
 		&:before {
 			background-color: #ec0016;
 		}
 	}
 
-	&..color-important {
+	&.color-important {
 		background-color: #68b700;
 		&:before {
 			background-color: #68b700;
 		}
 	}
 
-	&..color-insignificant {
+	&.color-insignificant {
 		background-color: #0084b7;
 		&:before {
 			background-color: #0084b7;
 		}
 	}
 
-	&..color-future {
+	&.color-future {
 		background-color: #2f5294;
 		&:before {
 			background-color: #2f5294;
 		}
 	}
 
-	&..color-think {
+	&.color-think {
 		background-color: #555;
 		&:before {
 			background-color: #555;
@@ -74,7 +74,7 @@
 		border-radius: 0 0 0 2px;
 	}
 
-	&..loc2 {
+	&.loc2 {
 		&:before {
 			bottom: auto;
 			top: 0;
@@ -82,7 +82,7 @@
 		}
 	}
 
-	&..loc3 {
+	&.loc3 {
 		&:before {
 			bottom: auto;
 			left: auto;
@@ -91,7 +91,7 @@
 		}
 	}
 
-	&..loc4 {
+	&.loc4 {
 		&:before {
 			left: auto;
 			right: 0;
