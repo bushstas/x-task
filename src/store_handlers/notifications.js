@@ -41,7 +41,7 @@ const add = ({dispatch}, {message, classes}) => {
 }
 
 const add_success = ({doAction}, message) => {
-  doAction('NOTIFICATIONS_ADD', {message, classes: 'x-task-success'})
+  doAction('NOTIFICATIONS_ADD', {message, type: 'success'})
 }
  
 export default {
