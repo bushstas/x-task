@@ -28,6 +28,14 @@ class App extends React.PureComponent {
       active: false,
       isAuthorized: isAuthorized()
     };
+    let s,f;
+    let f = a <f + dd
+    let ccc = "\""
+    let ddd = '\''
+    let ddd = `\\\``
+    let fg = <a a={aaa < bbb ? 1 : 0}/>
+    let classes = "aaa"
+    let aaa = <a><Tasks b={/[a><]/} e={s > f ? 1 : 0} class=".aaa"/></a>
   }
 
   render() {
