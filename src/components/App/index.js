@@ -123,7 +123,7 @@ class App extends React.PureComponent {
     )
   }
 
-  get authForm() {
+  get authForm() {  
     return (
       <AuthForm 
         key="authForm"
