@@ -29,7 +29,7 @@ export class Tabs extends React.PureComponent {
 								key: i,
 								index: i,
 								onSelect: this.handleSelectTab,
-								classes: "$activeTab==i ? active",
+								classes: $classy("$activeTab==i ? active ~aaa"),
 								...child.props
 							};
 							return React.cloneElement(child, props, null);
