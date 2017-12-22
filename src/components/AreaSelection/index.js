@@ -3,8 +3,6 @@ import VisualElement from '../VisualElement';
 import ElementResizer from '../ElementResizer';
 import TaskMark from '../TaskMark';
 
-import './index.scss';
-
 const MAX_SIZE = 1000;
 const MIN_SIZE = 50;
 
@@ -37,7 +35,7 @@ export default class AreaSelection extends React.Component {
 	 	return (
 	 		<VisualElement 
 	 			ref="element"
-	 			classes="self $classes $?active $?fixed"
+	 			classes="self $classes $?.active $?.fixed"
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
@@ -49,10 +47,14 @@ export default class AreaSelection extends React.Component {
 	 			onWheel={this.handleWheel}
 	 			onChangeCoords={onChangeCoords}
 	 			onChangeSize={onChangeSize}>
-	 			<ElementResizer position="t" classes="element-resizer::t"/>
-	 			<ElementResizer position="b" classes="element-resizer::b"/>
-	 			<ElementResizer position="l" classes="element-resizer::l"/>
-	 			<ElementResizer position="r" classes="element-resizer::r"/>
+	 			<ElementResizer position="t" classes="~t"/>
+	 			<ElementResizer position="b" classes="~b"/>
+	 			<ElementResizer position="l" classes="~l"/>
+	 			<ElementResizer position="r" classes="~r"/>
+	 			<ElementResizer position="lt" classes="~lt"/>
+	 			<ElementResizer position="rt" classes="~rt"/>
+	 			<ElementResizer position="rb" classes="~rb"/>
+	 			<ElementResizer position="lb" classes="~lb"/>
 	 			{bent && <TaskMark {...markProps}/>}
 	 		</VisualElement>
 

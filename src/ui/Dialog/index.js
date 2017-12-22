@@ -2,8 +2,6 @@ import React from 'react';
 import Icon from '../Icon';
 import {dict} from '../../utils/Dictionary';
 
-import './index.scss';
-
 export default class Dialog extends React.Component {
 	static defailtProps = {
 		onClose: () => {}

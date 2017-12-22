@@ -7,8 +7,6 @@ import Task from '../Task';
 import ActionButtons from '../ActionButtons';
 import Store from 'xstore'
 
-import './index.scss';
-
 class Tasks extends React.Component {
 
 	componentDidMount() {

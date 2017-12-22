@@ -8,8 +8,6 @@ import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
 
-import './index.scss';
-
 class QuickTask extends React.Component {
 
 	render() {

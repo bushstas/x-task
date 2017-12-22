@@ -6,8 +6,6 @@ import Button from '../../ui/Button';
 import ActionButtons from '../ActionButtons';
 import Store from 'xstore'
 
-import './index.scss';
-
 class Account extends React.Component {
 
 	componentDidMount() {

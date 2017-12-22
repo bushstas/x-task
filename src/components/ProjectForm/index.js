@@ -8,8 +8,6 @@ import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import {isCurrentProject} from '../../utils/User';
 
-import './index.scss';
-
 class ProjectForm extends React.Component {
 	render() {
 		let {formData: data, editedProject} = this.props;

@@ -4,8 +4,6 @@ import {dict, icons} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import Icon from '../../ui/Icon';
 
-import './index.scss';
-
 export default class TaskMark extends React.Component {
 
 	static defaultProps = {

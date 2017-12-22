@@ -2,8 +2,6 @@ import React from 'react';
 import classnames from 'classnames';
 import {icons} from '../../utils/Dictionary';
 
-import './index.scss';
-
 export default function Icon({children, classes, size, icon, ...others}) {
 	let style;
 	if (size) {

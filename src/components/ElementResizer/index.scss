@@ -1,5 +1,5 @@
 .self {
-	var .abs.wh15.br30p.bc-517198.z2.cur-ns-resize.o;
+	var .abs.wh15.br30p.bc-517198.z5.cur-ns-resize.o.bo-243d5d.box;
 
 	&.dragged {
 		var .cur-grabbing!;
@@ -9,12 +9,24 @@
 		var .l50p.ml-7.t-7;
 	}
 	&.b {
-		var .l50p.ml-7.b-10;
+		var .l50p.ml-7.b-7;
 	}
 	&.l {
 		var .t50p.mt-7.l-7.cur-ew-resize;
 	}
 	&.r {
-		var .t50p.mt-7.r-10.cur-ew-resize;
+		var .t50p.mt-7.r-7.cur-ew-resize;
+	}
+	&.lt {
+		var .t.l.ml-7.mt-7.cur-nwse-resize;
+	}
+	&.rt {
+		var .t.r.mr-7.mt-7.cur-nesw-resize;
+	}
+	&.rb {
+		var .b.r.mr-7.mb-7.cur-nwse-resize;
+	}
+	&.lb {
+		var .b.l.ml-7.mb-7.cur-nesw-resize;
 	}
 }

@@ -9,8 +9,6 @@ const INPUT_TYPES = [
 	Checkboxes
 ];
 
-import './index.scss';
-
 export default class FormField extends React.PureComponent {
 
 	render() {

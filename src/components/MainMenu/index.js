@@ -2,8 +2,6 @@ import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 
-import './index.scss';
-
 export default function MainMenu({active, onNavigate}) {
 	let {menu} = icons;
 	let keys = Object.keys(menu);

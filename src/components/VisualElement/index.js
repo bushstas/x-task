@@ -3,8 +3,6 @@ import DraggableElement from '../DraggableElement';
 import ElementResizer from '../ElementResizer';
 import {MAX_SIZES} from '../../consts/max_sizes';
 
-import './index.scss';
-
 export default class VisualElement extends React.PureComponent {
 
 	static defaultProps = {
@@ -37,7 +35,7 @@ export default class VisualElement extends React.PureComponent {
 	 			width={width}
 	 			height={height}
 	 			locked={locked}
-	 			classes=".visual-element $classes $dragged?.dragged">
+	 			classes="self $classes $dragged?.dragged">
 				{this.children}
 			</DraggableElement>
 		)
@@ -97,7 +95,8 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	handleChangeSize = ({l, r, t, b, a}, elementType) => {
-		let {maxWidth, minWidth, maxHeight, minHeight} = MAX_SIZES[elementType];
+		let maxSizes = MAX_SIZES[elementType] || MAX_SIZES.default;
+		let {maxWidth, minWidth, maxHeight, minHeight} = maxSizes;
 		let {width, height, mx, my} = this.state;
 		
 		const checkWidth = (param) => {
@@ -127,14 +126,16 @@ export default class VisualElement extends React.PureComponent {
 		} else if (r) {
 			width += r;
 			checkWidth(r);
-		} else if (t) {
+		} 
+		if (t) {
 			height += t;
 			t = checkHeight(t);
 			my -= t;
 		} else if (b) {
 			height += b;
 			checkHeight(b);
-		} else if (a) {
+		}
+		if (a) {
 			let w = Math.floor(width * a / 100);
 			let h = Math.floor(height * a / 100);
 			width += w;

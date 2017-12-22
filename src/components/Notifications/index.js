@@ -2,8 +2,6 @@ import React from 'react';
 import Store from 'xstore';
 import Notification from '../../ui/Notification';
 
-import './index.scss';
-
 class Notifications extends React.Component {
 	render() {
 		return (

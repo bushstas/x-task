@@ -3,8 +3,6 @@ import {dict, icons} from '../../utils/Dictionary';
 import Store from 'xstore';
 import Icon from '../../ui/Icon';
 
-import './index.scss';
-
 class VisualElementPanel extends React.Component {
 
 	render() {

@@ -6,8 +6,6 @@ import FormField from '../../ui/FormField';
 import Icon from '../../ui/Icon';
 import {dict, icons} from '../../utils/Dictionary';
 
-import './index.scss';
-
 export default class TaskInfoForm extends React.Component {
 	render() {
 		let {onClose, onFormChange} = this.props;

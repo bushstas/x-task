@@ -1,8 +1,6 @@
 import React from 'react';
 import Button from '../../ui/Button';
 
-import './index.scss';
-
 export default class ActionButtons extends React.Component {
 	static defaultProps = {
 		onAction: () => {}

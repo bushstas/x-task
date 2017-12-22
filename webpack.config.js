@@ -10,7 +10,8 @@ classy.init({
     globalPrefix: 'x-task',
     obfuscation: false,
     autoPrefixMode: true,
-    prefixAutoResolving: 'folder'
+    prefixAutoResolving: 'folder',
+    cssAutoImport: true
 });
 
 const env = process.env.NODE_ENV;
@@ -116,7 +117,7 @@ const config = {
                 }
             },
             {
-                test: /\.s?css$/,
+                test: /less|sass|\.s?css$/,
                 exclude: ['node_modules'],
                 loader: env !== 'server' ? ExtractTextPlugin.extract(
                     {

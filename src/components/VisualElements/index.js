@@ -3,8 +3,7 @@ import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import TaskMark from '../../components/TaskMark';
 import AreaSelection from '../../components/AreaSelection';
-
-import './index.scss';
+import Text from '../../components/Text';
 
 class VisualElements extends React.Component {
 
@@ -50,6 +49,12 @@ class VisualElements extends React.Component {
 						return (
 							<AreaSelection {...props}/>
 						)
+
+					case 'descr':
+						props.onChangeText = this.handleChangeText;
+						return (
+							<Text {...props}/>
+						)
 				}
 			});
 		}
@@ -57,6 +62,10 @@ class VisualElements extends React.Component {
 
 	handleChange(data) {
 		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
+	}
+
+	handleChangeText = ({target: {value}}) => {
+		this.handleChange({text: value});
 	}
 
 	handleChangeCoords = (mx, my) => {

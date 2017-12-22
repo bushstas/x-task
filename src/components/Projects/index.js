@@ -9,8 +9,6 @@ import ProjectForm from '../ProjectForm';
 import {hasRight, inProject} from '../../utils/User';
 import ActionButtons from '../ActionButtons';
 
-import './index.scss';
-
 class Projects extends React.Component {
 
 	componentDidMount() {

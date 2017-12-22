@@ -8,8 +8,6 @@ import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import {isHead, isCurrentUser} from '../../utils/User';
 
-import './index.scss';
-
 class UserForm extends React.Component {
 	render() {
 		let {userFormData: data, editedUserToken} = this.props;

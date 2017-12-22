@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './index.scss';
-
 export class Tabs extends React.PureComponent {
 	static defaultProps = {
 		onSelect: () => {}

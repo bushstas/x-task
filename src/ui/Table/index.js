@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './index.scss';
-
 export default class Table extends React.PureComponent {
 
 	render() {

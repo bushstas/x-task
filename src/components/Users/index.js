@@ -6,8 +6,6 @@ import Team from '../Team';
 import ActionButtons from '../ActionButtons';
 import Store from 'xstore'
 
-import './index.scss';
-
 class Users extends React.Component {
 
 	render() {
