@@ -174,7 +174,7 @@ class QuickTask extends React.Component {
 	}
 
 	handleExpandClick = () => {
-		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+		this.props.dispatch('QUICKTASK_DEACTIVE_VISUAL_MODE');
 	}
 
 	handleInfoClose = () => {

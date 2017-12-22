@@ -123,10 +123,19 @@ const element_set_active = (state, currentElement) => {
   }
 }
 
-const active_element_unset = () => {
+const deactive_visual_mode = () => {
    return {
     visualMode: false,
     status: 'active'
+  }
+}
+
+const active_element_unset = () => {
+   return {
+    visualMode: false,
+    status: 'active',
+    currentElement: -1,
+    visualElement: null
   }
 }
 
@@ -153,6 +162,7 @@ export default {
     visual_element_added,
     visual_element_changed,
     element_set_active,
-    active_element_unset
+    active_element_unset,
+    deactive_visual_mode
   }
 } 

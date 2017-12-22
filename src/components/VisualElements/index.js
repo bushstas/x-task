@@ -7,21 +7,22 @@ import Text from '../../components/Text';
 
 class VisualElements extends React.Component {
 
-	componentDidMount() {
-		document.body.addEventListener('click', this.handleBodyMouseDown, false);
-	}
-
-	componentWillUnmount() {
-		document.body.removeEventListener('click', this.handleBodyMouseDown, false);
-	}
-
 	render() {
-		let {active, visualMode} = this.props;
 	 	return (
 	 		<div class=".visual-elements">
+				{this.mask}
 				{this.elements}
 			</div>
 		)
+	}
+
+	get mask() {
+		let {currentElement} = this.props;
+		if (typeof currentElement == 'number' && currentElement >= 0) {
+			return (
+				<div class="mask" onMouseDown={this.handleBodyMouseDown}/>
+			)
+		}
 	}
 
 	get elements() {
@@ -70,7 +71,7 @@ class VisualElements extends React.Component {
 	}
 
 	handleBodyMouseDown = () => {
-		//this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
 	}
 
 	handleChange(data) {
