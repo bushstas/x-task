@@ -1,7 +1,9 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Store from 'xstore';
+import ColorPanel from '../../components/ColorPanel';
 import Icon from '../../ui/Icon';
+import {setScrollTop} from '../../utils';
 
 class VisualElementPanel extends React.Component {
 
@@ -11,6 +13,7 @@ class VisualElementPanel extends React.Component {
 	 		<div class="self .panel"
 	 			onClick={this.handleClick}
 	 			onMouseDown={this.handleMouseDown}>
+	 			{this.colorPanel}
 	 			{this.typeIcon}
 	 			{this.buttons}
 			</div>
@@ -53,6 +56,12 @@ class VisualElementPanel extends React.Component {
 		})
 	}
 
+	get colorPanel() {
+		return (
+			<ColorPanel onPickColor={this.handlePickColor}/>
+		)
+	}
+
 	get hasBindButton() {
 		let {currentType, markElement, selectionElement} = this.props;
 		return (currentType == 'mark' || currentType == 'selection') &&
@@ -73,8 +82,13 @@ class VisualElementPanel extends React.Component {
 	}
 
 	handleMouseDown = (e) => {
-		console.log('VisualElementPanel')
 		e.stopPropagation();
+	}
+
+	handlePickColor = ({target: {dataset: {color}}}) => {
+		if (color) {
+			this.dispatchChange({color});
+		}
 	}
 
 	handleClick = ({target: {dataset: {action}}}) => {
@@ -92,10 +106,23 @@ class VisualElementPanel extends React.Component {
 
 				case 'bind':
 					return this.props.doAction('QUICKTASK_CHANGE_PARAM', {bent: !this.props.bent});
+
+				case 'find':
+					let {my} = data;
+					if (typeof my == 'number') {
+						setScrollTop(my - 100);
+					}
 				break;
+
+				case 'remove':
+					return this.props.doAction('QUICKTASK_REMOVE_ELEMENT');
 			}
-			this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', props);
+			this.dispatchChange(props);
 		}
+	}
+
+	dispatchChange(props) {
+		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', props);
 	}
 }
 

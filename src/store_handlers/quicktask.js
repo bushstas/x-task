@@ -139,6 +139,32 @@ const active_element_unset = () => {
   }
 }
 
+const element_removed = (state) => {
+  let {
+    visualElements,
+    currentElement,
+    currentType
+  } = state;
+  visualElements.splice(currentElement, 1);
+  let props = {
+    visualElements,
+    visualMode: false,
+    status: 'active',
+    currentElement: -1,
+    visualElement: null
+  };
+  switch (currentType) {
+    case 'mark':
+      props.markElement = null;
+    break;
+
+    case 'selection':
+      props.selectionElement = null;
+    break;
+  }
+  return props;
+}
+
 const change_param = ({dispatch}, data) => {
   dispatch('QUICKTASK_PARAM_CHANGED', data);
 }
@@ -147,11 +173,16 @@ const change_visual_element = ({dispatch}, data) => {
   dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
 }
 
+const remove_element = ({dispatch}) => {
+  dispatch('QUICKTASK_ELEMENT_REMOVED');
+}
+
 
 export default {
   actions: {
     change_param,
-    change_visual_element
+    change_visual_element,
+    remove_element
   },
   reducers: {
     init,
@@ -163,6 +194,7 @@ export default {
     visual_element_changed,
     element_set_active,
     active_element_unset,
-    deactive_visual_mode
+    deactive_visual_mode,
+    element_removed
   }
 } 

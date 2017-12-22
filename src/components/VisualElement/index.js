@@ -22,8 +22,9 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	render() {
-		let {classes, locked} = this.props;
+		let {classes, locked, color} = this.props;
 		let {mx, my, width, height, dragged} = this.state;
+		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
 	 		<DraggableElement
 	 			onMove={this.handleMove}
@@ -34,7 +35,7 @@ export default class VisualElement extends React.PureComponent {
 	 			my={my}
 	 			width={width}
 	 			height={height}
-	 			classes="self $classes $?.dragged $?.locked">
+	 			classes="self $classes $className $?.dragged $?.locked">
 				{this.children}
 			</DraggableElement>
 		)

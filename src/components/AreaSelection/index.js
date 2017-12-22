@@ -2,6 +2,7 @@ import React from 'react';
 import VisualElement from '../VisualElement';
 import ElementResizer from '../ElementResizer';
 import TaskMark from '../TaskMark';
+import {getScrollTop} from '../../utils';
 
 const MAX_SIZE = 1000;
 const MIN_SIZE = 50;
@@ -20,7 +21,8 @@ export default class AreaSelection extends React.Component {
 				width = 150,
 				height = 120,
 				fixed,
-				locked
+				locked,
+				color
 			},
 			onChangeCoords,
 			onChangeSize,
@@ -37,6 +39,7 @@ export default class AreaSelection extends React.Component {
 	 			ref="element"
 	 			classes="self $classes $?.active $?.fixed"
 	 			index={index}
+	 			color={color}
 	 			mx={mx}
 	 			my={my}
 	 			width={width}
@@ -62,7 +65,7 @@ export default class AreaSelection extends React.Component {
 	}
 
 	get startYPosition() {
-		return ~~document.documentElement.scrollTop + 100;
+		return getScrollTop() + 100;
 	}
 
 	handleWheel = (e) => {

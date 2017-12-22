@@ -3,6 +3,7 @@ import {dict} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import ElementResizer from '../ElementResizer';
 import {TEXT_SIZES} from '../../consts/max_sizes';
+import {getScrollTop} from '../../utils';
 
 export default class Text extends React.Component {
 
@@ -25,6 +26,7 @@ export default class Text extends React.Component {
 				width = 400,
 				height = 80,
 				fontSize = 20,
+				color,
 				fixed,
 				locked,
 				text = dict.txt
@@ -46,6 +48,7 @@ export default class Text extends React.Component {
 	 			ref="element"
 	 			classes="self $classes $?.active $?.fixed"
 	 			index={index}
+	 			color={color}
 	 			mx={mx}
 	 			my={my}
 	 			width={width}
@@ -78,7 +81,7 @@ export default class Text extends React.Component {
 	}
 
 	get startYPosition() {
-		return ~~document.documentElement.scrollTop + 100;
+		return getScrollTop() + 100;
 	}
 
 	handleWheel = (e) => {

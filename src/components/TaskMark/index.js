@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import {dict, icons} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import Icon from '../../ui/Icon';
+import {getScrollTop} from '../../utils';
 
 export default class TaskMark extends React.Component {
 
@@ -53,7 +54,7 @@ export default class TaskMark extends React.Component {
 	}
 
 	get startYPosition() {
-		return ~~document.documentElement.scrollTop + 100;
+		return getScrollTop() + 100;
 	}
 
 	get icon() {

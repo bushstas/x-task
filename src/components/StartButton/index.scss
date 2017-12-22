@@ -4,18 +4,23 @@
 	bottom: 6px;
 	left: 8px;
 	cursor: pointer;
-	color: #444;
-	background-color: #fff;
-	padding: 4px 2px 2px 4px;
+	color: #eee;
+	background-color: #555;
 	border-radius: 3px;
+	box-sizing: border-box;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
 
 	&:hover {
-		color: #111;
+		background-color: #444;
+		color: #fff;
 	}
 
 	..icon {
-		font-size: 40px;
+		font-size: 30px;
 		line-height: 40px;
 		float: left;
+		margin-left: 6px;
 	}
 }

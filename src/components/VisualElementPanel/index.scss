@@ -1,22 +1,13 @@
 .self {
-	position: fixed;
-	top: 50%;	
+	var .fix.t50p.br0-5-5-0.c-fff.z9996.nosel.bc-555.p10-6;
 	transform: translate(0, -50%);
-	border-radius: 0 5px 5px 0;
-	padding: 10px 6px;
-	color: #fff;
-	z-index: 9996;
-	user-select: none;
-	background-color: #555;
 
 	..icon {
 		&..element-type {
-			margin-bottom: 10px;
-			cursor: default;
-			color: #888;
-			font-size: 35px;
+			var .mb10.cur-default.c-888.fs35;
+
 			&:hover {
-				color: #888;
+				var .c-888;
 			}
 		}
 	}
