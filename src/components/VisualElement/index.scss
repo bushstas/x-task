@@ -1,26 +1,22 @@
 .self {
-	margin-top: 100px;
-	cursor: pointer;
+	var .mt100.pntr;
 
 	&..active {
-		cursor: -moz-grab;
-    	cursor: -webkit-grab;
-    	cursor: grab;
+		var .z11.cur-grab;
+
 		..element-resizer {
-			opacity: 0.7;
+			var .o7;
 		}
 	}
 
 	&..dragged {
-		cursor: -moz-grabbing;
-    	cursor: -webkit-grabbing;
-    	cursor: grabbing;
+		var .cur-grabbing;
 	}
 
 	&..fixed {
-		position: fixed !important;
+		var .fix!;
 	}
 	&..locked {
-		cursor: not-allowed !important;
+		var .cur-not-allowed!.z9!;
 	}
 }

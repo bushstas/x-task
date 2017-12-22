@@ -17,8 +17,7 @@ export default class DraggableElement extends React.PureComponent {
 			width, 
 			height, 
 			onClick, 
-			onWheel,
-			locked
+			onWheel
 		} = this.props;
 		let style;
 		if (typeof mx == 'number') { 
@@ -31,7 +30,7 @@ export default class DraggableElement extends React.PureComponent {
 		}
 	 	return (
 	 		<div ref="element" 
-	 			class="$classes $?locked"
+	 			class="$classes"
 	 			style={style}
 	 			onWheel={onWheel}
 	 			onMouseDown={this.handleMouseDown}>
@@ -41,6 +40,7 @@ export default class DraggableElement extends React.PureComponent {
 	}
 
 	handleMouseDown = (e) => {
+		e.stopPropagation();
 		let {clientX, clientY} = e;
 		let {onClick, index} = this.props;
 		onClick(index);
@@ -48,7 +48,6 @@ export default class DraggableElement extends React.PureComponent {
 		this.y = clientY;
 		document.body.addEventListener('mousemove', this.handleMouseMove, false);
 		document.body.addEventListener('mouseup', this.handleMouseUp, false);
-		e.stopPropagation();
 	}
 
 	handleMouseUp = () => {

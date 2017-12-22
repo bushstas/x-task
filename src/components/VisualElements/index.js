@@ -7,6 +7,14 @@ import Text from '../../components/Text';
 
 class VisualElements extends React.Component {
 
+	componentDidMount() {
+		document.body.addEventListener('click', this.handleBodyMouseDown, false);
+	}
+
+	componentWillUnmount() {
+		document.body.removeEventListener('click', this.handleBodyMouseDown, false);
+	}
+
 	render() {
 		let {active, visualMode} = this.props;
 	 	return (
@@ -52,6 +60,7 @@ class VisualElements extends React.Component {
 
 					case 'descr':
 						props.onChangeText = this.handleChangeText;
+						props.onChangeFontSize = this.handleChangeFontSize;
 						return (
 							<Text {...props}/>
 						)
@@ -60,12 +69,20 @@ class VisualElements extends React.Component {
 		}
 	}
 
+	handleBodyMouseDown = () => {
+		//this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+	}
+
 	handleChange(data) {
 		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
 	}
 
 	handleChangeText = ({target: {value}}) => {
 		this.handleChange({text: value});
+	}
+
+	handleChangeFontSize = (fontSize) => {
+		this.handleChange({fontSize});
 	}
 
 	handleChangeCoords = (mx, my) => {

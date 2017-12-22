@@ -2,11 +2,13 @@ import React from 'react';
 import {dict} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import ElementResizer from '../ElementResizer';
+import {TEXT_SIZES} from '../../consts/max_sizes';
 
 export default class Text extends React.Component {
 
 	static defaultProps = {
-		onChangeSize: () => {}
+		onChangeSize: () => {},
+		onChangeFontSize: () => {}
 	}
 
 	componentDidMount() {
@@ -25,7 +27,7 @@ export default class Text extends React.Component {
 				fontSize = 20,
 				fixed,
 				locked,
-				text = ''
+				text = dict.txt
 			},
 			onChangeCoords,
 			onChangeSize,
@@ -59,7 +61,7 @@ export default class Text extends React.Component {
  					ref="input"
  					value={text}
  					onChange={onChangeText}
- 					style={{fontSize: fontSize + 'px'}}
+ 					style={{fontSize: fontSize + 'px', lineHeight: fontSize + 'px'}}
  					spellCheck="false"/>
 	 			
 	 			<ElementResizer position="t" classes="~t" {...resizerProps}/>
@@ -81,8 +83,9 @@ export default class Text extends React.Component {
 
 	handleWheel = (e) => {
 		e.preventDefault();
-		let {fontSize} = this.props;
-		
-		//this.refs.element.handleChangeSize({a: e.deltaY > 0 ? add : -add}, 'selection');
+		let {data: {fontSize = 20}} = this.props;
+		let add = 2 * (e.deltaY > 0 ? 1 : -1);
+		fontSize = Math.min(TEXT_SIZES.max, Math.max(TEXT_SIZES.min, fontSize + add));
+		this.props.onChangeFontSize(fontSize);
 	}
 }

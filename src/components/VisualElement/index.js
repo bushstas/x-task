@@ -34,8 +34,7 @@ export default class VisualElement extends React.PureComponent {
 	 			my={my}
 	 			width={width}
 	 			height={height}
-	 			locked={locked}
-	 			classes="self $classes $dragged?.dragged">
+	 			classes="self $classes $?.dragged $?.locked">
 				{this.children}
 			</DraggableElement>
 		)

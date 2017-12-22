@@ -12,3 +12,8 @@ export const MAX_SIZES = {
 		maxHeight: 3000
 	}
 }
+
+export const TEXT_SIZES = {
+	min: 18,
+	max: 70
+}

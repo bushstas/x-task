@@ -9,7 +9,8 @@ class VisualElementPanel extends React.Component {
 		let {visualElement} = this.props;
 	 	return !!visualElement ? (
 	 		<div class="self .panel"
-	 			onClick={this.handleClick}>
+	 			onClick={this.handleClick}
+	 			onMouseDown={this.handleMouseDown}>
 	 			{this.typeIcon}
 	 			{this.buttons}
 			</div>
@@ -69,6 +70,11 @@ class VisualElementPanel extends React.Component {
 			case 'bind':
 				return this.props.bent;
 		}
+	}
+
+	handleMouseDown = (e) => {
+		console.log('VisualElementPanel')
+		e.stopPropagation();
 	}
 
 	handleClick = ({target: {dataset: {action}}}) => {
