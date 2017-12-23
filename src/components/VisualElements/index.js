@@ -3,6 +3,7 @@ import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import TaskMark from '../../components/TaskMark';
 import AreaSelection from '../../components/AreaSelection';
+import Drawing from '../../components/Drawing';
 import Text from '../../components/Text';
 
 class VisualElements extends React.Component {
@@ -35,13 +36,12 @@ class VisualElements extends React.Component {
 					index: i,
 					data,
 					active: i == currentElement,
-					onChangeCoords: this.handleChangeCoords,
+					onChange: this.handleChange,
 					onClick: this.handleClick
 				}
 				switch (type) {
 					case 'mark': 
 						if (!bent) {
-							props.onLocChange = this.handleLocChange;
 							return (
 								<TaskMark {...props}/>
 							)
@@ -59,9 +59,12 @@ class VisualElements extends React.Component {
 							<AreaSelection {...props}/>
 						)
 
+					case 'drawing':
+						return (
+							<Drawing {...props}/>
+						)
+
 					case 'descr':
-						props.onChangeText = this.handleChangeText;
-						props.onChangeFontSize = this.handleChangeFontSize;
 						return (
 							<Text {...props}/>
 						)
@@ -74,24 +77,8 @@ class VisualElements extends React.Component {
 		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
 	}
 
-	handleChange(data) {
+	handleChange = (data) => {
 		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
-	}
-
-	handleChangeText = ({target: {value}}) => {
-		this.handleChange({text: value});
-	}
-
-	handleChangeFontSize = (fontSize) => {
-		this.handleChange({fontSize});
-	}
-
-	handleChangeCoords = (mx, my) => {
-		this.handleChange({mx, my});
-	}
-
-	handleLocChange = (loc) => {
-		this.handleChange({loc});
 	}
 
 	handleClick = (index) => {

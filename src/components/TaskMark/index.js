@@ -8,7 +8,8 @@ import {getScrollTop} from '../../utils';
 export default class TaskMark extends React.Component {
 
 	static defaultProps = {
-		onClick: () => {}
+		onClick: () => {},
+		onChange: () => {}
 	}
 
 	render() {
@@ -21,7 +22,7 @@ export default class TaskMark extends React.Component {
 				fixed,
 				locked
 			},
-			onChangeCoords,
+			onChange,
 			index,
 			classes,
 			active,
@@ -33,15 +34,16 @@ export default class TaskMark extends React.Component {
  	
 	 	return (
 	 		<VisualElement 
-	 			classes="self $classes $locClassName $colorClassName $?active $?fixed"
+	 			classes="self $classes $locClassName $colorClassName"
 	 			index={index}
 	 			mx={mx}
 	 			my={my}
 	 			onWheel={this.handleWheel}
 	 			onClick={this.handleClick}
 	 			active={active}
+	 			fixed={fixed}
 	 			locked={locked}
-	 			onChangeCoords={onChangeCoords}>
+	 			onChange={onChange}>
 	 			{this.icon}
 			</VisualElement>
 		)
@@ -93,6 +95,6 @@ export default class TaskMark extends React.Component {
 				loc = 4;
 			}
 		}
-		this.props.onLocChange(loc);
+		this.props.onChange({loc});
 	}
 }

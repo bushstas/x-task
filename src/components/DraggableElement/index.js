@@ -28,12 +28,15 @@ export default class DraggableElement extends React.PureComponent {
 				height: height + 'px'
 			}
 		}
+		let props = {
+			ref: 'element',
+			onWheel,
+			onMouseDown: this.handleMouseDown,
+			className: $classy('$classes'),
+			style
+		};
 	 	return (
-	 		<div ref="element" 
-	 			class="$classes"
-	 			style={style}
-	 			onWheel={onWheel}
-	 			onMouseDown={this.handleMouseDown}>
+	 		<div {...props}>
 				{children}
 			</div>
 		)

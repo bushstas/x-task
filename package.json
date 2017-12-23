@@ -17,7 +17,6 @@
   "author": "Thisman",
   "license": "ISC",
   "dependencies": {
-    "classnames": "^2.2.3",
     "classy-loader": "^1.2.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

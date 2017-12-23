@@ -10,7 +10,7 @@ const MIN_SIZE = 50;
 export default class AreaSelection extends React.Component {
 
 	static defaultProps = {
-		onChangeSize: () => {}
+		onChange: () => {}
 	}
 
 	render() {
@@ -24,10 +24,8 @@ export default class AreaSelection extends React.Component {
 				locked,
 				color
 			},
-			onChangeCoords,
-			onChangeSize,
+			onChange,
 			index,
-			classes,
 			active,
 			onClick,
 			bent,
@@ -37,7 +35,7 @@ export default class AreaSelection extends React.Component {
 	 	return (
 	 		<VisualElement 
 	 			ref="element"
-	 			classes="self $classes $?.active $?.fixed"
+	 			classes="self"
 	 			index={index}
 	 			color={color}
 	 			mx={mx}
@@ -45,11 +43,11 @@ export default class AreaSelection extends React.Component {
 	 			width={width}
 	 			height={height}
 	 			active={active}
+	 			fixed={fixed}
 	 			locked={locked}
 	 			onClick={onClick}
 	 			onWheel={this.handleWheel}
-	 			onChangeCoords={onChangeCoords}
-	 			onChangeSize={onChangeSize}>
+	 			onChange={onChange}>
 	 			<ElementResizer position="t" classes="~t"/>
 	 			<ElementResizer position="b" classes="~b"/>
 	 			<ElementResizer position="l" classes="~l"/>

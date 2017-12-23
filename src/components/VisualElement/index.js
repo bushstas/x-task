@@ -7,23 +7,13 @@ export default class VisualElement extends React.PureComponent {
 
 	static defaultProps = {
 		onClick: () => {},
-		onChangeCoords: () => {},
+		onChange: () => {},
 		onWheel: () => {}
 	}
 
-	constructor(props) {
-		super();
-		this.state = {
-			mx: props.mx,
-			my: props.my,
-			width: props.width,
-			height: props.height
-		}
-	}
-
 	render() {
-		let {classes, locked, color} = this.props;
-		let {mx, my, width, height, dragged} = this.state;
+		let {mx, my, width, height, classes, locked, active, fixed, color} = this.props;
+		let {dragged} = this.state || {};
 		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
 	 		<DraggableElement
@@ -35,7 +25,7 @@ export default class VisualElement extends React.PureComponent {
 	 			my={my}
 	 			width={width}
 	 			height={height}
-	 			classes="self $classes $className $?.dragged $?.locked">
+	 			classes="self $classes $className $?.dragged $?.locked $?.active $?.fixed">
 				{this.children}
 			</DraggableElement>
 		)
@@ -81,23 +71,21 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	handleDragEnd = (mx, my) => {
-		this.props.onChangeCoords(mx, my);
 		this.setState({dragged: false});
 	}
 
 	handleMove = (sx, sy) => {
-		let {locked} = this.props;
+		let {locked, mx, my} = this.props;
 		if (locked) return;
-		let {mx, my} = this.state;
 		mx += sx;
 		my += sy;
-		this.setState({mx, my});
+		this.props.onChange({mx, my});
 	}
 
 	handleChangeSize = ({l, r, t, b, a}, elementType) => {
 		let maxSizes = MAX_SIZES[elementType] || MAX_SIZES.default;
 		let {maxWidth, minWidth, maxHeight, minHeight} = maxSizes;
-		let {width, height, mx, my} = this.state;
+		let {width, height, mx, my} = this.props;
 		
 		const checkWidth = (param) => {
 			if (width > maxWidth) {
@@ -145,8 +133,7 @@ export default class VisualElement extends React.PureComponent {
 			mx -= Math.floor(w / 2);
 			my -= Math.floor(h / 2);
 		}
-
-		this.setState({
+		this.props.onChange({
 			width,
 			height,
 			mx,

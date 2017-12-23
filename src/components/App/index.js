@@ -6,6 +6,7 @@ import StartButton from '../StartButton';
 import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
 import QuickTask from '../QuickTask';
+import Mask from '../Mask';
 import VisualElements from '../VisualElements';
 import VisualElementPanel from '../VisualElementPanel';
 
@@ -38,6 +39,7 @@ class App extends React.PureComponent {
     if (!active) {
       elements.push(
         this.startButton,
+        this.mask
       );
       if (!this.taskMode) {
         elements.push(
@@ -76,6 +78,10 @@ class App extends React.PureComponent {
 
   get quicktask() {
     return <QuickTask key="quicktask"/>
+  }
+
+  get mask() {
+    return <Mask key="mask"/>
   }
 
   get notifications() {
