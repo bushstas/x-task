@@ -5,7 +5,17 @@
 		var .cnt.abs.rubb.shad-in-29476f-40.bo-002d65-2-dashed.o4.br3.z1;
 	}
 	..task-mark {
-		var .l-45!.t-58!.ml!.mt!.z4!;
+		var .l100p!.b100p!.ml-1!.mb10!.tau!.mt!.z4!;
+		
+		&..task-mark-loc2 {
+			var .l100p!.t100p!.ml-1!.mt10!.z4!;
+		}
+		&..task-mark-loc3 {
+			var .r100p!.t100p!.mr-1.mt10.lau!.ml!.z4!;
+		}
+		&..task-mark-loc4 {
+			var .r100p!.b100p!.mr-1.mb10.lau!.tau!.ml!.mt!.z4!;
+		}
 
 		&..fixed {
 			var .abs!;

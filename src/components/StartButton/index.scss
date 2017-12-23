@@ -1,26 +1,30 @@
 .self {
-	position: fixed;
-	z-index: 9990;
-	bottom: 6px;
-	left: 8px;
-	cursor: pointer;
-	color: #eee;
-	background-color: #555;
-	border-radius: 3px;
-	box-sizing: border-box;
-	width: 40px;
-	height: 40px;
-	overflow: hidden;
-
-	&:hover {
-		background-color: #444;
-		color: #fff;
+	var .fix.z9990.b6.l8.c-e1e1e1.pntr;
+	
+	& > div {
+		var .bc-555.br3.box.wh40.ovh;
 	}
 
 	..icon {
-		font-size: 30px;
-		line-height: 40px;
-		float: left;
-		margin-left: 6px;
+		var .fs30.lh40.fl.ml6;
+		&:hover {
+			var .c-fff;
+		}
+	}
+
+	.menu {
+		var .none.abs.b100p.l.r.bc-444.br3-3-0-0;
+		..icon {
+			var .fs24.ml8;
+		}
+	}
+
+	&:hover {
+		.main {
+			var .bc-444.br0-0-3-3;
+		}
+		.menu {
+			var .bl;
+		}
 	}
 }

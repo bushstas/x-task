@@ -4,6 +4,7 @@ import Store from 'xstore';
 import ColorPanel from '../../components/ColorPanel';
 import Icon from '../../ui/Icon';
 import {setScrollTop} from '../../utils';
+import {handleFixate} from '../../utils/MouseHandlers';
 
 class VisualElementPanel extends React.Component {
 
@@ -70,6 +71,9 @@ class VisualElementPanel extends React.Component {
 
 	isActive(data, action) {
 		switch (action) {
+			case 'cut':
+				return data.cut;
+
 			case 'lock':
 				return data.locked;
 
@@ -96,22 +100,28 @@ class VisualElementPanel extends React.Component {
 		let props = {};
 		if (action) {
 			switch (action) {
+				case 'cut':
+					props = {cut: !data.cut};
+				break;
+
 				case 'lock':
 					props = {locked: !data.locked};
 				break;
 
-				case 'fix':
-					props = {fixed: !data.fixed};
+				case 'fix': {
+					props = handleFixate(data);
+				}
 				break;
 
 				case 'bind':
 					return this.props.doAction('QUICKTASK_CHANGE_PARAM', {bent: !this.props.bent});
 
-				case 'find':
+				case 'find': {
 					let {my} = data;
 					if (typeof my == 'number') {
 						setScrollTop(my - 100);
 					}
+				}
 				break;
 
 				case 'remove':
@@ -122,7 +132,7 @@ class VisualElementPanel extends React.Component {
 	}
 
 	dispatchChange(props) {
-		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', props);
+		this.props.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', props);
 	}
 }
 

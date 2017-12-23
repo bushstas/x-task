@@ -53,20 +53,19 @@ class VisualElements extends React.Component {
 							let {markElement} = this.props;
 							props.bent = true;
 							props.markProps = visualElements[markElement];
-							props.markProps.data.loc = 4;
 						}
 						return (
-							<AreaSelection {...props}/>
+							<AreaSelection resizers={true} {...props}/>
 						)
 
 					case 'drawing':
 						return (
-							<Drawing {...props}/>
+							<Drawing resizers={true} {...props}/>
 						)
 
 					case 'descr':
 						return (
-							<Text {...props}/>
+							<Text resizers={true} {...props}/>
 						)
 				}
 			});
@@ -78,7 +77,7 @@ class VisualElements extends React.Component {
 	}
 
 	handleChange = (data) => {
-		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
+		this.props.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', data);
 	}
 
 	handleClick = (index) => {

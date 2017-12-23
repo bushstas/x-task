@@ -3,7 +3,6 @@ import Dialog from '../../ui/Dialog';
 import AuthForm from '../../components/AuthForm';
 import MainMenu from '../MainMenu';
 import StartButton from '../StartButton';
-import CreateTaskButton from '../CreateTaskButton';
 import Notifications from '../Notifications';
 import QuickTask from '../QuickTask';
 import Mask from '../Mask';
@@ -39,14 +38,10 @@ class App extends React.PureComponent {
     if (!active) {
       elements.push(
         this.startButton,
-        this.mask
       );
-      if (!this.taskMode) {
+      if (this.taskMode) {
         elements.push(
-          this.createTaskButton
-        );
-      } else {
-        elements.push(
+          this.mask,
           this.quicktask,
           this.visualElements
         );
@@ -81,7 +76,9 @@ class App extends React.PureComponent {
   }
 
   get mask() {
-    return <Mask key="mask"/>
+    return (
+      <Mask key="mask"/>
+    )
   }
 
   get notifications() {
@@ -96,18 +93,11 @@ class App extends React.PureComponent {
     return (
       <StartButton 
         key="startButton"
-        onClick={this.handleStartClick}/>
+        createTaskShown={!this.taskMode && hasRight('add_dev_task')}
+        maskButtonShown={this.taskMode}
+        onClick={this.handleStartClick}
+        onCreateTask={this.handleAddTaskClick}/>
     )
-  }
-
-  get createTaskButton() {    
-    if (hasRight('add_dev_task')) {
-      return (
-        <CreateTaskButton
-          key="createTaskButton"
-          onClick={this.handleAddTaskClick}/>
-      )
-    }
   }
 
   get dialog() {
@@ -173,7 +163,7 @@ class App extends React.PureComponent {
     this.setActive(true);
   }
 
-  handleAddTaskClick = () => {
+  handleAddTaskClick = (e) => {
     this.props.dispatch('QUICKTASK_ACTIVATED', 'active');
   }
 

@@ -1,7 +1,9 @@
 import React from 'react';
 import DraggableElement from '../DraggableElement';
-import ElementResizer from '../ElementResizer';
-import {MAX_SIZES} from '../../consts/max_sizes';
+import Resizers from '../Resizers';
+import {DEFAULT_SIZES} from '../../consts/max_sizes';
+import {getScrollTop} from '../../utils';
+import {handleResize} from '../../utils/MouseHandlers';
 
 export default class VisualElement extends React.PureComponent {
 
@@ -12,7 +14,16 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	render() {
-		let {mx, my, width, height, classes, locked, active, fixed, color} = this.props;
+		let {data, classes, active, resizers, type, children, set} = this.props;
+		let {
+			mx = this.mx,
+			my = this.my,
+			width = this.width,
+			height = this.height,
+			locked,
+			fixed,
+			color
+		} = data;
 		let {dragged} = this.state || {};
 		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
@@ -26,33 +37,39 @@ export default class VisualElement extends React.PureComponent {
 	 			width={width}
 	 			height={height}
 	 			classes="self $classes $className $?.dragged $?.locked $?.active $?.fixed">
-				{this.children}
+	 			{!locked && resizers && (
+	 				<Resizers
+	 					type={type}
+	 					set={set}
+	 					onChange={this.handleChange}/>
+	 			)}
+				{children}
 			</DraggableElement>
 		)
 	}
 
-	get children() {		
-		let {children, locked} = this.props;
-		if (children) {
-			if (!(children instanceof Array)) {
-				children = [children];
-			}
-			return children.map((child, i) => {
-				if (child instanceof Object) {
-					let props = {
-						key: i
-					}
-					if (child.type == ElementResizer) {
-						if (locked) {
-							return;
-						}
-						props.onChangeSize = this.handleChangeSize;
-					}
-					return React.cloneElement(child, props, child.props.children);
-				}
-				return child;
-			});
-		}
+	get mx() {
+		return this.props.data.mx || 0;
+	}
+
+	get my() {
+		return this.props.data.my || getScrollTop() + 100;
+	}
+
+	get width() {
+		return this.props.data.width || this.defaultWidth;
+	}
+
+	get height() {
+		return this.props.data.height || this.defaultHeight;
+	}
+
+	get defaultWidth() {
+		return DEFAULT_SIZES[this.props.type] && DEFAULT_SIZES[this.props.type].width;
+	}
+
+	get defaultHeight() {
+		return DEFAULT_SIZES[this.props.type] && DEFAULT_SIZES[this.props.type].height;
 	}
 
 	handleWheel = (e) => {
@@ -75,69 +92,26 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	handleMove = (sx, sy) => {
-		let {locked, mx, my} = this.props;
+		let {locked, mx = this.mx, my = this.my} = this.props.data;
 		if (locked) return;
 		mx += sx;
 		my += sy;
 		this.props.onChange({mx, my});
 	}
 
-	handleChangeSize = ({l, r, t, b, a}, elementType) => {
-		let maxSizes = MAX_SIZES[elementType] || MAX_SIZES.default;
-		let {maxWidth, minWidth, maxHeight, minHeight} = maxSizes;
-		let {width, height, mx, my} = this.props;
-		
-		const checkWidth = (param) => {
-			if (width > maxWidth) {
-				param -= width - maxWidth;
-				width = maxWidth;
-			} else if (width < minWidth) {
-				param += minWidth - width;
-				width = minWidth;
-			}
-			return param;
-		}
-		const checkHeight = (param) => {
-			if (height > maxHeight) {
-				param -= height - maxHeight;
-				height = maxHeight;
-			} else if (height < minHeight) {
-				param += minHeight - height;
-				height = minHeight;
-			}
-			return param;
-		}
-		if (l) {
-			width += l;
-			l = checkWidth(l);
-			mx -= l;
-		} else if (r) {
-			width += r;
-			checkWidth(r);
-		} 
-		if (t) {
-			height += t;
-			t = checkHeight(t);
-			my -= t;
-		} else if (b) {
-			height += b;
-			checkHeight(b);
-		}
-		if (a) {
-			let w = Math.floor(width * a / 100);
-			let h = Math.floor(height * a / 100);
-			width += w;
-			height += h;
-			w = checkWidth(w);
-			h = checkHeight(h);
-			mx -= Math.floor(w / 2);
-			my -= Math.floor(h / 2);
-		}
-		this.props.onChange({
-			width,
-			height,
-			mx,
-			my
-		});
+	handleChange = (changes, type) => {
+		let {
+			data: {
+				mx = this.mx,
+				my = this.my,
+				width = this.width,
+				height = this.height
+			},
+			set
+		} = this.props;
+
+		this.props.onChange(
+			handleResize(changes, type, {mx, my, width, height, set})
+		);
 	}
 }

@@ -86,7 +86,7 @@ class QuickTask extends React.Component {
 					<Icon icon="close"
 						title={dict.cancel_task}
 						classes=".white-icon .inline-icon"
-						onClick={this.handleExpandClick}/>
+						onClick={this.handleCloseClick}/>
 				</div>
 
 				{taskInfoShown && (
@@ -175,6 +175,10 @@ class QuickTask extends React.Component {
 
 	handleExpandClick = () => {
 		this.props.dispatch('QUICKTASK_DEACTIVE_VISUAL_MODE');
+	}
+
+	handleCloseClick = () => {
+		this.props.doAction('QUICKTASK_CANCEL');
 	}
 
 	handleInfoClose = () => {

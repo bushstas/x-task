@@ -4,9 +4,9 @@ import DraggableElement from '../DraggableElement';
 export default class ElementResizer extends React.PureComponent {
 
 	static defaultProps = {
-		onChangeSize: () => {},
+		onChange: () => {},
 		onClick: () => {},
-		elementType: 'selection'
+		type: 'selection'
 	}
 
 	constructor(props) {
@@ -29,7 +29,7 @@ export default class ElementResizer extends React.PureComponent {
 	}
 
 	handleMove = (sx, sy) => {
-		let {position, elementType} = this.props;
+		let {position, type} = this.props;
 		let l, r, t, b;
 		switch (position) {
 			case 'l':
@@ -68,7 +68,7 @@ export default class ElementResizer extends React.PureComponent {
 				b = sy;
 			break;
 		}
-		this.props.onChangeSize({l, r, t, b}, elementType);
+		this.props.onChange({l, r, t, b}, type);
 	}
 
 	handleClick = (e) => {

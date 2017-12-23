@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 import {icons} from '../../utils/Dictionary';
 
 export default function Icon({children, classes, size, icon, ...others}) {

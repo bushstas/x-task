@@ -1,49 +1,33 @@
 import React from 'react';
-import classnames from 'classnames';
 import {dict, icons} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import Icon from '../../ui/Icon';
-import {getScrollTop} from '../../utils';
+import {handleWheel} from '../../utils/MouseHandlers';
+import {DEFAULT_SIZES} from '../../consts/max_sizes';
+
+const TYPE = 'mark';
 
 export default class TaskMark extends React.Component {
 
 	static defaultProps = {
-		onClick: () => {},
-		onChange: () => {}
+		onClick: () => {}
 	}
 
 	render() {
-		let {
-			data: {
-				loc = 1,
-				mx = 0,
-				my = this.startYPosition,
-				importance,
-				fixed,
-				locked
-			},
-			onChange,
-			index,
-			classes,
-			active,
-			onClick
-		} = this.props;
-
+		let {data = {}} = this.props;
+		let {loc = 1, importance} = data;
 		let locClassName = $classy(loc, 'loc', [2,3,4]);
 		let colorClassName = $classy(importance, 'color-', ['burning', 'urgent', 'important', 'usual', 'insignificant', 'future', 'to_think']);
  	
 	 	return (
 	 		<VisualElement 
-	 			classes="self $classes $locClassName $colorClassName"
-	 			index={index}
-	 			mx={mx}
-	 			my={my}
+	 			{...this.props}
+	 			classes="self $locClassName $colorClassName"
 	 			onWheel={this.handleWheel}
-	 			onClick={this.handleClick}
-	 			active={active}
-	 			fixed={fixed}
-	 			locked={locked}
-	 			onChange={onChange}>
+	 			type={TYPE}
+	 			resizers={true}
+	 			set="2"
+	 			onClick={this.handleClick}>
 	 			{this.icon}
 			</VisualElement>
 		)
@@ -55,46 +39,50 @@ export default class TaskMark extends React.Component {
 		}
 	}
 
-	get startYPosition() {
-		return getScrollTop() + 100;
+	get defaultWidth() {
+		return DEFAULT_SIZES[TYPE] && DEFAULT_SIZES[TYPE].width;
+	}
+
+	get defaultHeight() {
+		return DEFAULT_SIZES[TYPE] && DEFAULT_SIZES[TYPE].height;
 	}
 
 	get icon() {
-		let {data: {importance, type}} = this.props;
+		let {data = {}} = this.props;
+		let {
+			importance,
+			type,
+			width = this.defaultWidth,
+			height = this.defaultHeight
+		} = data;
 		let icon;
 		if (type) {
 			icon = icons.task_type[type];
 		} else {
 			icon = icons.task_imp[importance];
 		}
+		let fontSize = Math.round(width / 2);
+		let marginLeft = -Math.round((fontSize - width / 20) / 2) + 'px';
+		let marginTop = -Math.round((fontSize) / 2) + 'px';
+		fontSize += 'px';
+		let style = {
+			fontSize,
+			lineHeight: fontSize,
+			marginLeft,
+			marginTop
+		}
 		return (
 			<div>
-				<Icon>
+				<Icon style={style}>
 					{icon}
 				</Icon>
 			</div>
 		)
-		var a = a 
-		<b && f>s
 	}
 
 	handleWheel = (e) => {
-		e.preventDefault();
-		let {deltaY} = e;
-		let {data: {loc}} = this.props;
-		if (!loc) {
-			loc = deltaY > 0 ? 2 : 4;
-		} else if (deltaY > 0) {
-			loc++;
-			if (loc > 4) {
-				loc = 1;
-			}
-		} else {
-			loc--;
-			if (loc < 1) {
-				loc = 4;
-			}
-		}
-		this.props.onChange({loc});
+		this.props.onChange(
+			handleWheel(e, TYPE, this.props.data)
+		);
 	}
 }

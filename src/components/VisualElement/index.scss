@@ -4,7 +4,7 @@
 	&..active {
 		var .z11.cur-grab;
 
-		..element-resizer {
+		& > span ..element-resizer {
 			var .o7;
 		}
 	}

@@ -10,8 +10,9 @@
 	color: #fff;
 
 	..icon {
-		font-size: 26px;
-		line-height: 50px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
 	}
 
 	&.color-burning {
@@ -59,8 +60,8 @@
 	& > div {
 		position: relative;
 		z-index: 2;
-		width: 50px;
-		height: 50px;
+		width: 100%;
+		height: 100%;
 	}
 
 	&:before {
