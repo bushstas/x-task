@@ -1,6 +1,7 @@
 import StoreKeeper from '../utils/StoreKeeper';
 import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
-import {getScrollTop} from '../utils';
+import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colors';
+import {getScrollTop, getElementMarginLeft, getCenterCoords} from '../utils';
 
 const STORAGE_KEY = 'processed_task';
 let savedState = StoreKeeper.get(STORAGE_KEY);
@@ -66,9 +67,6 @@ const visual_element_added = (state, element) => {
 
   element.data = {
     ...element.data,
-    action,
-    type,
-    importance,
     mx: 0,
     my: START_Y + getScrollTop(),
     width,
@@ -79,16 +77,6 @@ const visual_element_added = (state, element) => {
   let currentElement = visualElements.length - 1,
       currentType = element.type;
   
-  
-  let props = {
-    visualMode: true,
-    status: 'collapsed',
-    visualElements,
-    currentElement,
-    visualElement: {...element},
-    currentType
-  }
-
   switch (currentType) {
     case 'mark':
       props.markElement = currentElement;
@@ -97,6 +85,22 @@ const visual_element_added = (state, element) => {
     case 'selection':
       props.selectionElement = currentElement;
     break;
+
+    case 'drawing':
+      element.data.brushSize = DEFAULT_BRUSH_SIZE;
+      element.data.color = DEFAULT_COLOR;
+      element.data.opacity = DEFAULT_OPACITY;
+    break;    
+  }
+
+  
+  let props = {
+    visualMode: true,
+    status: 'collapsed',
+    visualElements,
+    currentElement,
+    visualElement: {...element},
+    currentType
   }
   return props;
 }
@@ -153,9 +157,16 @@ const element_removed = (state) => {
     currentType,
     markElement
   } = state;
+  if (
+    typeof markElement == 'number' &&
+    markElement > currentElement
+  ) {
+    markElement--;
+  }
   visualElements.splice(currentElement, 1);
   let props = {
     visualElements,
+    markElement,
     visualMode: false,
     status: 'active',
     currentElement: -1,
@@ -209,6 +220,20 @@ const remove_element = ({dispatch, state, doAction}) => {
   dispatch('QUICKTASK_ELEMENT_REMOVED');
 }
 
+const relocate_element = ({doAction, state}, coords) => {
+  let mx, my;
+  if (coords) {
+    mx = getElementMarginLeft(coords.x);
+    my = coords.y;
+  } else {
+    let {visualElement: {data: {width, height}}} = state;
+    let centerCoords = getCenterCoords();
+    mx = -width / 2;
+    my = centerCoords.y - height / 2;
+  }
+  doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {mx, my}); 
+}
+
 const cancel = ({dispatch}) => {
   dispatch('QUICKTASK_RESET');
 }
@@ -220,6 +245,7 @@ export default {
     change_param,
     change_visual_element,
     remove_element,
+    relocate_element,
     cancel
   },
   reducers: {

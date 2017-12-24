@@ -7,7 +7,10 @@ export default class VisualElementActions extends React.PureComponent {
 	render() {
 		let {active: a} = this.props;
 		return (
-			<div class="self" onMouseDown={this.handleMouseDown}>
+			<div 
+				class="self"
+				onMouseDown={this.stopPropagation}
+				onWheel={this.stopPropagation}>
 				{this.props.actions.map((action) => {
 					let active = a == action;
 					return (
@@ -16,6 +19,7 @@ export default class VisualElementActions extends React.PureComponent {
 							classes="$?.active"
 							data-action={action}
 							key={action}
+							title={dict[action]}
 							icon={action}/>
 					)
 				})}
@@ -29,7 +33,7 @@ export default class VisualElementActions extends React.PureComponent {
 		}
 	}
 
-	handleMouseDown = (e) => {
+	stopPropagation = (e) => {
 		e.stopPropagation();
 	}
 }

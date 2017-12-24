@@ -6,6 +6,7 @@ import Canvas from '../../utils/Canvas';
 import {COLORS} from '../../consts/colors';
 
 const TYPE = 'drawing';
+let timeout;
 
 export default class Drawing extends React.Component {
 	constructor() {
@@ -14,10 +15,13 @@ export default class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
+		let {color, brushSize, path} = this.props.data;
 		this.canvas.init(this.refs.canvas);
 		this.canvas.set({
-			color: COLORS.default.hash
+			color: COLORS[color],
+			size: brushSize
 		});
+		this.canvas.draw(path);
 	}
 
 	componentWillUnmount() {
@@ -25,19 +29,35 @@ export default class Drawing extends React.Component {
 		this.canvas = null;
 	}
 
-	componentDidUpdate() {
-		let {color} = this.props.data;
-		this.canvas.set({
-			color: COLORS[color]
-		});
+	componentWillUpdate(props) {
+		if (
+			props.data.color != this.props.data.color || 
+			props.data.brushSize != this.props.data.brushSize
+		) {
+			let {color, brushSize} = props.data;
+			this.canvas.set({
+				color: COLORS[color],
+				size: brushSize
+			});
+		}
+
+		if (
+			props.data.width != this.props.data.width || 
+			props.data.height != this.props.data.height
+		) {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				this.canvas.draw(props.data.path);
+			}, 200);
+		}
 	}
 
 	render() {
-		let {cx = -100, cy = -100, size = 40, focused} = this.state || {};
-		let {data} = this.props;
-		let {action = 'move', color = COLORS.default.name, locked} = data;
+		let {cx = -100, cy = -100, focused} = this.state || {};
+		let {data, active} = this.props;
+		let {action = 'move', color, locked, brushSize, opacity} = data;
 		let colorClass = this.getColorClass(color);
-		let isDraw = action == 'draw' && !locked;
+		let isDraw = active && (action == 'draw' || action == 'opacity') && !locked;
 	 	return (
 	 		<VisualElement 
 	 			{...this.props}
@@ -49,22 +69,23 @@ export default class Drawing extends React.Component {
 
 	 			{!locked && (
 	 				<VisualElementActions 
-	 					actions={['move', 'draw']}
+	 					actions={['move', 'draw', 'opacity']}
 	 					active={action}/>
 	 			)}
 	 			
-	 			{action == 'draw' && (
+	 			{isDraw && (
 	 				<div class="canvas-area">
 		 				{focused && (
 		 					<div 
 			 					class="cursor $colorClass" 
 			 					style={{
-			 						width: size + 'px',
-			 						height: size + 'px',
+			 						opacity,
+			 						width: brushSize + 'px',
+			 						height: brushSize + 'px',
 			 						left: cx + 'px',
 			 						top: cy + 'px',
-			 						marginLeft: size / -2 + 'px',
-			 						marginTop: size / -2 + 'px',
+			 						marginLeft: brushSize / -2 + 'px',
+			 						marginTop: brushSize / -2 + 'px',
 			 					}}/>
 			 			)}
 		 				{this.canvasElement}
@@ -72,6 +93,7 @@ export default class Drawing extends React.Component {
 	 			)}
 	 			
 	 			<canvas 
+	 				style={{opacity}}
 	 				ref="canvas"
 	 				width={data.width}
 	 				height={data.height}/>
@@ -85,6 +107,7 @@ export default class Drawing extends React.Component {
 		let props;
 		if (!locked) {
 			props = {
+				onWheel: this.handleWheel,
 				onMouseMove: this.handleMouseMove,
 		 		onMouseEnter: this.handleMouseEnter,
 		 		onMouseLeave: this.handleMouseLeave,
@@ -102,11 +125,9 @@ export default class Drawing extends React.Component {
 	}
 
 	handleWheel = (e) => {
-		if (this.props.data.action == 'move') {
-			this.props.onChange(
-				handleWheel(e, TYPE, this.props.data)
-			);
-		}
+		this.props.onChange(
+			handleWheel(e, TYPE, this.props.data)
+		);
 	}
 
 	handleMouseMove = ({nativeEvent: {offsetX, offsetY}}) => {
@@ -134,7 +155,10 @@ export default class Drawing extends React.Component {
 
 	handleMouseUp = (e) => {
 		this.drawing = false;
-		this.canvas.stop();
+		let {data: {path = []}} = this.props;
+		path.push(
+			this.canvas.stop()
+		);
+		this.props.onChange({path});
 	}
-
 }

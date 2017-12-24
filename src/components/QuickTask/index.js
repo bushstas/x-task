@@ -62,7 +62,7 @@ class QuickTask extends React.Component {
 					{this.renderButtons(icons.task_act, action, 'action', 'action')}
 				</div>
 
-				<div class="element-panel .panel">
+				<div class="element-panel .panel" onClick={this.handleExpandClick}>
 					{this.renderElementButtons()}
 				</div>
 
@@ -163,12 +163,14 @@ class QuickTask extends React.Component {
 		this.props.dispatch('QUICKTASK_FORM_DATA_CHANGED', data);
 	}
 
-	handleAddElementClick = ({target: {dataset: {type}}}) => {
+	handleAddElementClick = (e) => {
+		e.stopPropagation();
+		let {target: {dataset: {type}}} = e;
 		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_ADDED', {type, data: {}});
 	}
 
 	handleExpandClick = () => {
-		this.props.dispatch('QUICKTASK_DEACTIVE_VISUAL_MODE');
+		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
 	}
 
 	handleCloseClick = () => {

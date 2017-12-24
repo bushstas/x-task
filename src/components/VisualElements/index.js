@@ -81,8 +81,14 @@ class VisualElements extends React.Component {
 		}
 	}
 
-	handleBodyMouseDown = () => {
-		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+	handleBodyMouseDown = (e) => {
+		let {visualElement: {data: {here}}} = this.props;
+		if (here) {
+			let {nativeEvent: {pageX: x, pageY: y}} = e;
+			this.props.doAction('QUICKTASK_RELOCATE_ELEMENT', {x, y});
+		} else {
+			this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+		}		
 	}
 
 	handleChange = (data) => {

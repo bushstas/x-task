@@ -87,6 +87,9 @@ class VisualElementPanel extends React.Component {
 			case 'lock':
 				return data.locked;
 
+			case 'here':
+				return data.here;
+
 			case 'fix':
 				return data.fixed;
 
@@ -116,6 +119,14 @@ class VisualElementPanel extends React.Component {
 
 				case 'lock':
 					props = {locked: !data.locked};
+				break;
+
+				case 'here':
+					props = {here: !data.here};
+				break;
+
+				case 'center':
+					this.props.doAction('QUICKTASK_RELOCATE_ELEMENT');
 				break;
 
 				case 'fix': {

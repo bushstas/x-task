@@ -2,18 +2,32 @@ import React from 'react';
 import {dict} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import {handleWheel} from '../../utils/MouseHandlers';
+import VisualElementActions from '../VisualElementActions';
 
 const TYPE = 'descr';
 
 export default class Text extends React.Component {
 	componentDidMount() {
-		if (this.props.active && this.refs.input) {
+		this.componentDidUpdate();
+	}
+
+	componentDidUpdate() {
+		let {active, data: {action}} = this.props;
+		if (active && this.refs.input && action == 'write') {
 			this.refs.input.focus();
 		}
 	}
 
 	render() {
-		let {fontSize = 20, text = dict.txt, color} = this.props.data;
+		let {
+			data: {
+				fontSize = 20,
+				text = dict.txt,
+				color,
+				locked,
+				action = 'move'
+			}
+		} = this.props;
 		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
 	 		<VisualElement 
@@ -22,6 +36,12 @@ export default class Text extends React.Component {
 	 			classes="self $className"
 	 			type={TYPE}
 	 			onWheel={this.handleWheel}>
+
+	 			{!locked && (
+	 				<VisualElementActions 
+	 					actions={['move', 'write']}
+	 					active={action}/>
+	 			)}
 	 			
  				<textarea 
  					ref="input"
@@ -29,6 +49,10 @@ export default class Text extends React.Component {
  					onChange={this.handleChangeText}
  					style={{fontSize: fontSize + 'px', lineHeight: fontSize + 'px'}}
  					spellCheck="false"/>
+
+ 				{action != 'write' && (
+ 					<div class="mask"/>
+ 				)}
 	 		</VisualElement>
 
 		)

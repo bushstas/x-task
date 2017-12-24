@@ -1,4 +1,4 @@
-import {MAX_SIZES, TEXT_SIZES, START_Y} from '../../consts/max_sizes';
+import {MAX_SIZES, TEXT_SIZES, START_Y, BRUSH_SIZES} from '../../consts/max_sizes';
 import {getScrollTop} from '../../utils';
 
 const handleFontSizeChange = (e, props) => {
@@ -17,6 +17,9 @@ export const handleWheel = (e, type, props) => {
 
 		case 'mark':
 			return handleMarkLocChange(e, props);
+
+		case 'drawing':
+			return handleDrawingMouseWheel(e, type, props);
 	}
 	return handleWheelResize(e, type, props);
 }
@@ -155,4 +158,22 @@ export const handleFixate = (props) => {
 		}
 	}
 	return {fixed: !fixed, my};
+}
+
+const handleDrawingMouseWheel = (e, type, props) => {
+	let {action} = props;
+	let {deltaY} = e;
+	if (action == 'move') {
+		return handleWheelResize(e, type, props);
+	} else if (action == 'draw') {
+		let {brushSize} = props;
+		let add = 2 * (e.deltaY > 0 ? 1 : -1);
+		brushSize = Math.min(BRUSH_SIZES.max, Math.max(BRUSH_SIZES.min, brushSize + add));
+		return {brushSize};
+	} else if (action == 'opacity') {
+		let {opacity} = props;		
+		let add = .1 * (e.deltaY > 0 ? 1 : -1);
+		opacity = Math.min(1, Math.max(0.1, opacity + add));
+		return {opacity};
+	}
 }

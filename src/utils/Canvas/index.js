@@ -14,9 +14,15 @@ export default class Canvas {
 		this.height = this.canvas.height = getScrollHeight();
 	}
 
+	clear() {
+		let width = this.width || this.canvas.width;
+		let height = this.height || this.canvas.height;
+		this.context.clearRect(0, 0, width, height);
+	}
+
 	fill(opacity) {
 		let {context} = this;
-		context.clearRect(0, 0, this.width, this.height);
+		this.clear();
 		context.globalAlpha = opacity;
 		context.rect(0, 0, this.width, this.height);
 		context.fillStyle = 'white';
@@ -24,30 +30,35 @@ export default class Canvas {
 	}
 
 	cut(data) {
-		let {mx, my, width, height, fixed} = data;
+		let {mx, my, width, height} = data;
 	    let x = document.body.clientWidth / 2 + mx;
-	    let y = my + (fixed ? getScrollTop() : 0);
-		this.context.clearRect(x, y, width, height);
+		this.context.clearRect(x, my, width, height);
 	}
 
 	set({size, color}) {
-		this.size = size;
+		this.size = size - 2;
 		this.color = color;
+	}
+
+	initContext(color, size) {
+		let {context} = this;
+		context.shadowBlur = 1;
+		context.shadowColor = color;
+		context.strokeStyle = color;
+		context.fillStyle = color;
+		context.lineWidth = size;
+		context.lineCap = 'round';
+		context.lineJoin = 'round';
 	}
 
 	start({nativeEvent: {offsetX, offsetY}}) {
 		let {context} = this;
-		
+		this.initContext(this.color, this.size);
+		this.path = [offsetX + 'x' + offsetY];
 		this.sx = offsetX;
 		this.sy = offsetY;
 		context.beginPath();
-		context.strokeStyle = this.color;
-		context.fillStyle = this.color;
-		context.lineWidth = 30;
-		context.lineCap = 'round';
-		context.lineJoin = 'round';
-		
-		context.arc(offsetX, offsetY, Math.floor(30 / 2), 0, Math.PI * 2, true);
+		context.arc(offsetX, offsetY, Math.floor(this.size / 2), 0, Math.PI * 2, true);
 		context.closePath();
 		context.fill();
 		context.beginPath();
@@ -62,12 +73,49 @@ export default class Canvas {
 
 		this.sx += mx;
 		this.sy += my;
+		this.path.push(this.sx + 'x' + this.sy);
 		context.lineTo(this.sx, this.sy);
 		context.stroke();
 	}
 
 	stop() {
 		this.context.closePath();
+		return this.color + '_' + this.size + '_' + this.path.join('.');
+	}
+
+	draw(path) {
+		if (path instanceof Array) {
+			this.clear();
+			let {context} = this;
+			for (let p of path) {
+				let ps = p.split('_'),
+					color = ps[0],
+					size = ps[1],
+					points = ps[2].split('.'),
+					i = 0;
+
+				this.initContext(color, size);
+
+				let prevs;
+				for (let pnt of points) {
+					let pnts = pnt.split('x');
+					if (i == 0) {
+						context.beginPath();
+						context.arc(pnts[0], pnts[1], Math.floor(size / 2), 0, Math.PI * 2, true);
+						context.closePath();
+						context.fill();
+						context.beginPath();
+					} else {
+						context.moveTo(prevs[0], prevs[1]);
+						context.lineTo(pnts[0], pnts[1]);
+						context.stroke();
+					}
+					i++;
+					prevs = pnts;
+				}
+				context.closePath();
+			}
+		}
 	}
 
 	dispose() {

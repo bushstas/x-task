@@ -1,8 +1,4 @@
 export const COLORS = {
-	default: {
-		hash: '#000',
-		name: 'black'
-	},
 	black: '#000',
 	pale: '#8195ad',
 	red: '#f11e3d',
@@ -10,3 +6,7 @@ export const COLORS = {
 	blue: '#0473ce',
 	orange: '#ff8300'
 };
+
+export const DEFAULT_COLOR = 'black';
+export const DEFAULT_BRUSH_SIZE = 30;
+export const DEFAULT_OPACITY = .5;

@@ -32,6 +32,11 @@ export const TEXT_SIZES = {
 	max: 70
 }
 
+export const BRUSH_SIZES = {
+	min: 4,
+	max: 40
+}
+
 export const DEFAULT_SIZES = {
 	drawing: {
 		width: 300,
