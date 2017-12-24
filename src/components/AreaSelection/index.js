@@ -8,7 +8,12 @@ const TYPE = 'selection';
 export default class AreaSelection extends React.Component {
 
 	render() {
-		let {bent, markProps} = this.props;
+		let {
+			bent,
+			markProps,
+			taskType,
+			taskImportance
+		} = this.props;
 	 	return (
 	 		<VisualElement 
 	 			{...this.props}
@@ -16,7 +21,12 @@ export default class AreaSelection extends React.Component {
 	 			classes="self"
 	 			type={TYPE}
 	 			onWheel={this.handleWheel}>
-	 			{bent && <TaskMark {...markProps}/>}
+	 			{bent && (
+	 				<TaskMark 
+	 					taskType={taskType}
+	 					taskImportance={taskImportance}
+	 					{...markProps}/>
+	 			)}
 	 		</VisualElement>
 
 		)

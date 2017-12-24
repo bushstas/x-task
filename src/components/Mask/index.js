@@ -4,14 +4,22 @@ import Store from 'xstore';
 
 let timeuot;
 class Mask extends React.Component {
+	constructor() {
+		super();
+		this.canvas = new Canvas();
+	}
 
 	componentDidMount() {
 		this.redraw();
 		window.addEventListener('resize', this.redraw);
+		window.addEventListener('scroll', this.redraw);
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.redraw);
+		window.removeEventListener('scroll', this.redraw);
+		this.canvas.dispose();
+		this.canvas = null;
 	}
 
 	componentDidUpdate() {
@@ -20,11 +28,11 @@ class Mask extends React.Component {
 
 	redraw = () => {
 		if (this.isShown) {
-			Canvas.init(this.canvas);
-			Canvas.resize();
-			Canvas.fill(this.opacity);
+			this.canvas.init(this.refs.canvas);
+			this.canvas.resize();
+			this.canvas.fill(this.opacity);
 			for (let k in this.cuts) {
-				Canvas.cut(this.cuts[k]);
+				this.canvas.cut(this.cuts[k]);
 			}
 		}
 	}
@@ -36,10 +44,6 @@ class Mask extends React.Component {
 	 	return (
 	 		<canvas ref="canvas" class="self"/>
 		)
-	}
-
-	get canvas() {
-		return this.refs.canvas;
 	}
 
 	get cuts() {

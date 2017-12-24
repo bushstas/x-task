@@ -75,7 +75,7 @@ class QuickTask extends React.Component {
 						classes=".inline-icon"
 						title={dict.task_info}
 						data-param="taskInfoShown"
-						onClick={this.handleChange}/>
+						onClick={this.handleChangeParam}/>
 				</div>
 
 				<div class="top-panel .panel">
@@ -153,15 +153,9 @@ class QuickTask extends React.Component {
 		})
 	}
 
-	handleChange = ({target: {dataset: {param}}}) => {
-		if (param) {
-			this.props.dispatch('QUICKTASK_CHANGED', {[param]: true});
-		}
-	}
-
 	handleChangeParam = ({target: {dataset: {value, param}}}) => {
 		if (param && value) {
-			this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value});
+			this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value || true});
 		}
 	}
 
@@ -182,11 +176,11 @@ class QuickTask extends React.Component {
 	}
 
 	handleInfoClose = () => {
-		this.props.dispatch('QUICKTASK_CHANGED', {'taskInfoShown': false});
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {'taskInfoShown': false});
 	}
 
 	handleInfoChange = (info) => {
-		this.props.dispatch('QUICKTASK_CHANGED', {info});
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {info});
 	}
 }
 

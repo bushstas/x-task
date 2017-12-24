@@ -1,5 +1,6 @@
 import StoreKeeper from '../utils/StoreKeeper';
 import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
+import {getScrollTop} from '../utils';
 
 const STORAGE_KEY = 'processed_task';
 let savedState = StoreKeeper.get(STORAGE_KEY);
@@ -44,31 +45,8 @@ const activated = (state, status) => {
   return {status}
 }
 
-const changed = (state, data) => {
-  return data;
-}
-
 const param_changed = (state, data) => {
-  let {markElement: m, visualElements: e} = state;
-  if (typeof m == 'number' && e[m] instanceof Object) {
-    let {data: d} = e[m];
-    e[m].data = {
-      ...d,
-      ...data
-    }
-  }
-  return {
-    visualElements: e,
-    ...data
-  };
-}
-
-const type_changed = (state, type) => {
-  return {type}
-}
-
-const action_changed = (state, action) => {
-  return {action}
+  return data;
 }
 
 const form_data_changed = (state, formData) => {
@@ -92,7 +70,7 @@ const visual_element_added = (state, element) => {
     type,
     importance,
     mx: 0,
-    my: START_Y,
+    my: START_Y + getScrollTop(),
     width,
     height
   };
@@ -191,11 +169,7 @@ const element_removed = (state) => {
 
     case 'selection':
       props.selectionElement = null;
-      props.bent = false;
-      let mark = visualElements[markElement];
-      if (mark instanceof Object) {
-        mark.data.bent = false
-      }
+      props.bent = false;      
     break;
   }
   return props;
@@ -205,11 +179,12 @@ const change_param = ({dispatch}, data) => {
   dispatch('QUICKTASK_PARAM_CHANGED', data);
 }
 
-const change_visual_element = ({dispatch, state, doAction}, data) => {
-  dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
+const change_visual_element = ({dispatch, doAction}, data) => {
+  let state = dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
   let {visualElement: {data: d}, currentElement: id} = state;
-  let {cut} = data;
-  if (typeof cut != 'undefined' || d.cut) {
+  let {cut, my} = data;
+  let {fixed} = d;
+  if (typeof cut != 'undefined' || (typeof my != 'undefined' && d.cut)) {
     let props = {id, cut};
     if (cut || d.cut) {
       let {width, height, mx, my} = d;
@@ -218,19 +193,20 @@ const change_visual_element = ({dispatch, state, doAction}, data) => {
         height,
         mx,
         my,
+        fixed,
         ...props
       }
-      doAction('MASK_CUT_MASK', props);
     }
+    doAction('MASK_CUT_MASK', props);
   }
 }
 
 const remove_element = ({dispatch, state, doAction}) => {
-  dispatch('QUICKTASK_ELEMENT_REMOVED');
   let {visualElement: {data}, currentElement: id} = state;
   if (data.cut) {
     doAction('MASK_CUT_MASK', {id, cut: false}); 
   }
+  dispatch('QUICKTASK_ELEMENT_REMOVED');
 }
 
 const cancel = ({dispatch}) => {
@@ -251,7 +227,6 @@ export default {
     reset,
     activated,    
     param_changed,
-    changed,
     form_data_changed,
     visual_element_added,
     visual_element_changed,

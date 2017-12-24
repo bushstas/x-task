@@ -27,13 +27,22 @@ class VisualElements extends React.Component {
 	}
 
 	get elements() {
-		let {visualElements, currentElement, bent} = this.props;
+		let {
+			visualElements,
+			currentElement,
+			bent,
+			importance: taskImportance,
+			type: taskType
+		} = this.props;
 		if (visualElements instanceof Array) {
 			return visualElements.map((element, i) => {
 				let {type, data} = element;
 				let props = {
 					key: i,
 					index: i,
+					taskType,
+					taskImportance,
+					bent,
 					data,
 					active: i == currentElement,
 					onChange: this.handleChange,
@@ -51,8 +60,8 @@ class VisualElements extends React.Component {
 					case 'selection':
 						if (bent) {
 							let {markElement} = this.props;
-							props.bent = true;
 							props.markProps = visualElements[markElement];
+							props.bent = true;
 						}
 						return (
 							<AreaSelection resizers={true} {...props}/>

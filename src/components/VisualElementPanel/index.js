@@ -38,6 +38,11 @@ class VisualElementPanel extends React.Component {
 		let keys = Object.keys(items || {});
 		return keys.map((value) => {
 			switch (value) {
+				case 'cut':
+					if (!this.hasCutButton) {
+						return;
+					}
+				break;
 				case 'bind':
 					if (!this.hasBindButton) {
 						return;
@@ -61,6 +66,11 @@ class VisualElementPanel extends React.Component {
 		return (
 			<ColorPanel onPickColor={this.handlePickColor}/>
 		)
+	}
+
+	get hasCutButton() {
+		let {currentType} = this.props;
+		return currentType != 'mark';
 	}
 
 	get hasBindButton() {

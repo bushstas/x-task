@@ -22,21 +22,27 @@ export default class VisualElement extends React.PureComponent {
 			height = this.height,
 			locked,
 			fixed,
-			color
+			color,
+			action
 		} = data;
 		let {dragged} = this.state || {};
-		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
+			 	
+		let props = {
+			mx,
+			my,
+			width,
+			height,
+			onClick: this.handleClick,
+			classes: $classy('self $classes $?.dragged $?.locked $?.active $?.fixed')
+		}
+		
+		if (this.isOperable) {
+			props.onMove = this.handleMove;
+			props.onDragEnd = this.handleDragEnd;
+			props.onWheel = this.handleWheel;
+		}
 	 	return (
-	 		<DraggableElement
-	 			onMove={this.handleMove}
-	 			onClick={this.handleClick}
-	 			onDragEnd={this.handleDragEnd}
-	 			onWheel={this.handleWheel}
-	 			mx={mx}
-	 			my={my}
-	 			width={width}
-	 			height={height}
-	 			classes="self $classes $className $?.dragged $?.locked $?.active $?.fixed">
+	 		<DraggableElement {...props}>
 	 			{!locked && resizers && (
 	 				<Resizers
 	 					type={type}
@@ -46,6 +52,11 @@ export default class VisualElement extends React.PureComponent {
 				{children}
 			</DraggableElement>
 		)
+	}
+
+	get isOperable() {
+		let {data: {locked, action}} = this.props;
+		return !locked && (!action || action == 'move');
 	}
 
 	get mx() {
@@ -73,8 +84,8 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	handleWheel = (e) => {
-		let {active, locked, onWheel} = this.props;
-		if (active && !locked) {
+		let {active, onWheel} = this.props;
+		if (active) {
 			onWheel(e);
 		} else {
 			e.preventDefault();
@@ -82,9 +93,11 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	handleClick = () => {
-		let {onClick, index} = this.props;
+		let {onClick, index, data: {action}} = this.props;
 		onClick(index);
-		this.setState({dragged: true});
+		if (!action || action == 'move') {
+			this.setState({dragged: true});
+		}
 	}
 
 	handleDragEnd = (mx, my) => {
@@ -92,8 +105,7 @@ export default class VisualElement extends React.PureComponent {
 	}
 
 	handleMove = (sx, sy) => {
-		let {locked, mx = this.mx, my = this.my} = this.props.data;
-		if (locked) return;
+		let {mx = this.mx, my = this.my} = this.props.data;
 		mx += sx;
 		my += sy;
 		this.props.onChange({mx, my});

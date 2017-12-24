@@ -14,10 +14,9 @@ export default class TaskMark extends React.Component {
 	}
 
 	render() {
-		let {data = {}} = this.props;
-		let {loc = 1, importance} = data;
+		let {data: {loc = 1}, taskImportance} = this.props;
 		let locClassName = $classy(loc, 'loc', [2,3,4]);
-		let colorClassName = $classy(importance, 'color-', ['burning', 'urgent', 'important', 'usual', 'insignificant', 'future', 'to_think']);
+		let colorClassName = $classy(taskImportance, 'color-', ['burning', 'urgent', 'important', 'usual', 'insignificant', 'future', 'to_think']);
  	
 	 	return (
 	 		<VisualElement 
@@ -34,7 +33,7 @@ export default class TaskMark extends React.Component {
 	}
 
 	handleClick = (index) => {
-		if (!this.props.data.bent) {
+		if (!this.props.bent) {
 			this.props.onClick(index);
 		}
 	}
@@ -48,18 +47,16 @@ export default class TaskMark extends React.Component {
 	}
 
 	get icon() {
-		let {data = {}} = this.props;
+		let {data = {}, taskImportance, taskType} = this.props;
 		let {
-			importance,
-			type,
 			width = this.defaultWidth,
 			height = this.defaultHeight
 		} = data;
 		let icon;
-		if (type) {
-			icon = icons.task_type[type];
+		if (taskType) {
+			icon = icons.task_type[taskType];
 		} else {
-			icon = icons.task_imp[importance];
+			icon = icons.task_imp[taskImportance];
 		}
 		let fontSize = Math.round(width / 2);
 		let marginLeft = -Math.round((fontSize - width / 20) / 2) + 'px';

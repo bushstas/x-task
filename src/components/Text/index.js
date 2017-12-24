@@ -13,12 +13,13 @@ export default class Text extends React.Component {
 	}
 
 	render() {
-		let {fontSize = 20, text = dict.txt} = this.props.data;
+		let {fontSize = 20, text = dict.txt, color} = this.props.data;
+		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
 	 		<VisualElement 
 	 			{...this.props}
 	 			ref="element"
-	 			classes="self"
+	 			classes="self $className"
 	 			type={TYPE}
 	 			onWheel={this.handleWheel}>
 	 			
