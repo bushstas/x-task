@@ -23,17 +23,15 @@ export default class Text extends React.Component {
 			data: {
 				fontSize = 20,
 				text = dict.txt,
-				color,
 				locked,
 				action = 'move'
 			}
 		} = this.props;
-		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
 	 		<VisualElement 
 	 			{...this.props}
 	 			ref="element"
-	 			classes="self $className"
+	 			classes="self"
 	 			type={TYPE}
 	 			onWheel={this.handleWheel}>
 

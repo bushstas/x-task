@@ -2,10 +2,13 @@
 	var .abs.t.l100p.ml2.bc-555.p4.br5;
 
 	div {
-		var .wh25.br3.mb5.pntr;
+		var .wh25.br3.mb5.pntr.box;
 
 		&:last-child {
 			var .mb;
+		}
+		&.active {
+			var .bo-f1f1f1-2;
 		}
 	}	
 }
