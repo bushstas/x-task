@@ -5,8 +5,19 @@ import TaskMark from '../../components/TaskMark';
 import AreaSelection from '../../components/AreaSelection';
 import Drawing from '../../components/Drawing';
 import Text from '../../components/Text';
+import {getElementSelectorPath} from '../../utils';
+
+let currentSelectedElement;
 
 class VisualElements extends React.Component {
+
+	componentDidMount() {
+		document.body.addEventListener('click', this.onBodyClick);
+	}
+
+	componentWillUnmount() {
+		document.body.removeEventListener('click', this.onBodyClick);
+	}
 
 	render() {
 	 	return (
@@ -87,6 +98,24 @@ class VisualElements extends React.Component {
 						)
 				}
 			});
+		}
+	}
+
+	onBodyClick = (e) => {
+		e.preventDefault();
+		let selector = getElementSelectorPath(e.target);
+		if (selector) {
+			let element = document.body.querySelector(selector);
+			if (element) {
+				if (currentSelectedElement) {
+					currentSelectedElement.style.outline = '';
+				}
+				let style = window.getComputedStyle(element);
+				element.style.outline = '2px dotted red';
+				currentSelectedElement = element;
+
+				console.log(style)
+			}
 		}
 	}
 

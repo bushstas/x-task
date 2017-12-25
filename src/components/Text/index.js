@@ -12,8 +12,8 @@ export default class Text extends React.Component {
 	}
 
 	componentDidUpdate() {
-		let {active, data: {action}} = this.props;
-		if (active && this.refs.input && action == 'write') {
+		let {active, data: {action, locked}} = this.props;
+		if (active && this.refs.input && action == 'write' && !locked) {
 			this.refs.input.focus();
 		}
 	}
@@ -48,7 +48,7 @@ export default class Text extends React.Component {
  					style={{fontSize: fontSize + 'px', lineHeight: fontSize + 'px'}}
  					spellCheck="false"/>
 
- 				{action != 'write' && (
+ 				{(locked || action != 'write') && (
  					<div class="mask"/>
  				)}
 	 		</VisualElement>
