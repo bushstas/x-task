@@ -1,7 +1,7 @@
 import StoreKeeper from '../utils/StoreKeeper';
 import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
 import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colors';
-import {getScrollTop, getElementMarginLeft, getCenterCoords} from '../utils';
+import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
 
 const STORAGE_KEY = 'processed_task';
 let savedState = StoreKeeper.get(STORAGE_KEY);
@@ -13,9 +13,9 @@ const getDefaultState = () => {
     importance: 'usual',
     type: null,
     action: null,
-    visualElements: [],
+    visualElements: {},
     visualMode: false,
-    currentElement: -1,
+    currentElement: null,
     currentType: null,
     visualElement: null,
     markElement: null,
@@ -57,23 +57,16 @@ const form_data_changed = (state, formData) => {
 
 const visual_element_changed = (state, data) => {
   let {visualElements, currentElement} = state;
-  let element = visualElements[currentElement];
-  if (element instanceof Object) {
-    element.data = {
-      ...element.data,
+  let visualElement = visualElements[currentElement];
+  if (visualElement instanceof Object) {
+    visualElement.data = {
+      ...visualElement.data,
       ...data
     }
   }
   return {
     visualElements,
-    visualElement: {...element}
-  }
-}
-
-const deactive_visual_mode = () => {alert(111)
-   return {
-    visualMode: false,
-    status: 'active'
+    visualElement
   }
 }
 
@@ -130,9 +123,10 @@ const add_element = ({doAction, state}, type) => {
     }
   }  
 
-  visualElements.push(data);
-  let currentElement = visualElements.length - 1,
+  let currentElement = generateKey(),
       currentType = type;
+  visualElements[currentElement] = data;
+
   
   switch (currentType) {
     case 'mark':
@@ -181,13 +175,13 @@ const remove_element = ({state, doAction}) => {
   ) {
     markElement--;
   }
-  visualElements.splice(currentElement, 1);
+  delete visualElements[currentElement];
   let props = {
     visualElements,
     markElement,
     visualMode: false,
     status: 'active',
-    currentElement: -1,
+    currentElement: null,
     visualElement: null
   };
   switch (currentType) {
@@ -236,7 +230,7 @@ const unset_active_element = ({doAction}) => {
    doAction('QUICKTASK_CHANGE_PARAM', {
     visualMode: false,
     status: 'active',
-    currentElement: -1,
+    currentElement: null,
     visualElement: null
   });
 }
@@ -265,7 +259,6 @@ export default {
     activated,    
     param_changed,
     form_data_changed,
-    visual_element_changed,
-    deactive_visual_mode
+    visual_element_changed
   }
 } 

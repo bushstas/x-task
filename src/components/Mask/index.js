@@ -33,7 +33,7 @@ class Mask extends React.Component {
 			this.canvas.resize();
 			this.canvas.fill(maskOpacity);
 			for (let k in cuts) {
-				if (!layers || layerId == -1 || layerId == k) {
+				if (!layers || !layerId || layerId == k) {
 					this.canvas.cut(cuts[k]);
 				}
 			}

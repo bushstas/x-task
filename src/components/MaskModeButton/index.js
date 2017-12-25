@@ -19,7 +19,8 @@ class MaskModeButton extends React.PureComponent {
 		)
 	}
 
-	handleClick = () => {
+	handleClick = (e) => {
+		e.stopPropagation();
 		Store.doAction('MASK_TOGGLE_PARAM', 'maskShown');
 	}
 

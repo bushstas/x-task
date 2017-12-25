@@ -37,8 +37,7 @@ class VisualElements extends React.Component {
 	}
 
 	get isCurrentElement() {
-		let {currentElement} = this.props;
-		return typeof currentElement == 'number' && currentElement >= 0;
+		return !!this.props.currentElement;
 	}
 
 	get elements() {
@@ -50,16 +49,18 @@ class VisualElements extends React.Component {
 			type: taskType,
 			layers
 		} = this.props;
-		if (visualElements instanceof Array) {
-			return visualElements.map((element, i) => {
-				let active = i == currentElement;
+		if (visualElements instanceof Object) {
+			let keys = Object.keys(visualElements);
+			return keys.map((key) => {
+				let element = visualElements[key];
+				let active = key == currentElement;
 				if (layers && !active && this.isCurrentElement) {
 					return;
 				}
 				let {type, data} = element;
 				let props = {
-					key: i,
-					index: i,
+					key: key,
+					index: key,
 					taskType,
 					taskImportance,
 					bent,
@@ -135,7 +136,7 @@ class VisualElements extends React.Component {
 	}
 
 	handleClick = (currentElement) => {
-		if (typeof currentElement == 'number') {
+		if (currentElement) {
 			this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
 		}
 	}

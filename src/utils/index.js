@@ -71,3 +71,13 @@ export const getElementSelectorPath = (target) => {
 
 	return chain.join(' ');
 }
+
+export const generateKey = () => {
+	let len = 10;
+	let possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	let text = '';
+	for (let i = 0; i < len; i++) {
+	  text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
+}
