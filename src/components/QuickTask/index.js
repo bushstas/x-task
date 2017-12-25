@@ -7,6 +7,7 @@ import FormField from '../../ui/FormField';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
+import MaskModeButton from '../MaskModeButton';
 
 class QuickTask extends React.Component {
 
@@ -78,7 +79,7 @@ class QuickTask extends React.Component {
 						onClick={this.handleChangeParam}/>
 				</div>
 
-				<div class="top-panel .panel">
+				<div class="top-panel .panel" onClick={this.handleExpandClick}>
 					<Icon icon="up"
 						classes=".white-icon .panel-up .inline-icon"
 						onClick={this.handleExpandClick}/>
@@ -87,6 +88,8 @@ class QuickTask extends React.Component {
 						title={dict.cancel_task}
 						classes=".white-icon .inline-icon"
 						onClick={this.handleCloseClick}/>
+
+					<MaskModeButton/>
 				</div>
 
 				{taskInfoShown && (
@@ -173,7 +176,8 @@ class QuickTask extends React.Component {
 		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
 	}
 
-	handleCloseClick = () => {
+	handleCloseClick = (e) => {
+		e.stopPropagation();
 		this.props.doAction('QUICKTASK_CANCEL');
 	}
 

@@ -30,9 +30,10 @@ export default class Canvas {
 	}
 
 	cut(data) {
-		let {mx, my, width, height} = data;
+		let {mx, my, width, height, fixed} = data;
 	    let x = document.body.clientWidth / 2 + mx;
-		this.context.clearRect(x, my, width, height);
+	    let y = my + (fixed ? getScrollTop() : 0);
+		this.context.clearRect(x, y, width, height);
 	}
 
 	set({size, color}) {

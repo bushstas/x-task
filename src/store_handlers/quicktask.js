@@ -59,7 +59,9 @@ const visual_element_added = (state, element) => {
     visualElements,
     action,
     type,
-    importance
+    importance,
+    markElement,
+    selectionElement
   } = state;
 
   let width = DEFAULT_SIZES[element.type].width,
@@ -79,11 +81,11 @@ const visual_element_added = (state, element) => {
   
   switch (currentType) {
     case 'mark':
-      props.markElement = currentElement;
+      markElement = currentElement;
     break;
 
     case 'selection':
-      props.selectionElement = currentElement;
+      selectionElement = currentElement;
     break;
 
     case 'drawing':
@@ -95,6 +97,8 @@ const visual_element_added = (state, element) => {
 
   
   let props = {
+    markElement,
+    selectionElement,
     visualMode: true,
     status: 'collapsed',
     visualElements,

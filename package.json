@@ -17,10 +17,10 @@
   "author": "Thisman",
   "license": "ISC",
   "dependencies": {
-    "classy-loader": "^1.2.5",
+    "classy-loader": "^1.2.8",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "xstore": "^1.7.4"
+    "xstore": "^1.7.7"
   },
   "devDependencies": {
     "args": "^2.0.0",
