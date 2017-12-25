@@ -63,9 +63,19 @@ class VisualElementPanel extends React.Component {
 	}
 
 	get colorPanel() {
-		return (
-			<ColorPanel onPickColor={this.handlePickColor}/>
-		)
+		if (this.hasColorPanel) {
+			let {visualElement: {data: {color}}} = this.props;
+			return (
+				<ColorPanel 
+					color={color}
+					onPickColor={this.handlePickColor}/>
+			)
+		}
+	}
+
+	get hasColorPanel() {
+		let {currentType} = this.props;
+		return currentType != 'mark';
 	}
 
 	get hasCutButton() {

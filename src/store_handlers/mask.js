@@ -27,6 +27,10 @@ const param_changed = (state, props) => {
  	return props;
 }
 
+const cleared = () => {
+	return {cuts: {}, 'cleared': true}
+}
+
 const cut_added = (state, props) => {
 	let {cuts} = state;
 	cuts[props.id] = props;
@@ -52,17 +56,23 @@ const cut_mask = ({dispatch, state}, data) => {
 		dispatch('MASK_CUT_REMOVED', data);
 	}
 }
-  
+
+const change = ({dispatch}, data) => {
+	dispatch('MASK_PARAM_CHANGED', data);
+}
+ 
 export default {
 	onStateChanged,
 	actions: {
 		toggle_param,
-		cut_mask
+		cut_mask,
+		change
 	},
 	reducers: {
 		init,
 		param_changed,
 		cut_added,
-		cut_removed
+		cut_removed,
+		cleared
   	}
 } 

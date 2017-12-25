@@ -1,7 +1,6 @@
 import React from 'react';
 import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
-import Store from 'xstore';
 
 export default class VisualElementActions extends React.PureComponent {
 	render() {
@@ -29,7 +28,7 @@ export default class VisualElementActions extends React.PureComponent {
 
 	handleClick = ({target: {dataset: {action}}}) => {
 		if (action) {
-			Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {action});
+			this.props.onAction(action);
 		}
 	}
 

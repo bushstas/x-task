@@ -33,3 +33,5 @@ load(dict, user).then(() => {
 		box
 	);
 });
+
+export const APP_MAIN_CONTAINER = box;

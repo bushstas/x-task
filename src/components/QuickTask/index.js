@@ -7,6 +7,7 @@ import FormField from '../../ui/FormField';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
+import MaskModeButton from '../MaskModeButton';
 
 class QuickTask extends React.Component {
 
@@ -18,8 +19,10 @@ class QuickTask extends React.Component {
 			type, 
 			action, 
 			taskInfoShown,
-			info
+			info,
+			layers
 		} = this.props;
+
 		let className = $classy(status, '', ['active', 'collapsed']);
 	 	return (
 	 		<div class="self $className">
@@ -78,7 +81,17 @@ class QuickTask extends React.Component {
 						onClick={this.handleChangeParam}/>
 				</div>
 
-				<div class="top-panel .panel">
+				<div class="top-panel .panel" onClick={this.handleExpandClick}>
+
+					<Icon 
+						title={dict.layer}
+						icon={layers ? 'layer_off' : 'layer'}
+						classes=".white-icon .inline-icon"
+						onClick={this.handleLayersClick}/>
+
+
+					<MaskModeButton/>
+
 					<Icon icon="up"
 						classes=".white-icon .panel-up .inline-icon"
 						onClick={this.handleExpandClick}/>
@@ -166,14 +179,15 @@ class QuickTask extends React.Component {
 	handleAddElementClick = (e) => {
 		e.stopPropagation();
 		let {target: {dataset: {type}}} = e;
-		this.props.dispatch('QUICKTASK_VISUAL_ELEMENT_ADDED', {type, data: {}});
+		this.props.doAction('QUICKTASK_ADD_ELEMENT', type);
 	}
 
 	handleExpandClick = () => {
-		this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
+		this.props.doAction('QUICKTASK_UNSET_ACTIVE_ELEMENT');
 	}
 
-	handleCloseClick = () => {
+	handleCloseClick = (e) => {
+		e.stopPropagation();
 		this.props.doAction('QUICKTASK_CANCEL');
 	}
 
@@ -183,6 +197,13 @@ class QuickTask extends React.Component {
 
 	handleInfoChange = (info) => {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {info});
+	}
+
+	handleLayersClick = (e) => {
+		e.stopPropagation();
+		let {layers} = this.props;
+		layers = !layers;
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {layers});
 	}
 }
 

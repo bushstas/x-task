@@ -13,15 +13,18 @@
 	}
 
 	.menu {
-		var .none.abs.b100p.l.r.bc-444.br3-3-0-0;
+		var .none.abs.b100p.mb2.l.r.bc-444.br3;
 		..icon {
 			var .fs24.ml8;
+		}
+		&:after {
+			var .cnt.abs.b-2.l.r.h5;
 		}
 	}
 
 	&:hover {
 		.main {
-			var .bc-444.br0-0-3-3;
+			var .bc-444;
 		}
 		.menu {
 			var .bl;

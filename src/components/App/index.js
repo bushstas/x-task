@@ -29,7 +29,8 @@ class App extends React.PureComponent {
   }
 
   render() {
-    let {active} = this.state;  
+    let {active} = this.state;
+    let authorized = isAuthorized();
 
     let elements = [
       this.notifications
@@ -39,19 +40,15 @@ class App extends React.PureComponent {
       elements.push(
         this.startButton,
       );
-      if (this.taskMode) {
+      if (this.taskMode && authorized) {
         elements.push(
           this.mask,
           this.quicktask,
-          this.visualElements
+          this.visualElements,
+          this.visualElementPanel
         );
-        if (this.visualMode) {
-          elements.push(
-            this.visualElementPanel
-          );
-        }
       }
-    } else if (isAuthorized()) {
+    } else if (authorized) {
       elements.push(this.dialog);
     } else {
       elements.push(this.authForm);
@@ -94,7 +91,7 @@ class App extends React.PureComponent {
       <StartButton 
         key="startButton"
         createTaskShown={!this.taskMode && hasRight('add_dev_task')}
-        maskButtonShown={this.taskMode}
+        maskButtonShown={this.taskMode && isAuthorized()}
         onClick={this.handleStartClick}
         onCreateTask={this.handleAddTaskClick}/>
     )

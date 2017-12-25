@@ -28,11 +28,14 @@ class Mask extends React.Component {
 
 	redraw = () => {
 		if (this.isShown) {
+			let {cuts, maskOpacity, layers, layerId} = this.props;
 			this.canvas.init(this.refs.canvas);
 			this.canvas.resize();
-			this.canvas.fill(this.opacity);
-			for (let k in this.cuts) {
-				this.canvas.cut(this.cuts[k]);
+			this.canvas.fill(maskOpacity);
+			for (let k in cuts) {
+				if (!layers || layerId == -1 || layerId == k) {
+					this.canvas.cut(cuts[k]);
+				}
 			}
 		}
 	}
@@ -46,16 +49,8 @@ class Mask extends React.Component {
 		)
 	}
 
-	get cuts() {
-		return this.props.cuts;
-	}
-
 	get isShown() {
 		return this.props.maskShown;
-	}
-
-	get opacity() {
-		return this.props.maskOpacity;
 	}
 }
 

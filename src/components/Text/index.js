@@ -12,8 +12,8 @@ export default class Text extends React.Component {
 	}
 
 	componentDidUpdate() {
-		let {active, data: {action}} = this.props;
-		if (active && this.refs.input && action == 'write') {
+		let {active, data: {action, locked}} = this.props;
+		if (active && this.refs.input && action == 'write' && !locked) {
 			this.refs.input.focus();
 		}
 	}
@@ -23,17 +23,15 @@ export default class Text extends React.Component {
 			data: {
 				fontSize = 20,
 				text = dict.txt,
-				color,
 				locked,
 				action = 'move'
 			}
 		} = this.props;
-		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 	 	return (
 	 		<VisualElement 
 	 			{...this.props}
 	 			ref="element"
-	 			classes="self $className"
+	 			classes="self"
 	 			type={TYPE}
 	 			onWheel={this.handleWheel}>
 
@@ -50,7 +48,7 @@ export default class Text extends React.Component {
  					style={{fontSize: fontSize + 'px', lineHeight: fontSize + 'px'}}
  					spellCheck="false"/>
 
- 				{action != 'write' && (
+ 				{(locked || action != 'write') && (
  					<div class="mask"/>
  				)}
 	 		</VisualElement>

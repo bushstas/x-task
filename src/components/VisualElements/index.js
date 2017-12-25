@@ -5,8 +5,19 @@ import TaskMark from '../../components/TaskMark';
 import AreaSelection from '../../components/AreaSelection';
 import Drawing from '../../components/Drawing';
 import Text from '../../components/Text';
+import {getElementSelectorPath} from '../../utils';
+
+let currentSelectedElement;
 
 class VisualElements extends React.Component {
+
+	componentDidMount() {
+		document.body.addEventListener('click', this.onBodyClick);
+	}
+
+	componentWillUnmount() {
+		document.body.removeEventListener('click', this.onBodyClick);
+	}
 
 	render() {
 	 	return (
@@ -18,12 +29,16 @@ class VisualElements extends React.Component {
 	}
 
 	get mask() {
-		let {currentElement} = this.props;
-		if (typeof currentElement == 'number' && currentElement >= 0) {
+		if (this.isCurrentElement) {
 			return (
 				<div class="mask" onMouseDown={this.handleBodyMouseDown}/>
 			)
 		}
+	}
+
+	get isCurrentElement() {
+		let {currentElement} = this.props;
+		return typeof currentElement == 'number' && currentElement >= 0;
 	}
 
 	get elements() {
@@ -32,10 +47,15 @@ class VisualElements extends React.Component {
 			currentElement,
 			bent,
 			importance: taskImportance,
-			type: taskType
+			type: taskType,
+			layers
 		} = this.props;
 		if (visualElements instanceof Array) {
 			return visualElements.map((element, i) => {
+				let active = i == currentElement;
+				if (layers && !active && this.isCurrentElement) {
+					return;
+				}
 				let {type, data} = element;
 				let props = {
 					key: i,
@@ -44,7 +64,7 @@ class VisualElements extends React.Component {
 					taskImportance,
 					bent,
 					data,
-					active: i == currentElement,
+					active,
 					onChange: this.handleChange,
 					onClick: this.handleClick
 				}
@@ -81,23 +101,42 @@ class VisualElements extends React.Component {
 		}
 	}
 
+	onBodyClick = (e) => {
+		e.preventDefault();
+		let selector = getElementSelectorPath(e.target);
+		if (selector) {
+			let element = document.body.querySelector(selector);
+			if (element) {
+				if (currentSelectedElement) {
+					currentSelectedElement.style.outline = '';
+				}
+				let style = window.getComputedStyle(element);
+				element.style.outline = '2px dotted red';
+				currentSelectedElement = element;
+			}
+		}
+	}
+
 	handleBodyMouseDown = (e) => {
-		let {visualElement: {data: {here}}} = this.props;
-		if (here) {
-			let {nativeEvent: {pageX: x, pageY: y}} = e;
-			this.props.doAction('QUICKTASK_RELOCATE_ELEMENT', {x, y});
-		} else {
-			this.props.dispatch('QUICKTASK_ACTIVE_ELEMENT_UNSET');
-		}		
+		let {visualElement} = this.props;
+		if (visualElement instanceof Object) {
+			let {data: {here}} = visualElement;
+			if (here) {
+				let {nativeEvent: {pageX: x, pageY: y}} = e;
+				this.props.doAction('QUICKTASK_RELOCATE_ELEMENT', {x, y});
+			} else {
+				this.props.doAction('QUICKTASK_UNSET_ACTIVE_ELEMENT');
+			}
+		}
 	}
 
 	handleChange = (data) => {
 		this.props.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', data);
 	}
 
-	handleClick = (index) => {
-		if (typeof index == 'number') {
-			this.props.dispatch('QUICKTASK_ELEMENT_SET_ACTIVE', index);
+	handleClick = (currentElement) => {
+		if (typeof currentElement == 'number') {
+			this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
 		}
 	}
 }

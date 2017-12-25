@@ -1,9 +1,36 @@
 .self {
-	var .abs.l50p.w150.h120.t.z10;
+	var .abs.l50p.w150.h120.t.z10.trans!;
 
 	&:before {
-		var .cnt.abs.rubb.shad-in-29476f-40.bo-002d65-2-dashed.o4.br3.z1;
+		var .cnt.abs.rubb.shad-in-000-40.bo-000-2-dashed.o6.br3.z1;
 	}
+
+	&..pale {
+		&:before {
+			var .shad-in-29476f-40.boc-002d65;
+		}
+	}
+	&..red {
+		&:before {
+			var .shad-in-f11e3d-40.boc-f11e3d;
+		}
+	}
+	&..green {
+		&:before {
+			var .shad-in-00c70d-40.boc-00c70d;
+		}
+	}
+	&..blue {
+		&:before {
+			var .shad-in-0473ce-40.boc-0473ce;
+		}
+	}
+	&..orange {
+		&:before {
+			var .shad-in-ff8300-40.boc-ff8300;
+		}
+	}
+	
 	..task-mark {
 		var .l100p!.b100p!.ml-1!.mb10!.tau!.mt!.z4!;
 		

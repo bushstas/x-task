@@ -12,7 +12,9 @@ class MaskModeButton extends React.PureComponent {
 				title={dict.mask}
 				onClick={this.handleClick}
 				onWheel={this.handleWheel}>
-				<Icon icon={maskShown ? 'mask_off' : 'mask'}/>
+				<Icon 
+					classes=".white-icon"
+					icon={maskShown ? 'mask_off' : 'mask'}/>
 			</div>			
 		)
 	}

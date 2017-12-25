@@ -26,6 +26,8 @@ export default class VisualElement extends React.PureComponent {
 			action
 		} = data;
 		let {dragged} = this.state || {};
+
+		let className = $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
 			 	
 		let props = {
 			mx,
@@ -33,7 +35,7 @@ export default class VisualElement extends React.PureComponent {
 			width,
 			height,
 			onClick: this.handleClick,
-			classes: $classy('self $classes $?.dragged $?.locked $?.active $?.fixed')
+			classes: $classy('self $classes $?.dragged $?.locked $?.active $?.fixed $className')
 		}
 		
 		if (this.isOperable) {
@@ -41,6 +43,7 @@ export default class VisualElement extends React.PureComponent {
 			props.onDragEnd = this.handleDragEnd;
 			props.onWheel = this.handleWheel;
 		}
+
 	 	return (
 	 		<DraggableElement {...props}>
 	 			{!locked && resizers && (
