@@ -6,32 +6,33 @@ import {getScrollTop, getElementMarginLeft, getCenterCoords} from '../utils';
 const STORAGE_KEY = 'processed_task';
 let savedState = StoreKeeper.get(STORAGE_KEY);
 
-const DEFAULT_STATE = {
-  status: null,
-  formData: {},
-  importance: 'usual',
-  type: null,
-  action: null,
-  visualElements: [],
-  visualMode: false,
-  currentElement: -1,
-  currentType: null,
-  visualElement: null,
-  markElement: null,
-  selectionElement: null,
-  taskInfoShown: false,
-  info: {},
-  bent: false
+const getDefaultState = () => {
+  return {
+    status: null,
+    formData: {},
+    importance: 'usual',
+    type: null,
+    action: null,
+    visualElements: [],
+    visualMode: false,
+    currentElement: -1,
+    currentType: null,
+    visualElement: null,
+    markElement: null,
+    selectionElement: null,
+    taskInfoShown: false,
+    info: {},
+    bent: false
+  }
 }
 
-let defaultState = savedState || DEFAULT_STATE;
-
+let defaultState = savedState || getDefaultState();
 let timeout;
 const onStateChanged = (state) => {
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     StoreKeeper.set(STORAGE_KEY, state);
-  }, 1000);
+  }, 500);
 }
  
 const init = () => {
@@ -39,7 +40,7 @@ const init = () => {
 }
 
 const reset = () => {
-  return DEFAULT_STATE;
+  return getDefaultState();
 }
  
 const activated = (state, status) => {
@@ -52,61 +53,6 @@ const param_changed = (state, data) => {
 
 const form_data_changed = (state, formData) => {
   return {formData}
-}
-
-const visual_element_added = (state, element) => {
-  let {
-    visualElements,
-    action,
-    type,
-    importance,
-    markElement,
-    selectionElement
-  } = state;
-
-  let width = DEFAULT_SIZES[element.type].width,
-      height = DEFAULT_SIZES[element.type].height;
-
-  element.data = {
-    ...element.data,
-    mx: 0,
-    my: START_Y + getScrollTop(),
-    width,
-    height
-  };
-
-  visualElements.push(element);
-  let currentElement = visualElements.length - 1,
-      currentType = element.type;
-  
-  switch (currentType) {
-    case 'mark':
-      markElement = currentElement;
-    break;
-
-    case 'selection':
-      selectionElement = currentElement;
-    break;
-
-    case 'drawing':
-      element.data.brushSize = DEFAULT_BRUSH_SIZE;
-      element.data.color = DEFAULT_COLOR;
-      element.data.opacity = DEFAULT_OPACITY;
-    break;    
-  }
-
-  
-  let props = {
-    markElement,
-    selectionElement,
-    visualMode: true,
-    status: 'collapsed',
-    visualElements,
-    currentElement,
-    visualElement: {...element},
-    currentType
-  }
-  return props;
 }
 
 const visual_element_changed = (state, data) => {
@@ -124,43 +70,111 @@ const visual_element_changed = (state, data) => {
   }
 }
 
-const element_set_active = (state, currentElement) => {
-  let {visualElements} = state,
-      visualElement = visualElements[currentElement],
-      currentType = visualElement.type;
-
-  return {
-    currentElement,
-    visualElement,
-    visualMode: true,
-    status: 'collapsed',
-    currentType
-  }
-}
-
-const deactive_visual_mode = () => {
+const deactive_visual_mode = () => {alert(111)
    return {
     visualMode: false,
     status: 'active'
   }
 }
 
-const active_element_unset = () => {
-   return {
-    visualMode: false,
-    status: 'active',
-    currentElement: -1,
-    visualElement: null
+const change_param = ({dispatch, doAction}, data) => {
+  let state = dispatch('QUICKTASK_PARAM_CHANGED', data);
+  if (
+    typeof data.layers == 'boolean' || 
+    (typeof data.currentElement == 'number' && state.layers)
+  ) {
+    let {currentElement, layers} = state;
+    doAction('MASK_CHANGE', {layers: layers, layerId: currentElement}); 
   }
 }
 
-const element_removed = (state) => {
+const change_visual_element = ({dispatch, doAction}, data) => {
+  let state = dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
+  let {visualElement: {data: d}, currentElement: id} = state;
+  let {cut, my} = data;
+  let {fixed} = d;
+  if (typeof cut != 'undefined' || (typeof my != 'undefined' && d.cut)) {
+    let props = {id, cut};
+    if (cut || d.cut) {
+      let {width, height, mx, my} = d;
+      props = {
+        width,
+        height,
+        mx,
+        my,
+        fixed,
+        ...props
+      }
+    }
+    doAction('MASK_CUT_MASK', props);
+  }
+}
+
+const add_element = ({doAction, state}, type) => {
   let {
     visualElements,
+    markElement,
+    selectionElement
+  } = state;
+
+  let width = DEFAULT_SIZES[type].width,
+      height = DEFAULT_SIZES[type].height;
+
+  let data = {
+    type,
+    data: {  
+      mx: 0,
+      my: START_Y + getScrollTop(),
+      width,
+      height
+    }
+  }  
+
+  visualElements.push(data);
+  let currentElement = visualElements.length - 1,
+      currentType = type;
+  
+  switch (currentType) {
+    case 'mark':
+      markElement = currentElement;
+    break;
+
+    case 'selection':
+      selectionElement = currentElement;
+    break;
+
+    case 'drawing':
+      data.data.brushSize = DEFAULT_BRUSH_SIZE;
+      data.data.color = DEFAULT_COLOR;
+      data.data.opacity = DEFAULT_OPACITY;
+    break;    
+  }
+  
+  let props = {
+    markElement,
+    selectionElement,
+    visualMode: true,
+    status: 'collapsed',
+    visualElements,
+    currentElement,
+    visualElement: data,
+    currentType
+  }
+  doAction('QUICKTASK_CHANGE_PARAM', props);
+}
+
+const remove_element = ({state, doAction}) => {
+ let {
+    visualElements,
+    visualElement: {data},
     currentElement,
     currentType,
     markElement
   } = state;
+
+  if (data.cut) {
+    doAction('MASK_CUT_MASK', {id: currentElement, cut: false}); 
+  } 
   if (
     typeof markElement == 'number' &&
     markElement > currentElement
@@ -187,41 +201,7 @@ const element_removed = (state) => {
       props.bent = false;      
     break;
   }
-  return props;
-}
-
-const change_param = ({dispatch}, data) => {
-  dispatch('QUICKTASK_PARAM_CHANGED', data);
-}
-
-const change_visual_element = ({dispatch, doAction}, data) => {
-  let state = dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
-  let {visualElement: {data: d}, currentElement: id} = state;
-  let {cut, my} = data;
-  let {fixed} = d;
-  if (typeof cut != 'undefined' || (typeof my != 'undefined' && d.cut)) {
-    let props = {id, cut};
-    if (cut || d.cut) {
-      let {width, height, mx, my} = d;
-      props = {
-        width,
-        height,
-        mx,
-        my,
-        fixed,
-        ...props
-      }
-    }
-    doAction('MASK_CUT_MASK', props);
-  }
-}
-
-const remove_element = ({dispatch, state, doAction}) => {
-  let {visualElement: {data}, currentElement: id} = state;
-  if (data.cut) {
-    doAction('MASK_CUT_MASK', {id, cut: false}); 
-  }
-  dispatch('QUICKTASK_ELEMENT_REMOVED');
+  doAction('QUICKTASK_CHANGE_PARAM', props);
 }
 
 const relocate_element = ({doAction, state}, coords) => {
@@ -238,7 +218,31 @@ const relocate_element = ({doAction, state}, coords) => {
   doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {mx, my}); 
 }
 
+const set_element_active = ({doAction, state}, currentElement) => {
+  let {visualElements} = state,
+      visualElement = visualElements[currentElement],
+      currentType = visualElement.type;
+
+  doAction('QUICKTASK_CHANGE_PARAM', {
+    currentElement,
+    visualElement,
+    visualMode: true,
+    status: 'collapsed',
+    currentType
+  });
+}
+
+const unset_active_element = ({doAction}) => {
+   doAction('QUICKTASK_CHANGE_PARAM', {
+    visualMode: false,
+    status: 'active',
+    currentElement: -1,
+    visualElement: null
+  });
+}
+
 const cancel = ({dispatch}) => {
+  dispatch('MASK_CLEARED');
   dispatch('QUICKTASK_RESET');
 }
 
@@ -246,10 +250,13 @@ const cancel = ({dispatch}) => {
 export default {
   onStateChanged,
   actions: {
+    add_element,
     change_param,
     change_visual_element,
     remove_element,
     relocate_element,
+    unset_active_element,
+    set_element_active,
     cancel
   },
   reducers: {
@@ -258,11 +265,7 @@ export default {
     activated,    
     param_changed,
     form_data_changed,
-    visual_element_added,
     visual_element_changed,
-    element_set_active,
-    active_element_unset,
-    deactive_visual_mode,
-    element_removed
+    deactive_visual_mode
   }
 } 
