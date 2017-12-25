@@ -1,4 +1,5 @@
 import React from 'react';
+import Store from 'xstore';
 import VisualElement from '../VisualElement';
 import VisualElementActions from '../VisualElementActions';
 import {handleWheel} from '../../utils/MouseHandlers';
@@ -68,8 +69,9 @@ export default class Drawing extends React.Component {
 	 			onWheel={this.handleWheel}>
 
 	 			{!locked && (
-	 				<VisualElementActions 
-	 					actions={['move', 'draw', 'opacity']}
+	 				<VisualElementActions
+	 					onAction={this.handleAction} 
+	 					actions={['move', 'draw', 'opacity', 'eraser']}
 	 					active={action}/>
 	 			)}
 	 			
@@ -122,6 +124,14 @@ export default class Drawing extends React.Component {
 
 	getColorClass(color) {
 		return $classy(color, '.', ['black', 'pale', 'red', 'green', 'blue', 'orange']);
+	}
+
+	handleAction = (action) => {
+		if (action == 'eraser') {
+			Store.doAction('QUICKTASK_CLEAR_DRAWING');
+		} else {
+			Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {action});
+		}
 	}
 
 	handleWheel = (e) => {
