@@ -20,7 +20,7 @@
     "classy-loader": "^1.2.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "xstore": "^1.7.4"
+    "xstore": "^1.7.8"
   },
   "devDependencies": {
     "args": "^2.0.0",
