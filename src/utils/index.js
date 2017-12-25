@@ -35,10 +35,10 @@ export const getElementSelectorPath = (target) => {
 	let chain = [];
 	let add = (el) => {
 		let tag = el.tagName;
-		if (!!el.id) {
-			tag += '#' + el.id;
+		if (!!el.id && /^[\w\-]+$/.test(el.id.trim())) {
+			tag += '#' + el.id.trim();
 		}
-		if (!!el.className) {
+		if (!!el.className && /^[\w\- ]+$/.test(el.className.trim())) {
 			tag += '.' + el.className.trim().replace(/ {2,}/g, ' ').split(' ').join('.');
 		}
 		let p = el.parentNode;

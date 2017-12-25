@@ -113,8 +113,6 @@ class VisualElements extends React.Component {
 				let style = window.getComputedStyle(element);
 				element.style.outline = '2px dotted red';
 				currentSelectedElement = element;
-
-				console.log(style)
 			}
 		}
 	}
