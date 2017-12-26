@@ -23,17 +23,31 @@ class Mask extends React.Component {
 	}
 
 	componentDidUpdate() {
-		this.redraw();
+		let {props: {maskShown, added, removed}} = this;
+		if (maskShown) {
+			if (added || removed) {
+				if (removed) {
+					this.canvas.fillCut(removed);
+				}
+				if (added) {
+					for (let a of added) {
+						this.canvas.cut(a);
+					}
+				}
+			} else {
+				this.redraw();
+			}
+		}
 	}
 
 	redraw = () => {
-		if (this.isShown) {
-			let {cuts, maskOpacity, layers, layerId} = this.props;
+		if (this.props.maskShown) {
+			let {cuts, maskOpacity, layers, id} = this.props;
 			this.canvas.init(this.refs.canvas);
 			this.canvas.resize();
 			this.canvas.fill(maskOpacity);
 			for (let k in cuts) {
-				if (!layers || !layerId || layerId == k) {
+				if (!layers || !id || id == k) {
 					this.canvas.cut(cuts[k]);
 				}
 			}
@@ -41,16 +55,9 @@ class Mask extends React.Component {
 	}
 
 	render() {
-		if (!this.isShown) {
-			return null;
-		}
-	 	return (
+	 	return this.props.maskShown ? (
 	 		<canvas ref="canvas" class="self"/>
-		)
-	}
-
-	get isShown() {
-		return this.props.maskShown;
+		) : null;
 	}
 }
 

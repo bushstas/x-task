@@ -73,11 +73,12 @@ const visual_element_changed = (state, data) => {
 const change_param = ({dispatch, doAction}, data) => {
   let state = dispatch('QUICKTASK_PARAM_CHANGED', data);
   if (
-    typeof data.layers == 'boolean' || 
-    (typeof data.currentElement == 'number' && state.layers)
+    typeof data.currentElement != 'undefined' || 
+    typeof data.layers != 'undefined' || 
+    (data.currentElement && state.layers)
   ) {
     let {currentElement, layers} = state;
-    doAction('MASK_CHANGE', {layers: layers, layerId: currentElement}); 
+    doAction('MASK_CHANGE', {layers: layers, id: currentElement}); 
   }
 }
 

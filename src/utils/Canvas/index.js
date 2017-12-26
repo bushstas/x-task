@@ -29,11 +29,26 @@ export default class Canvas {
 		context.fill();
 	}
 
+	getCutCoords(data) {
+		let {x, y, width, height, fixed} = data;	
+	    if (fixed) {
+	    	y += getScrollTop();
+	    }	    
+	    return {x, y, width, height};
+	}
+
 	cut(data) {
-		let {mx, my, width, height, fixed} = data;
-	    let x = document.body.clientWidth / 2 + mx;
-	    let y = my + (fixed ? getScrollTop() : 0);
-		this.context.clearRect(x, y, width, height);
+		if (this.context) {
+			let {x, y, width, height} = this.getCutCoords(data);
+			this.context.clearRect(x, y, width, height);
+		}
+	}
+
+	fillCut(data) {
+		if (this.context) {
+			let {x, y, width, height} = this.getCutCoords(data);
+			this.context.fillRect(x - 2, y - 2, width + 4, height + 4);
+		}
 	}
 
 	set({size, color}) {

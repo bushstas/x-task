@@ -6,6 +6,8 @@ let savedState = StoreKeeper.get(STORAGE_KEY);
 let timeout;
 const onStateChanged = (state) => {
   clearTimeout(timeout);
+  delete state.added;
+  delete state.removed;
   timeout = setTimeout(() => {
     StoreKeeper.set(STORAGE_KEY, state);
   }, 1000);
@@ -14,27 +16,65 @@ const onStateChanged = (state) => {
 const DEFAULT_STATE = {
 	maskShown: false,
 	maskOpacity: 0.7,
-	cuts: {}
+	cuts: {},
+	added: null,
+	removed: null
 }
 
 let defaultState = savedState || DEFAULT_STATE;
  
+const getCoords = (data) => {
+	let {mx, my, width, height, fixed, id} = data;
+	let x = document.body.clientWidth / 2 + mx,
+		y = my,
+		x2 = x + width,
+		y2 = y + height;
+	return {x, y, x2, y2, width, fixed, height, id};
+}
+
 const init = () => {
 	return defaultState;
 }
  
 const param_changed = (state, props) => {
- 	return props;
+ 	return {
+ 		...props,
+ 		removed: null,
+ 		added: null
+ 	};
 }
 
 const cleared = () => {
-	return {cuts: {}, 'cleared': true}
+	return {
+		cuts: {},
+		cleared: true,
+		removed: null,
+ 		added: null
+	}
 }
 
 const cut_added = (state, props) => {
-	let {cuts} = state;
+	props = getCoords(props);
+	let {cuts, layers, id} = state;
+	let removed = null;
+	if (cuts[props.id]) {
+		removed = cuts[props.id];
+	}
 	cuts[props.id] = props;
-	return {cuts};
+	let added = [props];
+	let keys = Object.keys(cuts);
+	if (keys.length > 1 && (!layers || !id)) {
+		let {x, y, x2, y2} = props;
+		for (let k in cuts) {
+			if (k != props.id) {
+				let c = cuts[k];
+				if (!(x2 < c.x || c.x2 < x || y2 < c.y || c.y2 < y)) {
+					added.push(c);
+				}
+			}
+		}
+	}
+	return {cuts, added, removed};
 }
 
 const cut_removed = (state, props) => {
