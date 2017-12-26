@@ -2,11 +2,14 @@ import React from 'react';
 import Input from '../Input';
 import Select from '../Select';
 import Checkboxes from '../Checkboxes';
+import Radios from '../Radios';
+import Tooltip from '../Tooltip';
 
 const INPUT_TYPES = [
 	Input,
 	Select,
-	Checkboxes
+	Checkboxes,
+	Radios
 ];
 
 export default class FormField extends React.PureComponent {
@@ -17,6 +20,7 @@ export default class FormField extends React.PureComponent {
 			<div class="self $classes">
 				{this.caption}
 				{this.control}
+				{this.tooltip}
 			</div>
 		)
 	}
@@ -38,6 +42,17 @@ export default class FormField extends React.PureComponent {
 			children = [children];
 		}
 		return this.renderChildren(children);
+	}
+
+	get tooltip() {
+		let {tooltip} = this.props;
+		if (tooltip) {
+			return (
+				<Tooltip>
+					{tooltip}
+				</Tooltip>
+			)
+		}
 	}
 
 	renderChildren(children) {

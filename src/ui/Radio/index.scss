@@ -1,0 +1,16 @@
+.self {
+	cursor: pointer;
+	display: block;
+	padding: 4px 0;
+
+	input {
+		float: left;
+		margin-right: 5px;
+		margin-top: 3px;
+	}
+	&:after {
+		content: '';
+		display: block;
+		clear: left;
+	}
+}

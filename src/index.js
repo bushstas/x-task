@@ -13,6 +13,7 @@ import team from './store_handlers/team';
 import projects from './store_handlers/projects';
 import notifications from './store_handlers/notifications';
 import quicktask from './store_handlers/quicktask';
+import tooltip from './store_handlers/tooltip';
 
 Store.addHandlers({
 	mask,
@@ -20,7 +21,8 @@ Store.addHandlers({
 	team,
 	projects,
 	notifications,
-	quicktask
+	quicktask,
+	tooltip
 });
 
 let box = document.createElement('div');

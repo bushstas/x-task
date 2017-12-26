@@ -6,29 +6,29 @@
 	}
 
 	&.large {
-		.self {
+		& > .self {
 			var .w1000.h;
-		}
-		.content {
-			var .abs.l.r.t50.b.p15-0;
-		}
-		.buttons {
-			var .abs.l.r.b;
-		}
-		..tabs-menu {
-			var .pl20;
-		}
-		..tabs-content {
-			var .abs.t60.l.r.b55.ova.box.p5-20;
+			& > .content {
+				var .abs.l.r.t50.b.p15-0;
+			}
+			& > .buttons {
+				var .abs.l.r.b;
+			}
+			..tabs-menu {
+				var .pl20;
+			}
+			..tabs-content {
+				var .abs.t60.l.r.b55.ova.box.p5-20;
+			}
 		}
 	}
 	&.small {
-		.self {
+		& > .self {
 			var .w540;
 		}
 	}
 	&.narrow {
-		.self {
+		& > .self {
 			var .w360;
 		}
 	}
