@@ -134,7 +134,7 @@ export default class Drawing extends React.Component {
 		if (action == 'undo') {
 			let {data: {path}} = this.props;
 			let len = path.length - 1;
-			path.splice(len, 1);				
+			path.splice(len, 1);
 			Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {path});
 			this.canvas.draw(path);
 		} else if (action == 'eraser') {

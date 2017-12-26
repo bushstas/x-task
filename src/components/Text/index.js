@@ -1,4 +1,5 @@
 import React from 'react';
+import Store from 'xstore';
 import {dict} from '../../utils/Dictionary';
 import VisualElement from '../VisualElement';
 import {handleWheel} from '../../utils/MouseHandlers';
@@ -33,10 +34,12 @@ export default class Text extends React.Component {
 	 			ref="element"
 	 			classes="self"
 	 			type={TYPE}
-	 			onWheel={this.handleWheel}>
+	 			onWheel={this.handleWheel}
+	 			resizers={action == 'write' ? false : true}>
 
 	 			{!locked && (
 	 				<VisualElementActions 
+	 					onAction={this.handleAction} 
 	 					actions={['move', 'write']}
 	 					active={action}/>
 	 			)}
@@ -45,6 +48,7 @@ export default class Text extends React.Component {
  					ref="input"
  					value={text}
  					onChange={this.handleChangeText}
+ 					onWheel={action == 'write' ? this.handleWheel : null}
  					style={{fontSize: fontSize + 'px', lineHeight: fontSize + 'px'}}
  					spellCheck="false"/>
 
@@ -64,5 +68,9 @@ export default class Text extends React.Component {
 		this.props.onChange(
 			handleWheel(e, TYPE, this.props.data)
 		);
+	}
+
+	handleAction = (action) => {
+		Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {action});
 	}
 }

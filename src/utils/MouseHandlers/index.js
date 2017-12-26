@@ -8,12 +8,21 @@ const handleFontSizeChange = (e, props) => {
 	return {fontSize};
 }
 
+const handleTextMouseWheel = (e, type, props) => {
+	let {action} = props;
+	let {deltaY} = e;
+	if (action == 'move') {
+		return handleWheelResize(e, type, props);
+	}
+	return handleFontSizeChange(e, props);
+}
+
 export const handleWheel = (e, type, props) => {
 	e.preventDefault();
 
 	switch (type) {
-		case 'text':
-			return handleFontSizeChange(e, props);
+		case 'descr':
+			return handleTextMouseWheel(e, type, props);
 
 		case 'mark':
 			return handleMarkLocChange(e, props);
