@@ -241,7 +241,6 @@ const cancel = ({dispatch}) => {
   dispatch('QUICKTASK_RESET');
 }
 
-
 export default {
   onStateChanged,
   actions: {

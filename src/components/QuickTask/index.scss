@@ -89,6 +89,22 @@
 			vertical-align: top;
 		}
 	}
+	
+	.prev-element-panel {
+		position: absolute;
+		top: 2px;
+		left: -40px;
+		background-color: #555;
+		border-radius: 5px;
+	}
+	.next-element-panel {
+		position: absolute;
+		top: 2px;
+		right: -40px;
+		background-color: #555;
+		border-radius: 5px;
+	}
+
 
 	&.collapsed {
 		..icon {

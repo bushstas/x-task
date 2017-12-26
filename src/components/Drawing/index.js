@@ -56,9 +56,13 @@ export default class Drawing extends React.Component {
 	render() {
 		let {cx = -100, cy = -100, focused} = this.state || {};
 		let {data, active} = this.props;
-		let {action = 'move', color, locked, brushSize, opacity} = data;
+		let {action = 'move', color, locked, brushSize, opacity, path = []} = data;
 		let colorClass = this.getColorClass(color);
 		let isDraw = active && (action == 'draw' || action == 'opacity') && !locked;
+		let actions = ['move', 'draw', 'opacity'];
+		if (path.length > 0) {
+			actions.push('undo', 'eraser');
+		}
 	 	return (
 	 		<VisualElement 
 	 			{...this.props}
@@ -71,7 +75,7 @@ export default class Drawing extends React.Component {
 	 			{!locked && (
 	 				<VisualElementActions
 	 					onAction={this.handleAction} 
-	 					actions={['move', 'draw', 'opacity', 'eraser']}
+	 					actions={actions}
 	 					active={action}/>
 	 			)}
 	 			
@@ -127,8 +131,15 @@ export default class Drawing extends React.Component {
 	}
 
 	handleAction = (action) => {
-		if (action == 'eraser') {
-			Store.doAction('QUICKTASK_CLEAR_DRAWING');
+		if (action == 'undo') {
+			let {data: {path}} = this.props;
+			let len = path.length - 1;
+			path.splice(len, 1);				
+			Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {path});
+			this.canvas.draw(path);
+		} else if (action == 'eraser') {
+			Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {path: []});
+			this.canvas.clear();
 		} else {
 			Store.doAction('QUICKTASK_CHANGE_VISUAL_ELEMENT', {action});
 		}
@@ -166,9 +177,10 @@ export default class Drawing extends React.Component {
 	handleMouseUp = (e) => {
 		this.drawing = false;
 		let {data: {path = []}} = this.props;
-		path.push(
-			this.canvas.stop()
-		);
-		this.props.onChange({path});
+		let p = this.canvas.stop();
+		if (p) {
+			path.push(p);
+			this.props.onChange({path});
+		}		
 	}
 }

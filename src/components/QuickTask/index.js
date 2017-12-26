@@ -66,7 +66,9 @@ class QuickTask extends React.Component {
 				</div>
 
 				<div class="element-panel .panel" onClick={this.handleExpandClick}>
-					{this.renderElementButtons()}
+					{this.elementButtons}
+					{this.prevElementButton}
+					{this.nextElementButton}
 				</div>
 
 				<div class="bottom-panel .panel">
@@ -82,7 +84,6 @@ class QuickTask extends React.Component {
 				</div>
 
 				<div class="top-panel .panel" onClick={this.handleExpandClick}>
-
 					<Icon 
 						title={dict.layer}
 						icon={layers ? 'layer_off' : 'layer'}
@@ -112,7 +113,12 @@ class QuickTask extends React.Component {
 		)
 	}
 
-	renderElementButtons() {
+	get hasPrevNext() {
+		let {currentElement, visualElements} = this.props;
+		return !!currentElement && Object.keys(visualElements).length > 1;
+	}
+
+	get elementButtons() {
 		let {markElement, selectionElement} = this.props;
 		let items = icons.task_el || {};
 		let keys = Object.keys(items);
@@ -136,6 +142,32 @@ class QuickTask extends React.Component {
 				</Icon>
 			)
 		})
+	}
+
+	get prevElementButton() {
+		if (this.hasPrevNext) {
+			return (	
+				<div class="prev-element-panel .panel" onClick={this.handlePrevButtonClick}>
+					<Icon 
+						title={dict.left}
+						icon="left"
+						classes=".white-icon"/>
+				</div>
+			)
+		}
+	}
+
+	get nextElementButton() {
+		if (this.hasPrevNext) {
+			return (	
+				<div class="next-element-panel .panel" onClick={this.handleNextButtonClick}>
+					<Icon 
+						title={dict.right}
+						icon="right"
+						classes=".white-icon"/>
+				</div>
+			)
+		}
 	}
 
 	getElementButtonTitle(value) {
@@ -204,6 +236,48 @@ class QuickTask extends React.Component {
 		let {layers} = this.props;
 		layers = !layers;
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {layers});
+	}
+
+	handlePrevButtonClick = (e) => {
+		e.stopPropagation();
+		let {currentElement, visualElements, bent} = this.props;
+		let keys = Object.keys(visualElements);
+		let count = keys.length;
+		let idx = keys.indexOf(currentElement);
+		idx--;
+		if (idx < 0) {
+			idx = count - 1;
+		}
+		currentElement = keys[idx];
+		if (bent && visualElements[currentElement].type == 'mark') {
+			idx--;	
+			if (idx < 0) {
+				idx = count - 1;
+			}
+			currentElement = keys[idx];
+		}
+		this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
+	}
+
+	handleNextButtonClick = (e) => {
+		e.stopPropagation();
+		let {currentElement, visualElements, bent} = this.props;
+		let keys = Object.keys(visualElements);
+		let count = keys.length;
+		let idx = keys.indexOf(currentElement);
+		idx++;
+		if (idx >= count) {
+			idx = 0;
+		}
+		currentElement = keys[idx];
+		if (bent && visualElements[currentElement].type == 'mark') {
+			idx++;	
+			if (idx >= count) {
+				idx = 0;
+			}
+			currentElement = keys[idx];
+		}
+		this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
 	}
 }
 

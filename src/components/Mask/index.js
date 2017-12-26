@@ -2,7 +2,6 @@ import React from 'react';
 import Canvas from '../../utils/Canvas';
 import Store from 'xstore';
 
-let timeuot;
 class Mask extends React.Component {
 	constructor() {
 		super();
@@ -11,12 +10,12 @@ class Mask extends React.Component {
 
 	componentDidMount() {
 		this.redraw();
-		window.addEventListener('resize', this.redraw);
+		window.addEventListener('resize', this.handleResize);
 		window.addEventListener('scroll', this.redraw);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener('resize', this.redraw);
+		window.removeEventListener('resize', this.handleResize);
 		window.removeEventListener('scroll', this.redraw);
 		this.canvas.dispose();
 		this.canvas = null;
@@ -27,7 +26,9 @@ class Mask extends React.Component {
 		if (maskShown) {
 			if (added || removed) {
 				if (removed) {
-					this.canvas.fillCut(removed);
+					for (let r of removed) {
+						this.canvas.fillCut(r);
+					}
 				}
 				if (added) {
 					for (let a of added) {
@@ -38,6 +39,10 @@ class Mask extends React.Component {
 				this.redraw();
 			}
 		}
+	}
+
+	handleResize = () => {
+		this.props.dispatch('MASK_RESIZED');
 	}
 
 	redraw = () => {

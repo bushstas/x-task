@@ -85,8 +85,7 @@ class VisualElementPanel extends React.Component {
 
 	get hasBindButton() {
 		let {currentType, markElement, selectionElement} = this.props;
-		return (currentType == 'mark' || currentType == 'selection') &&
-			   typeof markElement == 'number' && typeof selectionElement == 'number';
+		return (currentType == 'mark' || currentType == 'selection') && markElement && selectionElement;
 	}
 
 	isActive(data, action) {

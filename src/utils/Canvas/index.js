@@ -95,8 +95,12 @@ export default class Canvas {
 	}
 
 	stop() {
-		this.context.closePath();
-		return this.color + '_' + this.size + '_' + this.path.join('.');
+		if (this.path) {
+			this.context.closePath();
+			let path = this.color + '_' + this.size + '_' + this.path.join('.');
+			this.path = null;
+			return path;
+		}
 	}
 
 	draw(path) {

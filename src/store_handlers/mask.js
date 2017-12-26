@@ -29,7 +29,7 @@ const getCoords = (data) => {
 		y = my,
 		x2 = x + width,
 		y2 = y + height;
-	return {x, y, x2, y2, width, fixed, height, id};
+	return {x, y, x2, y2, mx, my, width, fixed, height, id};
 }
 
 const init = () => {
@@ -58,7 +58,7 @@ const cut_added = (state, props) => {
 	let {cuts, layers, id} = state;
 	let removed = null;
 	if (cuts[props.id]) {
-		removed = cuts[props.id];
+		removed = [cuts[props.id]];
 	}
 	cuts[props.id] = props;
 	let added = [props];
@@ -83,6 +83,15 @@ const cut_removed = (state, props) => {
 	return {cuts};
 }
 
+const resized = (state) => {
+	let {cuts} = state;
+	let newCuts = {};
+	for (let k in cuts) {		
+		newCuts[k] = getCoords(cuts[k]);
+	}
+	return {cuts: newCuts};
+}
+
 const toggle_param = ({dispatch, state}, name) => {
 	dispatch('MASK_PARAM_CHANGED', {[name]: !state[name]});
 }
@@ -100,6 +109,7 @@ const cut_mask = ({dispatch, state}, data) => {
 const change = ({dispatch}, data) => {
 	dispatch('MASK_PARAM_CHANGED', data);
 }
+
  
 export default {
 	onStateChanged,
@@ -113,6 +123,7 @@ export default {
 		param_changed,
 		cut_added,
 		cut_removed,
-		cleared
+		cleared,
+		resized
   	}
 } 

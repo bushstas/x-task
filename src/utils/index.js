@@ -58,6 +58,9 @@ export const getElementSelectorPath = (target) => {
 	}
 	add(target);
 	let parent = target.parentNode;
+	if (parent == APP_MAIN_CONTAINER) {
+		return '';
+	}
 	while (parent instanceof Element) {
 		add(parent);
 		parent = parent.parentNode;
