@@ -75,6 +75,18 @@
     	z-index: 1;
 	}
 
+	.ui-panel {
+		position: absolute;
+	    top: -48px;
+	    left: 0;
+	    right: 0;
+	    height: 37px;
+	    border-radius: 5px;
+	    background-color: #ececec;
+    	border: 1px solid #b7b7b7;
+	    padding: 4px 5px 2px 5px;
+	}
+
 	.top-panel {
 		position: absolute;
 		top: -4px;

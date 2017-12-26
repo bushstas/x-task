@@ -69,6 +69,7 @@ class QuickTask extends React.Component {
 					{this.elementButtons}
 					{this.prevElementButton}
 					{this.nextElementButton}
+					{this.uiElementPanel}
 				</div>
 
 				<div class="bottom-panel .panel">
@@ -113,9 +114,36 @@ class QuickTask extends React.Component {
 		)
 	}
 
+	get uiElementPanel() {
+		if (this.props.uiPanelShown) {
+			return (
+				<div class="ui-panel .panel">
+					{this.uiButtons}
+				</div>
+			)
+		}
+	}
+
+	get uiButtons() {
+		let items = icons.ui || {};
+		let keys = Object.keys(items);
+		return keys.map((value) => {
+			return  (
+				<Icon 
+					classes=".inline-icon"
+					data-type={value}
+					title={dict.insertion + ': ' + dict[value]}
+					key={value}
+					onClick={this.handleAddElementClick}>
+					{items[value]}
+				</Icon>
+			)
+		})
+	}
+
 	get hasPrevNext() {
-		let {currentElement, visualElements} = this.props;
-		return !!currentElement && Object.keys(visualElements).length > 1;
+		let {visualElements} = this.props;
+		return Object.keys(visualElements).length > 0;
 	}
 
 	get elementButtons() {
@@ -211,7 +239,11 @@ class QuickTask extends React.Component {
 	handleAddElementClick = (e) => {
 		e.stopPropagation();
 		let {target: {dataset: {type}}} = e;
-		this.props.doAction('QUICKTASK_ADD_ELEMENT', type);
+		if (type != 'ui') {
+			this.props.doAction('QUICKTASK_ADD_ELEMENT', type);
+		} else {
+			this.props.doAction('QUICKTASK_CHANGE_PARAM', {uiPanelShown: !this.props.uiPanelShown});
+		}
 	}
 
 	handleExpandClick = () => {

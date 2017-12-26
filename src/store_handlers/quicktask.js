@@ -22,7 +22,8 @@ const getDefaultState = () => {
     selectionElement: null,
     taskInfoShown: false,
     info: {},
-    bent: false
+    bent: false,
+    uiPanelShown: false
   }
 }
 
@@ -223,7 +224,8 @@ const set_element_active = ({doAction, state}, currentElement) => {
     visualElement,
     visualMode: true,
     status: 'collapsed',
-    currentType
+    currentType,
+    uiPanelShown: false
   });
 }
 
