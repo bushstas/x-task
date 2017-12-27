@@ -1,0 +1,27 @@
+.self {
+	.caption {
+		var .fs18.bold.p10-20;
+	}
+	.path {
+		var .p10-20.mb10;
+		label {
+			var .rel.inb.vtop.mr15.p6-8-3-5.bc-eee.bo-aaa.br4;
+
+			&..inactive {
+				var .o4;
+			}
+			input {
+				var .fl.mt3;
+			}
+			&:after {
+				content: '/';
+				var .abs.l100p.ml5.t2.fs20;
+			}
+			&:last-child {
+				&:after {
+					var .none;
+				}
+			}
+		}
+	}
+}

@@ -4,10 +4,12 @@ import Button from '../../ui/Button';
 import Form from '../../ui/Form';
 import Input from '../../ui/Input';
 import FormField from '../../ui/FormField';
+import Dialog from '../../ui/Dialog';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
 import MaskModeButton from '../MaskModeButton';
+import TaskUrlResolver from '../TaskUrlResolver';
 
 class QuickTask extends React.Component {
 
@@ -20,7 +22,8 @@ class QuickTask extends React.Component {
 			action, 
 			taskInfoShown,
 			info,
-			layers
+			layers,
+			urlDialogData
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -29,9 +32,12 @@ class QuickTask extends React.Component {
 				<Form onChange={this.handleFormChanged}>
 					<FormField>
 						<Input 
+							classes="url"
 							name="url"
 							value={formData.url}
-							placeholder={dict.taskurl}/>
+							placeholder={dict.taskurl}
+							onClick={this.handleUrlInputClick}
+							readOnly/>
 					</FormField>
 
 					<FormField>
@@ -52,6 +58,16 @@ class QuickTask extends React.Component {
 						{dict.add_task}
 					</Button>
 				</Form>
+
+				{!!urlDialogData && (
+					<Dialog
+						classes="~large"
+						clickMaskToClose={true}
+						onClose={this.handleUrlDialogClose}
+						title={urlDialogData.dict.title}>
+						<TaskUrlResolver dict={urlDialogData.dict}/>
+					</Dialog>
+				)}
 
 				<div class="importance-panel .panel" onClick={this.handleChangeParam}>					
 					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
@@ -310,6 +326,14 @@ class QuickTask extends React.Component {
 			currentElement = keys[idx];
 		}
 		this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
+	}
+
+	handleUrlInputClick = () => {
+		this.props.doAction('QUICKTASK_SHOW_URL_DIALOG');	
+	}
+
+	handleUrlDialogClose = () => {
+		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urlDialogData: null});
 	}
 }
 

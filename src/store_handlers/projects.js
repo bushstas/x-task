@@ -5,7 +5,8 @@ const DEFAULT_STATE = {
   projects: [],
   formShown: null,
   formData: {},
-  editedProject: null
+  editedProject: null,
+  dict: {}
 }
  
 /**
@@ -29,11 +30,16 @@ const loaded = (state, data) => {
   }
 }
 
-const edit_form_shown = (state, {project, projectToken}) => {
+const edit_form_shown = (state, {project, projectToken, dict}) => {
+  let {dict: dictionary} = state;
   return {
     editedProject: projectToken,
     formShown: 'edit',
-    formData: project
+    formData: project,
+    dict: {
+      ...dictionary,
+      ...dict
+    }
   }
 }
 
@@ -70,8 +76,8 @@ const load = ({dispatch}) => {
 
 const show_edit_form = ({dispatch}, projectToken) => {
   post('get_project_data', {projectToken})
-    .then(({project}) => {
-      dispatch('PROJECTS_EDIT_FORM_SHOWN', {projectToken, project});
+    .then(({project, dict}) => {
+      dispatch('PROJECTS_EDIT_FORM_SHOWN', {projectToken, project, dict});
     });   
 }
 
@@ -79,7 +85,10 @@ const save = ({dispatch, state, doAction}, {token}) => {
     let {formData} = state;
     post('save_project', {projectToken: token, ...formData})
     .then(
-        () => doAction('PROJECTS_LOAD')
+        () => {
+          dispatch('PROJECTS_CANCELED');
+          doAction('PROJECTS_LOAD');
+        }
     );
 }
 

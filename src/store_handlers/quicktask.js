@@ -2,14 +2,21 @@ import StoreKeeper from '../utils/StoreKeeper';
 import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
 import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colors';
 import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
+import {getUrl} from '../utils/TaskResolver';
+import {get} from '../utils/Fetcher';
 
 const STORAGE_KEY = 'processed_task';
 let savedState = StoreKeeper.get(STORAGE_KEY);
+if (savedState) {
+  delete savedState.urlDialogData;
+}
 
 const getDefaultState = () => {
   return {
     status: null,
-    formData: {},
+    formData: {
+      url: getUrl()
+    },
     importance: 'usual',
     type: null,
     action: null,
@@ -23,17 +30,24 @@ const getDefaultState = () => {
     taskInfoShown: false,
     info: {},
     bent: false,
-    uiPanelShown: false
+    uiPanelShown: false,
+    urlDialogData: null,
+    dialogFetching: false
   }
 }
 
 let defaultState = savedState || getDefaultState();
 let timeout;
 const onStateChanged = (state) => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    StoreKeeper.set(STORAGE_KEY, state);
-  }, 500);
+  let {status} = state;
+  if (!status) {
+    StoreKeeper.remove(STORAGE_KEY);
+  } else {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      StoreKeeper.set(STORAGE_KEY, state);
+    }, 500);
+  }
 }
  
 const init = () => {
@@ -243,6 +257,17 @@ const cancel = ({dispatch}) => {
   dispatch('QUICKTASK_RESET');
 }
 
+const show_url_dialog = ({dispatch}) => {
+  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+  get('load_url_dialog')
+  .then((urlDialogData) => {
+    dispatch('QUICKTASK_PARAM_CHANGED', {
+      dialogFetching: false,
+      urlDialogData
+    });
+  });
+}
+
 export default {
   onStateChanged,
   actions: {
@@ -253,6 +278,7 @@ export default {
     relocate_element,
     unset_active_element,
     set_element_active,
+    show_url_dialog,
     cancel
   },
   reducers: {

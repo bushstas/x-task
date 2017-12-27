@@ -1,5 +1,6 @@
 import {get, post} from '../Fetcher';
 import StoreKeeper from '../StoreKeeper';
+import {init} from '../TaskResolver';
 import {LOCAL_STORAGE_TOKEN} from '../../consts';
 
 let loaded = false,
@@ -28,6 +29,7 @@ const onLoad = (data) => {
 		}
 		if (data.user instanceof Object) {
 			user = data.user;
+			init(user);
 		}
 		if (data.projects instanceof Array) {
 			projects = data.projects;

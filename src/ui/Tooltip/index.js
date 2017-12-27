@@ -15,14 +15,75 @@ class Tooltip extends React.PureComponent {
 				{!!tooltip && (
 					<Dialog
 						title={dict.tooltip}
-						classes="~small"
+						classes="~middle"
 						clickMaskToClose={true}
 						onClose={this.handleClose}>
-						{tooltip}
+						{this.content}
 					</Dialog>
 				)}
 			</span>
 		)
+	}
+
+	get content() {
+		let {tooltip} = this.props;
+		return tooltip.map((item, i) => {
+			if (typeof item == 'string') {
+				return item;
+			}
+			switch (item.type) {
+				case 'cap':
+					return (
+						<div class="caption1" key={i}>
+							{item.value}
+						</div>
+					)
+
+				case 'cap2':
+					return (
+						<div class="caption2" key={i}>
+							{item.value}
+						</div>
+					)
+
+				case 'p':
+					return (
+						<div class="paragraph" key={i}>
+							{item.value}
+						</div>
+					)
+
+				case 'c':
+					return (
+						<div class="code" key={i}>
+							{
+								item.value instanceof Array ? 
+									this.renderLines(item.value) : 
+									item.value}
+						</div>
+					)
+
+				case 'br':
+					return (
+						<div class="space" key={i}/>
+					)
+			}
+			return (
+				<div class="line" key={i}>
+					{item.value}
+				</div>
+			)
+		});
+	}
+
+	renderLines(lines) {
+		return lines.map((line, i) => {
+			return (
+				<div key={i}>
+					{line}
+				</div>
+			)
+		});
 	}
 
 	handleClick = () => {

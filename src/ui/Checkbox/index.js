@@ -6,13 +6,17 @@ export default class Checkbox extends React.PureComponent {
 	}
 
 	render() {
-		let {classes, checked, children} = this.props;
+		let {classes, checked, name, value = '', children} = this.props;
+		let props = {
+			type: 'checkbox',
+			checked,
+			name,
+			value,
+			onChange: this.handleChange
+		}
 		return (
 			<label class="self $classes">
-				<input 
-					type="checkbox"
-					checked={checked}
-					onChange={this.handleChange}/>
+				<input {...props}/>
 				<span>
 					{children}
 				</span>

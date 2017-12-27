@@ -6,12 +6,18 @@ export default class Input extends React.PureComponent {
 	}
 
 	render() {
-		let {textarea, classes, name, value = '', placeholder} = this.props;
+		let {
+			textarea,
+			classes,
+			value = '',
+			onValidate,
+			onChange,
+			...others
+		} = this.props;
 		let props = {
-			name,
+			...others,
 			value,
-			placeholder,
-			onChange: this.handleChange
+			onChange: this.handleChange						
 		}
 		if (!textarea) {
 			props.type = this.type;

@@ -4,13 +4,12 @@ import Input from '../../ui/Input';
 import Select from '../../ui/Select';
 import FormField from '../../ui/FormField';
 import Radios from '../../ui/Radios';
-import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import {isCurrentProject} from '../../utils/User';
 
 class ProjectForm extends React.Component {
 	render() {
-		let {formData: data, editedProject} = this.props;
+		let {formData: data, editedProject, dict} = this.props;
 		let isOnProject = isCurrentProject(editedProject);
 		return (
 			<Form 
@@ -25,35 +24,33 @@ class ProjectForm extends React.Component {
 						placeholder="My project"/>
 				</FormField>
 
-				<FormField caption={dict.main_page} classes=".mt15" tooltip="project_homepage">
+				<FormField caption={dict.homepage} classes=".mt15" tooltip="project_homepage">
 					<Input 
 						name="homepage"
 						value={data.homepage || ''}
 						placeholder="https://my-project.com"/>
 				</FormField>
 
-				<FormField caption={dict.domain} classes=".mt15" tooltip="project_domain">
+				<FormField caption={dict.domains} classes=".mt15" tooltip="project_domain">
 					<Input 
 						name="domain"
 						value={data.domain || ''}
-						placeholder="my-project.com"/>
+						placeholder={dict.domain_example}
+						textarea/>
 				</FormField>
 
-				<FormField classes=".mt15">
-					<Radios name="option" value={data.option || '1'} items={this.radios}/>
+				<FormField caption={dict.root} classes=".mt15" tooltip="project_root">
+					<Radios 
+						name="root" 
+						value={data.root || '0'} 
+						items={this.radios}/>
 				</FormField>
 			</Form>
 		)
 	}
 
 	get radios() {
-		let radios = [];
-		let a = [
-			{value: '1', label: 'Привет'},
-			{value: '2', label: 'Пока'}
-		]
-
-		return a//radios;
+		return this.props.dict.root_options;
 	}
 
 	handleFormChange = (data) => {

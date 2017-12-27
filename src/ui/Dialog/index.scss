@@ -27,6 +27,14 @@
 			var .w540;
 		}
 	}
+	&.middle {
+		& > .self {
+			var .w740;
+			& > .content {
+				var .mb10.mxh450.ova;
+			}
+		}
+	}
 	&.narrow {
 		& > .self {
 			var .w360;
@@ -53,7 +61,10 @@
 		var .rel.fs14.p15-20;
 	}
 	.close {
-		var .abs.r12.t13.pntr.fs24;
+		var .abs.r12.t13.pntr.fs24.c-d1d1d1!;
+		&:hover {
+			var .c-fff!;
+		}
 	}
 	.buttons {
 		var .rel.box.mnh55.p12-20.bot-d4d4d4.bc-e9e9e9;

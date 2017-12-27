@@ -20,7 +20,6 @@ export default class FormField extends React.PureComponent {
 			<div class="self $classes">
 				{this.caption}
 				{this.control}
-				{this.tooltip}
 			</div>
 		)
 	}
@@ -31,6 +30,7 @@ export default class FormField extends React.PureComponent {
 			return (
 				<div class="caption">
 					{caption}
+					{this.tooltip}
 				</div>
 			)
 		}

@@ -103,9 +103,9 @@ class VisualElements extends React.Component {
 	}
 
 	onBodyClick = (e) => {
-		e.preventDefault();
 		let selector = getElementSelectorPath(e.target);
 		if (selector) {
+			e.preventDefault();
 			let element = document.body.querySelector(selector);
 			if (element) {
 				if (currentSelectedElement) {
