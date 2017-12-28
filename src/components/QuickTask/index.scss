@@ -134,13 +134,14 @@
 	}
 
 	..button {
-		width: 170px;
+		width: 140px;
 	    line-height: 35px;
 	    height: 36px;
 	    background-color: #555555;
 	    color: #e1e1e1;
 	    border: 0 !important;
 	    float: right;
+	    margin-top: 3px;
 
 		&:hover {
 			color: #fff;

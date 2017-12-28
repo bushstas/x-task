@@ -10,9 +10,9 @@ import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
 import MaskModeButton from '../MaskModeButton';
 import TaskUrlResolver from '../TaskUrlResolver';
+import {getUrls} from '../../utils/TaskResolver';
 
 class QuickTask extends React.Component {
-
 	render() {
 		let {
 			formData, 
@@ -23,7 +23,8 @@ class QuickTask extends React.Component {
 			taskInfoShown,
 			info,
 			layers,
-			urlDialogData
+			urlDialogData,
+			urls
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -34,7 +35,7 @@ class QuickTask extends React.Component {
 						<Input 
 							classes="url"
 							name="url"
-							value={formData.url}
+							value={urls[0]}
 							placeholder={dict.taskurl}
 							onClick={this.handleUrlInputClick}
 							readOnly/>
@@ -65,7 +66,10 @@ class QuickTask extends React.Component {
 						clickMaskToClose={true}
 						onClose={this.handleUrlDialogClose}
 						title={urlDialogData.dict.title}>
-						<TaskUrlResolver dict={urlDialogData.dict}/>
+						<TaskUrlResolver 
+							urls={urls}
+							dict={urlDialogData.dict}
+							onChange={this.handleChangeUrls}/>
 					</Dialog>
 				)}
 
@@ -334,6 +338,10 @@ class QuickTask extends React.Component {
 
 	handleUrlDialogClose = () => {
 		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urlDialogData: null});
+	}
+
+	handleChangeUrls = (urls) => {
+		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urls});
 	}
 }
 

@@ -1,6 +1,13 @@
 .self {
+	var .p10-20;
 	.caption {
-		var .fs18.bold.p10-20;
+		var .fs17;
+	}
+	..input {
+		var .mt7.mb15;
+		input {
+			var .w.boc-e8e8e8;
+		}
 	}
 	.path {
 		var .p10-20.mb10;

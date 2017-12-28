@@ -2,8 +2,8 @@ import StoreKeeper from '../utils/StoreKeeper';
 import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
 import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colors';
 import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
-import {getUrl} from '../utils/TaskResolver';
 import {get} from '../utils/Fetcher';
+import {getUrls} from '../utils/TaskResolver';
 
 const STORAGE_KEY = 'processed_task';
 let savedState = StoreKeeper.get(STORAGE_KEY);
@@ -14,9 +14,7 @@ if (savedState) {
 const getDefaultState = () => {
   return {
     status: null,
-    formData: {
-      url: getUrl()
-    },
+    formData: {},
     importance: 'usual',
     type: null,
     action: null,
@@ -32,7 +30,8 @@ const getDefaultState = () => {
     bent: false,
     uiPanelShown: false,
     urlDialogData: null,
-    dialogFetching: false
+    dialogFetching: false,
+    urls: getUrls()
   }
 }
 
@@ -55,7 +54,9 @@ const init = () => {
 }
 
 const reset = () => {
-  return getDefaultState();
+  let state = getDefaultState();
+ 
+  return state;
 }
  
 const activated = (state, status) => {

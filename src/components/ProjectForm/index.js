@@ -3,7 +3,6 @@ import Form from '../../ui/Form';
 import Input from '../../ui/Input';
 import Select from '../../ui/Select';
 import FormField from '../../ui/FormField';
-import Radios from '../../ui/Radios';
 import Store from 'xstore';
 import {isCurrentProject} from '../../utils/User';
 
@@ -31,19 +30,12 @@ class ProjectForm extends React.Component {
 						placeholder="https://my-project.com"/>
 				</FormField>
 
-				<FormField caption={dict.domains} classes=".mt15" tooltip="project_domain">
+				<FormField caption={dict.roots} classes=".mt15" tooltip="project_roots">
 					<Input 
-						name="domain"
-						value={data.domain || ''}
-						placeholder={dict.domain_example}
+						name="roots"
+						value={data.roots || ''}
+						placeholder={dict.roots_example}
 						textarea/>
-				</FormField>
-
-				<FormField caption={dict.root} classes=".mt15" tooltip="project_root">
-					<Radios 
-						name="root" 
-						value={data.root || '0'} 
-						items={this.radios}/>
 				</FormField>
 			</Form>
 		)

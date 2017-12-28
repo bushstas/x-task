@@ -1,92 +1,92 @@
-let DOMAIN, 
-	DOMAINS = [],
-	EXCEPTS = [],
-    ROOT,
-    PATH_PARTS = [],
-    HOST;
+import Store from 'xstore';
 
-export const init = ({domain, root}) => {
-	DOMAIN = domain;
-	ROOT = root;
+let ROOTS = [],
+	ROOT = '',
+    TASK_URL,
+    TASK_URL_PARTS = 0;
 
-	let {pathname: p, host} = location;
-	PATH_PARTS = p.replace(/^\/+/, '').split('/');
-	HOST = host || 'localhost.ru';
+export const init = (roots) => {
+	roots = roots.trim().replace(/[\r\n]+/g, ',').replace(/,{2,}/g, '').replace(/\s/g, '').split(',');
+	if (!!roots[0]) {
+		ROOTS = roots;
+	}
+	initUrls();
+	window.addEventListener('popstate', handlePopState);
+	window.addEventListener('hashchange', handlePopState);
+}
 
-	
-	if (domain) {
-		let domains = domain.split(';');
-		for (let d of domains) {
-			let ps = d.split('(');
-			let subdomains = [];
-			if (ps[1]) {
-				let sd = ps[1].replace(/[\s\)]/g, '').split(',');
-				for (let s of sd) {
-					s = s.replace(/\s/g, '');
-					if (s) {
-						subdomains.push(s);
-					}
+export const initUrl = () => {
+	let {pathname, host} = location;
+		
+	let pathParts = [
+		host,
+		...pathname.replace(/^\/+/, '').split('/')
+	];
+
+	for (let r of ROOTS) {
+		if (r) {
+			let ps = r.split('/');
+			let f = [];
+			for (let i = 0; i < ps.length; i++) {
+				if (ps[i] == pathParts[i]) {
+					f.push(ps[i]);
+				} else {
+					break;
 				}
 			}
-			d = ps[0].replace(/\s/g, '');
-
-			if (d) {
-				let withMain = true,
-					except = false;
-				if (/^\^/.test(d)) {
-					d = d.replace(/^\^/, '');
-					except = true;
-					if (!/^\*\./.test(d)) {
-						withMain = false;
-					}
-				}
-				if (subdomains.length > 0) {
-					d = d.replace(/^\*\./, '');
-				}
-				if (withMain) {
-					DOMAINS.push(d);
-				}
-				if (except) {
-					EXCEPTS.push(d.replace(/^\*\./, ''));
-				}
-				for (let s of subdomains) {
-					DOMAINS.push(s + '.' + d);
-				}
+			if (f.length > TASK_URL_PARTS && f.length == ps.length) {
+				TASK_URL_PARTS = f.length;
+				ROOT = f.join('/');
 			}
 		}
 	}
-	console.log(DOMAINS)
-	console.log(EXCEPTS)
+	let url = [];
+	for (let i = TASK_URL_PARTS; i < pathParts.length; i++) {
+		url.push(pathParts[i]);
+	}
+	TASK_URL = url.join('/');
+	TASK_URL += window.location.search;
+	TASK_URL += window.location.hash;
 }
 
-export const getUrl = () => {
-	
+const getMainUrl = () => {
+	return ROOT + '/' + TASK_URL;
+}
 
-	switch (ROOT) {
-		default:
-			return '/' + PATH_PARTS.join('/');
+const initUrls = () => {
+	initUrl();
+	let state = Store.getState('quicktask');
+	if (!state.urls[0] || state.urls[0] != getMainUrl()) {
+		let urls = getUrls();
+		Store.dispatch('QUICKTASK_PARAM_CHANGED', {urls});
 	}
 }
 
-const isActive = (idx) => {
-	return idx > 0;
+const handlePopState = () => {
+	initUrls();
 }
 
-export const getPathParts = () => {
-	let parts = [
-		HOST,
-		...PATH_PARTS
-	];
-	let properParts = [];
-	for (let i = 0; i < parts.length; i++) {
-		properParts.push({
-			value: parts[i],
-			active: isActive(i)
-		})
+export const getUrls = () => {
+	if (!TASK_URL) {
+		return {};
 	}
-	return properParts;
+	let main = getMainUrl();
+	let urls = {
+		'0': main
+	}
+	if (TASK_URL_PARTS > 0) {
+		let idx = 0;
+		for (let r of ROOTS) {
+			let u = r + '/' + TASK_URL;
+			if (u != main) {
+				idx++;
+				urls[idx] = u;
+			}
+		}
+	}
+	return urls;
 }
 
-export const getUrls = (values) => {
-
+const isActive = (idx, parts) => {
+	return idx >= TASK_URL_PARTS;
 }
