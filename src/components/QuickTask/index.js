@@ -55,7 +55,7 @@ class QuickTask extends React.Component {
 							placeholder={dict.description}
 							textarea/>
 					</FormField>
-					<Button>
+					<Button onClick={this.handleSubmit}>
 						{dict.add_task}
 					</Button>
 				</Form>
@@ -333,7 +333,7 @@ class QuickTask extends React.Component {
 	}
 
 	handleUrlInputClick = () => {
-		this.props.doAction('QUICKTASK_SHOW_URL_DIALOG');	
+		this.props.doAction('QUICKTASK_SHOW_URL_DIALOG');
 	}
 
 	handleUrlDialogClose = () => {
@@ -342,6 +342,10 @@ class QuickTask extends React.Component {
 
 	handleChangeUrls = (urls) => {
 		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urls});
+	}
+
+	handleSubmit = () => {
+		this.props.doAction('QUICKTASK_SAVE');
 	}
 }
 

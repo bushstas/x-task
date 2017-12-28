@@ -2,7 +2,7 @@ import StoreKeeper from '../utils/StoreKeeper';
 import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
 import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colors';
 import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
-import {get} from '../utils/Fetcher';
+import {get, post} from '../utils/Fetcher';
 import {getUrls} from '../utils/TaskResolver';
 
 const STORAGE_KEY = 'processed_task';
@@ -269,6 +269,13 @@ const show_url_dialog = ({dispatch}) => {
   });
 }
 
+const save = ({dispatch, state}) => {
+  post('save_task', {data: JSON.stringify(state)})
+  .then((data) => {
+    console.log(data)
+  });
+}
+
 export default {
   onStateChanged,
   actions: {
@@ -280,7 +287,8 @@ export default {
     unset_active_element,
     set_element_active,
     show_url_dialog,
-    cancel
+    cancel,
+    save
   },
   reducers: {
     init,
