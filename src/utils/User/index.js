@@ -29,7 +29,7 @@ const onLoad = (data) => {
 		}
 		if (data.user instanceof Object) {
 			user = data.user;
-			init(user.roots);
+			init(user);
 		}
 		if (data.projects instanceof Array) {
 			projects = data.projects;

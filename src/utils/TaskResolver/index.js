@@ -2,17 +2,22 @@ import Store from 'xstore';
 
 let ROOTS = [],
 	ROOT = '',
+	NOHASHES,
+	NOPARAMS,
+	GETPARAMS,
     TASK_URL,
     TASK_URL_PARTS = 0;
 
-export const init = (roots) => {
+export const init = (data) => {
+	let {roots, nohashes, noparams, getparams} = data;
 	roots = roots.trim().replace(/[\r\n]+/g, ',').replace(/,{2,}/g, '').replace(/\s/g, '').split(',');
 	if (!!roots[0]) {
 		ROOTS = roots;
 	}
+	NOHASHES = nohashes == 1;
+	NOPARAMS = noparams == 1;
+	GETPARAMS = getparams;
 	initUrls();
-	window.addEventListener('popstate', handlePopState);
-	window.addEventListener('hashchange', handlePopState);
 }
 
 export const initUrl = () => {
@@ -45,8 +50,12 @@ export const initUrl = () => {
 		url.push(pathParts[i]);
 	}
 	TASK_URL = url.join('/');
-	TASK_URL += window.location.search;
-	TASK_URL += window.location.hash;
+	if (!NOPARAMS) {
+		TASK_URL += window.location.search;
+	}
+	if (!NOHASHES) {
+		TASK_URL += window.location.hash;
+	}
 }
 
 const getMainUrl = () => {
@@ -90,3 +99,6 @@ export const getUrls = () => {
 const isActive = (idx, parts) => {
 	return idx >= TASK_URL_PARTS;
 }
+
+window.addEventListener('popstate', handlePopState);
+window.addEventListener('hashchange', handlePopState);

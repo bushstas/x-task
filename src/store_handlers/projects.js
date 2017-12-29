@@ -1,4 +1,5 @@
 import {get, post} from '../utils/Fetcher';
+import {init as initTaskResolver} from '../utils/TaskResolver';
  
 const DEFAULT_STATE = {
   fetching: true,
@@ -86,6 +87,7 @@ const save = ({dispatch, state, doAction}, {token}) => {
     post('save_project', {projectToken: token, ...formData})
     .then(
         () => {
+          initTaskResolver(formData);
           dispatch('PROJECTS_CANCELED');
           doAction('PROJECTS_LOAD');
         }

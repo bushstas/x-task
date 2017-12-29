@@ -65,7 +65,10 @@ export default class Form extends React.Component {
 		return child;
 	}
 
-	handleControlChange = (name, value) => {
+	handleControlChange = (name, value, checked) => {
+		if (typeof checked == 'boolean') {
+			value = checked;
+		}
 		let {onControlChange, onChange} = this.props;
 		onControlChange(name, value);
 		let {formData} = this.state;

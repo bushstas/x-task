@@ -3,6 +3,7 @@ import Form from '../../ui/Form';
 import Input from '../../ui/Input';
 import Select from '../../ui/Select';
 import FormField from '../../ui/FormField';
+import Checkbox from '../../ui/Checkbox';
 import Store from 'xstore';
 import {isCurrentProject} from '../../utils/User';
 
@@ -10,6 +11,13 @@ class ProjectForm extends React.Component {
 	render() {
 		let {formData: data, editedProject, dict} = this.props;
 		let isOnProject = isCurrentProject(editedProject);
+		let {nohashes, noparams} = data;
+		if (nohashes == 0) {
+			nohashes = false;
+		}
+		if (noparams == 0) {
+			noparams = false;
+		}
 		return (
 			<Form 
 				data={data}
@@ -37,6 +45,29 @@ class ProjectForm extends React.Component {
 						placeholder={dict.roots_example}
 						textarea/>
 				</FormField>
+
+				<FormField caption={dict.settings} classes="settings .mt15" tooltip="project_settings">
+					<Checkbox 
+						checked={nohashes}
+						name="nohashes">
+						{dict.nohashes}
+					</Checkbox>
+
+					<Checkbox 
+						checked={noparams}
+						name="noparams">
+						{dict.noparams}
+					</Checkbox>
+
+					{noparams && (
+						<Input
+						 	name="getparams"
+						 	value={data.getparams}
+						 	classes="getparams"
+						 	placeholder={dict.getparams}
+						 	textarea/>
+					)}
+				</FormField>				
 			</Form>
 		)
 	}

@@ -27,7 +27,13 @@ class Fetcher {
 		var formData = new FormData;
 		if (data instanceof Object) {
 			for (var k in data) {
-				formData.append(k, data[k] instanceof Object ? JSON.stringify(data[k]) : data[k]);
+				let a = data[k];
+				if (a instanceof Object) {
+					a = JSON.stringify(data[k]);
+				} else if (typeof a == 'boolean') {
+					a = !!a ? 1 : 0;
+				}
+				formData.append(k, a);
 			}
 		}
 		return formData;

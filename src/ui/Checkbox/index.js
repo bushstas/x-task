@@ -7,6 +7,9 @@ export default class Checkbox extends React.PureComponent {
 
 	render() {
 		let {classes, checked, name, value = '', children} = this.props;
+		if (typeof checked != 'boolean') {
+			checked = !!checked;
+		}
 		let props = {
 			type: 'checkbox',
 			checked,

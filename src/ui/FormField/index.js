@@ -2,14 +2,18 @@ import React from 'react';
 import Input from '../Input';
 import Select from '../Select';
 import Checkboxes from '../Checkboxes';
+import Checkbox from '../Checkbox';
 import Radios from '../Radios';
+import Radio from '../Radio';
 import Tooltip from '../Tooltip';
 
 const INPUT_TYPES = [
 	Input,
 	Select,
 	Checkboxes,
-	Radios
+	Checkbox,
+	Radios,
+	Radio
 ];
 
 export default class FormField extends React.PureComponent {
@@ -19,7 +23,9 @@ export default class FormField extends React.PureComponent {
 		return (
 			<div class="self $classes">
 				{this.caption}
-				{this.control}
+				<div class="content">
+					{this.control}
+				</div>		
 			</div>
 		)
 	}
