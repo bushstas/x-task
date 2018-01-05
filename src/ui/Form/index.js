@@ -36,6 +36,9 @@ export default class Form extends React.Component {
 	renderChildren(children) {
 		if (children instanceof Array) {
 			return children.map((child, i) => {
+				if (child instanceof Array) {
+					return this.renderChildren(child);
+				}
 				return this.renderChild(child, i);
 			});
 		}

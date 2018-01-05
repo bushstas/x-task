@@ -69,7 +69,7 @@ class Fetcher {
 		})
 		.catch(function({message}) {  
 		    Store.doAction('NOTIFICATIONS_ADD', {message});
-		    return Promise.reject();
+		    return Promise.reject(message);
 		});
 	}
 	

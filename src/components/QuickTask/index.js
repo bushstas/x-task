@@ -8,9 +8,9 @@ import Dialog from '../../ui/Dialog';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
+import TaskUsers from '../TaskUsers';
 import MaskModeButton from '../MaskModeButton';
 import TaskUrlResolver from '../TaskUrlResolver';
-import {getUrls} from '../../utils/TaskResolver';
 
 class QuickTask extends React.Component {
 	render() {
@@ -20,11 +20,15 @@ class QuickTask extends React.Component {
 			importance, 
 			type, 
 			action, 
-			taskInfoShown,
+			taskInfoDict,
+			taskUsersDict,
 			info,
 			layers,
 			urlDialogData,
-			urls
+			urls = [],
+			nohashes,
+			noparams,
+			execs
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -68,8 +72,10 @@ class QuickTask extends React.Component {
 						title={urlDialogData.dict.title}>
 						<TaskUrlResolver 
 							urls={urls}
+							nohashes={nohashes}
+							noparams={noparams}
 							dict={urlDialogData.dict}
-							onChange={this.handleChangeUrls}/>
+							onChange={this.handleChange}/>
 					</Dialog>
 				)}
 
@@ -95,13 +101,13 @@ class QuickTask extends React.Component {
 				<div class="bottom-panel .panel">
 					<Icon icon="assign"
 						classes=".inline-icon"
-						title={dict.assign_executors}/>
+						title={dict.assign_executors}
+						onClick={this.handleAssignClick}/>
 
 					<Icon icon="task_info"
 						classes=".inline-icon"
 						title={dict.task_info}
-						data-param="taskInfoShown"
-						onClick={this.handleChangeParam}/>
+						onClick={this.handleInfoShown}/>
 				</div>
 
 				<div class="top-panel .panel" onClick={this.handleExpandClick}>
@@ -124,11 +130,20 @@ class QuickTask extends React.Component {
 						onClick={this.handleCloseClick}/>
 				</div>
 
-				{taskInfoShown && (
+				{taskInfoDict && (
 					<TaskInfoForm
 						formData={info}
+						dict={taskInfoDict}
 						onFormChange={this.handleInfoChange}
 						onClose={this.handleInfoClose}/>
+				)}
+
+				{taskUsersDict && (
+					<TaskUsers
+						execs={execs}
+						dict={taskUsersDict}
+						onSelect={this.handleSelectUser}
+						onClose={this.handleUsersClose}/>
 				)}
 			</div>
 		)
@@ -247,7 +262,7 @@ class QuickTask extends React.Component {
 	}
 
 	handleChangeParam = ({target: {dataset: {value, param}}}) => {
-		if (param && value) {
+		if (param) {
 			this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value || true});
 		}
 	}
@@ -275,12 +290,28 @@ class QuickTask extends React.Component {
 		this.props.doAction('QUICKTASK_CANCEL');
 	}
 
+	handleInfoShown = () => {
+		this.props.doAction('QUICKTASK_SHOW_INFO_FORM');
+	}
+
+	handleAssignClick = () => {
+		this.props.doAction('QUICKTASK_SHOW_USERS');	
+	}
+
 	handleInfoClose = () => {
-		this.props.doAction('QUICKTASK_CHANGE_PARAM', {'taskInfoShown': false});
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {taskInfoDict: false});
+	}
+
+	handleUsersClose = () => {
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {taskUsersDict: false});
 	}
 
 	handleInfoChange = (info) => {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {info});
+	}
+
+	handleSelectUser = (name, token, assigned) => {
+		this.props.dispatch('QUICKTASK_USER_ASSIGNED', {token, assigned});
 	}
 
 	handleLayersClick = (e) => {
@@ -340,8 +371,8 @@ class QuickTask extends React.Component {
 		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urlDialogData: null});
 	}
 
-	handleChangeUrls = (urls) => {
-		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urls});
+	handleChange = (data) => {
+		this.props.dispatch('QUICKTASK_PARAM_CHANGED', data);
 	}
 
 	handleSubmit = () => {

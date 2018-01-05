@@ -1,20 +1,19 @@
 ..dialog-box.self {
 	..dialog-content {
-		padding: 20px 34px;
-
-
 		..form {
+			var .abs.l.r.t.b60.p20-34.ova;
+
 			..form-field {
 				position: relative;
 				padding-left: 80px;
 
 				textarea {
-					height: 80px;
+					height: 100px;
 					margin-bottom: 10px;
 				}
 				..icon {
 					position: absolute;
-					left: 15px;
+					left: -65px;
 					top: 10px;
 					font-size: 40px;
 					color: #888;

@@ -25,13 +25,14 @@ const getDefaultState = () => {
     visualElement: null,
     markElement: null,
     selectionElement: null,
-    taskInfoShown: false,
+    taskInfoDict: null,
     info: {},
     bent: false,
     uiPanelShown: false,
     urlDialogData: null,
     dialogFetching: false,
-    urls: getUrls()
+    taskUsersDict: null,
+    users: []
   }
 }
 
@@ -55,7 +56,7 @@ const init = () => {
 
 const reset = () => {
   let state = getDefaultState();
- 
+  state.urls = getUrls();
   return state;
 }
  
@@ -85,6 +86,21 @@ const visual_element_changed = (state, data) => {
     visualElement
   }
 }
+
+const user_assigned = (state, {token, assigned}) => {
+  let {execs = []} = state;
+  if (!assigned) {
+    let idx = execs.indexOf(token);
+    if (idx > -1) {
+      execs.splice(idx, 1);
+    }
+  } else {
+    execs.push(token);
+  }
+  return {execs};
+}
+
+//===========================================
 
 const change_param = ({dispatch, doAction}, data) => {
   let state = dispatch('QUICKTASK_PARAM_CHANGED', data);
@@ -269,11 +285,48 @@ const show_url_dialog = ({dispatch}) => {
   });
 }
 
-const save = ({dispatch, state}) => {
+const save = ({dispatch, doAction, state}) => {
   post('save_task', {data: JSON.stringify(state)})
   .then((data) => {
-    console.log(data)
+    if (data.success) {
+      let classes = $classy(".notification-success");
+      doAction('NOTIFICATIONS_ADD', {message: data.message, classes});
+      doAction('QUICKTASK_CANCEL');
+    }
   });
+}
+
+const show_info_form = ({dispatch, state}) => {
+  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+  get('load_info_dialog', {type: state.type || ''})
+    .then(({dict}) => {
+      dispatch('QUICKTASK_PARAM_CHANGED', {
+        dialogFetching: false,
+        taskInfoDict: dict
+      });
+    });   
+}
+
+const show_users = ({dispatch, state}) => {
+  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+  get('load_task_users', {type: state.type || ''})
+    .then(({dict}) => {
+      let {users} = dict;
+      let {execs} = state;
+      if (!execs) {
+        if (users.proper.length > 0) {
+          execs = [];
+          for (let u of users.proper) {
+            execs.push(u.token);
+          }
+        }
+      }
+      dispatch('QUICKTASK_PARAM_CHANGED', {
+        dialogFetching: false,
+        taskUsersDict: dict,
+        execs
+      });
+    });   
 }
 
 export default {
@@ -288,7 +341,9 @@ export default {
     set_element_active,
     show_url_dialog,
     cancel,
-    save
+    save,
+    show_info_form,
+    show_users
   },
   reducers: {
     init,
@@ -296,6 +351,7 @@ export default {
     activated,    
     param_changed,
     form_data_changed,
-    visual_element_changed
+    visual_element_changed,
+    user_assigned
   }
 } 

@@ -1,9 +1,11 @@
 .self {
-	var .rel;
 	.caption {
 		padding-bottom: 6px;
 		color: #555;
 		font-size: 13px;
+	}
+	.content {
+		var .rel;
 	}
 	input[type="text"],
 	input[type="password"],
@@ -13,6 +15,6 @@
 		width: 100%;
 	}
 	..tooltip {
-		var .abs.r-30.t27;
+		var .abs.r-30.t6;
 	}
 }

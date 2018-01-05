@@ -25,6 +25,7 @@ export default class FormField extends React.PureComponent {
 				{this.caption}
 				<div class="content">
 					{this.control}
+					{this.tooltip}
 				</div>		
 			</div>
 		)
@@ -36,7 +37,6 @@ export default class FormField extends React.PureComponent {
 			return (
 				<div class="caption">
 					{caption}
-					{this.tooltip}
 				</div>
 			)
 		}
@@ -64,10 +64,13 @@ export default class FormField extends React.PureComponent {
 	renderChildren(children) {
 		if (children instanceof Array) {
 			return children.map((child, i) => {
+				if (child instanceof Array) {
+					return renderChildren(child);
+				}
 				return this.renderChild(child, i);
 			});
 		}
-		return children;
+		return this.renderChild(children);
 	}
 
 	renderChild(child, i) {

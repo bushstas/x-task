@@ -2,11 +2,9 @@ import Store from 'xstore';
 
 let ROOTS = [],
 	ROOT = '',
-	NOHASHES,
-	NOPARAMS,
-	GETPARAMS,
+	OPTIONS,
     TASK_URL,
-    TASK_URL_PARTS = 0;
+    TASK_URL_PARTS;
 
 export const init = (data) => {
 	let {roots, nohashes, noparams, getparams} = data;
@@ -14,14 +12,18 @@ export const init = (data) => {
 	if (!!roots[0]) {
 		ROOTS = roots;
 	}
-	NOHASHES = nohashes == 1;
-	NOPARAMS = noparams == 1;
-	GETPARAMS = getparams;
+	OPTIONS = {
+		nohashes: nohashes == 1,
+		noparams: noparams == 1,
+		getparams
+	}
 	initUrls();
 }
 
-export const initUrl = () => {
+export const initUrl = (nohashes, noparams) => {
+	TASK_URL_PARTS = 0;
 	let {pathname, host} = location;
+	ROOT = host;
 		
 	let pathParts = [
 		host,
@@ -33,6 +35,22 @@ export const initUrl = () => {
 			let ps = r.split('/');
 			let f = [];
 			for (let i = 0; i < ps.length; i++) {
+				if (i == 0) {
+					if (/^\*\./.test(ps[i])) {
+						let ps2 = pathParts[i].split('.');
+						if (ps2[2]) {
+							let l = ps2.length;
+							ps2 = ps2[l - 2] + '.' + ps2[l - 1];
+							if (ps[i] == '*.' + ps2) {
+								f.push(ps[i]);
+								continue;
+							}
+						}
+					}
+				} else if (ps[i] == '*') {
+					f.push(ps[i]);
+					continue;
+				}
 				if (ps[i] == pathParts[i]) {
 					f.push(ps[i]);
 				} else {
@@ -46,14 +64,18 @@ export const initUrl = () => {
 		}
 	}
 	let url = [];
+	if (TASK_URL_PARTS == 0) {
+		TASK_URL_PARTS = 1;
+	}
 	for (let i = TASK_URL_PARTS; i < pathParts.length; i++) {
 		url.push(pathParts[i]);
 	}
 	TASK_URL = url.join('/');
-	if (!NOPARAMS) {
+
+	if (!noparams) {
 		TASK_URL += window.location.search;
 	}
-	if (!NOHASHES) {
+	if (!nohashes) {
 		TASK_URL += window.location.hash;
 	}
 }
@@ -62,17 +84,44 @@ const getMainUrl = () => {
 	return ROOT + '/' + TASK_URL;
 }
 
-const initUrls = () => {
-	initUrl();
+export const initUrls = ({nohashes, noparams} = {}) => {
+	if (typeof nohashes == 'undefined') {
+		nohashes = getNohashes();
+	}
+	if (typeof noparams == 'undefined') {
+		noparams = getNoparams();
+	}
+	initUrl(nohashes, noparams);
 	let state = Store.getState('quicktask');
-	if (!state.urls[0] || state.urls[0] != getMainUrl()) {
+	if (!state.urls || !state.urls[0] || state.urls[0] != getMainUrl() || state.nohashes != nohashes || state.noparams != noparams) {
 		let urls = getUrls();
-		Store.dispatch('QUICKTASK_PARAM_CHANGED', {urls});
+		Store.dispatch('QUICKTASK_PARAM_CHANGED', {urls, nohashes, noparams});
 	}
 }
 
+const getNohashes = () => {
+	let value = Store.getState('quicktask.nohashes');
+	if (typeof value == 'undefined') {
+		value = OPTIONS.nohashes;
+	}
+	return value;
+}
+
+const getNoparams = () => {
+	let value = Store.getState('quicktask.noparams');
+	if (typeof value == 'undefined') {
+		value = OPTIONS.noparams;
+	}
+	return value;
+}
+
+
 const handlePopState = () => {
 	initUrls();
+}
+
+export const getOption = (name) => {
+	return OPTIONS[name];
 }
 
 export const getUrls = () => {
@@ -96,8 +145,12 @@ export const getUrls = () => {
 	return urls;
 }
 
-const isActive = (idx, parts) => {
-	return idx >= TASK_URL_PARTS;
+export const hasHash = () => {
+	return !!location.hash.replace(/\#/, '');
+}
+
+export const hasGetParams = () => {
+	return !!location.search.replace(/\?/, '');
 }
 
 window.addEventListener('popstate', handlePopState);

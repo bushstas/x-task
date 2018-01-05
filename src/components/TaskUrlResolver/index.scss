@@ -3,8 +3,11 @@
 	.caption {
 		var .fs17;
 	}
+	..form-field {
+		var .mr40.mt7.mb15;
+	}
 	..input {
-		var .mt7.mb15;
+		textarea,
 		input {
 			var .w.boc-e8e8e8;
 		}

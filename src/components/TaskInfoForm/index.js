@@ -3,36 +3,43 @@ import Dialog from '../../ui/Dialog';
 import Form from '../../ui/Form';
 import Input from '../../ui/Input';
 import FormField from '../../ui/FormField';
+import ActionButtons from '../ActionButtons';
 import Icon from '../../ui/Icon';
-import {dict, icons} from '../../utils/Dictionary';
+import Button from '../../ui/Button';
 
 export default class TaskInfoForm extends React.Component {
 	render() {
-		let {onClose, onFormChange} = this.props;
+		let {onClose, onFormChange, dict, formData} = this.props;
 		return (
-			 <Dialog title="Расширенное описание задачи"
+			 <Dialog title={dict.title}
 	            onClose={onClose}
 	            clickMaskToClose={true}
 	            classes="dialog::large self">
 	            
-	            <Form onChange={onFormChange}>
+	            <Form 
+	            	data={formData}
+	            	onChange={onFormChange}>
 					{this.fields}
 				</Form>
-
+				<ActionButtons onAction={this.handleAction}>					
+					<Button data-value="preview">
+						{dict.preview}
+					</Button>
+				</ActionButtons>
 	        </Dialog>
 		)
 	}
 
 	get fields() {
-		let {formData} = this.props;
-		let items = icons.task_inf;
-		if (items instanceof Object) {
-			let keys = Object.keys(items);
+		let {formData, dict} = this.props;
+		let {icons, captions} = dict;
+		if (icons instanceof Object) {
+			let keys = Object.keys(icons);
 			return keys.map((value) => {
 				return (
-					<FormField caption={dict[value]} key={value}>
+					<FormField caption={captions[value]} key={value}>
 						<Icon>
-							{items[value]}
+							{icons[value]}
 						</Icon>
 						<Input 
 							name={value}

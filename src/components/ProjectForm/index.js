@@ -4,6 +4,7 @@ import Input from '../../ui/Input';
 import Select from '../../ui/Select';
 import FormField from '../../ui/FormField';
 import Checkbox from '../../ui/Checkbox';
+import Radios from '../../ui/Radios';
 import Store from 'xstore';
 import {isCurrentProject} from '../../utils/User';
 
@@ -11,7 +12,7 @@ class ProjectForm extends React.Component {
 	render() {
 		let {formData: data, editedProject, dict} = this.props;
 		let isOnProject = isCurrentProject(editedProject);
-		let {nohashes, noparams} = data;
+		let {nohashes, noparams, measure} = data;
 		if (nohashes == 0) {
 			nohashes = false;
 		}
@@ -67,7 +68,14 @@ class ProjectForm extends React.Component {
 						 	placeholder={dict.getparams}
 						 	textarea/>
 					)}
-				</FormField>				
+				</FormField>
+
+				<FormField caption={dict.evals} classes="settings .mt15" tooltip="project_evals">
+					<Radios 
+						value={measure}
+						name="measure"
+						items={dict.evals_items}/>
+				</FormField>
 			</Form>
 		)
 	}
