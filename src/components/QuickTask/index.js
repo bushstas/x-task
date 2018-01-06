@@ -99,10 +99,12 @@ class QuickTask extends React.Component {
 				</div>
 
 				<div class="bottom-panel .panel">
-					<Icon icon="assign"
-						classes=".inline-icon"
-						title={dict.assign_executors}
-						onClick={this.handleAssignClick}/>
+					{action != 'note' && (
+						<Icon icon="assign"
+							classes=".inline-icon"
+							title={dict.assign_executors}
+							onClick={this.handleAssignClick}/>
+					)}
 
 					<Icon icon="task_info"
 						classes=".inline-icon"
@@ -248,6 +250,39 @@ class QuickTask extends React.Component {
 	renderButtons(items, param, paramName, title) {
 		let keys = Object.keys(items || {});
 		return keys.map((value) => {
+			switch (paramName) {
+				case 'action':
+				let {type} = this.props;
+					switch (type) {
+						case 'prototype':
+						case 'design':
+							if (value == 'removing' || value == 'repairing' || value == 'debugging') {
+								return;
+							}
+						break;
+						case 'text':
+							if (value == 'repairing' || value == 'debugging') {
+								return;
+							}
+						break;
+						case 'html':
+							if (value == 'debugging') {
+								return;
+							}
+						break;
+						case 'style':
+							if (value != 'editing' && value != 'note') {
+								return;
+							}
+						break;
+						case 'project':
+							if (value != 'planning' && value != 'note') {
+								return;
+							}
+						break;
+					}
+				break;
+			}
 			return  (
 				<Icon 
 					classes="$param==value?.active"
@@ -263,7 +298,12 @@ class QuickTask extends React.Component {
 
 	handleChangeParam = ({target: {dataset: {value, param}}}) => {
 		if (param) {
-			this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value || true});
+			let {type} = this.props;
+			let props = {[param]: value || true}
+			if (type != value && param == 'type') {
+				props.action = null;
+			}
+			this.props.doAction('QUICKTASK_CHANGE_PARAM', props);
 		}
 	}
 

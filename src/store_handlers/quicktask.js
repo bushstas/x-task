@@ -16,7 +16,7 @@ const getDefaultState = () => {
     status: null,
     formData: {},
     importance: 'usual',
-    type: null,
+    type: 'design',
     action: null,
     visualElements: {},
     visualMode: false,
@@ -309,7 +309,8 @@ const show_info_form = ({dispatch, state}) => {
 
 const show_users = ({dispatch, state}) => {
   dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
-  get('load_task_users', {type: state.type || ''})
+  let {type = '', action = ''} = state;
+  get('load_task_users', {type, action})
     .then(({dict}) => {
       let {users} = dict;
       let {execs} = state;

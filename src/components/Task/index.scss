@@ -1,6 +1,23 @@
 .self {
-	border: 1px solid #aaa;
-	border-radius: 3px;
-	margin-bottom: 10px;
-	padding: 10px 15px;
+	var .rel.bo-ddd.br3.mb10.p10-15.pl100;
+
+	.title {
+		var .fs17;
+	}
+	.icons {
+		var .abs.l7.t11;
+		..icon {
+			var .inb.fs22.c-000.mr6.o3;
+		}
+	}
+
+	&..status-ready {
+		var .boc-d0eab4.bc-f2ffe5;
+	}
+	&..status-in_work {
+		var .boc-eae6b4.bc-fffbe5;
+	}
+	&..status-cant_do {
+		var .boc-f1c6ce.bc-fff2f4;
+	}
 }

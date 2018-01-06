@@ -136,6 +136,10 @@ export const logout = () => {
 	return {then}
 }
 
+export const getRole = () => {
+	return user.role;
+}
+
 export default {
 	isAuthorized,
 	isCurrentUser,
@@ -149,5 +153,6 @@ export default {
 	inProject,
 	auth,
 	register,
-	logout
+	logout,
+	getRole
 }

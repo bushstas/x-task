@@ -58,9 +58,16 @@ class Team extends React.Component {
 		let index = 0;
 		for (let u of users) {
 			name = u.name;
+			let projects;
 			if (!u.projects) {
-				u.projects = dict.nothave;
-			}			
+				projects = (
+					<span class=".gray">
+						{dict.nothave}
+					</span>
+				)
+			} else {
+				projects = u.projects.split(',').join(', ');
+			}		
 			canEdit = token == u.token || (u.role != 'head' && (hasRight('edit_admin') || (u.role != 'admin' && hasRight('edit_user'))));
 			
 			
@@ -86,14 +93,20 @@ class Team extends React.Component {
 					</div>
 				)
 			}
+			let role;
+			if (u.spec) {
+				role = dict[u.spec];
+			} else {
+				role = dict[u.role];
+			}
 			rows.push([
 				<Icon
 					classes="icon::edit icon::button"
 					icon="edit"
 					{...iconProps}/>,
 				name,
-				dict[u.role],
-				u.projects.split(',').join(', ')
+				role,
+				projects
 			]);
 			index++;
 		}

@@ -4,8 +4,8 @@ import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
 import Task from '../Task';
-import ActionButtons from '../ActionButtons';
-import Store from 'xstore'
+import Store from 'xstore';
+import {getRole} from '../../utils/User';
 
 class Tasks extends React.Component {
 
@@ -14,12 +14,59 @@ class Tasks extends React.Component {
 	}
 
 	render() {
-		let {fetching} = this.props;
+		let {fetching, filter, status} = this.props;
+		let role = getRole();
 	 	return (
-	 		<Loader fetching={fetching} classes=".tasks">
-				{this.tasks}
-				{this.actionButtons}
-			</Loader>
+	 		<div class="self">
+		 		{role != 'observer' && (
+		 			<Tabs 
+						classes="main-tabs"
+			 			onSelect={this.handleSelectTab}
+			 			value={filter}
+			 			simple>
+			 			{this.firstTab}
+			 			{this.secondTab}
+			 			{this.thirdTab}
+					</Tabs>
+				)}
+				<Tabs 
+					classes="statuses"
+					onSelect={this.handleSelectStatusTab}
+					value={status}
+					simple>
+		 			<Tab caption={dict.all} value="all"/>
+		 			<Tab caption={dict.status_ready} value="ready"/>
+		 			<Tab caption={dict.status_in_work} value="in_work"/>
+		 			<Tab caption={dict.status_none} value="none"/>
+				</Tabs>
+		 		<Loader fetching={fetching} classes="content">
+					{this.tasks}
+				</Loader>
+			</div>
+		)
+	}
+
+	get firstTab() {
+		let role = getRole();
+		let caption = role == 'developer'  ? dict.tasks_for_me : dict.tasks_from_me;
+		let value = role == 'developer' ? 'forme' : 'fromme';
+		return (
+			<Tab caption={caption} value={value}/>
+		)
+	}
+
+	get secondTab() {
+		let role = getRole();
+		let caption = role != 6 ? dict.tasks_for_me : dict.tasks_from_me;
+		let value = role != 6 ? 'forme' : 'fromme';
+		return (
+			<Tab caption={caption} value={value}/>
+		)
+	}
+
+	get thirdTab() {
+		return (
+			<Tab caption={dict.all_tasks} value="all"/>
 		)
 	}
 
@@ -43,48 +90,12 @@ class Tasks extends React.Component {
 		)
 	}
 
-
-	get actionButtons() {
-		let {editedUserToken} = this.props;
-		return (
-			<ActionButtons 
-				buttonsShown={this.shownButtons}
-				onAction={this.handleAction}>
-				
-				<Button data-value="create_user">
-					{dict.create_user}
-				</Button>
-
-			</ActionButtons>
-		)
+	handleSelectTab = (filter) => {
+		this.props.doAction('TASKS_LOAD', {filter});
 	}
 
-	get shownButtons() {
-		let {activeTab} = this.props;
-		switch (activeTab) {
-			case 'users': {
-				return ['create_user'];
-			}
-		}
-		return [];
-	}
-
-	handleSelectTab = (activeTab) => {
-		
-	}
-
-	handleAction = (action, data) => {
-		switch (action) {
-			case 'cancel': 
-				return this.props.dispatch('USERS_CANCELED');
-
-			case 'create_user': 
-				return this.props.dispatch('USERS_ADDING_USER_FORM_SHOWN');
-			
-			case 'save_user': 
-				return this.props.doAction('USERS_SAVE_USER', data);
-			
-		}
+	handleSelectStatusTab = (status) => {
+		this.props.doAction('TASKS_LOAD', {status});	
 	}
 }
 

@@ -28,6 +28,7 @@ class Fetcher {
 		if (data instanceof Object) {
 			for (var k in data) {
 				let a = data[k];
+				if (a === undefined) continue;
 				if (a instanceof Object) {
 					a = JSON.stringify(data[k]);
 				} else if (typeof a == 'boolean') {

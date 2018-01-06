@@ -5,16 +5,16 @@ export class Tabs extends React.PureComponent {
 		onSelect: () => {}
 	}
 
-	constructor() {
+	constructor(props) {
 		super();
 		this.state = {
-			activeTab: 0
+			activeTab: props.value || 0
 		};
 	}
 	
 	render() {
 		let {activeTab} = this.state;
-		let {children, classes} = this.props;
+		let {children, classes, simple, value: v} = this.props;
 		if (!(children instanceof Array)) {
 			children = [children];
 		}
@@ -23,36 +23,48 @@ export class Tabs extends React.PureComponent {
 				<div class="menu">
 					{children.map((child, i) => {
 						if (child instanceof Object && child.type == Tab) {
+							let value = child.props.value || i;
+							if (i == 0 && activeTab === 0 && child.props.value) {
+								value = 0;
+							}
 							let props = {
 								key: i,
 								index: i,
 								onSelect: this.handleSelectTab,
-								classes: $classy("$activeTab==i ? active"),
+								classes: $classy("$activeTab==value ? active"),
 								...child.props
 							};
 							return React.cloneElement(child, props, null);
 						}
 					})}
 				</div>
-				<div class="content">
-					{children.map((child, i) => {
-						if (activeTab == i && child instanceof Object && child.type == Tab) {
-							return child.props.children;
-						}
-					})}
-				</div>
+				{!simple && (
+					<div class="content">
+						{children.map((child, i) => {
+							let value = child.props.value || i;
+							if (activeTab == value && child instanceof Object && child.type == Tab) {
+								return child.props.children;
+							}
+						})}
+					</div>
+				)}
 			</div>
 		)
 	}
 
 	handleSelectTab = (e) => {
-		let index = e.target.getAttribute('data-index');
 		let value = e.target.getAttribute('data-value');
+		if (value) {
+			this.setState({activeTab: value});
+			this.props.onSelect(value);
+			return;
+		}
+		let index = e.target.getAttribute('data-index');
 		if (index) {
 			let {activeTab} = this.state;
 			if (activeTab != index) {
 				this.setState({activeTab: index});
-				this.props.onSelect(value || index);
+				this.props.onSelect(index);
 			}			
 		}
 	}
