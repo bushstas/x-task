@@ -12,6 +12,20 @@
 		var .fl;
 	}
 	..tabs-tab {
-		var .fs13!.p7-10!.mnw40!;
+		var .fs13!.p10!.mnw40!.rel;
+		.count {
+			var .abs.r6.t8.bl.ml5.p2-3.bc-b7b7b7.br4.fr;
+		}
+		&..tabs-active {
+			.count {
+				var .bc-848484.c-fff;
+			}	
+		}
+	}
+	.left-menu {
+		var .abs.r100p.w44.t14.rt;
+	}
+	.right-menu {
+		var .abs.l100p.w44.t14;
 	}
 }

@@ -16,7 +16,9 @@ const onStateChanged = (state) => {
   timeout = setTimeout(() => {
     StoreKeeper.set(STORAGE_KEY, {
       filter: state.filter,
-      status: state.status
+      status: state.status,
+      type: state.type,
+      importance: state.importance
     });
   }, 500);
 }
@@ -47,10 +49,11 @@ const changed = (state, data) => {
   return data;
 }
 
-const shown = (state, {data, index}) => {
+const shown = (state, {data, index, prevNextButtons}) => {
   return {
     shownTaskData: data,
-    shownTaskIndex: index
+    shownTaskIndex: index,
+    prevNextButtons
   }
 }
 
@@ -70,7 +73,21 @@ const hidden = () => {
 
 const load = ({dispatch, state}, data = {}) => {
   dispatch('TASKS_FETCHING');
-  let {filter, status} = state;
+  let {filter, status, importance, type} = state;
+  if (data.importance) {
+    if (data.importance == importance) {
+      data.importance = null;
+    }
+    importance = data.importance;
+    dispatch('TASKS_CHANGED', data);
+  }
+  if (data.type) {
+    if (data.type == type) {
+       data.type = null;
+    }
+    type = data.type;
+    dispatch('TASKS_CHANGED', data);
+  }
   if (data.filter) {
     filter = data.filter;
     dispatch('TASKS_CHANGED', data);
@@ -80,6 +97,8 @@ const load = ({dispatch, state}, data = {}) => {
     dispatch('TASKS_CHANGED', data);
   }
   let params = {
+    importance,
+    type,
     filter,
     status
   };
@@ -96,21 +115,21 @@ const show = ({dispatch, state}, data) => {
 }
 
 const show_prev = ({dispatch, state}) => {  
-  let {shownTaskIndex, tasks} = state;
+  let {shownTaskIndex, tasks, prevNextButtons} = state;
   let prev = shownTaskIndex - 1;
   if (prev < 0) {
     prev = tasks.length - 1;
   }
-  dispatch('TASKS_SHOWN', {data: tasks[prev], index: prev});
+  dispatch('TASKS_SHOWN', {data: tasks[prev], index: prev, prevNextButtons});
 }
 
 const show_next = ({dispatch, state}) => {
-  let {shownTaskIndex, tasks} = state;
+  let {shownTaskIndex, tasks, prevNextButtons} = state;
   let next = shownTaskIndex + 1;
   if (next > tasks.length - 1) {
     next = 0;
   }
-  dispatch('TASKS_SHOWN', {data: tasks[next], index: next});
+  dispatch('TASKS_SHOWN', {data: tasks[next], index: next, prevNextButtons});
 }
 
 const hide = ({dispatch}) => {

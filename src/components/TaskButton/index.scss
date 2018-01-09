@@ -1,0 +1,18 @@
+.self {
+	var .bc-555.inb.mb3.cen.p10-0.pntr.w44.tra-w-2.nosel;
+	..icon {
+		var .c-eee.fs22;
+	}
+	&.active {
+		var .bc-fff.w34;
+		..icon {
+			var .c-333;
+		}
+	}
+	&.left {
+		var .br5-0-0-5;
+	}
+	&.right {
+		var .br0-5-5-0;
+	}
+}

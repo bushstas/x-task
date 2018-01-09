@@ -1,13 +1,14 @@
 import React from 'react';
-import {dict} from '../../utils/Dictionary';
+import {dict, icons} from '../../utils/Dictionary';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Dialog from '../../ui/Dialog';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
 import Task from '../Task';
 import TaskInfo from '../TaskInfo';
+import TaskButton from '../TaskButton';
 import Store from 'xstore';
-import {getRoleId} from '../../utils/User';
+import {getRoleId, getTasksCount} from '../../utils/User';
 
 class Tasks extends React.Component {
 
@@ -24,6 +25,7 @@ class Tasks extends React.Component {
 				shownTaskIndex,
 				prevNextButtons
 			} = this.props;
+
 	 	return (
 	 		<div class="self">
 		 		{getRoleId() != 7 && (
@@ -61,6 +63,54 @@ class Tasks extends React.Component {
 							onNext={this.handleNextTask}/>
 					</Dialog>
 				)}
+				{this.leftMenu}
+				{this.rightMenu}
+			</div>
+		)
+	}
+
+	get leftMenu() {
+		let {task_imp} = icons;
+		let {importance} = this.props;
+		return (
+			<div class="left-menu">
+				{Object.keys(task_imp).map(
+					(key) => {
+						let value = task_imp[key];
+						return (
+							<TaskButton
+								classes="~left"
+								active={importance == key}
+								icon={value}
+								value={key}
+								key={key}
+								onSelect={this.handleImportanceSelect}/>
+						)
+					}
+				)}
+			</div>
+		)
+	}
+
+	get rightMenu() {
+		let {task_type} = icons;
+		let {type} = this.props;
+		return (
+			<div class="right-menu">
+				{Object.keys(task_type).map(
+					(key) => {
+						let value = task_type[key];
+						return (
+							<TaskButton 
+								classes="~right"
+								active={type == key}
+								icon={value}
+								value={key}
+								key={key}
+								onSelect={this.handleTypeSelect}/>
+						)
+					}
+				)}
 			</div>
 		)
 	}
@@ -92,29 +142,40 @@ class Tasks extends React.Component {
 		return tabs;
 	}
 
-	get firstTab() {
+	get secondTab() {
 		let role = getRoleId();
 		let caption = role > 4  ? dict.tasks_for_me : dict.tasks_from_me;
 		let value = role > 4 ? 'forme' : 'fromme';
-		return (
-			<Tab caption={caption} value={value}/>
-		)
-	}
-
-	get secondTab() {
-		let role = getRoleId();
-		if (role > 5) return;
-		let caption = role < 5  ? dict.tasks_for_me : dict.tasks_from_me;
-		let value = role < 5 ? 'forme' : 'fromme';
-		return (
-			<Tab caption={caption} value={value}/>
-		)
+		return this.renderTab(caption, value);
+		
 	}
 
 	get thirdTab() {
-		return (
-			<Tab caption={dict.all_tasks} value="all"/>
+		let role = getRoleId();
+		if (role > 5 || role == 1) return;
+		let caption = role < 5  ? dict.tasks_for_me : dict.tasks_from_me;
+		let value = role < 5 ? 'forme' : 'fromme';
+		return this.renderTab(caption, value);
+	}
+
+	renderTab(caption, value) {
+		let counts = getTasksCount();
+		let count = counts[value];
+		caption = (
+			<span>
+				{caption} &nbsp;{count}
+				<span class="count">
+					{count}
+				</span>
+			</span>
 		)
+		return (
+			<Tab caption={caption} value={value} disabled={count == 0}/>
+		)
+	}
+
+	get firstTab() {
+		return this.renderTab(dict.all_tasks, 'all');
 	}
 
 	get tasks() {
@@ -146,7 +207,7 @@ class Tasks extends React.Component {
 	}
 
 	handleSelectStatusTab = (status) => {
-		this.props.doAction('TASKS_LOAD', {status});	
+		this.props.doAction('TASKS_LOAD', {status});
 	}
 
 	onTaskClick = (data, index) => {
@@ -158,11 +219,19 @@ class Tasks extends React.Component {
 	}
 
 	handlePrevTask = () => {
-		this.props.doAction('TASKS_SHOW_PREV');	
+		this.props.doAction('TASKS_SHOW_PREV');
 	}
 
 	handleNextTask = () => {
 		this.props.doAction('TASKS_SHOW_NEXT');	
+	}
+
+	handleTypeSelect = (type) => {
+		this.props.doAction('TASKS_LOAD', {type});
+	}
+
+	handleImportanceSelect = (importance) => {
+		this.props.doAction('TASKS_LOAD', {importance});
 	}
 }
 

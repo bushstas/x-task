@@ -58,28 +58,30 @@ export class Tabs extends React.PureComponent {
 		return value;
 	}
 
-	handleSelectTab = (e) => {
-		let value = e.target.getAttribute('data-value');
-		if (value) {
+	handleSelectTab = (index, value) => {
+		value = value || index;
+		let {activeTab} = this.state;
+		if (activeTab != value) {
 			this.setState({activeTab: value});
 			this.props.onSelect(value);
-			return;
-		}
-		let index = e.target.getAttribute('data-index');
-		if (index) {
-			let {activeTab} = this.state;
-			if (activeTab != index) {
-				this.setState({activeTab: index});
-				this.props.onSelect(index);
-			}			
 		}
 	}
 }
 
-export function Tab({caption, index, onSelect, classes, value}) {
-	return (
-		<div class="tab $classes" data-index={index} data-value={value} onClick={onSelect}>
-			{caption}
-		</div>
-	)
+export class Tab extends React.Component {
+	render() {
+		let {caption, classes, disabled} = this.props;
+		return (
+			<div class="tab $classes $?disabled" onClick={this.handleClick}>
+				{caption}
+			</div>
+		)
+	}
+
+	handleClick = () => {
+		let {index, onSelect, value, disabled} = this.props;
+		if (!disabled) {
+			onSelect(index, value);
+		}
+	}
 }

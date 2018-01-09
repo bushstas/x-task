@@ -33,5 +33,9 @@
 			background-color: #555;
 			color: #fff;
 		}
+		&.disabled {
+			cursor: default;
+			color: #999;
+		}
 	}
 }
