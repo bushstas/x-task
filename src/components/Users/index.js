@@ -5,6 +5,7 @@ import Button from '../../ui/Button';
 import Team from '../Team';
 import ActionButtons from '../ActionButtons';
 import Store from 'xstore'
+import {hasRight} from '../../utils/User';
 
 class Users extends React.Component {
 
@@ -76,6 +77,9 @@ class Users extends React.Component {
 
 	get shownButtons() {
 		let {activeTab} = this.props;
+		if (!hasRight('add_user')) {
+			return [];
+		}
 		switch (activeTab) {
 			case 'users': {
 				let {userFormShown} = this.props;

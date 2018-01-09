@@ -1,13 +1,17 @@
 .self {
 	.content {
-		var .abs.t100.l.r.b15.ova.p0-20;
+		var .abs.t60.l.r.b15.ova.p0-20;
 	}
-	.main-tabs {
+	.statuses {
+		var .fr;
 		..tabs-menu {
-			var .mb5!;
+			var .pl0.pr20;
 		}
 	}
+	.main-tabs {
+		var .fl;
+	}
 	..tabs-tab {
-		var .fs13!.p7-10!;
+		var .fs13!.p7-10!.mnw40!;
 	}
 }

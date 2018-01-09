@@ -42,17 +42,28 @@ class Team extends React.Component {
 	}
 
 	get headers() {
-		return ['', dict.name, dict.role, dict.projects];
+		let headers = [dict.name, dict.role, dict.projects];
+		if (this.canEdit) {
+			headers.unshift('');
+		}
+		return headers;
 	}
 
 	get widths() {
-		return [4, 31, 25, 40];
+		if (this.canEdit) {
+			return [4, 31, 25, 40];
+		}
+		return [35, 25, 40];
+	}
+
+	get canEdit() {
+		return hasRight('edit_user');
 	}
 
 	get rows() {
 		let {users} = this.props,
-			token = getToken(),
 			rows = [], name, canEdit,
+			token = getToken(),
 			i, placeholder, iconProps;
 		
 		let index = 0;
@@ -99,15 +110,20 @@ class Team extends React.Component {
 			} else {
 				role = dict[u.role];
 			}
-			rows.push([
-				<Icon
-					classes="icon::edit icon::button"
-					icon="edit"
-					{...iconProps}/>,
+			let row = [
 				name,
 				role,
 				projects
-			]);
+			];
+			if (this.canEdit) {
+				row.unshift(
+					<Icon
+						classes="icon::edit icon::button"
+						icon="edit"
+						{...iconProps}/>
+				);
+			}
+			rows.push(row);
 			index++;
 		}
 		return rows;

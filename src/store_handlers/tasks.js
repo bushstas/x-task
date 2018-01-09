@@ -47,6 +47,21 @@ const changed = (state, data) => {
   return data;
 }
 
+const shown = (state, {data, index}) => {
+  return {
+    shownTaskData: data,
+    shownTaskIndex: index
+  }
+}
+
+const hidden = () => {
+  return {
+    shownTaskData: null,
+    shownTaskIndex: -1
+  }
+}
+
+
 /**
  ===============
  Actions
@@ -73,16 +88,50 @@ const load = ({dispatch, state}, data = {}) => {
     dispatch('TASKS_LOADED', data);
   });
 }
+
+const show = ({dispatch, state}, data) => {
+  let {tasks} = state;
+  data.prevNextButtons = tasks.length > 1;
+  dispatch('TASKS_SHOWN', data);
+}
+
+const show_prev = ({dispatch, state}) => {  
+  let {shownTaskIndex, tasks} = state;
+  let prev = shownTaskIndex - 1;
+  if (prev < 0) {
+    prev = tasks.length - 1;
+  }
+  dispatch('TASKS_SHOWN', {data: tasks[prev], index: prev});
+}
+
+const show_next = ({dispatch, state}) => {
+  let {shownTaskIndex, tasks} = state;
+  let next = shownTaskIndex + 1;
+  if (next > tasks.length - 1) {
+    next = 0;
+  }
+  dispatch('TASKS_SHOWN', {data: tasks[next], index: next});
+}
+
+const hide = ({dispatch}) => {
+  dispatch('TASKS_HIDDEN');
+}
  
 export default {
   onStateChanged,
   actions: {
-    load
+    load,
+    show,
+    hide,
+    show_prev,
+    show_next
   },
   reducers: {
     init,
     fetching,
     loaded,
-    changed
+    changed,
+    shown,
+    hidden
   }
 } 

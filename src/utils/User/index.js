@@ -140,6 +140,10 @@ export const getRole = () => {
 	return user.role;
 }
 
+export const getRoleId = () => {
+	return user.role_id;
+}
+
 export default {
 	isAuthorized,
 	isCurrentUser,
@@ -154,5 +158,6 @@ export default {
 	auth,
 	register,
 	logout,
-	getRole
+	getRole,
+	getRoleId
 }

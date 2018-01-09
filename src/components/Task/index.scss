@@ -1,8 +1,11 @@
 .self {
-	var .rel.bo-ddd.br3.mb10.p10-15.pl100;
+	var .rel.bo-ddd.br3.mb10.p10-15.pl100.pntr;
 
 	.title {
 		var .fs17;
+	}
+	.status {
+		var .fs13.lh17.c-777;
 	}
 	.icons {
 		var .abs.l7.t11;
@@ -10,7 +13,6 @@
 			var .inb.fs22.c-000.mr6.o3;
 		}
 	}
-
 	&..status-ready {
 		var .boc-d0eab4.bc-f2ffe5;
 	}
@@ -19,5 +21,17 @@
 	}
 	&..status-cant_do {
 		var .boc-f1c6ce.bc-fff2f4;
+	}
+	&:hover {
+		var .boc-909090;
+		&..status-ready {
+			var .boc-91af70.bc-daf3c2;
+		}
+		&..status-in_work {
+			var .boc-b7b15f.bc-f7f1cf;
+		}
+		&..status-cant_do {
+			var .boc-bf8792.bc-f1d9dc;
+		}
 	}
 }

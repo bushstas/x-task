@@ -23,10 +23,7 @@ export class Tabs extends React.PureComponent {
 				<div class="menu">
 					{children.map((child, i) => {
 						if (child instanceof Object && child.type == Tab) {
-							let value = child.props.value || i;
-							if (i == 0 && activeTab === 0 && child.props.value) {
-								value = 0;
-							}
+							let value = this.getValue(child.props.value, i);
 							let props = {
 								key: i,
 								index: i,
@@ -41,7 +38,7 @@ export class Tabs extends React.PureComponent {
 				{!simple && (
 					<div class="content">
 						{children.map((child, i) => {
-							let value = child.props.value || i;
+							let value = this.getValue(child.props.value, i);
 							if (activeTab == value && child instanceof Object && child.type == Tab) {
 								return child.props.children;
 							}
@@ -50,6 +47,15 @@ export class Tabs extends React.PureComponent {
 				)}
 			</div>
 		)
+	}
+
+	getValue(v, i) {
+		let {activeTab} = this.state;
+		let value = v || i;
+		if (i == 0 && activeTab === 0 && v) {
+			value = 0;
+		}
+		return value;
 	}
 
 	handleSelectTab = (e) => {

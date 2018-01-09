@@ -1,0 +1,32 @@
+.self {
+	var .p10-20;
+
+	.title {
+		var .fs19;
+	}
+	.link {
+		var .abs.t-20.r100p.mr20.bc-fff.wh60.br50p.shad-333-2.cen.pntr.c-555.nosel;
+		..icon {
+			var .lh60.fs30;
+		}
+		&:hover {
+			var .c-333.shad-000-2;		
+		}
+	}
+	.prev,
+	.next {
+		var .fix.t50p.mt-70.wh140.br50p.bc-555.c-eee.pntr.box.nosel;
+		..icon {
+			var .fs50.lh140;
+		}
+		&:hover {
+			var .bc-333;
+		}
+	}
+	.prev {
+		var .l-70.rt.pr15;
+	}
+	.next {
+		var .r-70.pl15;
+	}
+}
