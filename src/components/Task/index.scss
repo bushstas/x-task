@@ -1,6 +1,9 @@
 .self {
-	var .rel.bo-ddd.br3.mb10.p10-15.pl100.pntr;
+	var .rel.bo-ddd.br3.mb10.p10-15.pl155.pntr;
 
+	..avatar {
+		var .abs.l96.t5.wh46;
+	}
 	.title {
 		var .fs17;
 	}

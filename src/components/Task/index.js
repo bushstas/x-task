@@ -1,6 +1,7 @@
 import React from 'react';
 import {icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
+import Avatar from '../Avatar';
 
 export default class Task extends React.Component {
 	render() {
@@ -23,6 +24,7 @@ export default class Task extends React.Component {
 						{icons.task_imp[data.importance]}
 					</Icon>
 				</div>
+				<Avatar id={data.avatar_id}/>
 				<div class="title">
 					{d.title}
 				</div>
