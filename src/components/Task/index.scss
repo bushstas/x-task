@@ -1,8 +1,17 @@
 .self {
-	var .rel.bo-ddd.br3.mb10.p10-15.pl155.pntr;
+	var .rel.bo-ddd.br3.mb10.p10-15.pl155.pr55.pntr;
 
 	..avatar {
 		var .abs.l96.t5.wh46;
+	}
+	..task-actions {
+		var .abs.r.t.b.w50.o4;
+		..icon {
+			var .abs.t50p.mt-15.l50p.ml-15;
+		}
+		&:hover {
+			var .o9;
+		}
 	}
 	.title {
 		var .fs17;

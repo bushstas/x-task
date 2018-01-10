@@ -189,7 +189,8 @@ class Tasks extends React.Component {
 						data={task}
 						key={i}
 						index={i}
-						onClick={this.onTaskClick}/>
+						onClick={this.onTaskClick}
+						onActionsClick={this.onTaskActionsClick}/>
 				)
 			});
 		}
@@ -217,6 +218,10 @@ class Tasks extends React.Component {
 
 	onTaskClick = (data, index) => {
 		this.props.doAction('TASKS_SHOW', {data, index});
+	}
+
+	onTaskActionsClick = (id) => {
+		alert(id)
 	}
 
 	handleInfoClose = () => {

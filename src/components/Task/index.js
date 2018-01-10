@@ -2,8 +2,14 @@ import React from 'react';
 import {icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
+import TaskActions from '../TaskActions';
 
 export default class Task extends React.Component {
+	static defaultProps = {
+		onClick: () => {},
+		onActionsClick: () => {}
+	}
+
 	render() {
 		let {data, onClick, status} = this.props;
 		let {data: d} = data;
@@ -24,18 +30,27 @@ export default class Task extends React.Component {
 						{icons.task_imp[data.importance]}
 					</Icon>
 				</div>
-				<Avatar id={data.avatar_id}/>
+				
+				<Avatar 
+					id={data.avatar_id}
+					userName={data.user_name}/>
+				
 				<div class="title">
 					{d.title}
 				</div>
 				<div class="status">
 					{data.changed}
 				</div>
+				<TaskActions onClick={this.handleActionsClick}/>
 			</div>
 		)
 	}
 
 	handleClick = () => {
 		this.props.onClick(this.props.data, this.props.index);
+	}
+
+	handleActionsClick = () => {
+		this.props.onActionsClick(this.props.data.id);
 	}
 }
