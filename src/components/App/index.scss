@@ -33,6 +33,15 @@ body {
 }
 
 ..main-box {
+	*::-webkit-scrollbar {
+	  width: 8px;
+	  height: 8px;
+	  background-color: #ccc;
+	}
+	*::-webkit-scrollbar-thumb {
+	    background: #888; 
+	}
+
 	var .ff-Roboto.c-111;
 
 	button {
