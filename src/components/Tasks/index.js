@@ -8,6 +8,7 @@ import Button from '../../ui/Button';
 import Task from '../Task';
 import TaskInfo from '../TaskInfo';
 import TaskButton from '../TaskButton';
+import TaskActions from '../TaskActions';
 import Store from 'xstore';
 import {getRoleId, getTasksCount} from '../../utils/User';
 
@@ -24,7 +25,8 @@ class Tasks extends React.Component {
 				status,
 				shownTaskData,
 				shownTaskIndex,
-				prevNextButtons
+				prevNextButtons,
+				taskActionsData
 			} = this.props;
 
 	 	return (
@@ -63,6 +65,11 @@ class Tasks extends React.Component {
 							onPrev={this.handlePrevTask}
 							onNext={this.handleNextTask}/>
 					</Dialog>
+				)}
+				{taskActionsData && (
+					<TaskActions 
+						data={taskActionsData}
+						onClose={this.handleActionsClose}/>
 				)}
 				{this.leftMenu}
 				{this.rightMenu}
@@ -138,7 +145,9 @@ class Tasks extends React.Component {
 				
 		}
 		tabs.push(
-			<Tab caption={dict.status_delayed} value="delayed" key="delayed"/>
+			<Tab caption={dict.status_delayed} value="delayed" key="delayed"/>,
+			<Tab caption={dict.status_frozen} value="frozen" key="frozen"/>,
+			<Tab caption={dict.status_closed} value="closed" key="closed"/>
 		);
 		return tabs;
 	}
@@ -189,8 +198,8 @@ class Tasks extends React.Component {
 						data={task}
 						key={i}
 						index={i}
-						onClick={this.onTaskClick}
-						onActionsClick={this.onTaskActionsClick}/>
+						onClick={this.handleTaskClick}
+						onActionsClick={this.handleTaskActionsClick}/>
 				)
 			});
 		}
@@ -216,12 +225,16 @@ class Tasks extends React.Component {
 		this.props.doAction('TASKS_LOAD', {status});
 	}
 
-	onTaskClick = (data, index) => {
+	handleTaskClick = (data, index) => {
 		this.props.doAction('TASKS_SHOW', {data, index});
 	}
 
-	onTaskActionsClick = (id) => {
-		alert(id)
+	handleTaskActionsClick = (id) => {
+		this.props.doAction('TASKS_SHOW_ACTIONS', id);
+	}
+
+	handleActionsClose = () => {
+		this.props.dispatch('TASKS_CHANGED', {taskActionsData: null});	
 	}
 
 	handleInfoClose = () => {

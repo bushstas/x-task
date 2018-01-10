@@ -1,5 +1,18 @@
 .self {
-	..icon {
-		var .fs28;
+	var .fix.l.t.r.b.z9999.flex.flcen;
+
+	.mask {
+		var .abs.z1.l.r.t.b.bc-a6a6a6.o9;
+	}
+
+	.content {
+		var .abs.z2.bc-fff.p20.br5;
+	}
+	..button {
+		var .bl.w160.mb5.fs15.lh40;
+		
+		&:last-child {
+			var .mb;
+		}
 	}
 }
