@@ -1,8 +1,14 @@
 .self {
 	var .p10-20;
-
+	
+	.content {
+		var .rel.pr80;
+	}
 	.title {
 		var .fs19;
+	}
+	.participants {
+		var .abs.w80.r.t;	
 	}
 	.link {
 		var .abs.t-20.r100p.mr20.bc-fff.wh60.br50p.shad-333-2.cen.pntr.c-555.nosel;

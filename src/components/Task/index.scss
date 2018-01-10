@@ -22,6 +22,9 @@
 	&..status-cant_do {
 		var .boc-f1c6ce.bc-fff2f4;
 	}
+	&..status-delayed {
+		var .boc-aaa.bc-e8e8e8;
+	}
 	&:hover {
 		var .boc-909090;
 		&..status-ready {
@@ -32,6 +35,9 @@
 		}
 		&..status-cant_do {
 			var .boc-bf8792.bc-f1d9dc;
+		}
+		&..status-delayed {
+			var .boc-888.bc-d8d8d8;
 		}
 	}
 }

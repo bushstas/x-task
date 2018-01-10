@@ -2,7 +2,13 @@ import React from 'react';
 
 export default class Select extends React.PureComponent {
 	static defaultProps = {
-		onChange: () => {}
+		onChange: () => {},
+		onDispose: () => {}
+	}
+
+	componentWillUnmount() {
+		let {name, onDispose} = this.props;
+		onDispose(name);
 	}
 
 	render() {

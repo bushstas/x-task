@@ -2,7 +2,13 @@ import React from 'react';
 
 export default class Input extends React.PureComponent {
 	static defaultProps = {
-		onChange: () => {}
+		onChange: () => {},
+		onDispose: () => {}
+	}
+
+	componentWillUnmount() {
+		let {name, onDispose} = this.props;
+		onDispose(name);
 	}
 
 	render() {
@@ -12,6 +18,7 @@ export default class Input extends React.PureComponent {
 			value = '',
 			onValidate,
 			onChange,
+			onDispose,
 			...others
 		} = this.props;
 		let props = {

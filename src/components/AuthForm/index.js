@@ -26,7 +26,7 @@ export default class AuthForm extends React.Component {
 	            
 	            <Form 
 	            	onChange={this.handleFormChange}
-	            	onSubmit={onSubmit}>
+	            	onSubmit={this.handleSubmit}>
 
 	            	<FormField caption={dict.login}>
 	            		<Input name="login" value={formData.login}/>
@@ -49,7 +49,7 @@ export default class AuthForm extends React.Component {
 	            		caption={dict.name}
 	            		classes=".mt10"
 	            		isPresent={mode == 'r'}>
-	            		<Input name="name" value={formData.name}/>
+	            		<Input name="userName" value={formData.userName}/>
 	            	</FormField>
 
 	            	<FormField 
@@ -86,5 +86,11 @@ export default class AuthForm extends React.Component {
 
 	changeModeButtonClick = () => {
 		this.setState({mode: this.state.mode == 'r' ? 'a' : 'r'});
+	}
+
+	handleSubmit = (data) => {
+		let {mode} = this.state;
+		let {onSubmit} = this.props;
+		onSubmit(data, mode);
 	}
 }

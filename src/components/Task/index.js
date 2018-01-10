@@ -4,9 +4,12 @@ import Icon from '../../ui/Icon';
 
 export default class Task extends React.Component {
 	render() {
-		let {data, onClick} = this.props;
+		let {data, onClick, status} = this.props;
 		let {data: d} = data;
-		let className = $classy(data.status, '.status-', ['ready', 'in_work', 'cant_do']);
+		let className;
+		if (!status || status == 'all') {
+			className = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed']);	
+		}		
 		return (
 			<div class="self $className" onClick={this.handleClick}>
 				<div class="icons">

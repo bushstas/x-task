@@ -8,6 +8,9 @@ let ROOTS = [],
 
 export const init = (data) => {
 	let {roots, nohashes, noparams, getparams} = data;
+	if (typeof roots != 'string') {
+		roots = '';
+	}
 	roots = roots.trim().replace(/[\r\n]+/g, ',').replace(/,{2,}/g, '').replace(/\s/g, '').split(',');
 	if (!!roots[0]) {
 		ROOTS = roots;

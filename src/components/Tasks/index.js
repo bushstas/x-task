@@ -3,6 +3,7 @@ import {dict, icons} from '../../utils/Dictionary';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Dialog from '../../ui/Dialog';
 import Loader from '../../ui/Loader';
+import Icon from '../../ui/Icon';
 import Button from '../../ui/Button';
 import Task from '../Task';
 import TaskInfo from '../TaskInfo';
@@ -137,7 +138,7 @@ class Tasks extends React.Component {
 				
 		}
 		tabs.push(
-			<Tab caption={dict.status_cant_do} value="cant_do" key="cant_do"/>
+			<Tab caption={dict.status_delayed} value="delayed" key="delayed"/>
 		);
 		return tabs;
 	}
@@ -179,11 +180,12 @@ class Tasks extends React.Component {
 	}
 
 	get tasks() {
-		let {tasks} = this.props;
+		let {tasks, status} = this.props;
 		if (tasks instanceof Array && tasks.length > 0) {
 			return tasks.map((task, i) => {
 				return (
 					<Task 
+						status={status}
 						data={task}
 						key={i}
 						index={i}
@@ -196,8 +198,11 @@ class Tasks extends React.Component {
 
 	get noTasks() {
 		return (
-			<div class=".no-tasks">
-				{dict.no_tasks}
+			<div class="no-tasks">
+				<Icon icon="sad"/>
+				<div class="no-tasks-text">
+					{dict.no_tasks}
+				</div>
 			</div>
 		)
 	}

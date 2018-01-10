@@ -18,6 +18,12 @@ const INPUT_TYPES = [
 
 export default class FormField extends React.PureComponent {
 
+	static defaultProps = {
+		onChange: () => {},
+		onValidate: () => {},
+		onDispose: () => {}
+	}
+
 	render() {
 		let {classes} = this.props;
 		return (
@@ -81,6 +87,7 @@ export default class FormField extends React.PureComponent {
 			if (INPUT_TYPES.indexOf(child.type) > -1) {
 				props.onChange = this.props.onChange;
 				props.onValidate = this.props.onValidate;
+				props.onDispose = this.props.onDispose;
 			}
 			return React.cloneElement(
 				child,

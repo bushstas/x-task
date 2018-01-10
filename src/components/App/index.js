@@ -172,8 +172,12 @@ class App extends React.PureComponent {
     this.setState({isAuthorized});
   }
 
-  handleSubmitAuthForm = (data) => {
-    auth(data).then(this.handleAuthStatusChanged);
+  handleSubmitAuthForm = (data, action) => {
+    if (action == 'r') {
+      register(data).then(this.handleAuthStatusChanged);  
+    } else {
+      auth(data).then(this.handleAuthStatusChanged);
+    }
   }
 
   handleNavigate = ({target: {dataset: {name}}}) => {

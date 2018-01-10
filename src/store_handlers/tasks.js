@@ -76,14 +76,14 @@ const load = ({dispatch, state}, data = {}) => {
   let {filter, status, importance, type} = state;
   if (data.importance) {
     if (data.importance == importance) {
-      data.importance = null;
+      data.importance = '';
     }
     importance = data.importance;
     dispatch('TASKS_CHANGED', data);
   }
   if (data.type) {
     if (data.type == type) {
-       data.type = null;
+       data.type = '';
     }
     type = data.type;
     dispatch('TASKS_CHANGED', data);
@@ -135,6 +135,14 @@ const show_next = ({dispatch, state}) => {
 const hide = ({dispatch}) => {
   dispatch('TASKS_HIDDEN');
 }
+
+const load_task_info = ({dispatch}, id) => {
+  dispatch('TASKS_FETCHING');
+  get('load_task_info', {id})
+  .then((data) => {
+    dispatch('TASKS_LOADED', data);
+  });
+}
  
 export default {
   onStateChanged,
@@ -143,7 +151,8 @@ export default {
     show,
     hide,
     show_prev,
-    show_next
+    show_next,
+    load_task_info
   },
   reducers: {
     init,

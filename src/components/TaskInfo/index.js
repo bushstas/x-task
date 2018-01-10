@@ -1,8 +1,13 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
+import Store from 'xstore';
 
-export default class TaskInfo extends React.Component {
+class TaskInfo extends React.Component {
+	componentDidMount() {
+		this.props.doAction('TASKS_LOAD_TASK_INFO', this.props.data.id);
+	}
+
 	render() {
 		let {data} = this.props;
 		let {data: d} = data;
@@ -12,8 +17,13 @@ export default class TaskInfo extends React.Component {
 					<Icon icon="open"/>
 				</div>
 				{this.buttons}
-				<div class="title">
-					{d.title}
+				<div class="content">
+					<div class="participants">
+						1111
+					</div>
+					<div class="title">
+						{d.title}
+					</div>
 				</div>
 			</div>
 		)
@@ -41,3 +51,9 @@ export default class TaskInfo extends React.Component {
 		this.props.onNext();
 	}
 }
+
+let params = {
+	has: 'tasks',
+	flat: true
+}
+export default Store.connect(TaskInfo, params);

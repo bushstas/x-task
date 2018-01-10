@@ -123,11 +123,17 @@ const doAction = (action, data) => {
 }
 
 export const auth = (data) => {
+	if (!data.login) {
+		data.login = '';
+	}
 	doAction('auth', data);
 	return {then}
 }
 
 export const register = (data) => {
+	if (!data.login) {
+		data.login = '';
+	}
 	doAction('register', data);
 	return {then}
 }

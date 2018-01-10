@@ -4,9 +4,15 @@
 		var .c-eee.fs22;
 	}
 	&.active {
-		var .bc-fff.w34;
+		var .bc-fff!.w34;
 		..icon {
-			var .c-333;
+			var .c-333!;
+		}
+	}
+	&:hover {
+		var .w36.bc-444;
+		..icon {
+			var .c-fff;
 		}
 	}
 	&.left {
