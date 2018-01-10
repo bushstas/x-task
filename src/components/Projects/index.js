@@ -167,6 +167,9 @@ class Projects extends React.Component {
 
 	get shownButtons() {
 		let {formShown} = this.props;
+		if (!hasRight('add_project')) {
+			return [];
+		}
 		if (formShown == 'edit') {
 			return ['save', 'cancel'];
 		}

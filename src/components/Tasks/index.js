@@ -69,7 +69,8 @@ class Tasks extends React.Component {
 				{taskActionsData && (
 					<TaskActions 
 						data={taskActionsData}
-						onClose={this.handleActionsClose}/>
+						onClose={this.handleActionsClose}
+						onAction={this.handleTaskAction}/>
 				)}
 				{this.leftMenu}
 				{this.rightMenu}
@@ -235,6 +236,10 @@ class Tasks extends React.Component {
 
 	handleActionsClose = () => {
 		this.props.dispatch('TASKS_CHANGED', {taskActionsData: null});	
+	}
+
+	handleTaskAction = (action) => {
+		this.props.doAction('TASKS_ACTION', action);
 	}
 
 	handleInfoClose = () => {

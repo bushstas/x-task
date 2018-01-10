@@ -41,7 +41,9 @@ export default class Task extends React.Component {
 				<div class="status">
 					{data.changed}
 				</div>
-				<TaskActionsButton onClick={this.handleActionsClick}/>
+				{data.actions && (
+					<TaskActionsButton onClick={this.handleActionsClick}/>
+				)}				
 			</div>
 		)
 	}

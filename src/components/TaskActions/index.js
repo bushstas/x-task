@@ -1,33 +1,31 @@
 import React from 'react';
 import Button from '../../ui/Button';
+import Loader from '../../ui/Loader';
 
 export default class TaskActions extends React.Component {
 	static defaultProps = {
 		onClose: () => {}
 	}
 
-	componentDidMount() {
-
-	}
-
 	render() {
+		let {data: {dict}} = this.props;
 		return (
 			<div class="self">
 				<div class="mask" onClick={this.handleClickMask}/>
-				<div class="content">
+				<Loader classes="content" fetching={!dict}>
 					{this.buttons}
-				</div>
+				</Loader>
 			</div>
 		)
 	}
 
 	get buttons() {
-		let {data: {actions = [], dict}} = this.props;
+		let {data: {actions = [], dict}, onAction} = this.props;
 		return (
 			<div class="actions">
 				{actions.map((action) => {
 					return (
-						<Button key={action}>
+						<Button key={action} value={action} onClick={onAction}>
 							{dict[action]}
 						</Button>
 					)

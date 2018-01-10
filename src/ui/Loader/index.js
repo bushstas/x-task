@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Loader({fetching, classes, height, children}) {
+export default function Loader({fetching, classes, className, height, children}) {
 	return (
 		<div class="$classes">
 			{children}

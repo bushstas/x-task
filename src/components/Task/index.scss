@@ -1,5 +1,5 @@
 .self {
-	var .rel.bo-ddd.br3.mb10.p10-15.pl155.pr55.pntr;
+	var .rel.bo-ddd.br3.mb10.p10-15.pl155.pr55.pntr.mnh40;
 
 	..avatar {
 		var .abs.l96.t7.wh46;
@@ -14,7 +14,7 @@
 		}
 	}
 	.title {
-		var .fs17;
+		var .fs17.lh17.pb2;
 	}
 	.status {
 		var .fs13.lh17.c-777;
@@ -43,7 +43,7 @@
 			var .boc-91af70.bc-daf3c2;
 		}
 		&..status-in_work {
-			var .boc-b7b15f.bc-f7f1cf;
+			var .boc-b7b15f.bc-f7f6cf;
 		}
 		&..status-cant_do {
 			var .boc-bf8792.bc-f1d9dc;

@@ -151,6 +151,14 @@ const show_actions = ({dispatch}, id) => {
     dispatch('TASKS_CHANGED', {taskActionsData: data});
   });
 }
+
+const action = ({dispatch, state}, name) => {
+  let {taskActionsData: {task_id: id}} = state;
+   get('task_action', {name, id})
+  .then((data) => {
+    dispatch('TASKS_LOADED', data);
+  });
+}
  
 export default {
   onStateChanged,
@@ -161,7 +169,8 @@ export default {
     show_prev,
     show_next,
     load_task_info,
-    show_actions
+    show_actions,
+    action
   },
   reducers: {
     init,
