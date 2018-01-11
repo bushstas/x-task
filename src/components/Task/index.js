@@ -33,6 +33,7 @@ export default class Task extends React.Component {
 				
 				<Avatar 
 					id={data.avatar_id}
+					userId={data.user_id}
 					userName={data.user_name}/>
 				
 				<div class="title">

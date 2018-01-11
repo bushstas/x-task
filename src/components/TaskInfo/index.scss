@@ -8,25 +8,25 @@
 		var .fs19;
 	}
 	.participants {
-		var .abs.w110.r20.t.p10.bc-e1e1e1.box;
+		var .abs.w110.r20.t.bc-e1e1e1.box;
 
 		.caption {
-			var .pb6.fs13;
+			var .mb6.fs13.bc-777.c-eee.br3.p0-5-2-5;
 		}
 		..avatar {
-			var .mb10;
+			var .mb3;
 		}
 	}
 	.participant {
-		var .pb12.mb12.bob-555-2;
+		var .bob-a1a1a1.p10;
 		&:last-child {
 			border-bottom: 0;
 		}
 	}
 	.link {
-		var .abs.t-20.r100p.mr20.bc-fff.wh60.br50p.shad-333-2.cen.pntr.c-555.nosel;
+		var .abs.t-20.r100p.mr20.bc-fff.wh50.br50p.shad-333-2.cen.pntr.c-555.nosel;
 		..icon {
-			var .lh60.fs30;
+			var .lh50.fs26;
 		}
 		&:hover {
 			var .c-333.shad-000-2;		

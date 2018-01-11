@@ -11,7 +11,7 @@ export default class Avatar extends React.Component {
 	}
 
 	render() {
-		let {id, classes, userName} = this.props;
+		let {id, classes, userId, userName} = this.props;
 		let style = {
 			backgroundImage: 'url(' + AVATAR_PATH + id + '.png)'
 		}
@@ -20,7 +20,7 @@ export default class Avatar extends React.Component {
 				<div class="inner" style={style} onClick={this.handleClick}/>
 				{this.state.dialogShown && (
 					<UserInfo 
-						id={id}
+						id={userId}
 						name={userName}
 						onClose={this.handleDialogClose}/>
 				)}

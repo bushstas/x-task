@@ -1,4 +1,5 @@
 import Store from 'xstore';
+import StoreKeeper from '../StoreKeeper';
 
 let ROOTS = [],
 	ROOT = '',
@@ -21,6 +22,10 @@ export const init = (data) => {
 		getparams
 	}
 	initUrls();
+	let viewedTask = StoreKeeper.get('current_viewed_task');
+	if (viewedTask) {
+		alert(viewedTask)
+	}
 }
 
 export const initUrl = (nohashes, noparams) => {
@@ -154,6 +159,23 @@ export const hasHash = () => {
 
 export const hasGetParams = () => {
 	return !!location.search.replace(/\?/, '');
+}
+
+export const resolveTaskUrl = (urls) => {
+	let {host} = location;
+
+	for (let url of urls) {
+		let ps = url.split('://');
+		if (ps[1]) {
+			url = ps[1];
+		}
+		ps = url.split('/');
+		let urlHost = ps[0];
+		if (urlHost == host) {
+			return location.protocol + '//' + url;
+		}
+	}
+	return '';
 }
 
 window.addEventListener('popstate', handlePopState);

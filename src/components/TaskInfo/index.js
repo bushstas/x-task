@@ -1,8 +1,10 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
+import StoreKeeper from '../../utils/StoreKeeper';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
 import Store from 'xstore';
+import {resolveTaskUrl} from '../../utils/TaskResolver';
 
 class TaskInfo extends React.Component {
 	componentDidMount() {
@@ -12,11 +14,12 @@ class TaskInfo extends React.Component {
 	render() {
 		let {data} = this.props;
 		let {data: d} = data;
+		let href = resolveTaskUrl(d.urls);
 		return (
 			<div class="self">
-				<div class="link">
+				<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
 					<Icon icon="open"/>
-				</div>
+				</a>
 				{this.buttons}
 				<div class="content">
 					{this.participants}
@@ -41,7 +44,8 @@ class TaskInfo extends React.Component {
 					</div>
 					<Avatar 
 						classes="~large"
-						id={users.author.id} 
+						id={users.author.avatar_id}
+						userId={users.author.id}
 						userName={users.author.name}/>
 					<div class="name">
 						{users.author.name}
@@ -54,7 +58,8 @@ class TaskInfo extends React.Component {
 						</div>
 						<Avatar 
 							classes="~large"
-							id={users.executor.id} 
+							id={users.executor.avatar_id}
+							userId={users.executor.id}
 							userName={users.executor.name}/>
 						<div class="name">
 							{users.executor.name}
@@ -68,11 +73,11 @@ class TaskInfo extends React.Component {
 						</div>
 						{users.executors.map((ex) => {
 							return (
-								<div>
+								<div key={ex.id}>
 									<Avatar 
-										key={ex.id}
 										classes="~large"
-										id={ex.id} 
+										id={ex.avatar_id}
+										userId={ex.id} 
 										userName={ex.name}/>
 									<div class="name">
 										{ex.name}
@@ -106,6 +111,11 @@ class TaskInfo extends React.Component {
 
 	handleNextClick = () => {
 		this.props.onNext();
+	}
+
+	handleLinkMouseDown = () => {
+		let {data: {id}} = this.props;
+		StoreKeeper.set('current_viewed_task', id);
 	}
 }
 
