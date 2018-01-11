@@ -28,7 +28,8 @@ export default class Avatar extends React.Component {
 		)
 	}
 
-	handleClick = () => {alert(111)
+	handleClick = (e) => {
+		e.stopPropagation();
 		this.setState({dialogShown: true});
 	}
 

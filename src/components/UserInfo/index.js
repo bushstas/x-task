@@ -5,11 +5,13 @@ import Dialog from '../../ui/Dialog';
 export default class UserInfo extends React.Component {
 
 	render() {
-		let {name} = this.props;
+		let {name, onClose} = this.props;
 		return (
 			<Dialog
 				title={name}
-				classes="~large self">
+				classes="~large self"
+				onClose={onClose}
+				clickMaskToClose>
 				111111111111
 			</Dialog>
 		)

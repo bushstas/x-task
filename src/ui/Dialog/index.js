@@ -3,12 +3,12 @@ import Icon from '../Icon';
 import {dict} from '../../utils/Dictionary';
 
 export default class Dialog extends React.Component {
-	static defailtProps = {
+	static defaultProps = {
 		onClose: () => {}
 	}
 
 	render() {
-		let {onClose, children, classes, titleContent} = this.props;
+		let {children, classes, titleContent} = this.props;
 		return (
 			<div class="box $classes">
 				<div class="mask" onClick={this.handleMaskClick}/>
@@ -18,7 +18,7 @@ export default class Dialog extends React.Component {
 						{titleContent}
 						
 						<Icon icon="close" 
-							onClick={onClose}
+							onClick={this.handleClose}
 							classes="close"/>
 					</div>
 					<div class="content">
@@ -42,10 +42,16 @@ export default class Dialog extends React.Component {
 		);
 	}
 
-	handleMaskClick = () => {
-		let {onClose, clickMaskToClose} = this.props;
+	handleClose = (e) => {
+		e.stopPropagation();
+		this.props.onClose();
+	}
+
+	handleMaskClick = (e) => {
+		e.stopPropagation();
+		let {clickMaskToClose} = this.props;
 		if (clickMaskToClose) {
-			onClose();
+			this.handleClose(e);
 		}
 	}
 }
