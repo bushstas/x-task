@@ -1,6 +1,7 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
+import Avatar from '../Avatar';
 import Store from 'xstore';
 
 class TaskInfo extends React.Component {
@@ -18,13 +19,58 @@ class TaskInfo extends React.Component {
 				</div>
 				{this.buttons}
 				<div class="content">
-					<div class="participants">
-						1111
-					</div>
+					{this.participants}
 					<div class="title">
 						{d.title}
 					</div>
 				</div>
+			</div>
+		)
+	}
+
+	get participants() {
+		let {info: {dict, users}} = this.props;
+		if (!dict) {
+			return;
+		}
+		return (
+			<div class="participants">
+				<div class="author">
+					<div class="caption">
+						{dict.author}
+					</div>
+					<Avatar 
+						classes="~large"
+						id={users.author.id} 
+						userName={users.author.name}/>
+				</div>
+				{users.executor && (
+					<div class="executor">
+						<div class="caption">
+							{dict.executor}
+						</div>
+						<Avatar 
+							classes="~large"
+							id={users.executor.id} 
+							userName={users.executor.name}/>
+					</div>
+				)}
+				{users.executors && (
+					<div class="executor">
+						<div class="caption">
+							{dict.executors}
+						</div>
+						{users.executors.map((ex) => {
+							return (
+								<Avatar 
+									key={ex.id}
+									classes="~large"
+									id={ex.id} 
+									userName={ex.name}/>
+							)
+						})}
+					</div>
+				)}
 			</div>
 		)
 	}

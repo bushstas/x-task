@@ -3,13 +3,17 @@ import {get, post} from '../utils/Fetcher';
  
 const DEFAULT_STATE = {
   tasks: [],
-  tasksFetching: false 
+  tasksFetching: false,
+  info: {}
 }
 
 const STORAGE_KEY = 'tasks_page';
 let savedState = StoreKeeper.get(STORAGE_KEY);
 
-let defaultState = savedState || DEFAULT_STATE;
+let defaultState = {
+  ...DEFAULT_STATE,
+  ...savedState
+};
 let timeout;
 const onStateChanged = (state) => {
   clearTimeout(timeout);
@@ -139,8 +143,8 @@ const hide = ({dispatch}) => {
 const load_task_info = ({dispatch}, id) => {
   dispatch('TASKS_FETCHING');
   get('load_task_info', {id})
-  .then((data) => {
-    dispatch('TASKS_LOADED', data);
+  .then((info) => {
+    dispatch('TASKS_LOADED', {info});
   });
 }
 

@@ -2,13 +2,20 @@
 	var .p10-20;
 	
 	.content {
-		var .rel.pr80;
+		var .abs.l20.r.t20.b20.ova.pr80;
 	}
 	.title {
 		var .fs19;
 	}
 	.participants {
-		var .abs.w80.r.t;	
+		var .abs.w90.r20.t;
+
+		.caption {
+			var .pb6.fs13;
+		}
+		..avatar {
+			var .mb10;
+		}
 	}
 	.link {
 		var .abs.t-20.r100p.mr20.bc-fff.wh60.br50p.shad-333-2.cen.pntr.c-555.nosel;
