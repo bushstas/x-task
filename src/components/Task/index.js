@@ -15,7 +15,7 @@ export default class Task extends React.Component {
 		let {data: d} = data;
 		let className;
 		if (!status || status == 'all') {
-			className = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed']);	
+			className = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);	
 		}		
 		return (
 			<div class="self $className" onClick={this.handleClick}>

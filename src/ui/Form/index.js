@@ -6,6 +6,7 @@ export default class Form extends React.Component {
 	static defaultProps = {
 		onControlChange: () => {},
 		onChange: () => {},
+		onDispose: () => {},
 		onSubmit: () => {}
 	}
 
@@ -56,7 +57,6 @@ export default class Form extends React.Component {
 				}
 				props.onChange = this.handleControlChange;
 				props.onValidate = this.props.onChange;
-				props.onDispose = this.handleControlDispose;
 			} else  if (child.type == FormSubmit) {
 				props.onClick = this.handleSubmit;
 			}
@@ -77,13 +77,6 @@ export default class Form extends React.Component {
 		onControlChange(name, value);
 		let {formData} = this.state;
 		formData[name] = value;
-		onChange(formData);
-	}
-
-	handleControlDispose = (name) => {
-		let {onChange} = this.props;
-		let {formData} = this.state;
-		delete formData[name];
 		onChange(formData);
 	}
 

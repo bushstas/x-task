@@ -4,7 +4,8 @@ import Loader from '../../ui/Loader';
 
 export default class TaskActions extends React.Component {
 	static defaultProps = {
-		onClose: () => {}
+		onClose: () => {},
+		onAction: () => {}
 	}
 
 	render() {
@@ -24,14 +25,24 @@ export default class TaskActions extends React.Component {
 		return (
 			<div class="actions">
 				{actions.map((action) => {
+					let {name, available} = action;
 					return (
-						<Button key={action} value={action} onClick={onAction}>
-							{dict[action]}
+						<Button 
+							key={name}
+							value={name}
+							onClick={this.handleAction}
+							disabled={!available}>
+							{dict[name]}
 						</Button>
 					)
 				})}
 			</div>
 		)
+	}
+
+	handleAction = (action) => {
+		this.props.onAction(action);
+		this.handleClickMask();
 	}
 
 	handleClickMask = () => {

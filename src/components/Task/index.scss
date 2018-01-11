@@ -31,11 +31,11 @@
 	&..status-in_work {
 		var .boc-eae6b4.bc-fffbe5;
 	}
-	&..status-cant_do {
-		var .boc-f1c6ce.bc-fff2f4;
-	}
 	&..status-delayed {
 		var .boc-aaa.bc-e8e8e8;
+	}
+	&..status-frozen {
+		var .boc-b9ccdc.bc-e5f3ff;
 	}
 	&:hover {
 		var .boc-909090;
@@ -45,11 +45,11 @@
 		&..status-in_work {
 			var .boc-b7b15f.bc-f7f6cf;
 		}
-		&..status-cant_do {
-			var .boc-bf8792.bc-f1d9dc;
-		}
 		&..status-delayed {
 			var .boc-888.bc-d8d8d8;
+		}
+		&..status-frozen {
+			var .boc-829bb1.bc-d1e3f3;
 		}
 	}
 }

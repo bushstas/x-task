@@ -6,8 +6,8 @@ export default class Button extends React.Component {
 	}
 
 	render() {
-		let {classes, children, href, onClick, width, ...others} = this.props;
-		classes = $classy('self $classes');
+		let {classes, children, href, onClick, disabled, width, ...others} = this.props;
+		classes = $classy('self $classes $?disabled');
 		let props = {
 			className: classes,
 			onClick: this.handleClick,
@@ -33,7 +33,8 @@ export default class Button extends React.Component {
 	}
 
 	handleClick = (e) => {
-		let {value} = this.props;
+		let {value, disabled} = this.props;
+		if (disabled) return;
 		this.props.onClick(value || e);
 	}
 }

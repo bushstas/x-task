@@ -152,11 +152,11 @@ const show_actions = ({dispatch}, id) => {
   });
 }
 
-const action = ({dispatch, state}, name) => {
+const action = ({doAction, state}, name) => {
   let {taskActionsData: {task_id: id}} = state;
    get('task_action', {name, id})
   .then((data) => {
-    dispatch('TASKS_LOADED', data);
+    doAction('TASKS_LOAD');
   });
 }
  

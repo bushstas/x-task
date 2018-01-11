@@ -25,4 +25,10 @@
 			background-color: #f1f1f1;
 		}
 	}
+	&.disabled {
+		background-color: #ccc !important;
+		border: 1px solid #ccc !important;
+		color: #999 !important;
+		cursor: default;
+	}
 }
