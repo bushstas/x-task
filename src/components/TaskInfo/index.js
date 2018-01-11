@@ -35,7 +35,7 @@ class TaskInfo extends React.Component {
 		}
 		return (
 			<div class="participants">
-				<div class="author">
+				<div class="participant">
 					<div class="caption">
 						{dict.author}
 					</div>
@@ -43,9 +43,12 @@ class TaskInfo extends React.Component {
 						classes="~large"
 						id={users.author.id} 
 						userName={users.author.name}/>
+					<div class="name">
+						{users.author.name}
+					</div>
 				</div>
 				{users.executor && (
-					<div class="executor">
+					<div class="participant">
 						<div class="caption">
 							{dict.executor}
 						</div>
@@ -53,20 +56,28 @@ class TaskInfo extends React.Component {
 							classes="~large"
 							id={users.executor.id} 
 							userName={users.executor.name}/>
+						<div class="name">
+							{users.executor.name}
+						</div>
 					</div>
 				)}
 				{users.executors && (
-					<div class="executor">
+					<div class="participant">
 						<div class="caption">
 							{dict.executors}
 						</div>
 						{users.executors.map((ex) => {
 							return (
-								<Avatar 
-									key={ex.id}
-									classes="~large"
-									id={ex.id} 
-									userName={ex.name}/>
+								<div>
+									<Avatar 
+										key={ex.id}
+										classes="~large"
+										id={ex.id} 
+										userName={ex.name}/>
+									<div class="name">
+										{ex.name}
+									</div>
+								</div>
 							)
 						})}
 					</div>
