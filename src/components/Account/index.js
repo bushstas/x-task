@@ -4,6 +4,7 @@ import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
 import ActionButtons from '../ActionButtons';
+import Tasks from '../Tasks';
 import Store from 'xstore'
 
 class Account extends React.Component {
@@ -25,13 +26,13 @@ class Account extends React.Component {
 	get tabs() {		
 		return (
 			<Tabs onSelect={this.handleSelectTab} classes="~absolute">
+				<Tab caption={dict.my_tasks} value="tasks">
+					<Tasks my={true}/>
+				</Tab>
 				<Tab caption={dict.home} value="home">
 					2
 				</Tab>
 				<Tab caption={dict.notifications} value="notifications">
-					2
-				</Tab>
-				<Tab caption={dict.my_tasks} value="tasks">
 					2
 				</Tab>
 				<Tab caption={dict.info} value="users">

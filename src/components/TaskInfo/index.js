@@ -16,17 +16,21 @@ class TaskInfo extends React.Component {
 	}
 
 	render() {
-		let {data} = this.props;
+		let {data, info: {actions}} = this.props;
 		let {data: d} = data;
 		let href = resolveTaskUrl(d.urls);
 		return (
 			<div class="self">
-				<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
-					<Icon icon="open"/>
-				</a>
-				<div class="actions" onClick={this.handleActionsClick}>
-					<Icon icon="settings"/>
-				</div>
+				{actions && (
+					<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
+						<Icon icon="open"/>
+					</a>
+				)}
+				{actions && (
+					<div class="actions" onClick={this.handleActionsClick}>
+						<Icon icon="settings"/>
+					</div>
+				)}
 				{this.buttons}
 				<div class="content">
 					<table cellPadding="0" cellSpacing="0">

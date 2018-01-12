@@ -15,41 +15,27 @@ import {getRoleId, getTasksCount} from '../../utils/User';
 class Tasks extends React.Component {
 
 	componentDidMount() {
-		this.props.doAction('TASKS_LOAD');
+		if (this.props.my) {
+			this.props.doAction('TASKS_LOAD', {filter: 'my'});	
+		} else {
+			this.props.doAction('TASKS_LOAD');
+		}		
 	}
 
 	render() {
 		let {
-				fetching,
-				filter,
-				status,
-				shownTaskData,
-				shownTaskIndex,
-				prevNextButtons,
-				taskActionsData
-			} = this.props;
+			my,
+			fetching,
+			shownTaskData,
+			shownTaskIndex,
+			prevNextButtons,
+			taskActionsData
+		} = this.props;
 
 	 	return (
 	 		<div class="self">
-		 		{getRoleId() != 7 && (
-		 			<Tabs 
-						classes="main-tabs"
-			 			onSelect={this.handleSelectTab}
-			 			value={filter}
-			 			simple>
-			 			{this.firstTab}
-			 			{this.secondTab}
-			 			{this.thirdTab}
-					</Tabs>
-				)}
-				<Tabs 
-					classes="statuses"
-					onSelect={this.handleSelectStatusTab}
-					value={status}
-					simple>
-					{this.statusTabs}
-				</Tabs>
-		 		<Loader fetching={fetching} classes="content">
+		 		{this.tabs}
+		 		<Loader fetching={fetching} classes="content $?my">
 					{this.tasks}
 				</Loader>
 				{shownTaskData && (
@@ -79,7 +65,43 @@ class Tasks extends React.Component {
 		)
 	}
 
+	get tabs() {
+		let {
+			filter,
+			status,
+			my
+		} = this.props;
+		if (my) {
+			return;
+		}
+		return (
+			<div>
+				{getRoleId() != 7 && (
+			 		<Tabs 
+						classes="main-tabs"
+						onSelect={this.handleSelectTab}
+						value={filter}
+						simple>
+						{this.firstTab}
+						{this.secondTab}
+						{this.thirdTab}
+					</Tabs>
+				)}
+				<Tabs 
+					classes="statuses"
+					onSelect={this.handleSelectStatusTab}
+					value={status}
+					simple>
+					{this.statusTabs}
+				</Tabs>
+			</div>
+		)
+	}
+
 	get leftMenu() {
+		if (this.props.my) {
+			return;
+		}
 		let {task_imp} = icons;
 		let {importance} = this.props;
 		return (
@@ -103,6 +125,9 @@ class Tasks extends React.Component {
 	}
 
 	get rightMenu() {
+		if (this.props.my) {
+			return;
+		}
 		let {task_type} = icons;
 		let {type} = this.props;
 		return (

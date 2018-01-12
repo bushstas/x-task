@@ -39,10 +39,10 @@
 		}
 	}
 	&.absolute {
-		.menu {
+		& > .menu {
 			var .pl20;
 		}
-		.content {
+		& > .content {
 			var .abs.t60.l.r.b55.ova.box.p5-20;
 		}
 	}
