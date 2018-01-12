@@ -42,9 +42,9 @@
 	.history {
 		var .w200.box.fs13.p10;
 		.action {
-			var .pb6.mb6.bob-d4d4d4.rel.pl55;
+			var .pb6.mb6.bob-d4d4d4.rel.pl58;
 			..avatar {
-				var .abs.wh40.l5.t2;
+				var .abs.wh44.l5.t2;
 			}
 			.action-name {
 				var .bold.pb2;
@@ -90,6 +90,7 @@
 			}
 		}
 	}
+	.actions,
 	.link {
 		var .abs.t-20.r100p.mr20.bc-fff.wh50.br50p.shad-333-2.cen.pntr.c-555.nosel;
 		..icon {
@@ -98,6 +99,9 @@
 		&:hover {
 			var .c-333.shad-000-2;		
 		}
+	}
+	.actions {
+		var .t40;
 	}
 	.prev,
 	.next {

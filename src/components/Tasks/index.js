@@ -63,7 +63,8 @@ class Tasks extends React.Component {
 							index={shownTaskIndex}
 							buttons={prevNextButtons}
 							onPrev={this.handlePrevTask}
-							onNext={this.handleNextTask}/>
+							onNext={this.handleNextTask}
+							onActionsClick={this.handleTaskActionsClick}/>
 					</Dialog>
 				)}
 				{taskActionsData && (

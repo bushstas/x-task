@@ -22,6 +22,9 @@ class TaskInfo extends React.Component {
 				<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
 					<Icon icon="open"/>
 				</a>
+				<div class="actions" onClick={this.handleActionsClick}>
+					<Icon icon="settings"/>
+				</div>
 				{this.buttons}
 				<div class="content">
 					<table cellPadding="0" cellSpacing="0">
@@ -265,6 +268,10 @@ class TaskInfo extends React.Component {
 	handleLinkMouseDown = () => {
 		let {data: {id}} = this.props;
 		StoreKeeper.set('current_viewed_task', id);
+	}
+
+	handleActionsClick = () => {
+		this.props.onActionsClick(this.props.data.id);
 	}
 }
 

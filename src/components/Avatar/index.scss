@@ -1,9 +1,12 @@
 .self {
-	var .rel.bc-555.br3.box;
+	var .rel.bc-a0a0a0.br3.box.pntr;
 	.inner {
-		var .cvr.br3.abs.l2.t2.r2.b2;
+		var .cvr.br3.abs.l3.t3.r3.b3;
 	}
 	&.large {
 		var .wh90;
+	}
+	&:hover {
+		var .bc-bb9500;
 	}
 }
