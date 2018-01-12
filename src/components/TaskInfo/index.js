@@ -4,6 +4,8 @@ import StoreKeeper from '../../utils/StoreKeeper';
 import Icon from '../../ui/Icon';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Avatar from '../Avatar';
+import TaskComments from '../TaskComments';
+import TaskProblems from '../TaskProblems';
 import Store from 'xstore';
 import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
@@ -51,30 +53,36 @@ class TaskInfo extends React.Component {
 			commentsCount = comments.length;
 			problemsCount = problems.length;
 		}
-		
+		let titleClassName = $classy(data.importance, '.importance-', ['burning', 'urgent']);
+		let statusClassName = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		return (
 			<td>
-				<div class="status">
-					<div class="importance">
-						<Icon>
-							{icons.task_imp[data.importance]}
-						</Icon> 
-						{dict[data.importance]}
+				<div class="status $statusClassName">
+					<div class="left-side">
+						{dict['status_' + data.status]}
 					</div>
-					<div class="type">
-						<Icon>
-							{icons.task_type[data.type]}
-						</Icon> 
-						{dict[data.type]}
-					</div>
-					<div class="action">
-						<Icon>
-							{icons.task_act[data.action]}
-						</Icon> 
-						{dict[data.action]}
+					<div class="right-side">
+						<div class="importance">
+							<Icon>
+								{icons.task_imp[data.importance]}
+							</Icon> 
+							{dict[data.importance]}
+						</div>
+						<div class="type">
+							<Icon>
+								{icons.task_type[data.type]}
+							</Icon> 
+							{dict[data.type]}
+						</div>
+						<div class="action">
+							<Icon>
+								{icons.task_act[data.action]}
+							</Icon> 
+							{dict[data.action]}
+						</div>
 					</div>
 				</div>
-				<div class="title">
+				<div class="title $titleClassName">
 					{d.title}
 				</div>
 				<div class="description">
@@ -82,8 +90,8 @@ class TaskInfo extends React.Component {
 				</div>
 				<Tabs>
 					{this.renderTab(dict.information, infoCount, this.info)}
-					{this.renderTab(dict.comments, commentsCount, '2222')}
-					{this.renderTab(dict.problems, problemsCount, '333')}
+					{this.renderTab(dict.comments, commentsCount, this.comments)}
+					{this.renderTab(dict.problems, problemsCount, this.problems)}
 				</Tabs>
 				
 			</td>
@@ -129,6 +137,22 @@ class TaskInfo extends React.Component {
 						</div>
 					)
 				})}
+			</div>
+		)
+	}
+
+	get comments() {
+		return (
+			<div class="comments">
+				<TaskComments/>
+			</div>
+		)
+	}
+
+	get problems() {
+		return (
+			<div class="problems">
+				<TaskProblems/>
 			</div>
 		)
 	}
@@ -190,19 +214,6 @@ class TaskInfo extends React.Component {
 		}
 		return (
 			<div class="participants">
-				<div class="participant">
-					<div class="caption">
-						{dict.author}
-					</div>
-					<Avatar 
-						classes="~large"
-						id={users.author.avatar_id}
-						userId={users.author.id}
-						userName={users.author.name}/>
-					<div class="name">
-						{users.author.name}
-					</div>
-				</div>
 				{users.executor && (
 					<div class="participant">
 						<div class="caption">
@@ -218,6 +229,19 @@ class TaskInfo extends React.Component {
 						</div>
 					</div>
 				)}
+				<div class="participant">
+					<div class="caption">
+						{dict.author}
+					</div>
+					<Avatar 
+						classes="~large"
+						id={users.author.avatar_id}
+						userId={users.author.id}
+						userName={users.author.name}/>
+					<div class="name">
+						{users.author.name}
+					</div>
+				</div>
 				{users.executors && (
 					<div class="participant">
 						<div class="caption">

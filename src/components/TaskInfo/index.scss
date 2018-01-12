@@ -22,15 +22,39 @@
 		}
 	}
 	.title {
-		var .fs19.pb5.pt15;
+		var .fs19.mb5.mt10.lh19;
+		&..importance-burning {
+			var .p6-10.br3.bo-d8a42b.bc-ffd576.mb12;
+		}
+		&..importance-urgent {
+			var .p6-10.br3.bo-d82b3b.bc-ffa3a7.mb12;
+		}
 	}
 	.status {
-		var .bc-eaeaea.p7-10;
-		& > div {
-			var .inb.vmid.mr15;
-			..icon {
-				var .fl.mr6;
+		var .bc-eaeaea.p10.bo-e7e7e7.fs15.h40.box;
+		.left-side {
+			var .fl.fs16.bold;
+		}
+		.right-side {
+			var .fr;
+			& > div {
+				var .inb.vmid.mr15;
+				..icon {
+					var .fl.mr6;
+				}
 			}
+		}
+		&..status-ready {
+			var .boc-d0eab4.bc-f2ffe5;
+		}
+		&..status-in_work {
+			var .boc-eae6b4.bc-fffbe5;
+		}
+		&..status-delayed {
+			var .boc-aaa.bc-e8e8e8;
+		}
+		&..status-frozen {
+			var .boc-b9ccdc.bc-e5f3ff;
 		}
 	}
 	.description {
@@ -89,6 +113,12 @@
 				var .c-0075cc;
 			}
 		}
+	}
+	.comments {
+		var .pt10;
+	}
+	.problems {
+		var .pt10;
 	}
 	.actions,
 	.link {
