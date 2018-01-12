@@ -24,7 +24,7 @@ class Account extends React.Component {
 
 	get tabs() {		
 		return (
-			<Tabs onSelect={this.handleSelectTab}>
+			<Tabs onSelect={this.handleSelectTab} classes="~absolute">
 				<Tab caption={dict.home} value="home">
 					2
 				</Tab>

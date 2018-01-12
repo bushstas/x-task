@@ -2,9 +2,11 @@ import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import StoreKeeper from '../../utils/StoreKeeper';
 import Icon from '../../ui/Icon';
+import {Tabs, Tab} from '../../ui/Tabs';
 import Avatar from '../Avatar';
 import Store from 'xstore';
 import {resolveTaskUrl} from '../../utils/TaskResolver';
+import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
 	componentDidMount() {
@@ -22,11 +24,158 @@ class TaskInfo extends React.Component {
 				</a>
 				{this.buttons}
 				<div class="content">
-					{this.participants}
-					<div class="title">
-						{d.title}
+					<table cellPadding="0" cellSpacing="0">
+						<tbody>
+							<tr>
+								{this.leftColumn}
+								{this.middleColumn}
+								{this.rightColumn}
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		)
+	}
+
+	get leftColumn() {
+		let {data, info: {comments, problems}} = this.props;
+		let {data: d} = data;
+		let {info} = d;
+		let infoCount = Object.keys(info).length,
+			commentsCount, problemsCount;
+		if (comments) {
+			commentsCount = comments.length;
+			problemsCount = problems.length;
+		}
+		
+		return (
+			<td>
+				<div class="status">
+					<div class="importance">
+						<Icon>
+							{icons.task_imp[data.importance]}
+						</Icon> 
+						{dict[data.importance]}
+					</div>
+					<div class="type">
+						<Icon>
+							{icons.task_type[data.type]}
+						</Icon> 
+						{dict[data.type]}
+					</div>
+					<div class="action">
+						<Icon>
+							{icons.task_act[data.action]}
+						</Icon> 
+						{dict[data.action]}
 					</div>
 				</div>
+				<div class="title">
+					{d.title}
+				</div>
+				<div class="description">
+					{d.descr}
+				</div>
+				<Tabs>
+					{this.renderTab(dict.information, infoCount, this.info)}
+					{this.renderTab(dict.comments, commentsCount, '2222')}
+					{this.renderTab(dict.problems, problemsCount, '333')}
+				</Tabs>
+				
+			</td>
+		)
+	}
+
+	renderTab(caption, count, content) {
+		if (typeof count == 'number') {
+			caption = (
+				<span>
+					{caption} &nbsp;{count}
+					<span class="count">
+						{count}
+					</span>
+				</span>
+			);
+		}
+		return (
+			<Tab caption={caption}>
+				{content}
+			</Tab>
+		)
+	}
+
+	get info() {
+		let {data, info: {dict}} = this.props;
+		let {data: {info}} = data;
+		if (!dict) {
+			return;
+		}
+		return (
+			<div class="info">
+				{Object.keys(info).map((k) => {
+					return (
+						<div class="info-block" key={k}>
+							<div class="info-block-title">
+								<Icon>
+									{dict.icons[k]}
+								</Icon>
+								{dict.captions[k]}
+							</div>
+							<div class="info-block-content" dangerouslySetInnerHTML={{__html: parseText(info[k])}}/>
+						</div>
+					)
+				})}
+			</div>
+		)
+	}
+
+	get middleColumn() {
+		return (
+			<td>
+				{this.history}
+			</td>
+		)
+	}
+
+	get rightColumn() {
+		return (
+			<td>
+				{this.participants}
+			</td>
+		)
+	}
+
+	get history() {
+		let {info: {dict, history: h}} = this.props;
+		if (!dict) {
+			return;
+		}
+		return (
+			<div class="history">
+				<div class="caption">
+					{dict.history}
+				</div>
+				{h.map((action, i) => {
+					return (
+						<div class="action" key={i}>
+							<Avatar
+								id={action.avatar_id}
+								userId={action.user_id}
+								userName={action.user_name}
+							/>
+							<div class="action-name">
+								{dict[action.action]}
+							</div>
+							<div class="action-time">
+								{action.time}
+							</div>
+							<div class="action-ago">
+								{action.ago}
+							</div>
+						</div>
+					)
+				})}
 			</div>
 		)
 	}

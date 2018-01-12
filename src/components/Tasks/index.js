@@ -191,20 +191,22 @@ class Tasks extends React.Component {
 
 	get tasks() {
 		let {tasks, status} = this.props;
-		if (tasks instanceof Array && tasks.length > 0) {
-			return tasks.map((task, i) => {
-				return (
-					<Task 
-						status={status}
-						data={task}
-						key={i}
-						index={i}
-						onClick={this.handleTaskClick}
-						onActionsClick={this.handleTaskActionsClick}/>
-				)
-			});
+		if (tasks instanceof Array) {
+			if (tasks.length > 0) {
+				return tasks.map((task, i) => {
+					return (
+						<Task 
+							status={status}
+							data={task}
+							key={i}
+							index={i}
+							onClick={this.handleTaskClick}
+							onActionsClick={this.handleTaskActionsClick}/>
+					)
+				});
+			}
+			return this.noTasks;
 		}
-		return this.noTasks;
 	}
 
 	get noTasks() {

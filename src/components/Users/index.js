@@ -20,7 +20,7 @@ class Users extends React.Component {
 
 	get tabs() {		
 		return (
-			<Tabs onSelect={this.handleSelectTab}>
+			<Tabs onSelect={this.handleSelectTab} classes="~absolute">
 				<Tab caption={dict[this.teamTabCaption]} value="users">
 					{this.team}
 				</Tab>

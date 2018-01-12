@@ -2,7 +2,6 @@ import StoreKeeper from '../utils/StoreKeeper';
 import {get, post} from '../utils/Fetcher';
  
 const DEFAULT_STATE = {
-  tasks: [],
   tasksFetching: false,
   info: {}
 }
