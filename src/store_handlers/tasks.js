@@ -1,23 +1,25 @@
 import StoreKeeper from '../utils/StoreKeeper';
 import {get, post} from '../utils/Fetcher';
+import {TASKS_STORAGE_KEY} from '../consts/storage';
  
-const DEFAULT_STATE = {
-  tasksFetching: false,
-  info: {}
-}
 
-const STORAGE_KEY = 'tasks_page';
-let savedState = StoreKeeper.get(STORAGE_KEY);
+const getDefaultState = () => {
+  return {
+    tasksFetching: false,
+    info: {}
+  }
+}
+let savedState = StoreKeeper.get(TASKS_STORAGE_KEY);
 
 let defaultState = {
-  ...DEFAULT_STATE,
+  ...getDefaultState(),
   ...savedState
 };
 let timeout;
 const onStateChanged = (state) => {
   clearTimeout(timeout);
   timeout = setTimeout(() => {
-    StoreKeeper.set(STORAGE_KEY, {
+    StoreKeeper.set(TASKS_STORAGE_KEY, {
       filter: state.filter,
       status: state.status,
       type: state.type,
@@ -35,6 +37,10 @@ const onStateChanged = (state) => {
  
 const init = () => {
   return defaultState;
+}
+
+const reset = () => {
+  return getDefaultState();
 }
 
 const fetching = (state) => {
@@ -156,10 +162,13 @@ const show_actions = ({dispatch}, id) => {
 }
 
 const action = ({doAction, state}, name) => {
-  let {taskActionsData: {task_id: id}} = state;
+  let {shownTaskData, taskActionsData: {task_id: id}} = state;
    get('task_action', {name, id})
   .then((data) => {
     doAction('TASKS_LOAD');
+    if (shownTaskData) {
+      doAction('TASKS_LOAD_TASK_INFO', id);
+    }
   });
 }
  
@@ -177,6 +186,7 @@ export default {
   },
   reducers: {
     init,
+    reset,
     fetching,
     loaded,
     changed,

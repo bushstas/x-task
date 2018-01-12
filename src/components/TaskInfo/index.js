@@ -48,7 +48,7 @@ class TaskInfo extends React.Component {
 	}
 
 	get leftColumn() {
-		let {data, info: {comments, problems}} = this.props;
+		let {data, info: {dict: dct = {}, status, comments, problems}} = this.props;
 		let {data: d} = data;
 		let {info} = d;
 		let infoCount = Object.keys(info).length,
@@ -58,12 +58,12 @@ class TaskInfo extends React.Component {
 			problemsCount = problems.length;
 		}
 		let titleClassName = $classy(data.importance, '.importance-', ['burning', 'urgent']);
-		let statusClassName = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
+		let statusClassName = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		return (
 			<td>
 				<div class="status $statusClassName">
 					<div class="left-side">
-						{dict['status_' + data.status]}
+						{dct[status]}
 					</div>
 					<div class="right-side">
 						<div class="importance">
@@ -107,7 +107,7 @@ class TaskInfo extends React.Component {
 			caption = (
 				<span>
 					{caption} &nbsp;{count}
-					<span class="count">
+					<span class=".tabs-count">
 						{count}
 					</span>
 				</span>

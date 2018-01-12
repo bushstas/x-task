@@ -6,19 +6,24 @@
 		margin-bottom: 10px;
 	}
 	.tab {
+		position: relative;
 		text-align: center;
-		min-width: 80px;
+		min-width: 40px;
 		letter-spacing: 0;
 		line-height: 16px;
-		font-size: 14px;
+		font-size: 13px;
 		display: inline-block;
 		vertical-align: top;
-		padding: 10px 14px;
+		padding: 7px 10px;
 		margin-right: 1px;
 		background-color: #ddd;
 		cursor: pointer;
 		user-select: none;
 		box-sizing: content-box;
+
+		.count {
+			var .abs.r6.t5.bl.ml5.p2-3.bc-b7b7b7.br4.fr;
+		}
 
 		&:first-child {
 			border-radius: 5px 0 0 5px;
@@ -32,6 +37,9 @@
 		&.active {
 			background-color: #555;
 			color: #fff;
+			.count {
+				var .bc-848484.c-fff;
+			}	
 		}
 		&.disabled {
 			cursor: default;
@@ -43,7 +51,7 @@
 			var .pl20;
 		}
 		& > .content {
-			var .abs.t60.l.r.b55.ova.box.p5-20;
+			var .abs.t55.l.r.b55.ova.box.p0-20;
 		}
 	}
 }

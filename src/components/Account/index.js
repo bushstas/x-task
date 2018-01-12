@@ -1,5 +1,6 @@
 import React from 'react';
 import {dict} from '../../utils/Dictionary';
+import {isHead} from '../../utils/User';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Button from '../../ui/Button';
@@ -26,9 +27,11 @@ class Account extends React.Component {
 	get tabs() {		
 		return (
 			<Tabs onSelect={this.handleSelectTab} classes="~absolute">
-				<Tab caption={dict.my_tasks} value="tasks">
-					<Tasks my={true}/>
-				</Tab>
+				{!isHead() && (
+					<Tab caption={dict.my_tasks} value="tasks">
+						<Tasks my={true}/>
+					</Tab>
+				)}
 				<Tab caption={dict.home} value="home">
 					2
 				</Tab>
@@ -38,7 +41,7 @@ class Account extends React.Component {
 				<Tab caption={dict.info} value="users">
 					{this.info}
 				</Tab>
-				<Tab caption={dict.settings} value="users">
+				<Tab caption={dict.settings} value="settings">
 					{this.settings}
 				</Tab>
 			</Tabs>

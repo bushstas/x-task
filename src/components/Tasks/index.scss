@@ -1,6 +1,6 @@
 .self {
 	.content {
-		var .abs.t60.l.r.b15.ova.p0-20;
+		var .abs.t55.l.r.b15.ova.p0-20;
 		&.my {
 			var .t;
 		}
@@ -13,17 +13,6 @@
 	}
 	.main-tabs {
 		var .fl.ml20;
-	}
-	..tabs-tab {
-		var .fs13!.p10!.mnw40!.rel;
-		.count {
-			var .abs.r6.t8.bl.ml5.p2-3.bc-b7b7b7.br4.fr;
-		}
-		&..tabs-active {
-			.count {
-				var .bc-848484.c-fff;
-			}	
-		}
 	}
 	.left-menu {
 		var .abs.r100p.w44.t14.rt;

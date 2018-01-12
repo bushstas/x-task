@@ -1,7 +1,9 @@
 import {get, post} from '../Fetcher';
 import StoreKeeper from '../StoreKeeper';
+import Store from 'xstore';
 import {init} from '../TaskResolver';
 import {LOCAL_STORAGE_TOKEN} from '../../consts';
+import {TASKS_STORAGE_KEY} from '../../consts/storage';
 
 let loaded = false,
 	callback,
@@ -143,6 +145,8 @@ export const logout = () => {
 	user = null;
 	currentProject = null;
 	StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
+	StoreKeeper.remove(TASKS_STORAGE_KEY);
+	Store.reset();
 	return {then}
 }
 

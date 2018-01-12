@@ -24,7 +24,7 @@ export const init = (data) => {
 	initUrls();
 	let viewedTask = StoreKeeper.get('current_viewed_task');
 	if (viewedTask) {
-		alert(viewedTask)
+		
 	}
 }
 

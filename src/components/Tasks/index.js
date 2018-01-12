@@ -201,7 +201,7 @@ class Tasks extends React.Component {
 		caption = (
 			<span>
 				{caption} &nbsp;{count}
-				<span class="count">
+				<span class=".tabs-count">
 					{count}
 				</span>
 			</span>

@@ -40,7 +40,7 @@
 			& > div {
 				var .inb.vmid.mr15;
 				..icon {
-					var .fl.mr6;
+					var .fl.mr6.fs22.c-777;
 				}
 			}
 		}
@@ -86,14 +86,14 @@
 		..avatar {
 			var .mb3;
 		}
-		.name {
-			var .fs14.bold;
-		}
 	}
 	.participant {
-		var .bob-d4d4d4.p10;
+		var .bob-d4d4d4.p10.pb0;
 		&:last-child {
 			border-bottom: 0;
+		}
+		.name {
+			var .fs14.bold.pb10;
 		}
 	}
 	.info {
@@ -148,16 +148,5 @@
 	}
 	.next {
 		var .r-70.pl15;
-	}
-	..tabs-tab {
-		var .fs13!.p10!.mnw40!.rel;
-		.count {
-			var .abs.r6.t8.bl.ml5.p2-3.bc-b7b7b7.br4.fr;
-		}
-		&..tabs-active {
-			.count {
-				var .bc-848484.c-fff;
-			}	
-		}
 	}
 }
