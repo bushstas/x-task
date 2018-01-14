@@ -267,6 +267,27 @@ class TaskInfo extends React.Component {
 						})}
 					</div>
 				)}
+				{users.testers && (
+					<div class="participant">
+						<div class="caption">
+							{dict.testers}
+						</div>
+						{users.testers.map((ex) => {
+							return (
+								<div key={ex.id}>
+									<Avatar 
+										classes="~large"
+										id={ex.avatar_id}
+										userId={ex.id} 
+										userName={ex.name}/>
+									<div class="name">
+										{ex.name}
+									</div>
+								</div>
+							)
+						})}
+					</div>
+				)}
 			</div>
 		)
 	}

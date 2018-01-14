@@ -4,9 +4,9 @@ import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colo
 import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
 import {get, post} from '../utils/Fetcher';
 import {getUrls} from '../utils/TaskResolver';
+import {QUICKTASK_STORAGE_KEY} from '../consts/storage';
 
-const STORAGE_KEY = 'processed_task';
-let savedState = StoreKeeper.get(STORAGE_KEY);
+let savedState = StoreKeeper.get(QUICKTASK_STORAGE_KEY);
 if (savedState) {
   delete savedState.urlDialogData;
 }
@@ -41,11 +41,11 @@ let timeout;
 const onStateChanged = (state) => {
   let {status} = state;
   if (!status) {
-    StoreKeeper.remove(STORAGE_KEY);
+    StoreKeeper.remove(QUICKTASK_STORAGE_KEY);
   } else {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      StoreKeeper.set(STORAGE_KEY, state);
+      StoreKeeper.set(QUICKTASK_STORAGE_KEY, state);
     }, 500);
   }
 }
@@ -87,17 +87,18 @@ const visual_element_changed = (state, data) => {
   }
 }
 
-const user_assigned = (state, {token, assigned}) => {
-  let {execs = []} = state;
+const user_assigned = (state, {token, assigned, role}) => {
+  let key = role == 'exec' ? 'execs' : 'testers';
+  let list = state[key] || [];
   if (!assigned) {
-    let idx = execs.indexOf(token);
+    let idx = list.indexOf(token);
     if (idx > -1) {
-      execs.splice(idx, 1);
+      list.splice(idx, 1);
     }
   } else {
-    execs.push(token);
+    list.push(token);
   }
-  return {execs};
+  return {[key]: list};
 }
 
 //===========================================

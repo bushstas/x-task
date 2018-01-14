@@ -105,6 +105,9 @@ const load = ({dispatch, state}, data = {}) => {
     status = data.status;
     dispatch('TASKS_CHANGED', data);
   }
+  if (data.my) {
+    filter = 'my';
+  }
   let params = {
     importance,
     type,

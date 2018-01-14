@@ -28,7 +28,8 @@ class QuickTask extends React.Component {
 			urls = [],
 			nohashes,
 			noparams,
-			execs
+			execs,
+			testers
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -143,6 +144,7 @@ class QuickTask extends React.Component {
 				{taskUsersDict && (
 					<TaskUsers
 						execs={execs}
+						testers={testers}
 						dict={taskUsersDict}
 						onSelect={this.handleSelectUser}
 						onClose={this.handleUsersClose}/>
@@ -350,8 +352,8 @@ class QuickTask extends React.Component {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {info});
 	}
 
-	handleSelectUser = (name, token, assigned) => {
-		this.props.dispatch('QUICKTASK_USER_ASSIGNED', {token, assigned});
+	handleSelectUser = (role, token, assigned) => {
+		this.props.dispatch('QUICKTASK_USER_ASSIGNED', {token, assigned, role});
 	}
 
 	handleLayersClick = (e) => {

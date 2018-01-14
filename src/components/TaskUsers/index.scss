@@ -4,22 +4,44 @@
 	}
 }
 .self {
+	table {
+		var .w;
+		td {
+			var .vtop;
+			width: auto;
+			&:nth-child(2) {
+				var .pl15.rel.w25p;
+				&:after {
+					var .cnt.w1.abs.t.b.l-5.bc-e1e1e1;
+				}
+			}
+		}
+	}
 	.block {
 		var .pb15;
 	}
 	.caption {
-		var .fs18.pb6;
+		var .fs16.pb6;
 	}
 	.users {
 		var .mt10;
 	}
 	.user {
-		var .p10.bo-eee.br5.mb10;
+		var .inb.w195.vtop.p10.bc-eee.bo-e6e6e6.br5.mb10.mr10;
+		&.checked {
+			var .bc-eefddc.boc-c6d6b3;
+			.role {
+				var .c-93b16f;
+			}
+		}
 	}
 	.role {
-		var .pl10.c-aaa;
+		var .c-aaa;
 	}
 	.none {
 		var .p10.bo-eee.br5.mb10.c-aaa;
+	}
+	..avatar {
+		var .fl.wh44.mr10;
 	}
 }

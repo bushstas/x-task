@@ -15,11 +15,8 @@ import {getRoleId, getTasksCount} from '../../utils/User';
 class Tasks extends React.Component {
 
 	componentDidMount() {
-		if (this.props.my) {
-			this.props.doAction('TASKS_LOAD', {filter: 'my'});	
-		} else {
-			this.props.doAction('TASKS_LOAD');
-		}		
+		let {my, doAction} = this.props;
+		doAction('TASKS_LOAD', {my});
 	}
 
 	render() {
@@ -85,6 +82,7 @@ class Tasks extends React.Component {
 						{this.firstTab}
 						{this.secondTab}
 						{this.thirdTab}
+						{this.fourthTab}
 					</Tabs>
 				)}
 				<Tabs 
@@ -193,6 +191,12 @@ class Tasks extends React.Component {
 		let caption = role < 5  ? dict.tasks_for_me : dict.tasks_from_me;
 		let value = role < 5 ? 'forme' : 'fromme';
 		return this.renderTab(caption, value);
+	}
+
+	get fourthTab() {
+		// let role = getRoleId();
+		// if (role > 5 || role == 1) return;
+		return this.renderTab(dict.mine_tasks, 'my');
 	}
 
 	renderTab(caption, value) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import Avatar from '../Avatar';
 import Dialog from '../../ui/Dialog';
 import Checkbox from '../../ui/Checkbox';
 import {dict as dictionary} from '../../utils/Dictionary';
@@ -6,50 +7,44 @@ import {dict as dictionary} from '../../utils/Dictionary';
 export default class TaskUsers extends React.Component {
 	render() {
 		let {onClose, dict} = this.props;
+		let {users: {proper, rest, testers}} = dict;
 		return (
 			 <Dialog title={dict.title}
 	            onClose={onClose}
 	            clickMaskToClose={true}
 	            classes="dialog::large self">
 	            
-	           	{this.proper}
-	           	{this.rest}
+	           	<table cellPadding="0" cellSpacing="0">
+		           	<tbody>
+			           	<tr>
+			           		<td>
+			           			{this.renderUsers(proper, dict.proper)}
+			           			{this.renderUsers(rest, dict.rest)}
+			           		</td>
+			           		{testers && (
+			           			<td>
+			           				{this.renderUsers(testers, dict.testers)}
+			           			</td>
+			           		)}
+			        	</tr>
+			        </tbody>
+	           	</table>
 	        </Dialog>
 		)
 	}
 
-	get proper() {
-		let {dict} = this.props;
-		let {users: {proper}} = dict;
+	renderUsers(users, caption) {
 		return (
 			<div class="block">
 				<div class="caption">
-	       			{dict.proper}
+	       			{caption}
 	       		</div>
 	       		<div class="users">
-	       			{proper.length > 0 ? 
-	       				proper.map(this.renderUser) :
+	       			{users.length > 0 ? 
+	       				users.map(this.renderUser) :
 	       				this.none
 	       			}
 	       		</div>
-			</div>
-		)
-	}
-
-	get rest() {
-		let {dict} = this.props;
-		let {users: {rest}} = dict;
-		return (
-			<div class="block">
-				<div class="caption">
-	        		{dict.rest}
-	        	</div>
-	        	<div class="users">
-	        		{rest.length > 0 ? 
-	       				rest.map(this.renderUser) :
-	       				this.none
-	       			}
-	        	</div>
 			</div>
 		)
 	}
@@ -63,18 +58,26 @@ export default class TaskUsers extends React.Component {
 	}
 
 	renderUser = (user) => {
-		let {onSelect, execs = []} = this.props;
+		let {onSelect, execs = [], testers = []} = this.props;
+		let list = user.tester ? testers : execs;
+		let checked = list.indexOf(user.token) > -1;
 		return (
-			<div class="user" key={user.token}>
+			<div class="user $?checked" key={user.token}>
 				<Checkbox 
-					name="user"
-					checked={execs.indexOf(user.token) > -1}
+					name={user.tester ? 'tester' : 'exec'}
+					checked={checked}
 					value={user.token}
 					onChange={onSelect}>
-					{user.name}
-					<span class="role">
-						({dictionary[user.spec ? user.spec : user.role]})
-					</span>
+					<Avatar
+						id={user.avatar_id}
+						userId={user.id}
+						userName={user.name}/>
+					<div class="name">
+						{user.name}
+					</div>
+					<div class="role">
+						{dictionary[user.spec ? user.spec : user.role]}
+					</div>
 				</Checkbox>
 			</div>
 		)

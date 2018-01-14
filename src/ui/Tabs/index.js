@@ -38,9 +38,11 @@ export class Tabs extends React.PureComponent {
 				{!simple && (
 					<div class="content">
 						{children.map((child, i) => {
-							let value = this.getValue(child.props.value, i);
-							if (activeTab == value && child instanceof Object && child.type == Tab) {
-								return child.props.children;
+							if (child instanceof Object) {
+								let value = this.getValue(child.props.value, i);
+								if (activeTab == value && child instanceof Object && child.type == Tab) {
+									return child.props.children;
+								}
 							}
 						})}
 					</div>

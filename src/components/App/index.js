@@ -22,7 +22,7 @@ class App extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      activeTab: 'my_account',
+      activeTab: 'tasks',
       active: false,
       isAuthorized: isAuthorized()
     };
