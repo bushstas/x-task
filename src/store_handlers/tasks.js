@@ -82,21 +82,27 @@ const hidden = () => {
 
 const load = ({dispatch, state}, data = {}) => {
   dispatch('TASKS_FETCHING');
-  let {filter, status, importance, type} = state;
+  let {filter, status, importance = [], type = []} = state;
   if (data.importance) {
-    if (data.importance == importance) {
-      data.importance = '';
+    let idx = importance.indexOf(data.importance);
+    if (idx > -1) {
+      importance.splice(idx, 1);
+    } else {
+      importance.push(data.importance);
     }
-    importance = data.importance;
-    dispatch('TASKS_CHANGED', data);
+    dispatch('TASKS_CHANGED', {importance});
   }
+  importance = importance.toString();
   if (data.type) {
-    if (data.type == type) {
-       data.type = '';
+    let idx = type.indexOf(data.type);
+    if (idx > -1) {
+      type.splice(idx, 1);
+    } else {
+      type.push(data.type);
     }
-    type = data.type;
-    dispatch('TASKS_CHANGED', data);
+    dispatch('TASKS_CHANGED', {type});
   }
+  type = type.toString();
   if (data.filter) {
     filter = data.filter;
     dispatch('TASKS_CHANGED', data);

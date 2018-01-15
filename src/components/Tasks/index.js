@@ -15,13 +15,11 @@ import {getRoleId, getTasksCount} from '../../utils/User';
 class Tasks extends React.Component {
 
 	componentDidMount() {
-		let {my, doAction} = this.props;
-		doAction('TASKS_LOAD', {my});
+		this.props.doAction('TASKS_LOAD');
 	}
 
 	render() {
 		let {
-			my,
 			fetching,
 			shownTaskData,
 			shownTaskIndex,
@@ -32,7 +30,7 @@ class Tasks extends React.Component {
 	 	return (
 	 		<div class="self">
 		 		{this.tabs}
-		 		<Loader fetching={fetching} classes="content $?my">
+		 		<Loader fetching={fetching} classes="content">
 					{this.tasks}
 				</Loader>
 				{shownTaskData && (
@@ -65,12 +63,8 @@ class Tasks extends React.Component {
 	get tabs() {
 		let {
 			filter,
-			status,
-			my
+			status
 		} = this.props;
-		if (my) {
-			return;
-		}
 		return (
 			<div>
 				{getRoleId() != 7 && (
@@ -85,23 +79,22 @@ class Tasks extends React.Component {
 						{this.fourthTab}
 					</Tabs>
 				)}
-				<Tabs 
-					classes="statuses"
-					onSelect={this.handleSelectStatusTab}
-					value={status}
-					simple>
-					{this.statusTabs}
-				</Tabs>
+				{filter != 'my' && (
+					<Tabs 
+						classes="statuses"
+						onSelect={this.handleSelectStatusTab}
+						value={status}
+						simple>
+						{this.statusTabs}
+					</Tabs>
+				)}
 			</div>
 		)
 	}
 
 	get leftMenu() {
-		if (this.props.my) {
-			return;
-		}
 		let {task_imp} = icons;
-		let {importance} = this.props;
+		let {importance = []} = this.props;
 		return (
 			<div class="left-menu">
 				{Object.keys(task_imp).map(
@@ -110,7 +103,7 @@ class Tasks extends React.Component {
 						return (
 							<TaskButton
 								classes="~left"
-								active={importance == key}
+								active={importance.indexOf(key) > -1}
 								icon={value}
 								value={key}
 								key={key}
@@ -123,11 +116,8 @@ class Tasks extends React.Component {
 	}
 
 	get rightMenu() {
-		if (this.props.my) {
-			return;
-		}
 		let {task_type} = icons;
-		let {type} = this.props;
+		let {type = []} = this.props;
 		return (
 			<div class="right-menu">
 				{Object.keys(task_type).map(
@@ -136,7 +126,7 @@ class Tasks extends React.Component {
 						return (
 							<TaskButton 
 								classes="~right"
-								active={type == key}
+								active={type.indexOf(key) > -1}
 								icon={value}
 								value={key}
 								key={key}
@@ -194,8 +184,8 @@ class Tasks extends React.Component {
 	}
 
 	get fourthTab() {
-		// let role = getRoleId();
-		// if (role > 5 || role == 1) return;
+		let role = getRoleId();
+		if (role == 1) return;
 		return this.renderTab(dict.mine_tasks, 'my');
 	}
 
@@ -220,12 +210,13 @@ class Tasks extends React.Component {
 	}
 
 	get tasks() {
-		let {tasks, status} = this.props;
+		let {tasks, status, filter} = this.props;
 		if (tasks instanceof Array) {
 			if (tasks.length > 0) {
 				return tasks.map((task, i) => {
 					return (
 						<Task 
+							filter={filter}
 							status={status}
 							data={task}
 							key={i}

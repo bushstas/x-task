@@ -11,10 +11,10 @@ export default class Task extends React.Component {
 	}
 
 	render() {
-		let {data, onClick, status} = this.props;
+		let {data, onClick, status, filter} = this.props;
 		let {data: d} = data;
 		let className;
-		if (!status || status == 'all') {
+		if (!status || status == 'all' || filter == 'my') {
 			className = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		}		
 		return (
