@@ -1,0 +1,61 @@
+..dialog-box.self {
+	..dialog-content {
+		.content {
+			var .p10-30;
+		}
+		.caption {
+			var .mb18.fs16.bold.inb;
+			..tooltip {
+				var .fr.mt-3.ml5;
+			}
+		}
+		.difficulties {
+
+			.difficulty {
+				var .rel.mb10.p10.bo-ccc.br3.fs15.pntr.w150.inb.vtop.mr10.cen.bc-f1f1f1;
+				&:hover {
+					var .boc-aaa;
+				}
+				&.selected {
+					var .bc-eefddc.boc-8ab557.c-4a7b11;
+				}
+
+				&:after {
+					var .cnt.abs.l.t.r.b.z2;
+				}
+			}
+		}
+		.terms {
+
+			.term {
+				var .rel.mb10.p10.bo-ccc.br3.fs15.pntr.w80.inb.vtop.mr10.bc-f1f1f1;
+				&:hover {
+					var .boc-aaa;
+				}
+				&.selected {
+					var .bc-eefddc.boc-8ab557.c-4a7b11;
+				}
+			}
+		}
+		.space {
+			var .h1;
+		}
+		.untils {
+			.until {
+				var .mb10.p10.bo-ccc.br3.fs15.pntr.inb.vtop.mr10.bc-f1f1f1.nowr;
+				&:hover {
+					var .boc-aaa;
+				}
+				&.selected {
+					var .bc-eefddc.boc-8ab557.c-4a7b11;
+				}
+				..input {
+					var .w60.inb.mr5;
+					input {
+						var .w.cen.fs15;
+					}
+				}
+			}
+		}
+	}
+}

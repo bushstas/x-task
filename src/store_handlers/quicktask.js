@@ -32,7 +32,9 @@ const getDefaultState = () => {
     urlDialogData: null,
     dialogFetching: false,
     taskUsersDict: null,
-    users: []
+    users: [],
+    difficulty: 5,
+    termsId: 7
   }
 }
 
@@ -308,6 +310,17 @@ const show_info_form = ({dispatch, state}) => {
     });   
 }
 
+const show_terms = ({dispatch, state}) => {
+  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+  get('load_task_terms')
+    .then(({dict}) => {
+      dispatch('QUICKTASK_PARAM_CHANGED', {
+        dialogFetching: false,
+        termsData: dict
+      });
+    });   
+}
+
 const show_users = ({dispatch, state}) => {
   dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
   let {type = '', action = ''} = state;
@@ -345,7 +358,8 @@ export default {
     cancel,
     save,
     show_info_form,
-    show_users
+    show_users,
+    show_terms
   },
   reducers: {
     init,

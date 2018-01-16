@@ -8,6 +8,7 @@ import Dialog from '../../ui/Dialog';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import TaskInfoForm from '../TaskInfoForm';
+import TaskTerms from '../TaskTerms';
 import TaskUsers from '../TaskUsers';
 import MaskModeButton from '../MaskModeButton';
 import TaskUrlResolver from '../TaskUrlResolver';
@@ -29,7 +30,11 @@ class QuickTask extends React.Component {
 			nohashes,
 			noparams,
 			execs,
-			testers
+			testers,
+			termsData,
+			difficulty,
+			termsId,
+			until
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -80,6 +85,16 @@ class QuickTask extends React.Component {
 					</Dialog>
 				)}
 
+				{!!termsData && (
+					<TaskTerms
+						difficulty={difficulty}
+						termsId={termsId}
+						until={until}
+						dict={termsData}
+						onSelect={this.handleSelectDifficultyOrTerms}
+						onClose={this.handleTermsClose}/>
+				)}
+
 				<div class="importance-panel .panel" onClick={this.handleChangeParam}>					
 					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
 				</div>
@@ -111,6 +126,11 @@ class QuickTask extends React.Component {
 						classes=".inline-icon"
 						title={dict.task_info}
 						onClick={this.handleInfoShown}/>
+
+					<Icon icon="terms"
+						classes=".inline-icon"
+						title={dict.terms}
+						onClick={this.handleTermsShown}/>
 				</div>
 
 				<div class="top-panel .panel" onClick={this.handleExpandClick}>
@@ -336,12 +356,24 @@ class QuickTask extends React.Component {
 		this.props.doAction('QUICKTASK_SHOW_INFO_FORM');
 	}
 
+	handleTermsShown = () => {
+		this.props.doAction('QUICKTASK_SHOW_TERMS');
+	}
+
 	handleAssignClick = () => {
 		this.props.doAction('QUICKTASK_SHOW_USERS');	
 	}
 
 	handleInfoClose = () => {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {taskInfoDict: false});
+	}
+
+	handleTermsClose = () => {
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {termsData: null});
+	}
+
+	handleSelectDifficultyOrTerms = (value, param) => {
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value});
 	}
 
 	handleUsersClose = () => {
