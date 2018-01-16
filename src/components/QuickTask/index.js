@@ -91,7 +91,7 @@ class QuickTask extends React.Component {
 						termsId={termsId}
 						until={until}
 						dict={termsData}
-						onSelect={this.handleSelectDifficultyOrTerms}
+						onSelect={this.handleSelectTerms}
 						onClose={this.handleTermsClose}/>
 				)}
 
@@ -372,8 +372,11 @@ class QuickTask extends React.Component {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {termsData: null});
 	}
 
-	handleSelectDifficultyOrTerms = (value, param) => {
+	handleSelectTerms = (value, param) => {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {[param]: value});
+		if (param == 'until') {
+			this.props.doAction('QUICKTASK_LOAD_UNTIL_DATE', value);
+		}
 	}
 
 	handleUsersClose = () => {

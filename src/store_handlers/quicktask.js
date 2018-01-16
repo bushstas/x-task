@@ -344,6 +344,13 @@ const show_users = ({dispatch, state}) => {
     });   
 }
 
+const load_until_date = ({dispatch}, value) => {
+  get('load_until_date', {value})
+    .then(({data}) => {
+      console.log(data)
+    });   
+}
+
 export default {
   onStateChanged,
   actions: {
@@ -359,7 +366,8 @@ export default {
     save,
     show_info_form,
     show_users,
-    show_terms
+    show_terms,
+    load_until_date
   },
   reducers: {
     init,
