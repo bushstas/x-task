@@ -4,7 +4,7 @@
 			var .p10-30;
 		}
 		.caption {
-			var .mb18.fs16.bold.inb;
+			var .rel.mb18.fs16.bold.inb;
 			..tooltip {
 				var .fr.mt-3.ml5;
 			}
@@ -41,6 +41,9 @@
 			var .h1;
 		}
 		.untils {
+			.time-left {
+				var .abs.l100p.ml40.t2.nowr.fs14.c-999;
+			}
 			.until {
 				var .mb10.p10.bo-ccc.br3.fs15.pntr.inb.vtop.mr10.bc-f1f1f1.nowr;
 				&:hover {

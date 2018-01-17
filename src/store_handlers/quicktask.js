@@ -34,7 +34,8 @@ const getDefaultState = () => {
     taskUsersDict: null,
     users: [],
     difficulty: 5,
-    termsId: 7
+    termsId: 7,
+    untilNum: ''
   }
 }
 
@@ -346,8 +347,11 @@ const show_users = ({dispatch, state}) => {
 
 const load_until_date = ({dispatch}, value) => {
   get('load_until_date', {value})
-    .then(({data}) => {
-      console.log(data)
+    .then(({value}) => {
+      dispatch('QUICKTASK_PARAM_CHANGED', {
+        dialogFetching: false,
+        untilTimeLeft: value
+      });
     });   
 }
 

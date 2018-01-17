@@ -34,7 +34,9 @@ class QuickTask extends React.Component {
 			termsData,
 			difficulty,
 			termsId,
-			until
+			until,
+			untilTimeLeft,
+			untilNum
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -90,6 +92,8 @@ class QuickTask extends React.Component {
 						difficulty={difficulty}
 						termsId={termsId}
 						until={until}
+						untilTimeLeft={untilTimeLeft}
+						untilNum={untilNum}
 						dict={termsData}
 						onSelect={this.handleSelectTerms}
 						onClose={this.handleTermsClose}/>

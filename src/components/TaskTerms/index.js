@@ -9,13 +9,6 @@ export default class TaskTerms extends React.Component {
 		onSelect: () => {}
 	}
 
-	constructor() {
-		super();
-		this.state = {
-			num: ''
-		}
-	}
-
 	render() {
 		let {onClose, dict} = this.props;
 		return (
@@ -92,8 +85,7 @@ export default class TaskTerms extends React.Component {
 	}
 
 	get untils() {
-		let {until, dict: {till, number, untils = []}} = this.props;
-		let {num} = this.state;
+		let {until, untilNum, untilTimeLeft, dict: {till, number, untils = []}} = this.props;
 		return (
 			<div class="untils">
 				<div class="caption .mt20">
@@ -101,11 +93,16 @@ export default class TaskTerms extends React.Component {
 					<Tooltip>
 						task_until
 					</Tooltip>
+					{untilTimeLeft && (
+						<div class="time-left">
+							{untilTimeLeft}
+						</div>
+					)}
 				</div>
 				<br/>
 				{untils.map((u, i) => {
 					if (u) {
-						let selected = !num && i == until;
+						let selected = !untilNum && i == until;
 						return (
 							<div 
 								class="until $?selected"
@@ -120,10 +117,10 @@ export default class TaskTerms extends React.Component {
 				})}
 				<div>
 					<div 
-						class="until $num?selected"
-						data-value={'n' + num}
+						class="until $untilNum?selected"
+						data-value={'n' + untilNum}
 						onClick={this.handleUntilClick}>
-						<Input name="num" value={num} onChange={this.handleInputChange}/>
+						<Input name="num" value={untilNum} onChange={this.handleInputChange}/>
 						{number}
 					</div>
 				</div>
@@ -145,7 +142,7 @@ export default class TaskTerms extends React.Component {
 
 	handleUntilClick = ({target: {dataset: {value}}}) => {
 		if (value && value[0] != 'n') {
-			this.setState({num: ''});
+			this.props.onSelect('', 'untilNum');
 			this.props.onSelect(value, 'until');
 		}
 	}
@@ -156,7 +153,7 @@ export default class TaskTerms extends React.Component {
 			num = Math.max(num, 1);
 			num = Math.min(num, 31);
 		}
-		this.setState({num});
 		this.props.onSelect('n' + num , 'until');
+		this.props.onSelect(num, 'untilNum');
 	}
 }
