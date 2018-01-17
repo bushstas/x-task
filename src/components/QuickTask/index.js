@@ -36,7 +36,8 @@ class QuickTask extends React.Component {
 			termsId,
 			until,
 			untilTimeLeft,
-			untilNum
+			untilNum,
+			lockedTask
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -101,6 +102,12 @@ class QuickTask extends React.Component {
 
 				<div class="importance-panel .panel" onClick={this.handleChangeParam}>					
 					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
+
+					<Icon 
+						classes="lock-task $lockedTask?.active"
+						title={dict.locked}
+						icon="locked"
+						onClick={this.handleLockTaskClick}/>
 				</div>
 
 				<div class="type-panel .panel" onClick={this.handleChangeParam}>
@@ -458,6 +465,11 @@ class QuickTask extends React.Component {
 
 	handleSubmit = () => {
 		this.props.doAction('QUICKTASK_SAVE');
+	}
+
+	handleLockTaskClick = () => {
+		let {lockedTask} = this.props;
+		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {lockedTask: !lockedTask});
 	}
 }
 

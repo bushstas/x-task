@@ -37,6 +37,9 @@ export default class Task extends React.Component {
 					userName={data.user_name}/>
 				
 				<div class="title">
+					{data.locked && (
+						<Icon icon="locked"/>
+					)}
 					{d.title}
 				</div>
 				<div class="status">

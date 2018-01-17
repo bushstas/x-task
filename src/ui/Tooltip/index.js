@@ -6,11 +6,12 @@ import {dict, icons} from '../../utils/Dictionary';
 
 class Tooltip extends React.PureComponent {
 	render() {
-		let {tooltip} = this.props;
+		let {tooltip, dark} = this.props;
+		let icon = dark ? 'tooltip2' : 'tooltip';
 		return (
 			<span class="self">
 				<Icon onClick={this.handleClick}>
-					{icons.tooltip}
+					{icons[icon]}
 				</Icon>
 				{!!tooltip && (
 					<Dialog

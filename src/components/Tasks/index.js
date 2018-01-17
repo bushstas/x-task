@@ -262,7 +262,11 @@ class Tasks extends React.Component {
 	}
 
 	handleTaskAction = (action) => {
-		this.props.doAction('TASKS_ACTION', action);
+		if (action == 'edit') {
+			this.props.doAction('TASKS_EDIT', action);
+		} else {
+			this.props.doAction('TASKS_ACTION', action);
+		}
 	}
 
 	handleInfoClose = () => {

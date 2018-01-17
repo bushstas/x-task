@@ -181,6 +181,20 @@ const action = ({doAction, state}, name) => {
   });
 }
  
+const edit = ({doAction, state, getState}) => {
+  let newTask = getState('quicktask');
+  if (newTask.status) {
+    doAction('NOTIFICATIONS_ADD', {message: 'dsfdfsdfdsf'})
+  }
+  let {taskActionsData: {task_id: id}, tasks} = state;
+  for (let t of tasks) {
+    if (t.id == id) {
+
+    }
+  }
+  
+}
+
 export default {
   onStateChanged,
   actions: {
@@ -191,7 +205,8 @@ export default {
     show_next,
     load_task_info,
     show_actions,
-    action
+    action,
+    edit
   },
   reducers: {
     init,

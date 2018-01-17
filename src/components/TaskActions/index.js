@@ -16,7 +16,7 @@ export default class TaskActions extends React.Component {
 				<div class="mask" onClick={this.handleClickMask}/>
 				<Loader classes="content" fetching={!dict}>
 					<div class="tooltip">
-						<Tooltip>
+						<Tooltip dark>
 							task_actions
 						</Tooltip>
 					</div>
