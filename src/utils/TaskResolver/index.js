@@ -178,6 +178,7 @@ export const resolveTaskUrl = (urls) => {
 		if (urlHost == host) {
 			return protocol + '//' + url;
 		}
+		
 		if (!fisrtProtocol) {
 			firstUrl = url;
 			fisrtProtocol = protocol;

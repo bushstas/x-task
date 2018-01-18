@@ -69,13 +69,6 @@ class ProjectForm extends React.Component {
 						 	textarea/>
 					)}
 				</FormField>
-
-				<FormField caption={dict.evals} classes="settings .mt15" tooltip="project_evals">
-					<Radios 
-						value={measure}
-						name="measure"
-						items={dict.evals_items}/>
-				</FormField>
 			</Form>
 		)
 	}
