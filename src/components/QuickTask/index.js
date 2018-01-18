@@ -37,7 +37,8 @@ class QuickTask extends React.Component {
 			until,
 			untilTimeLeft,
 			untilNum,
-			lockedTask
+			lockedTask,
+			taskList
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -167,8 +168,10 @@ class QuickTask extends React.Component {
 				{taskInfoDict && (
 					<TaskInfoForm
 						formData={info}
+						taskList={taskList}
 						dict={taskInfoDict}
 						onFormChange={this.handleInfoChange}
+						onListChange={this.handleListChange}
 						onClose={this.handleInfoClose}/>
 				)}
 
@@ -396,6 +399,13 @@ class QuickTask extends React.Component {
 
 	handleInfoChange = (info) => {
 		this.props.doAction('QUICKTASK_CHANGE_PARAM', {info});
+	}
+
+	handleListChange = (name, value) => {
+		let key = name.replace(/^[^\d]+/g, '');
+		let {taskList = {}} = this.props;
+		taskList[key] = value;
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {taskList});
 	}
 
 	handleSelectUser = (role, token, assigned) => {

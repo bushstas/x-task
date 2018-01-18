@@ -19,6 +19,7 @@ export default class TaskInfoForm extends React.Component {
 	            <Form 
 	            	data={formData}
 	            	onChange={onFormChange}>
+					{this.list}
 					{this.fields}
 				</Form>
 				<ActionButtons onAction={this.handleAction}>					
@@ -27,6 +28,32 @@ export default class TaskInfoForm extends React.Component {
 					</Button>
 				</ActionButtons>
 	        </Dialog>
+		)
+	}
+
+	get list() {
+		let {taskList = {}, dict, onListChange} = this.props;
+		let fields = [];
+		for (let i = 0; i < 10; i++) {
+			fields.push(i);
+		}
+		return (
+			<div class="list">
+				<div class="list-caption">
+					{dict.list}
+				</div>
+				{fields.map((value) => {
+					return (
+						<div class="list-item" key={value}>
+							<Icon icon="checked"/>
+							<Input 
+								name={'item' + value}
+								value={taskList[value]}
+								onChange={onListChange}/>
+						</div>
+					)
+				})}
+			</div>
 		)
 	}
 

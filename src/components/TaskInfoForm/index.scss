@@ -1,24 +1,52 @@
 ..dialog-box.self {
 	..dialog-content {
+		.list {
+			padding-bottom: 20px;
+			padding-left: 80px;
+		}
+		.list-caption {
+			padding-bottom: 6px;
+    		color: #555;
+    		font-size: 13px;
+		}
+		.list-item {
+			position: relative;
+			padding-bottom: 8px;
+			..input {
+				input {
+					width: 100%;
+					border-color: #d8d8d8;
+				}
+			}
+			..icon {
+				position: absolute;
+				left: -34px;
+				top: 6px;
+				font-size: 25px;
+				color: #888;
+			}
+		}
 		..form {
 			var .abs.l.r.t-1.b60.p20-34.ova.bc-f2f2f2;
 
 			..form-field {
 				position: relative;
 				padding-left: 80px;
+				padding-bottom: 10px;
 
 				textarea {
 					height: 150px;
 					margin-bottom: 10px;
-				}
-				..icon {
-					position: absolute;
-					left: -65px;
-					top: 10px;
-					font-size: 40px;
-					color: #888;
+					border-color: #d8d8d8;
 				}
 			}
+		}
+		..icon {
+			position: absolute;
+			left: -65px;
+			top: 10px;
+			font-size: 40px;
+			color: #888;
 		}
 	}
 }
