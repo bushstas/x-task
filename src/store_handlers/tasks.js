@@ -127,28 +127,29 @@ const load = ({dispatch, state}, data = {}) => {
   });
 }
 
-const show = ({dispatch, state}, data) => {
+const show = ({dispatch, doAction, state}, data) => {
   let {tasks} = state;
   data.prevNextButtons = tasks.length > 1;
+  doAction('TASKS_LOAD_TASK_INFO', data.data.id);
   dispatch('TASKS_SHOWN', data);
 }
 
-const show_prev = ({dispatch, state}) => {  
+const show_prev = ({doAction, state}) => {  
   let {shownTaskIndex, tasks, prevNextButtons} = state;
   let prev = shownTaskIndex - 1;
   if (prev < 0) {
     prev = tasks.length - 1;
   }
-  dispatch('TASKS_SHOWN', {data: tasks[prev], index: prev, prevNextButtons});
+  doAction('TASKS_SHOW', {data: tasks[prev], index: prev});
 }
 
-const show_next = ({dispatch, state}) => {
+const show_next = ({doAction, state}) => {
   let {shownTaskIndex, tasks, prevNextButtons} = state;
   let next = shownTaskIndex + 1;
   if (next > tasks.length - 1) {
     next = 0;
   }
-  dispatch('TASKS_SHOWN', {data: tasks[next], index: next, prevNextButtons});
+  doAction('TASKS_SHOW', {data: tasks[next], index: next});
 }
 
 const hide = ({dispatch}) => {

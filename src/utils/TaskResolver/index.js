@@ -164,6 +164,8 @@ export const hasGetParams = () => {
 export const resolveTaskUrl = (urls) => {
 	let {host} = location;
 
+	let fisrtProtocol,
+		firstUrl;
 	for (let url of urls) {
 		let ps = url.split('://');
 		let protocol = 'http';
@@ -176,8 +178,12 @@ export const resolveTaskUrl = (urls) => {
 		if (urlHost == host) {
 			return protocol + '//' + url;
 		}
+		if (!fisrtProtocol) {
+			firstUrl = url;
+			fisrtProtocol = protocol;
+		}
 	}
-	return urls[0];
+	return fisrtProtocol + '://' + firstUrl;
 }
 
 export const editTask = (id, url) => {

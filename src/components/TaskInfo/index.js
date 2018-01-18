@@ -11,10 +11,6 @@ import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
-	componentDidMount() {
-		this.props.doAction('TASKS_LOAD_TASK_INFO', this.props.data.id);
-	}
-
 	render() {
 		let {data, info: {actions}} = this.props;
 		let {data: d} = data;
