@@ -1,3 +1,4 @@
+const DEFAULT_SHOWTIME = 30000;
 
 const DEFAULT_STATE = {
    items: []
@@ -33,11 +34,14 @@ const removed = (state, data) => {
 }
 
 
-const add = ({dispatch}, {message, classes}) => {
+const add = ({dispatch}, {message, classes, showtime}) => {
   dispatch('NOTIFICATIONS_ADDED', {message, classes});
+  if (typeof showtime != 'number') {
+    showtime = DEFAULT_SHOWTIME;
+  }
   setTimeout(() => {
     dispatch('NOTIFICATIONS_REMOVED');
-  }, 30000);
+  }, showtime);
 }
 
 const add_success = ({doAction}, message) => {

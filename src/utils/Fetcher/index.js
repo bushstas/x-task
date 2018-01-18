@@ -69,7 +69,7 @@ class Fetcher {
 		    throw new Error('Неизвестная ошибка операции ' + action);
 		})
 		.catch(function({message}) {  
-		    Store.doAction('NOTIFICATIONS_ADD', {message});
+		    Store.doAction('NOTIFICATIONS_ADD', {message, showtime: 4000});
 		    return Promise.reject(message);
 		});
 	}

@@ -1,4 +1,5 @@
 import StoreKeeper from '../utils/StoreKeeper';
+import {resolveTaskUrl, editTask} from '../utils/TaskResolver';
 import {get, post} from '../utils/Fetcher';
 import {TASKS_STORAGE_KEY} from '../consts/storage';
  
@@ -182,14 +183,11 @@ const action = ({doAction, state}, name) => {
 }
  
 const edit = ({doAction, state, getState}) => {
-  let newTask = getState('quicktask');
-  if (newTask.status) {
-    doAction('NOTIFICATIONS_ADD', {message: 'dsfdfsdfdsf'})
-  }
   let {taskActionsData: {task_id: id}, tasks} = state;
   for (let t of tasks) {
     if (t.id == id) {
-
+      let url = resolveTaskUrl(t.data.urls);
+      editTask(id, url);
     }
   }
   

@@ -166,16 +166,25 @@ export const resolveTaskUrl = (urls) => {
 
 	for (let url of urls) {
 		let ps = url.split('://');
+		let protocol = 'http';
 		if (ps[1]) {
+			protocol = ps[0];
 			url = ps[1];
 		}
 		ps = url.split('/');
 		let urlHost = ps[0];
 		if (urlHost == host) {
-			return location.protocol + '//' + url;
+			return protocol + '//' + url;
 		}
 	}
-	return '';
+	return urls[0];
+}
+
+export const editTask = (id, url) => {
+	let a = document.createElement('a');
+	a.setAttribute('href', url);
+	document.body.appendChild(a);
+	a.click();
 }
 
 window.addEventListener('popstate', handlePopState);
