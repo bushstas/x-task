@@ -364,6 +364,7 @@ const load_until_date = ({dispatch}, value) => {
 }
 
 const load_edited_task = ({dispatch, doAction, state}, id) => {
+  doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'editmode'});
   get('load_task', {id})
   .then(data => {
   let {visualElements} = data;

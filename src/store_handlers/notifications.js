@@ -23,6 +23,10 @@ const added = (state, data) => {
   }
 }
 
+const added_special = (state, special) => {
+  return {special}
+}
+
 const removed = (state, data) => {
   let {items} = state;
   items.splice(items.length - 1, 1);
@@ -33,15 +37,26 @@ const removed = (state, data) => {
   }
 }
 
+const removed_special = (state, special) => {
+  return {special: null}
+}
 
-const add = ({dispatch}, {message, classes, showtime}) => {
-  dispatch('NOTIFICATIONS_ADDED', {message, classes});
+
+const add = ({dispatch}, {message, messageFromDict, classes, showtime}) => {
+  dispatch('NOTIFICATIONS_ADDED', {message, classes, messageFromDict});
   if (typeof showtime != 'number') {
     showtime = DEFAULT_SHOWTIME;
   }
   setTimeout(() => {
     dispatch('NOTIFICATIONS_REMOVED');
   }, showtime);
+}
+
+const add_special = ({dispatch}, {message, messageFromDict, classes}) => {
+  dispatch('NOTIFICATIONS_ADDED_SPECIAL', {message, classes, messageFromDict});
+  setTimeout(() => {
+    dispatch('NOTIFICATIONS_REMOVED_SPECIAL');
+  }, 2000);
 }
 
 const add_success = ({doAction}, message) => {
@@ -51,11 +66,14 @@ const add_success = ({doAction}, message) => {
 export default {
   actions: {
     add,
-    add_success
+    add_success,
+    add_special
   },
   reducers: {
     init,
     added,
-    removed
+    removed,
+    added_special,
+    removed_special
   }
 } 
