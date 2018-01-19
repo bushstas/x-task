@@ -33,6 +33,7 @@ export default class Button extends React.Component {
 	}
 
 	handleClick = (e) => {
+		e.stopPropagation();
 		let {value, disabled} = this.props;
 		if (disabled) return;
 		this.props.onClick(value || e);

@@ -8,11 +8,15 @@ import {QUICKTASK_STORAGE_KEY, EDITED_TASK_STORAGE_KEY} from '../consts/storage'
 
 let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
 let savedState;
-if (!editedTask) {
-  savedState = StoreKeeper.get(QUICKTASK_STORAGE_KEY);
-  if (savedState) {
-    delete savedState.urlDialogData;
+const getSavedData = () => {
+  let state = StoreKeeper.get(QUICKTASK_STORAGE_KEY);
+  if (state) {
+    delete state.urlDialogData;
   }
+  return state;
+}
+if (!editedTask) {
+  savedState = getSavedData();
 }
 
 const getDefaultState = () => {
@@ -64,8 +68,15 @@ const init = () => {
   return defaultState;
 }
 
-const reset = () => {
-  let state = getDefaultState();
+const reset = (state) => {
+  let {task_id} = state;
+  if (task_id) {
+    state = getSavedData();
+    if (state) {
+      return state;
+    }
+  }
+  state = getDefaultState();
   state.urls = getUrls();
   return state;
 }
@@ -285,7 +296,10 @@ const unset_active_element = ({doAction}) => {
   });
 }
 
-const cancel = ({dispatch}) => {
+const cancel = ({dispatch, doAction, state}) => {
+  if (state.task_id && getSavedData()) {
+    doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'createmode'});
+  }
   dispatch('MASK_CLEARED');
   dispatch('QUICKTASK_RESET');
 }

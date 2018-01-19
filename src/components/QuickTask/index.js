@@ -12,9 +12,11 @@ import TaskTerms from '../TaskTerms';
 import TaskUsers from '../TaskUsers';
 import MaskModeButton from '../MaskModeButton';
 import TaskUrls from '../TaskUrls';
+import {stopEditTask} from '../../utils/TaskResolver';
 
 class QuickTask extends React.Component {
 	render() {
+		let {closeConfirm} = this.state || {};
 		let {
 			formData, 
 			status, 
@@ -178,6 +180,17 @@ class QuickTask extends React.Component {
 						title={dict.cancel_task}
 						classes=".white-icon .inline-icon"
 						onClick={this.handleCloseClick}/>
+					
+					{closeConfirm && (
+						<div class="close-confirm">
+							<Button value="1" onClick={this.handleCloseConfirm}>
+								{dict.yes}
+							</Button>
+							<Button value="0" onClick={this.handleCloseConfirm}>
+								{dict.no}
+							</Button>
+						</div>
+					)}
 				</div>
 
 				{taskInfoDict && (
@@ -378,7 +391,18 @@ class QuickTask extends React.Component {
 
 	handleCloseClick = (e) => {
 		e.stopPropagation();
-		this.props.doAction('QUICKTASK_CANCEL');
+		this.setState({closeConfirm: true});
+	}
+
+	handleCloseConfirm = (value) => {
+		if (value == 1) {
+			let {task_id} = this.props;
+			if (task_id) {
+				stopEditTask();
+			}
+			this.props.doAction('QUICKTASK_CANCEL');
+		}
+		this.setState({closeConfirm: false});
 	}
 
 	handleInfoShown = () => {

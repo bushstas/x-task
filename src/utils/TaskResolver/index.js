@@ -1,6 +1,6 @@
 import Store from 'xstore';
 import StoreKeeper from '../StoreKeeper';
-import {EDITED_TASK_STORAGE_KEY, VIEWED_TASK_STORAGE_KEY} from '../../consts/storage';
+import {EDITED_TASK_STORAGE_KEY, VIEWED_TASK_STORAGE_KEY, QUICKTASK_STORAGE_KEY} from '../../consts/storage';
 
 let EDIT_TASK_PARAM = 'edit_x_task=',
 	ROOTS = [],
@@ -238,10 +238,13 @@ export const editTask = (id, url) => {
 		}
 		fakeLink = document.createElement('a');
 		fakeLink.setAttribute('href', url);
-		fakeLink.setAttribute('target', '_blank');
 		document.body.appendChild(fakeLink);	
 	}	
 	fakeLink.click();
+}
+
+export const stopEditTask = () => {
+	StoreKeeper.remove(EDITED_TASK_STORAGE_KEY);
 }
 
 window.addEventListener('popstate', handlePopState);

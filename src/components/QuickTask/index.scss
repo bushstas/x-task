@@ -31,6 +31,17 @@
 		bottom: -442px;
 	}
 
+	.close-confirm {
+		position: absolute;
+		top: -42px;
+		right: 0;
+		..button {
+			width: 50px;
+			margin-left: 3px;
+			float: left;
+		}
+	}
+
 	& > ..form {
 		position: absolute;
 		top: 48px;
