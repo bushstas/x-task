@@ -1,13 +1,16 @@
 import Store from 'xstore';
 import StoreKeeper from '../StoreKeeper';
+import {EDITED_TASK_STORAGE_KEY, VIEWED_TASK_STORAGE_KEY} from '../../consts/storage';
 
-let ROOTS = [],
+let EDIT_TASK_PARAM = 'edit_x_task=',
+	ROOTS = [],
 	ROOT = '',
 	OPTIONS,
     TASK_URL,
     TASK_URL_PARTS;
 
 export const init = (data) => {
+	parseGetParams();
 	let {roots, nohashes, noparams, getparams} = data;
 	if (typeof roots != 'string') {
 		roots = '';
@@ -22,16 +25,39 @@ export const init = (data) => {
 		getparams
 	}
 	initUrls();
-	let viewedTask = StoreKeeper.get('current_viewed_task');
+	let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
+	if (editedTask) {
+		Store.doAction('QUICKTASK_LOAD_EDITED_TASK', editedTask);
+		return;
+	}
+	let viewedTask = StoreKeeper.get(VIEWED_TASK_STORAGE_KEY);
 	if (viewedTask) {
 		
 	}
 }
 
+const parseGetParams = () => {
+	let {search, href} = location;
+	if (search) {
+		let parts = search.split(EDIT_TASK_PARAM);
+		if (parts[1]) {
+			let editedTaskId = parts[1].match(/^\d+/)[0] || '';
+			if (editedTaskId) {
+				StoreKeeper.set(EDITED_TASK_STORAGE_KEY, editedTaskId);
+			}
+			href = href.replace(EDIT_TASK_PARAM + editedTaskId, '');
+			if (/\?$/.test(href)) {
+				href = href.replace(/\?$/, '');
+			}
+			history.replaceState({}, '', href);
+		}
+	}
+}
+
 export const initUrl = (nohashes, noparams) => {
 	TASK_URL_PARTS = 0;
-	let {pathname, host} = location;
-	ROOT = host;
+	let {pathname, host, protocol} = location;
+	ROOT = protocol + '//' + host;
 		
 	let pathParts = [
 		host,
@@ -43,24 +69,31 @@ export const initUrl = (nohashes, noparams) => {
 			let ps = r.split('/');
 			let f = [];
 			for (let i = 0; i < ps.length; i++) {
+				let p = ps[i];
+				let pr = 'http';
+				let parts = p.split('://');
+				if (parts[1]) {
+					pr = parts[0];
+					p = parts[1];
+				}
 				if (i == 0) {
-					if (/^\*\./.test(ps[i])) {
+					if (/^\*\./.test(p)) {
 						let ps2 = pathParts[i].split('.');
 						if (ps2[2]) {
 							let l = ps2.length;
 							ps2 = ps2[l - 2] + '.' + ps2[l - 1];
-							if (ps[i] == '*.' + ps2) {
-								f.push(ps[i]);
+							if (p == '*.' + ps2) {
+								f.push(pr + '://' + p);
 								continue;
 							}
 						}
 					}
-				} else if (ps[i] == '*') {
-					f.push(ps[i]);
+				} else if (p == '*') {
+					f.push(pr + '://' + p);
 					continue;
 				}
-				if (ps[i] == pathParts[i]) {
-					f.push(ps[i]);
+				if (p == pathParts[i]) {
+					f.push(pr + '://' + p);
 				} else {
 					break;
 				}
@@ -176,9 +209,8 @@ export const resolveTaskUrl = (urls) => {
 		ps = url.split('/');
 		let urlHost = ps[0];
 		if (urlHost == host) {
-			return protocol + '//' + url;
+			return protocol + '://' + url;
 		}
-		
 		if (!fisrtProtocol) {
 			firstUrl = url;
 			fisrtProtocol = protocol;
@@ -187,11 +219,29 @@ export const resolveTaskUrl = (urls) => {
 	return fisrtProtocol + '://' + firstUrl;
 }
 
+let fakeLink;
 export const editTask = (id, url) => {
-	let a = document.createElement('a');
-	a.setAttribute('href', url);
-	document.body.appendChild(a);
-	a.click();
+	if (!fakeLink) {
+		if (!/^http/.test(url)) {
+			url = 'http://' + url;
+			let gp = EDIT_TASK_PARAM + id;
+			let parts = url.split('#');
+			url = parts[0];
+			if (!/\?/.test(url)) {
+				url += '?' + gp; 
+			} else {
+				url += '&' + gp; 
+			}
+			if (typeof parts[1] == 'string') {
+				url += '#' + parts[1];
+			}
+		}
+		fakeLink = document.createElement('a');
+		fakeLink.setAttribute('href', url);
+		fakeLink.setAttribute('target', '_blank');
+		document.body.appendChild(fakeLink);	
+	}	
+	fakeLink.click();
 }
 
 window.addEventListener('popstate', handlePopState);

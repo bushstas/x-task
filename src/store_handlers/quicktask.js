@@ -4,11 +4,15 @@ import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colo
 import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
 import {get, post} from '../utils/Fetcher';
 import {getUrls} from '../utils/TaskResolver';
-import {QUICKTASK_STORAGE_KEY} from '../consts/storage';
+import {QUICKTASK_STORAGE_KEY, EDITED_TASK_STORAGE_KEY} from '../consts/storage';
 
-let savedState = StoreKeeper.get(QUICKTASK_STORAGE_KEY);
-if (savedState) {
-  delete savedState.urlDialogData;
+let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
+let savedState;
+if (!editedTask) {
+  savedState = StoreKeeper.get(QUICKTASK_STORAGE_KEY);
+  if (savedState) {
+    delete savedState.urlDialogData;
+  }
 }
 
 const getDefaultState = () => {
@@ -43,6 +47,9 @@ let defaultState = savedState || getDefaultState();
 let timeout;
 const onStateChanged = (state) => {
   let {status} = state;
+  if (state.task_id) {
+    return;
+  }
   if (!status) {
     StoreKeeper.remove(QUICKTASK_STORAGE_KEY);
   } else {
@@ -352,7 +359,14 @@ const load_until_date = ({dispatch}, value) => {
         dialogFetching: false,
         untilTimeLeft: value
       });
-    });   
+    });
+}
+
+const load_edited_task = ({dispatch}, id) => {
+  get('load_task', {id})
+  .then(data => {
+    dispatch('QUICKTASK_PARAM_CHANGED', data);
+  });
 }
 
 export default {
@@ -371,7 +385,8 @@ export default {
     show_info_form,
     show_users,
     show_terms,
-    load_until_date
+    load_until_date,
+    load_edited_task
   },
   reducers: {
     init,

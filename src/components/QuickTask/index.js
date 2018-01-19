@@ -11,7 +11,7 @@ import TaskInfoForm from '../TaskInfoForm';
 import TaskTerms from '../TaskTerms';
 import TaskUsers from '../TaskUsers';
 import MaskModeButton from '../MaskModeButton';
-import TaskUrlResolver from '../TaskUrlResolver';
+import TaskUrls from '../TaskUrls';
 
 class QuickTask extends React.Component {
 	render() {
@@ -38,7 +38,8 @@ class QuickTask extends React.Component {
 			untilTimeLeft,
 			untilNum,
 			lockedTask,
-			taskList
+			taskList,
+			task_id
 		} = this.props;
 
 		let className = $classy(status, '', ['active', 'collapsed']);
@@ -70,7 +71,7 @@ class QuickTask extends React.Component {
 							textarea/>
 					</FormField>
 					<Button onClick={this.handleSubmit}>
-						{dict.add_task}
+						{dict[task_id ? 'save_task' : 'add_task']}
 					</Button>
 				</Form>
 
@@ -80,7 +81,7 @@ class QuickTask extends React.Component {
 						clickMaskToClose={true}
 						onClose={this.handleUrlDialogClose}
 						title={urlDialogData.dict.title}>
-						<TaskUrlResolver 
+						<TaskUrls 
 							urls={urls}
 							nohashes={nohashes}
 							noparams={noparams}

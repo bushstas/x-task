@@ -5,7 +5,7 @@ import FormField from '../../ui/FormField';
 import Form from '../../ui/Form';
 import {initUrls, hasHash, hasGetParams} from '../../utils/TaskResolver';
 
-export default class TaskUrlResolver extends React.Component {
+export default class TaskUrls extends React.Component {
 
 	render() {
 		let {dict} = this.props;
@@ -77,7 +77,7 @@ export default class TaskUrlResolver extends React.Component {
 		 				{dict.noparams}
 		 			</Checkbox>
 		 		)}
-		 		{noparams && (
+		 		{hasGetParams() && noparams && (
 		 			<Input 
 		 				name="getparams"
 		 				textarea/>

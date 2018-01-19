@@ -7,12 +7,13 @@ class Fetcher {
 		var path = PATH_TO_API;
 		var token = StoreKeeper.get(LOCAL_STORAGE_TOKEN);
 		var query = [];
-		if (typeof XTaskLang == 'undefined') {
+		if (typeof XTaskLang != 'undefined') {
 			var XTaskLang = 'ru';
 		}
-		if (typeof XTaskLang == 'string') {
-			query.push('lang=' + XTaskLang);
+		if (typeof XTaskLang != 'string') {
+			XTaskLang = 'ru';
 		}
+		query.push('lang=' + XTaskLang);
 		if (token) {
 			query.push('token=' + token);
 		}
@@ -61,7 +62,7 @@ class Fetcher {
 		})
 		.then(function(data) {
 			if (data.success === true) {
-		   		return data;
+		   		return data.body;
 		    }
 		    if (data.error) {
 		    	throw new Error(data.error);

@@ -1,5 +1,5 @@
 import StoreKeeper from '../utils/StoreKeeper';
-import {resolveTaskUrl, editTask} from '../utils/TaskResolver';
+import {editTask} from '../utils/TaskResolver';
 import {get, post} from '../utils/Fetcher';
 import {TASKS_STORAGE_KEY} from '../consts/storage';
  
@@ -122,7 +122,7 @@ const load = ({dispatch, state}, data = {}) => {
     status
   };
   get('load_tasks', params)
-  .then((data) => {
+  .then(data => {
     dispatch('TASKS_LOADED', data);
   });
 }
@@ -167,7 +167,7 @@ const load_task_info = ({dispatch}, id) => {
 const show_actions = ({dispatch}, id) => {
   dispatch('TASKS_CHANGED', {taskActionsData: {}});
   get('load_task_actions', {id})
-  .then((data) => {
+  .then(data => {
     dispatch('TASKS_CHANGED', {taskActionsData: data});
   });
 }
@@ -175,7 +175,7 @@ const show_actions = ({dispatch}, id) => {
 const action = ({doAction, state}, name) => {
   let {shownTaskData, taskActionsData: {task_id: id}} = state;
    get('task_action', {name, id})
-  .then((data) => {
+  .then(data => {
     doAction('TASKS_LOAD');
     if (shownTaskData) {
       doAction('TASKS_LOAD_TASK_INFO', id);
@@ -187,8 +187,7 @@ const edit = ({doAction, state, getState}) => {
   let {taskActionsData: {task_id: id}, tasks} = state;
   for (let t of tasks) {
     if (t.id == id) {
-      let url = resolveTaskUrl(t.data.urls);
-      editTask(id, url);
+      editTask(id, t.data.urls[0]);
     }
   }
   
