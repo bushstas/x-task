@@ -61,6 +61,7 @@ const changed = (state, data) => {
 
 const shown = (state, {data, index, prevNextButtons}) => {
   return {
+    shownTaskId: data.id,
     shownTaskData: data,
     shownTaskIndex: index,
     prevNextButtons
@@ -190,7 +191,23 @@ const edit = ({doAction, state, getState}) => {
       editTask(id, t.data.urls[0]);
     }
   }
-  
+}
+
+const check_subtask = ({dispatch, state}, {idx, checked}) => {
+  let {shownTaskId: id, listChecked = []} = state;
+  if (checked) {
+    listChecked.push(~~idx);
+  } else {
+    let index = listChecked.indexOf(~~idx);
+    if (index > -1) {
+      listChecked.splice(index, 1);
+    }
+  }
+  dispatch('TASKS_CHANGED', {listChecked});
+  get('check_subtask', {id, idx, checked})
+  .then(() => {
+    
+  });
 }
 
 export default {
@@ -204,7 +221,8 @@ export default {
     load_task_info,
     show_actions,
     action,
-    edit
+    edit,
+    check_subtask
   },
   reducers: {
     init,

@@ -44,4 +44,12 @@
 	..avatar {
 		var .fl.wh44.mr10;
 	}
+	..checkbox {		
+		var .pt;
+		&..checkbox-checked {
+			..checkbox-control {
+				var .bc-7c9065.boc-7c9065;
+			}
+		}
+	}
 }

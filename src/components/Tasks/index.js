@@ -45,6 +45,7 @@ class Tasks extends React.Component {
 							buttons={prevNextButtons}
 							onPrev={this.handlePrevTask}
 							onNext={this.handleNextTask}
+							onCheckSubtask={this.handleCheckSubtask}
 							onActionsClick={this.handleTaskActionsClick}/>
 					</Dialog>
 				)}
@@ -287,6 +288,10 @@ class Tasks extends React.Component {
 
 	handleImportanceSelect = (importance) => {
 		this.props.doAction('TASKS_LOAD', {importance});
+	}
+
+	handleCheckSubtask = (idx, checked) => {
+		this.props.doAction('TASKS_CHECK_SUBTASK', {idx, checked: checked ? 1 : 0});
 	}
 }
 

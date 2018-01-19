@@ -2,6 +2,7 @@ import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import StoreKeeper from '../../utils/StoreKeeper';
 import Icon from '../../ui/Icon';
+import Checkbox from '../../ui/Checkbox';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Loader from '../../ui/Loader';
 import Avatar from '../Avatar';
@@ -48,7 +49,7 @@ class TaskInfo extends React.Component {
 	get leftColumn() {
 		let {data, info: {dict: dct = {}, status, comments, problems}} = this.props;
 		let {data: d} = data;
-		let {info} = d;
+		let {info, taskList} = d;
 		let infoCount = Object.keys(info).length,
 			commentsCount, problemsCount;
 		if (comments) {
@@ -90,6 +91,7 @@ class TaskInfo extends React.Component {
 				<div class="description">
 					{d.descr}
 				</div>
+				{taskList && this.subtasks}
 				<Tabs>
 					{this.renderTab(dict.information, infoCount, this.info)}
 					{this.renderTab(dict.comments, commentsCount, this.comments)}
@@ -97,6 +99,39 @@ class TaskInfo extends React.Component {
 				</Tabs>
 				
 			</td>
+		)
+	}
+
+	get subtasks() {
+		let {
+			data: {
+				data: {taskList}
+			}, 
+			info: {
+				own,
+				task = {}
+			},
+			listChecked = []
+		} = this.props;
+		let {status} = task;
+		return (
+			<div class="subtasks">
+				{taskList.map((item, i) => {
+					let checked = listChecked.indexOf(i) > -1;
+					let disabled = !own || status != 'in_work';
+					return (
+						<div class="subtask" key={i}>
+							<Checkbox 
+								disabled={disabled}
+								checked={checked}
+								value={i}
+								onChange={this.handleSubtaskChecked}>
+								{item}
+							</Checkbox>
+						</div>
+					)
+				})}
+			</div>
 		)
 	}
 
@@ -319,6 +354,10 @@ class TaskInfo extends React.Component {
 
 	handleActionsClick = () => {
 		this.props.onActionsClick(this.props.data.id);
+	}
+
+	handleSubtaskChecked = (name, value, checked) => {
+		this.props.onCheckSubtask(value, checked);
 	}
 }
 

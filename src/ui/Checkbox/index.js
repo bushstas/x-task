@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from '../Icon';
 
 export default class Checkbox extends React.PureComponent {
 	static defaultProps = {
@@ -6,7 +7,7 @@ export default class Checkbox extends React.PureComponent {
 	}
 
 	render() {
-		let {classes, checked, name, value = '', children} = this.props;
+		let {classes, checked, disabled, name, value = '', children} = this.props;
 		if (typeof checked != 'boolean') {
 			checked = !!checked;
 		}
@@ -18,9 +19,13 @@ export default class Checkbox extends React.PureComponent {
 			onChange: this.handleChange
 		}
 		return (
-			<label class="self $classes">
-				<input {...props}/>
-				<span>
+			<label class="self $classes $?checked $?disabled" onClick={this.handleChange}>
+				<span class="control">
+					{checked && (
+						<Icon icon="checked"/>
+					)}
+				</span>
+				<span class="label">
 					{children}
 				</span>
 			</label>
@@ -28,7 +33,9 @@ export default class Checkbox extends React.PureComponent {
 	}
 
 	handleChange = (e) => {
-		let {onChange, name, value} = this.props;
-		onChange(name, value, e.target.checked);
+		let {onChange, name, value, checked, disabled} = this.props;
+		if (!disabled) {
+			onChange(name, value, !checked);
+		}
 	}
 }

@@ -30,6 +30,17 @@
 			var .p6-10.br3.bo-d82b3b.bc-ffa3a7.mb12;
 		}
 	}
+	.subtasks {
+		var .mb20.pl10;
+		.subtask {
+			var .lh16.pb5;
+		}
+		..checkbox..checkbox-checked {
+			..checkbox-label {
+				text-decoration: line-through;
+			}
+		}
+	}
 	.status {
 		var .bc-eaeaea.p10.bo-e7e7e7.fs15.h40.box;
 		.left-side {
