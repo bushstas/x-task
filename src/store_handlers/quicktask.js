@@ -3,7 +3,7 @@ import {START_Y, DEFAULT_SIZES} from '../consts/max_sizes';
 import {DEFAULT_BRUSH_SIZE, DEFAULT_COLOR, DEFAULT_OPACITY} from '../consts/colors';
 import {getScrollTop, getElementMarginLeft, getCenterCoords, generateKey} from '../utils';
 import {get, post} from '../utils/Fetcher';
-import {getUrls} from '../utils/TaskResolver';
+import {getUrls, stopEditTask} from '../utils/TaskResolver';
 import {QUICKTASK_STORAGE_KEY, EDITED_TASK_STORAGE_KEY} from '../consts/storage';
 
 let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
@@ -297,8 +297,11 @@ const unset_active_element = ({doAction}) => {
 }
 
 const cancel = ({dispatch, doAction, state}) => {
-  if (state.task_id && getSavedData()) {
-    doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'createmode'});
+  if (state.task_id) {
+    stopEditTask();
+    if (getSavedData()) {    
+     doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'createmode'});
+    }
   }
   dispatch('MASK_CLEARED');
   dispatch('QUICKTASK_RESET');

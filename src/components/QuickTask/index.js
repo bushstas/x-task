@@ -12,7 +12,6 @@ import TaskTerms from '../TaskTerms';
 import TaskUsers from '../TaskUsers';
 import MaskModeButton from '../MaskModeButton';
 import TaskUrls from '../TaskUrls';
-import {stopEditTask} from '../../utils/TaskResolver';
 
 class QuickTask extends React.Component {
 	render() {
@@ -396,10 +395,6 @@ class QuickTask extends React.Component {
 
 	handleCloseConfirm = (value) => {
 		if (value == 1) {
-			let {task_id} = this.props;
-			if (task_id) {
-				stopEditTask();
-			}
 			this.props.doAction('QUICKTASK_CANCEL');
 		}
 		this.setState({closeConfirm: false});

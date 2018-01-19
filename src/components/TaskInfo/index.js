@@ -3,6 +3,7 @@ import {dict, icons} from '../../utils/Dictionary';
 import StoreKeeper from '../../utils/StoreKeeper';
 import Icon from '../../ui/Icon';
 import {Tabs, Tab} from '../../ui/Tabs';
+import Loader from '../../ui/Loader';
 import Avatar from '../Avatar';
 import TaskComments from '../TaskComments';
 import TaskProblems from '../TaskProblems';
@@ -12,7 +13,7 @@ import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
 	render() {
-		let {data, info: {actions}} = this.props;
+		let {data, info: {actions}, tasksFetching} = this.props;
 		let {data: d} = data;
 		let href = resolveTaskUrl(d.urls);
 		return (
@@ -39,6 +40,7 @@ class TaskInfo extends React.Component {
 						</tbody>
 					</table>
 				</div>
+				{tasksFetching && <Loader fetching={true}/>}
 			</div>
 		)
 	}
