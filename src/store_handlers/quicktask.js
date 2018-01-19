@@ -129,22 +129,26 @@ const change_visual_element = ({dispatch, doAction}, data) => {
   let state = dispatch('QUICKTASK_VISUAL_ELEMENT_CHANGED', data);
   let {visualElement: {data: d}, currentElement: id} = state;
   let {cut, my} = data;
-  let {fixed} = d;
   if (typeof cut != 'undefined' || (typeof my != 'undefined' && d.cut)) {
-    let props = {id, cut};
-    if (cut || d.cut) {
-      let {width, height, mx, my} = d;
-      props = {
-        width,
-        height,
-        mx,
-        my,
-        fixed,
-        ...props
-      }
-    }
-    doAction('MASK_CUT_MASK', props);
+    cutMask(id, cut, d, doAction);
   }
+}
+
+const cutMask = (id, cut, data, doAction) => {
+  let {fixed} = data;
+  let props = {id, cut};
+  if (cut || data.cut) {
+    let {width, height, mx, my} = data;
+    props = {
+      width,
+      height,
+      mx,
+      my,
+      fixed,
+      ...props
+    }
+  }
+  doAction('MASK_CUT_MASK', props);
 }
 
 const add_element = ({doAction, state}, type) => {
@@ -243,6 +247,7 @@ const remove_element = ({state, doAction}) => {
 }
 
 const relocate_element = ({doAction, state}, coords) => {
+  let {currentElement} = state;
   let mx, my;
   if (coords) {
     mx = getElementMarginLeft(coords.x);
@@ -358,10 +363,16 @@ const load_until_date = ({dispatch}, value) => {
     });
 }
 
-const load_edited_task = ({dispatch}, id) => {
+const load_edited_task = ({dispatch, doAction, state}, id) => {
   get('load_task', {id})
   .then(data => {
-    dispatch('QUICKTASK_PARAM_CHANGED', data);
+  let {visualElements} = data;
+    dispatch('QUICKTASK_PARAM_CHANGED', data);    
+    if (visualElements instanceof Object) {
+      for (let k in visualElements) {
+        cutMask(k, true, visualElements[k].data, doAction);
+      }
+    }
   });
 }
 

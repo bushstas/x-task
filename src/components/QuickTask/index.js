@@ -140,7 +140,7 @@ class QuickTask extends React.Component {
 				</div>
 
 				<div class="bottom-panel .panel">
-					{action != 'note' && (
+					{!task_inwork && action != 'note' && (
 						<Icon icon="assign"
 							classes=".inline-icon"
 							title={dict.assign_executors}
@@ -152,10 +152,12 @@ class QuickTask extends React.Component {
 						title={dict.task_info}
 						onClick={this.handleInfoShown}/>
 
-					<Icon icon="terms"
-						classes=".inline-icon"
-						title={dict.terms}
-						onClick={this.handleTermsShown}/>
+					{!task_inwork && (
+						<Icon icon="terms"
+							classes=".inline-icon"
+							title={dict.terms}
+							onClick={this.handleTermsShown}/>
+					)}
 				</div>
 
 				<div class="top-panel .panel" onClick={this.handleExpandClick}>
