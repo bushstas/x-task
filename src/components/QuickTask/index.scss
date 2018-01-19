@@ -17,6 +17,16 @@
 		display: block;
 	}
 
+	&.no-buttons {
+		& > ..form {
+			left: 8px;
+			right: 8px;
+		}
+		.bottom-panel {
+			left: 8px;
+		}
+	}
+
 	&.collapsed {
 		bottom: -442px;
 	}
@@ -129,7 +139,7 @@
 
 	.bottom-panel {
 		position: absolute;
-		bottom: 3px;
+		bottom: 5px;
 		left: 48px;
 		width: 300px;
 	}

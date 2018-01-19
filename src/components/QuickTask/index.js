@@ -26,7 +26,7 @@ class QuickTask extends React.Component {
 			info,
 			layers,
 			urlDialogData,
-			urls = [],
+			urls,
 			nohashes,
 			noparams,
 			execs,
@@ -39,13 +39,19 @@ class QuickTask extends React.Component {
 			untilNum,
 			lockedTask,
 			taskList,
-			task_id
+			task_id,
+			task_inwork
 		} = this.props;
 
+		if (!urls) {
+			urls = [];
+		}
 		let className = $classy(status, '', ['active', 'collapsed']);
 	 	return (
-	 		<div class="self $className">
-				<Form onChange={this.handleFormChanged}>
+	 		<div class="self $className $task_inwork?no-buttons">
+				<Form 
+					data={formData}
+					onChange={this.handleFormChanged}>
 					<FormField>
 						<Input 
 							classes="url"
@@ -102,23 +108,29 @@ class QuickTask extends React.Component {
 						onClose={this.handleTermsClose}/>
 				)}
 
-				<div class="importance-panel .panel" onClick={this.handleChangeParam}>					
-					{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
+				{!task_inwork && (
+					<div class="importance-panel .panel" onClick={this.handleChangeParam}>					
+						{this.renderButtons(icons.task_imp, importance, 'importance', 'importance')}
 
-					<Icon 
-						classes="lock-task $lockedTask?.active"
-						title={dict.locked}
-						icon="locked"
-						onClick={this.handleLockTaskClick}/>
-				</div>
+						<Icon 
+							classes="lock-task $lockedTask?.active"
+							title={dict.locked}
+							icon="locked"
+							onClick={this.handleLockTaskClick}/>
+					</div>
+				)}
 
-				<div class="type-panel .panel" onClick={this.handleChangeParam}>
-					{this.renderButtons(icons.task_type, type, 'type', 'category')}
-				</div>
-				
-				<div class="action-panel .panel" onClick={this.handleChangeParam}>
-					{this.renderButtons(icons.task_act, action, 'action', 'action')}
-				</div>
+				{!task_inwork && (
+					<div class="type-panel .panel" onClick={this.handleChangeParam}>
+						{this.renderButtons(icons.task_type, type, 'type', 'category')}
+					</div>
+				)}
+
+				{!task_inwork && (
+					<div class="action-panel .panel" onClick={this.handleChangeParam}>
+						{this.renderButtons(icons.task_act, action, 'action', 'action')}
+					</div>
+				)}
 
 				<div class="element-panel .panel" onClick={this.handleExpandClick}>
 					{this.elementButtons}

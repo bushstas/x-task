@@ -298,12 +298,8 @@ const show_url_dialog = ({dispatch}) => {
 
 const save = ({dispatch, doAction, state}) => {
   post('save_task', {data: JSON.stringify(state)})
-  .then((data) => {
-    if (data.success) {
-      let classes = $classy(".notification-success");
-      doAction('NOTIFICATIONS_ADD', {message: data.message, classes});
-      doAction('QUICKTASK_CANCEL');
-    }
+  .then(data => {
+    doAction('QUICKTASK_CANCEL');
   });
 }
 
@@ -315,7 +311,7 @@ const show_info_form = ({dispatch, state}) => {
         dialogFetching: false,
         taskInfoDict: dict
       });
-    });   
+    });
 }
 
 const show_terms = ({dispatch, state}) => {

@@ -61,11 +61,16 @@ class Fetcher {
 			return response.json();
 		})
 		.then(function(data) {
-			if (data.success === true) {
-		   		return data.body;
+			let {success, message, body = {}, error} = data;
+			if (success === true) {
+		   		if (message) {
+					let classes = $classy(".notification-success");
+      				Store.doAction('NOTIFICATIONS_ADD', {message: message, classes});
+				}
+		   		return body;
 		    }
-		    if (data.error) {
-		    	throw new Error(data.error);
+		    if (error) {
+		    	throw new Error(error);
 		    }
 		    throw new Error('Неизвестная ошибка операции ' + action);
 		})
