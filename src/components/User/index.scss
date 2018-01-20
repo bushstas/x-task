@@ -1,0 +1,67 @@
+.self {
+	var .rel.bo-ddd.br3.mb10.p10-15.pl100.pntr.mnh92.box.nowr;
+	&:before {
+		var .cnt.abs.l322.t.b.w1.bc-e9e9e9;
+	}
+	&:after {
+		var .cnt.abs.l640.t.b.w1.bc-e9e9e9;
+	}
+	.main-info {
+		var .inb.w220.vtop;
+	}
+	.status {
+		var .p1-5-2-5.br3.bc-848484.c-fff.fs13.mt5.inb;
+		&.status-6,
+		&.status-1 {
+			var .bc-5cc31b;
+		}
+		&.status-5,
+		&.status-2 {
+			var .bc-d61a1a;
+		}
+	}
+	.projects {
+		var .inb.w300.vtop.pl10;
+		.projects-list {
+			white-space: normal;
+		}
+	}
+	.data {
+		var .abs.r.t.b.w310.bc-f3f3f3.p10.box;
+		white-space: normal;
+		.title {
+			var .bc-e4e4e4;
+		}
+		.task {
+			var .lh15.fs13.mxh46.ovh;
+		}
+	}
+	.title {
+		var .lh12.mb6.fs13.p3-6.br3.bc-f1f1f1.inb;
+	}
+	.name {
+		white-space: normal;
+		var .fs20.lh12.pb8;
+	}
+	..avatar {
+		var .abs.l5.t5.wh80;
+	}
+	&..role-head,
+	&..role-admin,
+	&..role-editor,
+	&..role-analyst {
+		var .bc-fffbe5;
+		.title {
+			var .bc-efeecf;
+		}
+		.data {
+			var .bc-f4f5e1;
+			.title {
+				var .bc-ececce;
+			}
+		}
+		..gray {
+			var .c-a7a98f;
+		}
+	}
+}

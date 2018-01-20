@@ -23,9 +23,13 @@ class Account extends React.Component {
 		)
 	}
 
-	get tabs() {		
+	get tabs() {
+		let {accountActiveTab} = this.props;
 		return (
-			<Tabs onSelect={this.handleSelectTab} classes="~absolute">
+			<Tabs 
+				onSelect={this.handleSelectTab}
+				classes="~absolute"
+				value={accountActiveTab}>
 				<Tab caption={dict.home} value="home">
 					2
 				</Tab>
@@ -75,8 +79,8 @@ class Account extends React.Component {
 		return [];
 	}
 
-	handleSelectTab = (activeTab) => {
-		this.props.dispatch('USERS_TAB_CHANGED', activeTab);
+	handleSelectTab = (accountActiveTab) => {
+		this.props.doAction('APP_CHANGE', {accountActiveTab});
 	}
 
 	handleAction = (action, data) => {
@@ -95,7 +99,7 @@ class Account extends React.Component {
 }
 
 const params = {
-  has: 'users',
+  has: 'app',
   flat: true
 }
 export default Store.connect(Account, params);

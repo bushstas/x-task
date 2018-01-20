@@ -21,6 +21,12 @@ export default function StartButton({onClick, onCreateTask, createTaskShown, mas
 						<Icon icon="addtask"/>
 					</div>
 				)}
+				<div 
+					class="user"
+					title={dict.status}
+					onClick={onCreateTask}>
+					<Icon icon="user"/>
+				</div>
 			</span>
 		</div>
 	)

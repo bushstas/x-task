@@ -3,10 +3,10 @@ import {editTask} from '../utils/TaskResolver';
 import {get, post} from '../utils/Fetcher';
 import {TASKS_STORAGE_KEY} from '../consts/storage';
  
-
 const getDefaultState = () => {
   return {
     tasksFetching: false,
+    taskInfoFetching: false,
     info: {}
   }
 }
@@ -44,23 +44,13 @@ const reset = () => {
   return getDefaultState();
 }
 
-const fetching = (state) => {
-  return {tasksFetching: true}
-}
-
-const loaded = (state, data) => {
-  return {
-    ...data,
-    tasksFetching: false
-  }
-}
-
 const changed = (state, data) => {
   return data;
 }
 
 const shown = (state, {data, index, prevNextButtons}) => {
   return {
+    listChecked: [],
     shownTaskId: data.id,
     shownTaskData: data,
     shownTaskIndex: index,
@@ -83,7 +73,7 @@ const hidden = () => {
 */
 
 const load = ({dispatch, state}, data = {}) => {
-  dispatch('TASKS_FETCHING');
+  dispatch('TASKS_CHANGED', {tasksFetching: true});
   let {filter, status, importance = [], type = []} = state;
   if (data.importance) {
     let idx = importance.indexOf(data.importance);
@@ -124,7 +114,7 @@ const load = ({dispatch, state}, data = {}) => {
   };
   get('load_tasks', params)
   .then(data => {
-    dispatch('TASKS_LOADED', data);
+    dispatch('TASKS_CHANGED', {tasksFetching: false, ...data});
   });
 }
 
@@ -158,10 +148,11 @@ const hide = ({dispatch}) => {
 }
 
 const load_task_info = ({dispatch}, id) => {
-  dispatch('TASKS_FETCHING');
+  dispatch('TASKS_CHANGED', {taskInfoFetching: true});
   get('load_task_info', {id})
   .then((info) => {
-    dispatch('TASKS_LOADED', {info});
+    let listChecked = info.listChecked;
+    dispatch('TASKS_CHANGED', {taskInfoFetching: false, info, listChecked});
   });
 }
 
@@ -181,6 +172,7 @@ const action = ({doAction, state}, name) => {
     if (shownTaskData) {
       doAction('TASKS_LOAD_TASK_INFO', id);
     }
+    doAction('TASKS_LOAD_COUNTS');
   });
 }
  
@@ -204,10 +196,29 @@ const check_subtask = ({dispatch, state}, {idx, checked}) => {
     }
   }
   dispatch('TASKS_CHANGED', {listChecked});
-  get('check_subtask', {id, idx, checked})
-  .then(() => {
-    
+  post('check_subtask', {id, idx, checked});
+}
+
+const load_counts = ({dispatch}) => {
+  get('load_task_counts')
+  .then(({counts}) => {
+    dispatch('TASKS_CHANGED', {counts});
   });
+}
+
+let interval;
+const start_update = ({doAction}, data) => {
+  doAction('TASKS_STOP_UPDATE');
+  let cb = () => {
+    doAction('TASKS_LOAD', data);
+    doAction('TASKS_LOAD_COUNTS');  
+  };    
+  interval = setInterval(cb, 30000);
+  cb();
+}
+
+const stop_update = () => {
+  clearInterval(interval);
 }
 
 export default {
@@ -222,13 +233,14 @@ export default {
     show_actions,
     action,
     edit,
-    check_subtask
+    check_subtask,
+    load_counts,
+    start_update,
+    stop_update
   },
   reducers: {
     init,
     reset,
-    fetching,
-    loaded,
     changed,
     shown,
     hidden

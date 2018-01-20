@@ -22,7 +22,7 @@
 		}
 	}
 	.title {
-		var .fs19.mb5.mt10.lh19;
+		var .fs19.mb5.mt16.lh19;
 		&..importance-burning {
 			var .p6-10.br3.bo-d8a42b.bc-ffd576.mb12;
 		}
@@ -31,9 +31,18 @@
 		}
 	}
 	.subtasks {
-		var .mb20.pl10;
+		var .mb20.bo-ddd;
 		.subtask {
 			var .lh16.pb5;
+		}
+		.subtask-list {
+			var .p10;
+		}
+		.subtasks-title {
+			var .bc-f2f2f2.bold.fs14.p8-10;
+			..icon {
+				var .fs24.fl.mt-4.mr7.c-777;
+			}
 		}
 		..checkbox..checkbox-checked {
 			..checkbox-label {
@@ -42,16 +51,19 @@
 		}
 	}
 	.status {
-		var .bc-eaeaea.p10.bo-e7e7e7.fs15.h40.box;
+		var .bc-eaeaea.p10.bo-e7e7e7.fs15.h58.box.rel;
 		.left-side {
 			var .fl.fs16.bold;
 		}
+		.changed {
+			var .norm.fs13;
+		}
 		.right-side {
-			var .fr;
+			var .abs.r.t8;
 			& > div {
 				var .inb.vmid.mr15;
 				..icon {
-					var .fl.mr6.fs22.c-777;
+					var .fl.mr6.fs22.c-777.mt-1;
 				}
 			}
 		}
@@ -68,11 +80,54 @@
 			var .boc-b9ccdc.bc-e5f3ff;
 		}
 	}
+	.time {
+		var .rel.p12-15-12-55.m10-0-20-0.bo-ddd;
+		..icon {
+			var .abs.l12.t50p.mt-14.fs28;
+		}
+		&..status-frozen {
+			.timeleft {	
+				var .o4;
+			}
+			.scale-outer {
+				.scale {
+					var .bc-d8e4e8;
+				}
+			}
+		}
+		.timeleft {
+			var .pt3;
+		}
+		&.with-scale {
+			var .pt18;
+		}
+	}
 	.description {
-		var .fs14.mt5.mb15.lh19.mnh100.bc-f2f2f2.mt12.p10;
+		var .fs14.mb20.lh19.mnh100.bc-f2f2f2.mt12.p10;
 	}
 	.caption {
 		var .mb6.fs13.bc-777.c-eee.br3.p1-5-2-5;
+	}
+	.scale-outer {
+		var .abs.t3.r3.l3.h5.bc-f1f1f1;
+		.scale {
+			var .h5;
+			&.scale-green {
+				var .bc-93da5e;
+			}
+			&.scale-yellow {
+				var .bc-e4df46;
+			}
+			&.scale-orange {
+				var .bc-f1b13c;
+			}
+			&.scale-red {
+				var .bc-fd5959;
+			}
+			&.scale-dark {
+				var .bc-b10041;
+			}
+		}
 	}
 	.history {
 		var .w200.box.fs13.p10;
@@ -85,10 +140,13 @@
 				var .bold.pb2;
 			}
 			.action-time {
-				var .it;
+				var .fs12;
 			}
 			.action-ago {
-				var .c-888;
+				var .c-888.lh12.fs12.p2-0;
+			}
+			&:last-child {
+				border-bottom: 0;
 			}
 		}
 	}
@@ -115,7 +173,7 @@
 		.info-block-title {
 			var .mb5.bc-f2f2f2.bold.fs14.p8-10;
 			..icon {
-				var .fs24.fl.mt-5.mr7.c-777;
+				var .fs24.fl.mt-4.mr7.c-777;
 			}
 		}
 		.info-block-content {

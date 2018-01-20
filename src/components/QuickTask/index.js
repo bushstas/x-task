@@ -141,7 +141,7 @@ class QuickTask extends React.Component {
 				</div>
 
 				<div class="bottom-panel .panel">
-					{!task_inwork && action != 'note' && (
+					{!task_inwork && (
 						<Icon icon="assign"
 							classes=".inline-icon"
 							title={dict.assign_executors}
@@ -334,12 +334,12 @@ class QuickTask extends React.Component {
 							}
 						break;
 						case 'style':
-							if (value != 'editing' && value != 'note') {
+							if (value != 'editing') {
 								return;
 							}
 						break;
 						case 'project':
-							if (value != 'planning' && value != 'note') {
+							if (value != 'planning') {
 								return;
 							}
 						break;

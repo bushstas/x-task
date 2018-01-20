@@ -7,8 +7,8 @@ import {load} from './utils/Loader';
 import {load as dict} from './utils/Dictionary';
 import {load as user} from './utils/User';
 
+import app from './store_handlers/app';
 import mask from './store_handlers/mask';
-import userpage from './store_handlers/userpage';
 import team from './store_handlers/team';
 import projects from './store_handlers/projects';
 import notifications from './store_handlers/notifications';
@@ -17,8 +17,8 @@ import tooltip from './store_handlers/tooltip';
 import tasks from './store_handlers/tasks';
 
 Store.addHandlers({
+	app,
 	mask,
-	userpage,
 	team,
 	projects,
 	notifications,

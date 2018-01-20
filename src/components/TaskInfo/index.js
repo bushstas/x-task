@@ -14,7 +14,7 @@ import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
 	render() {
-		let {data, info: {actions}, tasksFetching} = this.props;
+		let {data, info: {actions}, taskInfoFetching} = this.props;
 		let {data: d} = data;
 		let href = resolveTaskUrl(d.urls);
 		return (
@@ -41,14 +41,15 @@ class TaskInfo extends React.Component {
 						</tbody>
 					</table>
 				</div>
-				{tasksFetching && <Loader fetching={true}/>}
+				{taskInfoFetching && <Loader fetching={true}/>}
 			</div>
 		)
 	}
 
 	get leftColumn() {
-		let {data, info: {dict: dct = {}, status, comments, problems}} = this.props;
+		let {data, info: {dict: dct = {}, status, comments, problems, task = {}}} = this.props;
 		let {data: d} = data;
+		let {scale, timeleft, timepassed} = task;
 		let {info, taskList} = d;
 		let infoCount = Object.keys(info).length,
 			commentsCount, problemsCount;
@@ -56,6 +57,7 @@ class TaskInfo extends React.Component {
 			commentsCount = comments.length;
 			problemsCount = problems.length;
 		}
+		let scaleClass = this.scaleClass;
 		let titleClassName = $classy(data.importance, '.importance-', ['burning', 'urgent']);
 		let statusClassName = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		return (
@@ -63,6 +65,9 @@ class TaskInfo extends React.Component {
 				<div class="status $statusClassName">
 					<div class="left-side">
 						{dct[status]}
+						<div class="changed">
+							{data.changed}
+						</div>
 					</div>
 					<div class="right-side">
 						<div class="importance">
@@ -91,51 +96,96 @@ class TaskInfo extends React.Component {
 				<div class="description">
 					{d.descr}
 				</div>
+				<div class="time $scale?with-scale $statusClassName">
+					<Icon icon="time"/>
+					{scale && (
+						<div class="scale-outer">
+							<div class="scale $scaleClass" style={{width: scale + '%'}}/>
+						</div>
+					)}
+					<div class="timepassed">
+						{timepassed}
+					</div>
+					<div class="timeleft">
+						{timeleft}
+					</div>
+
+				</div>
 				{taskList && this.subtasks}
-				<Tabs>
-					{this.renderTab(dict.information, infoCount, this.info)}
-					{this.renderTab(dict.comments, commentsCount, this.comments)}
-					{this.renderTab(dict.problems, problemsCount, this.problems)}
+				<Tabs value="information">
+					{this.renderTab('information', infoCount, this.info)}
+					{this.renderTab('comments', commentsCount, this.comments)}
+					{this.renderTab('problems', problemsCount, this.problems)}
 				</Tabs>
 				
 			</td>
 		)
 	}
 
+	get scaleClass() {
+		let {info: {task = {}}} = this.props;
+		let {scale} = task;
+		if (!scale) return;
+		if (scale <= 30) {
+			return $classy('scale-green');
+		}
+		if (scale <= 60) {
+			return $classy('scale-yellow');
+		}
+		if (scale <= 80) {
+			return $classy('scale-orange');
+		}
+		if (scale <= 95) {
+			return $classy('scale-dark');
+		}
+		return $classy('scale-red');
+	}
+
 	get subtasks() {
 		let {
 			data: {
-				data: {taskList}
+				data: {taskList = []}
 			}, 
 			info: {
+				dict = {},
 				own,
 				task = {}
 			},
 			listChecked = []
 		} = this.props;
+		if (taskList.length == 0) {
+			return;
+		}
 		let {status} = task;
 		return (
 			<div class="subtasks">
-				{taskList.map((item, i) => {
-					let checked = listChecked.indexOf(i) > -1;
-					let disabled = !own || status != 'in_work';
-					return (
-						<div class="subtask" key={i}>
-							<Checkbox 
-								disabled={disabled}
-								checked={checked}
-								value={i}
-								onChange={this.handleSubtaskChecked}>
-								{item}
-							</Checkbox>
-						</div>
-					)
-				})}
+				<div class="subtasks-title">
+					<Icon icon="list"/>
+					{dict.subtasks}
+				</div>
+				<div class="subtask-list">
+					{taskList.map((item, i) => {
+						let checked = listChecked.indexOf(i) > -1;
+						let disabled = !own || status != 'in_work';
+						return (
+							<div class="subtask" key={i}>
+								<Checkbox 
+									disabled={disabled}
+									checked={checked}
+									value={i}
+									onChange={this.handleSubtaskChecked}>
+									{item}
+								</Checkbox>
+							</div>
+						)
+					})}
+				</div>
 			</div>
 		)
 	}
 
-	renderTab(caption, count, content) {
+	renderTab(value, count, content) {
+		let caption = dict[value];
 		if (typeof count == 'number') {
 			caption = (
 				<span>
@@ -147,7 +197,7 @@ class TaskInfo extends React.Component {
 			);
 		}
 		return (
-			<Tab caption={caption}>
+			<Tab caption={caption} value={value}>
 				{content}
 			</Tab>
 		)

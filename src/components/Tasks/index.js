@@ -10,17 +10,21 @@ import TaskInfo from '../TaskInfo';
 import TaskButton from '../TaskButton';
 import TaskActions from '../TaskActions';
 import Store from 'xstore';
-import {getRoleId, getTasksCount} from '../../utils/User';
+import {getRoleId} from '../../utils/User';
 
 class Tasks extends React.Component {
 
 	componentDidMount() {
-		this.props.doAction('TASKS_LOAD');
+		this.props.doAction('TASKS_START_UPDATE');
+	}
+
+	componentWillUnmount() {
+		this.props.doAction('TASKS_STOP_UPDATE');		
 	}
 
 	render() {
 		let {
-			fetching,
+			tasksFetching,
 			shownTaskData,
 			shownTaskIndex,
 			prevNextButtons,
@@ -30,7 +34,7 @@ class Tasks extends React.Component {
 	 	return (
 	 		<div class="self">
 		 		{this.tabs}
-		 		<Loader fetching={fetching} classes="content">
+		 		<Loader fetching={tasksFetching} classes="content">
 					{this.tasks}
 				</Loader>
 				{shownTaskData && (
@@ -64,7 +68,7 @@ class Tasks extends React.Component {
 	get tabs() {
 		let {
 			filter,
-			status
+			status = []
 		} = this.props;
 		return (
 			<div>
@@ -80,15 +84,16 @@ class Tasks extends React.Component {
 						{this.fourthTab}
 					</Tabs>
 				)}
-				{filter != 'my' && (
-					<Tabs 
-						classes="statuses"
-						onSelect={this.handleSelectStatusTab}
-						value={status}
-						simple>
-						{this.statusTabs}
-					</Tabs>
-				)}
+				
+				<Tabs 
+					classes="statuses"
+					onSelect={this.handleSelectStatusTab}
+					value={status}
+					simple
+					multiple>
+					{this.statusTabs}
+				</Tabs>
+				
 			</div>
 		)
 	}
@@ -106,6 +111,7 @@ class Tasks extends React.Component {
 								classes="~left"
 								active={importance.indexOf(key) > -1}
 								icon={value}
+								title={dict[key]}
 								value={key}
 								key={key}
 								onSelect={this.handleImportanceSelect}/>
@@ -129,6 +135,7 @@ class Tasks extends React.Component {
 								classes="~right"
 								active={type.indexOf(key) > -1}
 								icon={value}
+								title={dict[key]}
 								value={key}
 								key={key}
 								onSelect={this.handleTypeSelect}/>
@@ -141,9 +148,7 @@ class Tasks extends React.Component {
 
 	get statusTabs() {
 		let roleId = getRoleId();
-		let tabs = [
-			<Tab caption={dict.all} value="all" key="all"/>
-		];
+		let tabs = [];
 		let current = (
 				<Tab caption={dict.status_none} value="none" key="none"/>
 			),
@@ -163,7 +168,7 @@ class Tasks extends React.Component {
 		tabs.push(
 			<Tab caption={dict.status_delayed} value="delayed" key="delayed"/>,
 			<Tab caption={dict.status_frozen} value="frozen" key="frozen"/>,
-			<Tab caption={dict.status_closed} value="closed" key="closed"/>
+			<Tab caption={dict.status_closed} value="closed" key="closed" single/>
 		);
 		return tabs;
 	}
@@ -191,7 +196,7 @@ class Tasks extends React.Component {
 	}
 
 	renderTab(caption, value) {
-		let counts = getTasksCount();
+		let {counts = {}} = this.props;
 		let count = counts[value];
 		caption = (
 			<span>
@@ -243,11 +248,11 @@ class Tasks extends React.Component {
 	}
 
 	handleSelectTab = (filter) => {
-		this.props.doAction('TASKS_LOAD', {filter});
+		this.props.doAction('TASKS_START_UPDATE', {filter});
 	}
 
 	handleSelectStatusTab = (status) => {
-		this.props.doAction('TASKS_LOAD', {status});
+		this.props.doAction('TASKS_START_UPDATE', {status});
 	}
 
 	handleTaskClick = (data, index) => {
@@ -283,11 +288,11 @@ class Tasks extends React.Component {
 	}
 
 	handleTypeSelect = (type) => {
-		this.props.doAction('TASKS_LOAD', {type});
+		this.props.doAction('TASKS_START_UPDATE', {type});
 	}
 
 	handleImportanceSelect = (importance) => {
-		this.props.doAction('TASKS_LOAD', {importance});
+		this.props.doAction('TASKS_START_UPDATE', {importance});
 	}
 
 	handleCheckSubtask = (idx, checked) => {

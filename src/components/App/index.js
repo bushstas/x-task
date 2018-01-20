@@ -22,7 +22,6 @@ class App extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      activeTab: 'tasks',
       active: false,
       isAuthorized: isAuthorized()
     };
@@ -104,7 +103,7 @@ class App extends React.PureComponent {
           titleContent={(
             <MainMenu 
               onNavigate={this.handleNavigate}
-              active={this.state.activeTab}/>
+              active={this.props.appActiveTab}/>
           )}
           onClose={this.handleDialogClose}
           key="dialog"
@@ -123,7 +122,7 @@ class App extends React.PureComponent {
     )
   }
   get title() {
-    switch (this.state.activeTab) {
+    switch (this.props.appActiveTab) {
       case 'users':
         return dict.users;
       
@@ -140,7 +139,7 @@ class App extends React.PureComponent {
   }
 
   get content() {
-    switch (this.state.activeTab) {
+    switch (this.props.appActiveTab) {
       case 'users':
         return <Users/>
 
@@ -188,7 +187,7 @@ class App extends React.PureComponent {
         this.forceUpdate();
       });
     } else if (name) {
-      this.setState({activeTab: name});
+      this.props.doAction('APP_CHANGE', {appActiveTab: name});
     }
   }
 
@@ -198,7 +197,7 @@ class App extends React.PureComponent {
 }
 
 const params = {
-  has: 'quicktask:status|visualMode',
+  has: 'app, quicktask:status|visualMode',
   flat: true
 }
 export default Store.connect(App, params);

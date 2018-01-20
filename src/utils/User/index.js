@@ -9,7 +9,6 @@ let loaded = false,
 	callback,
 	currentProject = null,
 	user = null,
-	tasksCount = {},
 	projects = [],
 	rights = [];
 
@@ -39,9 +38,6 @@ const onLoad = (data) => {
 		}
 		if (data.rights instanceof Array) {
 			rights = data.rights;
-		}
-		if (data.tasks_count instanceof Object) {
-			tasksCount = data.tasks_count;
 		}
 	}
 	if (callback instanceof Function) {
@@ -159,10 +155,6 @@ export const getRoleId = () => {
 	return user.role_id;
 }
 
-export const getTasksCount = () => {
-	return tasksCount;
-}
-
 export default {
 	isAuthorized,
 	isCurrentUser,
@@ -178,6 +170,5 @@ export default {
 	register,
 	logout,
 	getRole,
-	getRoleId,
-	getTasksCount
+	getRoleId
 }

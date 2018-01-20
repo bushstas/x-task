@@ -224,17 +224,17 @@ export const editTask = (id, url) => {
 	if (!fakeLink) {
 		if (!/^http/.test(url)) {
 			url = 'http://' + url;
-			let gp = EDIT_TASK_PARAM + id;
-			let parts = url.split('#');
-			url = parts[0];
-			if (!/\?/.test(url)) {
-				url += '?' + gp; 
-			} else {
-				url += '&' + gp; 
-			}
-			if (typeof parts[1] == 'string') {
-				url += '#' + parts[1];
-			}
+		}
+		let gp = EDIT_TASK_PARAM + id;
+		let parts = url.split('#');
+		url = parts[0];
+		if (!/\?/.test(url)) {
+			url += '?' + gp; 
+		} else {
+			url += '&' + gp; 
+		}
+		if (typeof parts[1] == 'string') {
+			url += '#' + parts[1];
 		}
 		fakeLink = document.createElement('a');
 		fakeLink.setAttribute('href', url);

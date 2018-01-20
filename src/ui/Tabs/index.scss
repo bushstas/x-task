@@ -23,6 +23,9 @@
 
 		.count {
 			var .abs.r6.t5.bl.ml5.p2-3.bc-b7b7b7.br4.fr;
+			&:empty {
+				var .none;
+			}
 		}
 
 		&:first-child {
@@ -51,7 +54,12 @@
 			var .pl20;
 		}
 		& > .content {
-			var .abs.t55.l.r.b55.ova.box.p0-20;
+			var .abs.t55.l.r.b60.ova.box.p0-20;
+		}
+		&.no-overflow {
+			& > .content {
+				overflow: visible !important;
+			}
 		}
 	}
 }

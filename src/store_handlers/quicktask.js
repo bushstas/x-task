@@ -43,6 +43,7 @@ const getDefaultState = () => {
     users: [],
     difficulty: 5,
     termsId: 7,
+    until: 2,
     untilNum: ''
   }
 }
@@ -381,14 +382,21 @@ const load_until_date = ({dispatch}, value) => {
 }
 
 const load_edited_task = ({dispatch, doAction, state}, id) => {
+  dispatch('MASK_CLEARED');
   doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'editmode'});
   get('load_task', {id})
   .then(data => {
   let {visualElements} = data;
-    dispatch('QUICKTASK_PARAM_CHANGED', data);    
+    if (visualElements instanceof Array) {
+        data.visualElements = {};
+    }
+    dispatch('QUICKTASK_PARAM_CHANGED', data);
     if (visualElements instanceof Object) {
       for (let k in visualElements) {
-        cutMask(k, true, visualElements[k].data, doAction);
+        let {data} = visualElements[k];
+        if (data.cut) {
+          cutMask(k, true, data, doAction);
+        }
       }
     }
   });

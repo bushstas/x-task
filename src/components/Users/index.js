@@ -18,10 +18,14 @@ class Users extends React.Component {
 		)
 	}
 
-	get tabs() {		
+	get tabs() {
+		let {usersActiveTab} = this.props;
 		return (
-			<Tabs onSelect={this.handleSelectTab} classes="~absolute">
-				<Tab caption={dict[this.teamTabCaption]} value="users">
+			<Tabs 
+				onSelect={this.handleSelectTab}
+				classes="~absolute ~no-overflow"
+				value={usersActiveTab}>
+				<Tab caption={dict[this.teamTabCaption]} value="team">
 					{this.team}
 				</Tab>
 				<Tab caption={dict.invitations} value="invitations">
@@ -95,8 +99,8 @@ class Users extends React.Component {
 		return [];
 	}
 
-	handleSelectTab = (activeTab) => {
-		this.props.dispatch('USERPAGE_TAB_CHANGED', activeTab);
+	handleSelectTab = (usersActiveTab) => {
+		this.props.doAction('APP_CHANGE', {usersActiveTab});
 	}
 
 	handleAction = (action, data) => {
@@ -123,7 +127,7 @@ class Users extends React.Component {
 }
 
 const params = {
-  has: 'userpage, team',
+  has: 'app, team',
   flat: true
 }
 export default Store.connect(Users, params);

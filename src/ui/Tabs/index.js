@@ -8,13 +8,14 @@ export class Tabs extends React.PureComponent {
 	constructor(props) {
 		super();
 		this.state = {
-			activeTab: props.value || 0
+			activeTab: props.value
 		};
 	}
 	
 	render() {
 		let {activeTab} = this.state;
 		let {children, classes, simple, value: v} = this.props;
+		this.singles = [];
 		if (!(children instanceof Array)) {
 			children = [children];
 		}
@@ -23,12 +24,21 @@ export class Tabs extends React.PureComponent {
 				<div class="menu">
 					{children.map((child, i) => {
 						if (child instanceof Object && child.type == Tab) {
-							let value = this.getValue(child.props.value, i);
+							let value = child.props.value;
+							if (child.props.single) {
+								this.singles.push(value);
+							}
+							let active;
+							if (activeTab instanceof Array) {
+								active = activeTab.indexOf(value) > -1;
+							} else {
+								active = activeTab == value;
+							}
 							let props = {
 								key: i,
 								index: i,
 								onSelect: this.handleSelectTab,
-								classes: $classy("$activeTab==value ? active"),
+								classes: $classy("$?active"),
 								...child.props
 							};
 							return React.cloneElement(child, props, null);
@@ -39,8 +49,14 @@ export class Tabs extends React.PureComponent {
 					<div class="content">
 						{children.map((child, i) => {
 							if (child instanceof Object) {
-								let value = this.getValue(child.props.value, i);
-								if (activeTab == value && child instanceof Object && child.type == Tab) {
+								let value = child.props.value;
+								let active;
+								if (activeTab instanceof Array) {
+									active = activeTab.indexOf(value) > -1;
+								} else {
+									active = activeTab == value;
+								}
+								if (active && child instanceof Object && child.type == Tab) {
 									return child.props.children;
 								}
 							}
@@ -51,22 +67,39 @@ export class Tabs extends React.PureComponent {
 		)
 	}
 
-	getValue(v, i) {
+	handleSelectTab = (value, single) => {
+		let {multiple} = this.props;
 		let {activeTab} = this.state;
-		let value = v || i;
-		if (i == 0 && activeTab === 0 && v) {
-			value = 0;
-		}
-		return value;
-	}
+		if (multiple) {
+			if (!(activeTab instanceof Array)) {
+				activeTab = [activeTab];
+			}
+			let idx = activeTab.indexOf(value);
+			if (idx > -1) {
+				if (single) {
+					activeTab = [];
+				} else {
+					activeTab.splice(idx, 1);
+				}
+			} else {
+				if (single) {
+					activeTab = [value];
+				} else {
+					activeTab.push(value);
+					for (let s of this.singles) {
+						let i = activeTab.indexOf(s);
+						if (i > -1) {
+							activeTab.splice(i, 1);
+						}
+					}
+				}
 
-	handleSelectTab = (index, value) => {
-		value = value || index;
-		let {activeTab} = this.state;
-		if (activeTab != value) {
-			this.setState({activeTab: value});
-			this.props.onSelect(value);
+			}
+		} else if (activeTab != value) {
+			activeTab = value;
 		}
+		this.setState({activeTab});
+		this.props.onSelect(activeTab);
 	}
 }
 
@@ -81,9 +114,9 @@ export class Tab extends React.Component {
 	}
 
 	handleClick = () => {
-		let {index, onSelect, value, disabled} = this.props;
+		let {onSelect, value, disabled, single} = this.props;
 		if (!disabled) {
-			onSelect(index, value);
+			onSelect(value, single);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {dict} from '../../utils/Dictionary';
 import {getToken, hasRight} from '../../utils/User';
-import Table from '../../ui/Table';
+import User from '../User';
 import Icon from '../../ui/Icon';
 import UserForm from '../UserForm';
 import Store from 'xstore';
@@ -17,13 +17,17 @@ class Team extends React.Component {
 	}
 
 	render() {
-		let {userFormShown, teamFetching} = this.props;
+		let {userFormShown, teamFetching, users} = this.props;
 	 	if (userFormShown) {
 	 		return this.form;
 	 	}
 	 	return (
-	 		<Loader fetching={teamFetching}>
-	 			{this.table}
+	 		<Loader classes="self" fetching={teamFetching}>
+	 			{users.map((user) => {
+	 				return (
+	 					<User data={user} key={user.token}/>
+	 				)
+	 			})}
 	 		</Loader>
 	 	)
 	}
