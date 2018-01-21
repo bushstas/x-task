@@ -3,7 +3,7 @@ import StoreKeeper from '../StoreKeeper';
 import Store from 'xstore';
 
 class Fetcher {
-	getPathToApi(action) {
+	getPathToApi(action, data) {
 		var path = PATH_TO_API;
 		var token = StoreKeeper.get(LOCAL_STORAGE_TOKEN);
 		var query = [];
@@ -19,6 +19,17 @@ class Fetcher {
 		}
 		if (action) {
 			query.push('action=' + action);
+		}
+		if (data instanceof Object) {
+			for (let k in data) {
+				if (typeof data[k] == 'string' || 
+					typeof data[k] == 'number' ||
+					typeof data[k] == 'boolean') {
+					query.push(k + '=' + data[k]);
+				} else if (typeof data[k] == 'object') {
+					query.push(k + '=' + JSON.stringify(data[k]));
+				}
+			}
 		}
 		query = query.join('&');
 		return path + (!!query ? '?' + query : '');
@@ -42,7 +53,7 @@ class Fetcher {
 	}
 
 	get(action, data) {
-		return this.send('POST', action, data);
+		return this.send('GET', action, data);
 	}
 
 	post(action, data) {
@@ -50,13 +61,15 @@ class Fetcher {
 	}
 
 	send(method, action, data) {
-		var url = this.getPathToApi(action),
-			formData = this.getFormData(data);
-
-		return fetch(url, {
-			method: method || 'GET',
-			body: formData || new FormData
-		})
+		method = method || 'GET';
+		let url, body, params = {method};
+		if (method.toLowerCase() == 'get') {
+			url = this.getPathToApi(action, data);
+		} else {
+			url = this.getPathToApi(action);
+			params.body = this.getFormData(data) || new FormData;
+		}
+		return fetch(url, params)
 		.then(function(response) {
 			return response.json();
 		})

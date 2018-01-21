@@ -16,7 +16,7 @@ class StartButton extends React.Component {
 						<div 
 							class="user"
 							title={dict.status}
-							onClick={null}>
+							onClick={this.handleStatusClick}>
 							<Icon icon="user"/>
 						</div>
 						{this.hasCreateButton && (
@@ -36,6 +36,10 @@ class StartButton extends React.Component {
 	handleStartClick = () => {
 		let {active} = this.props;
     	this.props.doAction('APP_CHANGE', {active: !active});
+  	}
+
+  	handleStatusClick = () => {
+  		this.props.doAction('APP_SHOW_STATUS');
   	}
 
 	get hasCreateButton() {
