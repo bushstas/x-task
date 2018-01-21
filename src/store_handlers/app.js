@@ -9,7 +9,8 @@ const getDefaultState = () => {
 	return {
   		usersActiveTab: 'team',
   		appActiveTab: 'tasks',
-  		accountActiveTab: 'home'
+  		accountActiveTab: 'home',
+      quicktaskMode: false
 	}
 }
 let defaultState = getSavedData() || getDefaultState();
@@ -23,6 +24,11 @@ const init = () => {
 }
  
 const changed = (state, data) => {
+  if (data.quicktaskMode) {
+    data.active = false;
+  } else if (data.active) {
+    data.quicktaskMode = false;
+  }
   return data;
 }
 

@@ -22,24 +22,21 @@ class App extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      active: false,
       isAuthorized: isAuthorized()
     };
   }
 
   render() {
-    let {active} = this.state;
+    let {active, quicktaskMode} = this.props;
     let authorized = isAuthorized();
 
     let elements = [
-      this.notifications
+      this.notifications,
+      this.startButton
     ];
     
-    if (!active) {
-      elements.push(
-        this.startButton,
-      );
-      if (this.taskMode && authorized) {
+    if (isAuthorized()) {
+      if (quicktaskMode) {
         elements.push(
           this.mask,
           this.quicktask,
@@ -47,16 +44,13 @@ class App extends React.PureComponent {
           this.visualElementPanel
         );
       }
-    } else if (authorized) {
-      elements.push(this.dialog);
+      if (active) {
+        elements.push(this.dialog);  
+      }
     } else {
       elements.push(this.authForm);
     }
     return elements;
-  }
-
-  get taskMode() {
-     return !!this.props.status || this.visualMode;
   }
 
   get visualMode() {
@@ -87,12 +81,7 @@ class App extends React.PureComponent {
 
   get startButton() {
     return (
-      <StartButton 
-        key="startButton"
-        createTaskShown={!this.taskMode && hasRight('add_dev_task')}
-        maskButtonShown={this.taskMode && isAuthorized()}
-        onClick={this.handleStartClick}
-        onCreateTask={this.handleAddTaskClick}/>
+      <StartButton key="startButton"/>
     )
   }
 
@@ -155,16 +144,8 @@ class App extends React.PureComponent {
     }
   }
 
-  handleStartClick = () => {
-    this.setActive(true);
-  }
-
-  handleAddTaskClick = (e) => {
-    this.props.dispatch('QUICKTASK_ACTIVATED', 'active');
-  }
-
   handleDialogClose = () => {
-    this.setActive(false);
+    this.props.doAction('APP_CHANGE', {active: false});
   }
 
   handleAuthStatusChanged = (isAuthorized) => {
@@ -190,14 +171,10 @@ class App extends React.PureComponent {
       this.props.doAction('APP_CHANGE', {appActiveTab: name});
     }
   }
-
-  setActive(active) {
-    this.setState({active});
-  }
 }
 
 const params = {
-  has: 'app, quicktask:status|visualMode',
+  has: 'app',
   flat: true
 }
 export default Store.connect(App, params);

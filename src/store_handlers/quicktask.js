@@ -21,13 +21,12 @@ if (!editedTask) {
 
 const getDefaultState = () => {
   return {
-    status: null,
+    status: 'active',
     formData: {},
     importance: 'usual',
     type: 'design',
     action: null,
     visualElements: {},
-    visualMode: false,
     currentElement: null,
     currentType: null,
     visualElement: null,
@@ -207,7 +206,6 @@ const add_element = ({doAction, state}, type) => {
   let props = {
     markElement,
     selectionElement,
-    visualMode: true,
     status: 'collapsed',
     visualElements,
     currentElement,
@@ -239,7 +237,6 @@ const remove_element = ({state, doAction}) => {
   let props = {
     visualElements,
     markElement,
-    visualMode: false,
     status: 'active',
     currentElement: null,
     visualElement: null
@@ -281,7 +278,6 @@ const set_element_active = ({doAction, state}, currentElement) => {
   doAction('QUICKTASK_CHANGE_PARAM', {
     currentElement,
     visualElement,
-    visualMode: true,
     status: 'collapsed',
     currentType,
     uiPanelShown: false
@@ -290,7 +286,6 @@ const set_element_active = ({doAction, state}, currentElement) => {
 
 const unset_active_element = ({doAction}) => {
    doAction('QUICKTASK_CHANGE_PARAM', {
-    visualMode: false,
     status: 'active',
     currentElement: null,
     visualElement: null
