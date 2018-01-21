@@ -150,7 +150,7 @@ class Tasks extends React.Component {
 		let roleId = getRoleId();
 		let tabs = [];
 		let current = (
-				<Tab caption={dict.status_none} value="none" key="none"/>
+				<Tab caption={dict.status_current} value="current" key="current"/>
 			),
 			ready = (
 				<Tab caption={dict.status_ready} value="ready" key="ready"/>

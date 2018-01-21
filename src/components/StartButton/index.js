@@ -7,7 +7,8 @@ import {hasRight, isAuthorized} from '../../utils/User';
 
 class StartButton extends React.Component {
 	render() {
-		let {active, statusesDict} = this.props;
+		let {shown, statusesDict} = this.props;
+		let active = shown == 'main';
 		return (
 			<div class="self $?active">
 				<div class="main" onClick={this.handleStartClick}>
@@ -15,6 +16,12 @@ class StartButton extends React.Component {
 				</div>
 				{isAuthorized() && (
 					<div class="menu">
+						<div 
+							class="board"
+							title={dict.create_task}
+							onClick={this.handleBoardClick}>
+							<Icon icon="board"/>
+						</div>
 						<div 
 							class="user"
 							title={dict.work_status}
@@ -42,8 +49,9 @@ class StartButton extends React.Component {
 	}
 
 	handleStartClick = () => {
-		let {active} = this.props;
-    	this.props.doAction('APP_CHANGE', {active: !active});
+		let {shown} = this.props;
+		shown = shown != 'main' ? 'main' : null;
+    	this.props.doAction('APP_CHANGE', {shown});
   	}
 
   	handleStatusClick = () => {
@@ -55,7 +63,7 @@ class StartButton extends React.Component {
 	}
 
 	handleAddTaskClick = () => {
-		this.props.doAction('APP_CHANGE', {quicktaskMode: true});
+		this.props.doAction('APP_CHANGE', {shown: 'quicktask'});
   	}
 
   	handleStatusesClose = () => {
@@ -64,6 +72,10 @@ class StartButton extends React.Component {
 
   	handleStatusesSelect = (status) => {
   		this.props.doAction('APP_SAVE_STATUS', {status});	
+  	}
+
+  	handleBoardClick = () => {
+  		this.props.doAction('APP_SHOW_BOARD');
   	}
 }
 

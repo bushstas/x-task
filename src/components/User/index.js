@@ -2,6 +2,7 @@ import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
+import ActionsButton from '../ActionsButton';
 
 export default class User extends React.Component {
 	
@@ -71,6 +72,9 @@ export default class User extends React.Component {
 						{task}
 					</div>
 				</div>
+				{true && (
+					<ActionsButton onClick={this.handleActionsClick}/>
+				)}
 			</div>
 		)
 	}

@@ -2,7 +2,7 @@ import React from 'react';
 import {icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
-import TaskActionsButton from '../TaskActionsButton';
+import ActionsButton from '../ActionsButton';
 
 export default class Task extends React.Component {
 	static defaultProps = {
@@ -43,8 +43,8 @@ export default class Task extends React.Component {
 					{data.changed}
 				</div>
 				{data.actions && (
-					<TaskActionsButton onClick={this.handleActionsClick}/>
-				)}				
+					<ActionsButton onClick={this.handleActionsClick}/>
+				)}
 			</div>
 		)
 	}

@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from '../../ui/Icon';
 
-export default class TaskActionsButton extends React.Component {
+export default class ActionsButton extends React.Component {
 	static defaultProps = {
 		onClick: () => {}
 	}

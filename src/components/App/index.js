@@ -8,6 +8,7 @@ import QuickTask from '../QuickTask';
 import Mask from '../Mask';
 import VisualElements from '../VisualElements';
 import VisualElementPanel from '../VisualElementPanel';
+import Board from '../Board';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -27,7 +28,7 @@ class App extends React.PureComponent {
   }
 
   render() {
-    let {active, quicktaskMode} = this.props;
+    let {shown} = this.props;
     let authorized = isAuthorized();
 
     let elements = [
@@ -36,16 +37,17 @@ class App extends React.PureComponent {
     ];
     
     if (isAuthorized()) {
-      if (quicktaskMode) {
+      if (shown == 'quicktask') {
         elements.push(
           this.mask,
           this.quicktask,
           this.visualElements,
           this.visualElementPanel
         );
-      }
-      if (active) {
+      } else if (shown == 'main') {
         elements.push(this.dialog);  
+      } else if (shown == 'board') {
+        elements.push(this.board);  
       }
     } else {
       elements.push(this.authForm);
@@ -53,8 +55,9 @@ class App extends React.PureComponent {
     return elements;
   }
 
-  get visualMode() {
-    return !!this.props.visualMode;
+  get board() {
+    let {boardTasks, boardDict} = this.props;
+    return <Board key="board" tasks={boardTasks} dict={boardDict}/>
   }
 
   get visualElementPanel() {
@@ -145,7 +148,7 @@ class App extends React.PureComponent {
   }
 
   handleDialogClose = () => {
-    this.props.doAction('APP_CHANGE', {active: false});
+    this.props.doAction('APP_CHANGE', {shown: null});
   }
 
   handleAuthStatusChanged = (isAuthorized) => {

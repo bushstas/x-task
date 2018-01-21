@@ -1,0 +1,61 @@
+.self {
+	var .fix.z9999.l.t.r.b.bc-f1f1f1;
+	.header {
+		var .h45.lh45.bc-e1e1e1;
+		.title {
+			var .abs.l.t.fs18.pl20;
+		}
+		.logo {
+			var .c-555.tshad-fff-3.bold.it.fs20.inb.mr15;
+			
+			..icon {
+				var .fl.mt11.mr1.c-555;
+			}
+		}
+	}
+	.content {
+		var .abs.t55.l15.r15.b60;
+		.column {
+			var .abs.t.b.w20p;
+		}
+		.column1 {
+			var .l;
+			..board-task {
+				var .bc-fff;
+			}
+		}
+		.column2 {
+			var .l20p;
+			..board-task {
+				var .boc-d6d082.bc-fffbe5;
+			}
+		}
+		.column3 {
+			var .l40p;
+			..board-task {
+				var .boc-aaa.bc-e8e8e8;
+			}
+		}
+		.column4 {
+			var .l60p;
+			..board-task {
+				var .boc-bddc9c.bc-f2ffe5;
+			}
+		}
+		.column5 {
+			var .l80p;
+			..board-task {
+				var .boc-b9ccdc.bc-e5f3ff;
+			}
+		}
+	}
+	.tasks {
+		var .abs.l5.r5.t.b.bc-fff.br5.p7.pt35.box.shad-eee-10;
+	}
+	.empty {
+		var .abs.l5.r5.t.b.bc-fff.br5.p7.pt35.box.shad-eee-10;
+	}
+	.column-title {
+		var .abs.t.l.r.bc-555.c-fff.br5-5-0-0.box.p5-10.fs14;
+	}
+}

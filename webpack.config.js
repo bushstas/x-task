@@ -8,7 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const classy = require('classy-loader');
 classy.init({
     globalPrefix: 'x-task',
-    obfuscation: false,
+    obfuscation: true,
     autoPrefixMode: true,
     prefixAutoResolving: 'folder',
     cssAutoImport: true

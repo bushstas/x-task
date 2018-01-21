@@ -11,7 +11,7 @@ const getDefaultState = () => {
   		usersActiveTab: 'team',
   		appActiveTab: 'tasks',
   		accountActiveTab: 'home',
-      quicktaskMode: false
+      shown: null
 	}
 }
 let defaultState = getSavedData() || getDefaultState();
@@ -25,11 +25,6 @@ const init = () => {
 }
  
 const changed = (state, data) => {
-  if (data.quicktaskMode) {
-    data.active = false;
-  } else if (data.active) {
-    data.quicktaskMode = false;
-  }
   return data;
 }
 
@@ -51,12 +46,21 @@ const save_status = ({dispatch}, data) => {
   });
 }
 
+const show_board = ({dispatch}) => {
+  dispatch('APP_CHANGED', {shown: 'board'});
+  get('load_board')
+  .then((boardData) => {
+    dispatch('APP_CHANGED', boardData);
+  });
+}
+
 export default {
   onStateChanged,
   actions: {
   	change,
     show_status,
-    save_status
+    save_status,
+    show_board
   },
   reducers: {
     init,
