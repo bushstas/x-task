@@ -78,7 +78,7 @@ class Fetcher {
 			if (success === true) {
 		   		if (message) {
 					let classes = $classy(".notification-success");
-      				Store.doAction('NOTIFICATIONS_ADD', {message: message, classes});
+      				Store.doAction('NOTIFICATIONS_ADD', {message: message, classes, showtime: 4000});
 				}
 		   		return body;
 		    }

@@ -1,21 +1,23 @@
 import React from 'react';
 import Store from 'xstore';
+import WorkStatuses from '../WorkStatuses';
 import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
 import {hasRight, isAuthorized} from '../../utils/User';
 
 class StartButton extends React.Component {
 	render() {
+		let {active, statusesDict} = this.props;
 		return (
-			<div class="self">
+			<div class="self $?active">
 				<div class="main" onClick={this.handleStartClick}>
 					<Icon icon="logo"/>
 				</div>
 				{isAuthorized() && (
-					<span class="menu">
+					<div class="menu">
 						<div 
 							class="user"
-							title={dict.status}
+							title={dict.work_status}
 							onClick={this.handleStatusClick}>
 							<Icon icon="user"/>
 						</div>
@@ -27,7 +29,13 @@ class StartButton extends React.Component {
 								<Icon icon="addtask"/>
 							</div>
 						)}
-					</span>
+					</div>
+				)}
+				{statusesDict && (
+					<WorkStatuses 
+						dict={statusesDict}
+						onClose={this.handleStatusesClose}
+						onSelect={this.handleStatusesSelect}/>
 				)}
 			</div>
 		)
@@ -48,6 +56,14 @@ class StartButton extends React.Component {
 
 	handleAddTaskClick = () => {
 		this.props.doAction('APP_CHANGE', {quicktaskMode: true});
+  	}
+
+  	handleStatusesClose = () => {
+  		this.props.doAction('APP_CHANGE', {statusesDict: null});
+  	}
+
+  	handleStatusesSelect = (status) => {
+  		this.props.doAction('APP_SAVE_STATUS', {status});	
   	}
 }
 

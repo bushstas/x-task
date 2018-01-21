@@ -49,8 +49,14 @@
 	&..role-head,
 	&..role-admin,
 	&..role-editor,
-	&..role-analyst {
-		var .bc-fffbe5;
+	&..role-analyst {		
+		&:before {
+			var .bc-e8e4cd;
+		}
+		&:after {
+			var .bc-e8e4cd;
+		}
+		var .bc-fffbe5.boc-d2d4b9;
 		.title {
 			var .bc-efeecf;
 		}

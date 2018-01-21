@@ -1,6 +1,6 @@
 import StoreKeeper from '../utils/StoreKeeper';
 import {APP_STORAGE_KEY} from '../consts/storage';
-import {get} from '../utils/Fetcher';
+import {get, post} from '../utils/Fetcher';
 
 const getSavedData = () => {
   return StoreKeeper.get(APP_STORAGE_KEY);
@@ -39,8 +39,15 @@ const change = ({dispatch}, data) => {
 
 const show_status = ({dispatch}, data) => {
   get('load_work_status')
-  .then((data) => {
-    console.log(data)
+  .then(data => {
+    dispatch('APP_CHANGED', data);
+  });
+}
+
+const save_status = ({dispatch}, data) => {
+  post('save_work_status', data)
+  .then(() => {
+    
   });
 }
 
@@ -48,7 +55,8 @@ export default {
   onStateChanged,
   actions: {
   	change,
-    show_status
+    show_status,
+    save_status
   },
   reducers: {
     init,

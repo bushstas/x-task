@@ -1,0 +1,30 @@
+.self {
+	var .fix.l.t.r.b.z9999.flex.flcen;
+
+	.mask {
+		var .abs.z1.l.r.t.b.bc-a6a6a6.o9;
+	}
+
+	.content {
+		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box.flex.flcen;
+	}
+	..button {
+		var .bl.w160.mb5.fs15.lh40;
+		
+		&:last-child {
+			var .mb;
+		}
+	}
+	.reason {
+		var .ml20.w300;
+		.reason-title {
+			var .fs14.mb10.c-333;
+		}
+		.reason-note {
+			var .mt10.fs14.c-999.pb14;
+		}
+		textarea {
+			var .w.h200;
+		}
+	}
+}
