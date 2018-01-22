@@ -11,7 +11,8 @@ const getDefaultState = () => {
   		usersActiveTab: 'team',
   		appActiveTab: 'tasks',
   		accountActiveTab: 'home',
-      shown: null
+      shown: null,
+      shownModals: {}
 	}
 }
 let defaultState = getSavedData() || getDefaultState();
@@ -40,10 +41,7 @@ const show_status = ({dispatch}, data) => {
 }
 
 const save_status = ({dispatch}, data) => {
-  post('save_work_status', data)
-  .then(() => {
-    
-  });
+  post('save_work_status', data);
 }
 
 const show_board = ({dispatch}) => {
@@ -54,13 +52,27 @@ const show_board = ({dispatch}) => {
   });
 }
 
+const hide_modal = ({dispatch, state}, name) => {
+  let {shownModals = {}} = state;
+  delete shownModals[name];
+  dispatch('APP_CHANGED', {shownModals});
+}
+
+const show_modal = ({dispatch, state}, {name, data, dict}) => {
+  let {shownModals = {}} = state;
+  shownModals[name] = {data, dict};
+  dispatch('APP_CHANGED', {shownModals});
+}
+
 export default {
   onStateChanged,
   actions: {
   	change,
     show_status,
     save_status,
-    show_board
+    show_board,
+    show_modal,
+    hide_modal
   },
   reducers: {
     init,

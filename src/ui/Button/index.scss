@@ -21,8 +21,8 @@
 		background-color: transparent;
 		color: #555;
 		&:hover {
-			color: #333;
-			background-color: #f1f1f1;
+			color: #333 !important;
+			background-color: #f1f1f1 !important;
 		}
 	}
 	&.disabled {

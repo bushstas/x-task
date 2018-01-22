@@ -6,7 +6,6 @@ import Loader from '../../ui/Loader';
 import Icon from '../../ui/Icon';
 import Button from '../../ui/Button';
 import Task from '../Task';
-import TaskInfo from '../TaskInfo';
 import TaskButton from '../TaskButton';
 import TaskActions from '../TaskActions';
 import Store from 'xstore';
@@ -25,34 +24,14 @@ class Tasks extends React.Component {
 	render() {
 		let {
 			tasksFetching,
-			shownTaskData,
-			shownTaskIndex,
-			prevNextButtons,
 			taskActionsData
 		} = this.props;
-
 	 	return (
 	 		<div class="self">
 		 		{this.tabs}
 		 		<Loader fetching={tasksFetching} classes="content">
 					{this.tasks}
 				</Loader>
-				{shownTaskData && (
-					<Dialog
-						title={dict.task_inf}
-						classes="~large ~no-overflow"
-						onClose={this.handleInfoClose}
-						clickMaskToClose>
-						<TaskInfo 
-							data={shownTaskData}
-							index={shownTaskIndex}
-							buttons={prevNextButtons}
-							onPrev={this.handlePrevTask}
-							onNext={this.handleNextTask}
-							onCheckSubtask={this.handleCheckSubtask}
-							onActionsClick={this.handleTaskActionsClick}/>
-					</Dialog>
-				)}
 				{taskActionsData && (
 					<TaskActions 
 						data={taskActionsData}
@@ -255,8 +234,8 @@ class Tasks extends React.Component {
 		this.props.doAction('TASKS_START_UPDATE', {status});
 	}
 
-	handleTaskClick = (data, index) => {
-		this.props.doAction('TASKS_SHOW', {data, index});
+	handleTaskClick = (shownTaskData, shownTaskIndex) => {
+		this.props.doAction('TASKS_SHOW', {shownTaskData, shownTaskIndex});
 	}
 
 	handleTaskActionsClick = (id) => {
@@ -279,24 +258,12 @@ class Tasks extends React.Component {
 		this.props.doAction('TASKS_HIDE');
 	}
 
-	handlePrevTask = () => {
-		this.props.doAction('TASKS_SHOW_PREV');
-	}
-
-	handleNextTask = () => {
-		this.props.doAction('TASKS_SHOW_NEXT');	
-	}
-
 	handleTypeSelect = (type) => {
 		this.props.doAction('TASKS_START_UPDATE', {type});
 	}
 
 	handleImportanceSelect = (importance) => {
 		this.props.doAction('TASKS_START_UPDATE', {importance});
-	}
-
-	handleCheckSubtask = (idx, checked) => {
-		this.props.doAction('TASKS_CHECK_SUBTASK', {idx, checked: checked ? 1 : 0});
 	}
 }
 

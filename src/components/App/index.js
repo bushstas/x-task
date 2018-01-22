@@ -9,6 +9,7 @@ import Mask from '../Mask';
 import VisualElements from '../VisualElements';
 import VisualElementPanel from '../VisualElementPanel';
 import Board from '../Board';
+import Modals from '../Modals';
 
 import Users from '../Users';
 import Projects from '../Projects';
@@ -33,7 +34,8 @@ class App extends React.PureComponent {
 
     let elements = [
       this.notifications,
-      this.startButton
+      this.startButton,
+      this.modals
     ];
     
     if (isAuthorized()) {
@@ -58,6 +60,10 @@ class App extends React.PureComponent {
   get board() {
     let {boardTasks, boardDict} = this.props;
     return <Board key="board" tasks={boardTasks} dict={boardDict}/>
+  }
+
+  get modals() {
+    return <Modals key="modals"/>
   }
 
   get visualElementPanel() {

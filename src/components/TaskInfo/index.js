@@ -14,9 +14,10 @@ import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
 	render() {
-		let {data, info: {actions}, taskInfoFetching} = this.props;
-		let {data: d} = data;
-		let href = resolveTaskUrl(d.urls);
+		console.log(this.props)
+		let {shownTaskData, info: {actions}, taskInfoFetching} = this.props;
+		let {data} = shownTaskData;
+		let href = resolveTaskUrl(data.urls);
 		return (
 			<div class="self">
 				{actions && (
@@ -47,7 +48,7 @@ class TaskInfo extends React.Component {
 	}
 
 	get leftColumn() {
-		let {data, info: {dict: dct = {}, status, comments, problems, task = {}}} = this.props;
+		let {shownTaskData: data, info: {dict: dct = {}, status, comments, problems, task = {}}} = this.props;
 		let {data: d} = data;
 		let {scale, timeleft, timepassed} = task;
 		let {info, taskList} = d;
@@ -143,7 +144,7 @@ class TaskInfo extends React.Component {
 
 	get subtasks() {
 		let {
-			data: {
+			shownTaskData: {
 				data: {taskList = []}
 			}, 
 			info: {
@@ -204,8 +205,8 @@ class TaskInfo extends React.Component {
 	}
 
 	get info() {
-		let {data, info: {dict}} = this.props;
-		let {data: {info}} = data;
+		let {shownTaskData, info: {dict}} = this.props;
+		let {data: {info}} = shownTaskData;
 		if (!dict) {
 			return;
 		}
@@ -376,8 +377,8 @@ class TaskInfo extends React.Component {
 	}
 
 	get buttons() {
-		let {buttons} = this.props;
-		if (buttons) {
+		let {prevNextButtons} = this.props;
+		if (prevNextButtons) {
 			return [
 				<div class="prev" onClick={this.handlePrevClick} key="prev">
 					<Icon icon="back"/>
@@ -389,25 +390,25 @@ class TaskInfo extends React.Component {
 		}
 	}
 
-	handlePrevClick = () => {
-		this.props.onPrev();
-	}
-
-	handleNextClick = () => {
-		this.props.onNext();
-	}
-
 	handleLinkMouseDown = () => {
-		let {data: {id}} = this.props;
+		let {shownTaskData: {id}} = this.props;
 		StoreKeeper.set('current_viewed_task', id);
 	}
 
-	handleActionsClick = () => {
-		this.props.onActionsClick(this.props.data.id);
+	handleSubtaskChecked = (name, idx, checked) => {
+		this.props.doAction('TASKS_CHECK_SUBTASK', {idx, checked: checked ? 1 : 0});
 	}
 
-	handleSubtaskChecked = (name, value, checked) => {
-		this.props.onCheckSubtask(value, checked);
+	handleActionsClick = (id) => {
+		this.props.doAction('TASKS_SHOW_ACTIONS', this.props.shownTaskData.id);
+	}
+
+	handlePrevClick = () => {
+		this.props.doAction('TASKS_SHOW_PREV');
+	}
+
+	handleNextClick = () => {
+		this.props.doAction('TASKS_SHOW_NEXT');	
 	}
 }
 

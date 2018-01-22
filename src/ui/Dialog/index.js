@@ -44,7 +44,7 @@ export default class Dialog extends React.Component {
 
 	handleClose = (e) => {
 		e.stopPropagation();
-		this.props.onClose();
+		this.props.onClose(this.props.name);
 	}
 
 	handleMaskClick = (e) => {

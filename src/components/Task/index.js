@@ -37,10 +37,15 @@ export default class Task extends React.Component {
 					{data.locked && (
 						<Icon icon="locked"/>
 					)}
-					{d.title}
+					{data.title}
 				</div>
 				<div class="status">
 					{data.changed}
+					{data.timeleft && (
+						<div class="timeleft">
+							{data.timeleft}
+						</div>
+					)}
 				</div>
 				{data.actions && (
 					<ActionsButton onClick={this.handleActionsClick}/>

@@ -48,12 +48,12 @@ const changed = (state, data) => {
   return data;
 }
 
-const shown = (state, {data, index, prevNextButtons}) => {
+const shown = (state, {shownTaskId, shownTaskData, shownTaskIndex, prevNextButtons}) => {
   return {
     listChecked: [],
-    shownTaskId: data.id,
-    shownTaskData: data,
-    shownTaskIndex: index,
+    shownTaskId,
+    shownTaskData,
+    shownTaskIndex,
     prevNextButtons
   }
 }
@@ -121,8 +121,10 @@ const load = ({dispatch, state}, data = {}) => {
 const show = ({dispatch, doAction, state}, data) => {
   let {tasks} = state;
   data.prevNextButtons = tasks.length > 1;
-  doAction('TASKS_LOAD_TASK_INFO', data.data.id);
+  data.shownTaskId = data.shownTaskData.id;
+  doAction('TASKS_LOAD_TASK_INFO', data.shownTaskId);
   dispatch('TASKS_SHOWN', data);
+  doAction('APP_SHOW_MODAL', {name: 'task_info'});
 }
 
 const show_prev = ({doAction, state}) => {  
