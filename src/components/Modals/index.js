@@ -4,6 +4,7 @@ import {dict} from '../../utils/Dictionary';
 import Dialog from '../../ui/Dialog';
 
 import TaskInfo from '../TaskInfo';
+import TaskActions from '../TaskActions';
 
 class Modals extends React.Component {	
 	render() {
@@ -17,18 +18,27 @@ class Modals extends React.Component {
 
 	renderModal = (key) => {
 		let {shownModals} = this.props;
-		let {data = {}, dict:modalDict = {}} = shownModals[key];
-		switch (key) {
-			
+		let data = shownModals[key];
+		let dialog;
+		switch (key) {			
 			case 'task_info':
-				return this.renderThisModal({
+				dialog = this.renderThisModal({
 					name: key,
 					title: dict.task_inf,
-					content: <TaskInfo/>
+					content: <TaskInfo id={data.id}/>
 				});
 			break;
+
+			case 'task_actions':
+				dialog = <TaskActions/>
+
+				<TaskActions 
+						data={taskActionsData}
+						onClose={this.handleActionsClose}
+						onAction={this.handleTaskAction}/>
+			break;
 		}
-		return <div/>
+		return dialog;
 	}
 
 	renderThisModal = (params) => {

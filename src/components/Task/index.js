@@ -55,7 +55,7 @@ export default class Task extends React.Component {
 	}
 
 	handleClick = () => {
-		this.props.onClick(this.props.data, this.props.index);
+		this.props.onClick(this.props.data.id, this.props.index);
 	}
 
 	handleActionsClick = () => {

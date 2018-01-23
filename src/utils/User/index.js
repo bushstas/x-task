@@ -3,7 +3,7 @@ import StoreKeeper from '../StoreKeeper';
 import Store from 'xstore';
 import {init} from '../TaskResolver';
 import {LOCAL_STORAGE_TOKEN} from '../../consts';
-import {TASKS_STORAGE_KEY, QUICKTASK_STORAGE_KEY} from '../../consts/storage';
+import {TASKS_STORAGE_KEY, QUICKTASK_STORAGE_KEY, APP_STORAGE_KEY} from '../../consts/storage';
 
 let loaded = false,
 	callback,
@@ -141,6 +141,7 @@ export const logout = () => {
 	user = null;
 	currentProject = null;
 	StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
+	StoreKeeper.remove(APP_STORAGE_KEY);
 	StoreKeeper.remove(TASKS_STORAGE_KEY);
 	StoreKeeper.remove(QUICKTASK_STORAGE_KEY);
 	Store.reset();

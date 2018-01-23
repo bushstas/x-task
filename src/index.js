@@ -15,6 +15,7 @@ import notifications from './store_handlers/notifications';
 import quicktask from './store_handlers/quicktask';
 import tooltip from './store_handlers/tooltip';
 import tasks from './store_handlers/tasks';
+import taskinfo from './store_handlers/taskinfo';
 
 Store.addHandlers({
 	app,
@@ -24,7 +25,8 @@ Store.addHandlers({
 	notifications,
 	quicktask,
 	tooltip,
-	tasks
+	tasks,
+	taskinfo
 });
 
 let box = document.createElement('div');

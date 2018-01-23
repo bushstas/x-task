@@ -13,13 +13,34 @@ import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
+	componentDidMount() {
+		this.load(this.props.id);
+	}
+
+	componentWillUpdate(props) {
+		if (this.props.id != props.id) {
+			this.load(props.id);
+		}
+	}
+
+	load(id) {
+		this.props.doAction('TASKINFO_LOAD', id);
+	}
+
 	render() {
-		console.log(this.props)
-		let {shownTaskData, info: {actions}, taskInfoFetching} = this.props;
-		let {data} = shownTaskData;
-		let href = resolveTaskUrl(data.urls);
+		let {data, fetching} = this.props;
 		return (
-			<div class="self">
+			<Loader classes="self" fetching={fetching}>
+				{data && this.content}
+			</Loader>
+		)
+	}
+
+	get content() {
+		let {data: {task: {urls}, actions}} = this.props;
+		let href = resolveTaskUrl(urls);
+		return (
+			<div class="outer">
 				{actions && (
 					<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
 						<Icon icon="open"/>
@@ -42,24 +63,41 @@ class TaskInfo extends React.Component {
 						</tbody>
 					</table>
 				</div>
-				{taskInfoFetching && <Loader fetching={true}/>}
 			</div>
 		)
 	}
 
 	get leftColumn() {
-		let {shownTaskData: data, info: {dict: dct = {}, status, comments, problems, task = {}}} = this.props;
-		let {data: d} = data;
-		let {scale, timeleft, timepassed} = task;
-		let {info, taskList} = d;
-		let infoCount = Object.keys(info).length,
+		let {
+			data: {
+				dict: dct,
+				status,
+				comments,
+				problems,
+				task: {
+					title,
+					descr,
+					scale,
+					timeleft,
+					timepassed,
+					importance,
+					type,
+					action,
+					info,
+					changed
+				},	
+				taskList
+			}
+		} = this.props;
+
+		let infoCount = info.length,
 			commentsCount, problemsCount;
 		if (comments) {
 			commentsCount = comments.length;
 			problemsCount = problems.length;
 		}
 		let scaleClass = this.scaleClass;
-		let titleClassName = $classy(data.importance, '.importance-', ['burning', 'urgent']);
+		let titleClassName = $classy(importance, '.importance-', ['burning', 'urgent']);
 		let statusClassName = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		return (
 			<td>
@@ -67,35 +105,35 @@ class TaskInfo extends React.Component {
 					<div class="left-side">
 						{dct[status]}
 						<div class="changed">
-							{data.changed}
+							{changed}
 						</div>
 					</div>
 					<div class="right-side">
 						<div class="importance">
 							<Icon>
-								{icons.task_imp[data.importance]}
+								{icons.task_imp[importance]}
 							</Icon> 
-							{dict[data.importance]}
+							{dict[importance]}
 						</div>
 						<div class="type">
 							<Icon>
-								{icons.task_type[data.type]}
+								{icons.task_type[type]}
 							</Icon> 
-							{dict[data.type]}
+							{dict[type]}
 						</div>
 						<div class="action">
 							<Icon>
-								{icons.task_act[data.action]}
+								{icons.task_act[action]}
 							</Icon> 
-							{dict[data.action]}
+							{dict[action]}
 						</div>
 					</div>
 				</div>
 				<div class="title $titleClassName">
-					{d.title}
+					{title}
 				</div>
 				<div class="description">
-					{d.descr}
+					{descr}
 				</div>
 				<div class="time $scale?with-scale $statusClassName">
 					<Icon icon="time"/>
@@ -124,8 +162,7 @@ class TaskInfo extends React.Component {
 	}
 
 	get scaleClass() {
-		let {info: {task = {}}} = this.props;
-		let {scale} = task;
+		let {data: {task: {scale}}} = this.props;
 		if (!scale) return;
 		if (scale <= 30) {
 			return $classy('scale-green');
@@ -144,10 +181,8 @@ class TaskInfo extends React.Component {
 
 	get subtasks() {
 		let {
-			shownTaskData: {
-				data: {taskList = []}
-			}, 
-			info: {
+			data: {
+				taskList = [],
 				dict = {},
 				own,
 				task = {}
@@ -205,23 +240,22 @@ class TaskInfo extends React.Component {
 	}
 
 	get info() {
-		let {shownTaskData, info: {dict}} = this.props;
-		let {data: {info}} = shownTaskData;
+		let {data: {dict, task: {info}}} = this.props;
 		if (!dict) {
 			return;
 		}
 		return (
 			<div class="info">
-				{Object.keys(info).map((k) => {
+				{info.map((item) => {
 					return (
-						<div class="info-block" key={k}>
+						<div class="info-block" key={item.key}>
 							<div class="info-block-title">
 								<Icon>
-									{dict.icons[k]}
+									{dict.icons[item.key]}
 								</Icon>
-								{dict.captions[k]}
+								{dict.captions[item.key]}
 							</div>
-							<div class="info-block-content" dangerouslySetInnerHTML={{__html: parseText(info[k])}}/>
+							<div class="info-block-content" dangerouslySetInnerHTML={{__html: parseText(item.value)}}/>
 						</div>
 					)
 				})}
@@ -262,7 +296,7 @@ class TaskInfo extends React.Component {
 	}
 
 	get history() {
-		let {info: {dict, history: h}} = this.props;
+		let {data: {dict, history: h}} = this.props;
 		if (!dict) {
 			return;
 		}
@@ -296,7 +330,7 @@ class TaskInfo extends React.Component {
 	}
 
 	get participants() {
-		let {info: {dict, users}} = this.props;
+		let {data: {dict, users}} = this.props;
 		if (!dict) {
 			return;
 		}
@@ -377,8 +411,7 @@ class TaskInfo extends React.Component {
 	}
 
 	get buttons() {
-		let {prevNextButtons} = this.props;
-		if (prevNextButtons) {
+		if (this.props.tasksCount > 1) {
 			return [
 				<div class="prev" onClick={this.handlePrevClick} key="prev">
 					<Icon icon="back"/>
@@ -391,16 +424,17 @@ class TaskInfo extends React.Component {
 	}
 
 	handleLinkMouseDown = () => {
-		let {shownTaskData: {id}} = this.props;
-		StoreKeeper.set('current_viewed_task', id);
+		StoreKeeper.set('current_viewed_task', this.props.id);
 	}
 
 	handleSubtaskChecked = (name, idx, checked) => {
-		this.props.doAction('TASKS_CHECK_SUBTASK', {idx, checked: checked ? 1 : 0});
+		let {id} = this.props;
+		checked = checked ? 1 : 0;
+		this.props.doAction('TASKINFO_CHECK_SUBTASK', {idx, checked, id});
 	}
 
-	handleActionsClick = (id) => {
-		this.props.doAction('TASKS_SHOW_ACTIONS', this.props.shownTaskData.id);
+	handleActionsClick = () => {
+		this.props.doAction('TASKS_SHOW_ACTIONS', this.props.id);
 	}
 
 	handlePrevClick = () => {
@@ -413,7 +447,7 @@ class TaskInfo extends React.Component {
 }
 
 let params = {
-	has: 'tasks',
+	has: 'taskinfo, tasks:tasksCount|shownTaskId',
 	flat: true
 }
 export default Store.connect(TaskInfo, params);

@@ -6,8 +6,7 @@ import {TASKS_STORAGE_KEY} from '../consts/storage';
 const getDefaultState = () => {
   return {
     tasksFetching: false,
-    taskInfoFetching: false,
-    info: {}
+    taskInfoFetching: false
   }
 }
 let savedState = StoreKeeper.get(TASKS_STORAGE_KEY);
@@ -30,12 +29,6 @@ const onStateChanged = (state) => {
 }
 
  
-/**
- ===============
- Reducers
- ===============
-*/
- 
 const init = () => {
   return defaultState;
 }
@@ -47,30 +40,6 @@ const reset = () => {
 const changed = (state, data) => {
   return data;
 }
-
-const shown = (state, {shownTaskId, shownTaskData, shownTaskIndex, prevNextButtons}) => {
-  return {
-    listChecked: [],
-    shownTaskId,
-    shownTaskData,
-    shownTaskIndex,
-    prevNextButtons
-  }
-}
-
-const hidden = () => {
-  return {
-    shownTaskData: null,
-    shownTaskIndex: -1
-  }
-}
-
-
-/**
- ===============
- Actions
- ===============
-*/
 
 const load = ({dispatch, state}, data = {}) => {
   dispatch('TASKS_CHANGED', {tasksFetching: true});
@@ -113,49 +82,52 @@ const load = ({dispatch, state}, data = {}) => {
     status
   };
   get('load_tasks', params)
-  .then(data => {
-    dispatch('TASKS_CHANGED', {tasksFetching: false, ...data});
+  .then(({tasks, dict}) => {
+    dispatch('TASKS_CHANGED', {
+    	tasksFetching: false,
+    	tasks,
+    	dict,
+    	tasksCount: tasks.length
+    });
   });
 }
 
-const show = ({dispatch, doAction, state}, data) => {
-  let {tasks} = state;
-  data.prevNextButtons = tasks.length > 1;
-  data.shownTaskId = data.shownTaskData.id;
-  doAction('TASKS_LOAD_TASK_INFO', data.shownTaskId);
-  dispatch('TASKS_SHOWN', data);
-  doAction('APP_SHOW_MODAL', {name: 'task_info'});
+const show = ({dispatch, doAction, state}, {id, index}) => {
+  let count = state.tasks.length;
+
+  dispatch('TASKS_CHANGED', {
+  	shownTaskId: id,
+    shownTaskIndex: index
+  });
+  doAction('APP_SHOW_MODAL', {name: 'task_info', props: {id}});
 }
 
 const show_prev = ({doAction, state}) => {  
-  let {shownTaskIndex, tasks, prevNextButtons} = state;
+  let {shownTaskIndex, tasks} = state;
+  console.log(tasks)
+  console.log(tasks)
   let prev = shownTaskIndex - 1;
   if (prev < 0) {
     prev = tasks.length - 1;
   }
-  doAction('TASKS_SHOW', {data: tasks[prev], index: prev});
+  doAction('TASKS_SHOW', {id: tasks[prev].id, index: prev});
 }
 
 const show_next = ({doAction, state}) => {
-  let {shownTaskIndex, tasks, prevNextButtons} = state;
+  let {shownTaskIndex, tasks} = state;
   let next = shownTaskIndex + 1;
   if (next > tasks.length - 1) {
     next = 0;
   }
-  doAction('TASKS_SHOW', {data: tasks[next], index: next});
+  doAction('TASKS_SHOW', {id: tasks[next].id, index: next});
 }
 
-const hide = ({dispatch}) => {
-  dispatch('TASKS_HIDDEN');
-}
-
-const load_task_info = ({dispatch}, id) => {
-  dispatch('TASKS_CHANGED', {taskInfoFetching: true});
-  get('load_task_info', {id})
-  .then((info) => {
-    let listChecked = info.listChecked;
-    dispatch('TASKS_CHANGED', {taskInfoFetching: false, info, listChecked});
+const hide = ({dispatch, doAction}) => {
+   dispatch('TASKS_CHANGED', {
+  	shownTaskId: null,
+    shownTaskIndex: null
   });
+  doAction('APP_HIDE_MODAL', 'task_info');
 }
 
 const show_actions = ({dispatch}, id) => {
@@ -167,14 +139,14 @@ const show_actions = ({dispatch}, id) => {
 }
 
 const action = ({doAction, state}, name) => {
-  let {shownTaskData, taskActionsData: {task_id: id}} = state;
+  let {shownTaskIndex: index, shownTaskId: id} = state;
    get('task_action', {name, id})
   .then(data => {
     doAction('TASKS_LOAD');
-    if (shownTaskData) {
-      doAction('TASKS_LOAD_TASK_INFO', id);
-    }
     doAction('TASKS_LOAD_COUNTS');
+    if (typeof index == 'number') {
+      doAction('TASKINFO_LOAD', id);
+    }    
   });
 }
  
@@ -185,20 +157,6 @@ const edit = ({doAction, state, getState}) => {
       editTask(id, t.data.urls[0]);
     }
   }
-}
-
-const check_subtask = ({dispatch, state}, {idx, checked}) => {
-  let {shownTaskId: id, listChecked = []} = state;
-  if (checked) {
-    listChecked.push(~~idx);
-  } else {
-    let index = listChecked.indexOf(~~idx);
-    if (index > -1) {
-      listChecked.splice(index, 1);
-    }
-  }
-  dispatch('TASKS_CHANGED', {listChecked});
-  post('check_subtask', {id, idx, checked});
 }
 
 const load_counts = ({dispatch}) => {
@@ -231,11 +189,9 @@ export default {
     hide,
     show_prev,
     show_next,
-    load_task_info,
     show_actions,
     action,
     edit,
-    check_subtask,
     load_counts,
     start_update,
     stop_update
@@ -243,8 +199,6 @@ export default {
   reducers: {
     init,
     reset,
-    changed,
-    shown,
-    hidden
+    changed
   }
 } 

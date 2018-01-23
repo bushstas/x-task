@@ -23,8 +23,7 @@ class Tasks extends React.Component {
 
 	render() {
 		let {
-			tasksFetching,
-			taskActionsData
+			tasksFetching
 		} = this.props;
 	 	return (
 	 		<div class="self">
@@ -32,12 +31,6 @@ class Tasks extends React.Component {
 		 		<Loader fetching={tasksFetching} classes="content">
 					{this.tasks}
 				</Loader>
-				{taskActionsData && (
-					<TaskActions 
-						data={taskActionsData}
-						onClose={this.handleActionsClose}
-						onAction={this.handleTaskAction}/>
-				)}
 				{this.leftMenu}
 				{this.rightMenu}
 			</div>
@@ -234,8 +227,8 @@ class Tasks extends React.Component {
 		this.props.doAction('TASKS_START_UPDATE', {status});
 	}
 
-	handleTaskClick = (shownTaskData, shownTaskIndex) => {
-		this.props.doAction('TASKS_SHOW', {shownTaskData, shownTaskIndex});
+	handleTaskClick = (id, index) => {
+		this.props.doAction('TASKS_SHOW', {id, index});
 	}
 
 	handleTaskActionsClick = (id) => {

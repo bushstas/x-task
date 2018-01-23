@@ -10,15 +10,24 @@ const getDefaultState = () => {
 	return {
   		usersActiveTab: 'team',
   		appActiveTab: 'tasks',
-  		accountActiveTab: 'home',
-      shown: null,
-      shownModals: {}
+  		accountActiveTab: 'home'
 	}
 }
 let defaultState = getSavedData() || getDefaultState();
 
 const onStateChanged = (state) => {
-    StoreKeeper.set(APP_STORAGE_KEY, state);
+    let {
+      appActiveTab,
+      usersActiveTab,
+      accountActiveTab,
+      shown
+    } = state;
+    StoreKeeper.set(APP_STORAGE_KEY, {
+      appActiveTab,
+      usersActiveTab,
+      accountActiveTab,
+      shown
+    });
 }
 
 const init = () => {
@@ -47,20 +56,20 @@ const save_status = ({dispatch}, data) => {
 const show_board = ({dispatch}) => {
   dispatch('APP_CHANGED', {shown: 'board'});
   get('load_board')
-  .then((boardData) => {
+  .then(boardData => {
     dispatch('APP_CHANGED', boardData);
   });
+}
+
+const show_modal = ({dispatch, state}, {name, props = {}}) => {
+  let {shownModals = {}} = state;
+  shownModals[name] = props;
+  dispatch('APP_CHANGED', {shownModals});
 }
 
 const hide_modal = ({dispatch, state}, name) => {
   let {shownModals = {}} = state;
   delete shownModals[name];
-  dispatch('APP_CHANGED', {shownModals});
-}
-
-const show_modal = ({dispatch, state}, {name, data, dict}) => {
-  let {shownModals = {}} = state;
-  shownModals[name] = {data, dict};
   dispatch('APP_CHANGED', {shownModals});
 }
 
