@@ -60,12 +60,14 @@ class TaskActions extends React.Component {
 			.then(data => {
 				if (loc == 'tasks' || loc == 'task_info') {
 					doAction('TASKS_START_UPDATE');	
-				}
-				if (loc == 'task_info') {
-					let index = Store.getState('tasks.shownTaskIndex');			    
-			    	if (typeof index == 'number') {
-			      		doAction('TASKINFO_LOAD', id);
-			    	}
+					if (loc == 'task_info') {
+						let index = Store.getState('tasks.shownTaskIndex');
+				    	if (typeof index == 'number') {
+				      		doAction('TASKINFO_LOAD', id);
+				    	}
+				    }
+				} else if (loc == 'board') {
+					doAction('BOARD_LOAD');
 			    }
 			});
 		}
