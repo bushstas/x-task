@@ -8,34 +8,38 @@ import TaskActions from '../TaskActions';
 
 class Modals extends React.Component {	
 	render() {
-		let {shownModals = {}} = this.props;
+		let {modals} = this.props;
 		return (
 			<div class="self">
-				{Object.keys(shownModals).map(this.renderModal)}
+				{Object.keys(modals).map(this.renderModal)}
 			</div>
 		)	
 	}
 
 	renderModal = (key) => {
-		let {shownModals} = this.props;
-		let data = shownModals[key];
+		let {modals} = this.props;
+		let data = modals[key];
 		let dialog;
 		switch (key) {			
 			case 'task_info':
 				dialog = this.renderThisModal({
 					name: key,
 					title: dict.task_inf,
-					content: <TaskInfo id={data.id}/>
+					content: (
+						<TaskInfo 
+							id={data.id}
+							key="taskinfo"/>
+					)
 				});
 			break;
 
 			case 'task_actions':
-				dialog = <TaskActions/>
-
-				<TaskActions 
-						data={taskActionsData}
-						onClose={this.handleActionsClose}
-						onAction={this.handleTaskAction}/>
+				dialog = (
+					<TaskActions 
+						id={data.id}  
+						loc={data.loc} 
+						key="taskactions"/>
+				)
 			break;
 		}
 		return dialog;
@@ -58,12 +62,12 @@ class Modals extends React.Component {
 	}
 
 	handleClose = (name) => {
-		this.props.doAction('APP_HIDE_MODAL', name);
+		this.props.doAction('MODALS_HIDE', name);
 	}
 }
 
 let params = {
-	has: 'app',
+	has: 'modals',
 	flat: true
 }
 export default Store.connect(Modals, params);

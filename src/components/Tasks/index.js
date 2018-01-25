@@ -7,7 +7,6 @@ import Icon from '../../ui/Icon';
 import Button from '../../ui/Button';
 import Task from '../Task';
 import TaskButton from '../TaskButton';
-import TaskActions from '../TaskActions';
 import Store from 'xstore';
 import {getRoleId} from '../../utils/User';
 
@@ -199,8 +198,7 @@ class Tasks extends React.Component {
 							data={task}
 							key={i}
 							index={i}
-							onClick={this.handleTaskClick}
-							onActionsClick={this.handleTaskActionsClick}/>
+							onClick={this.handleTaskClick}/>
 					)
 				});
 			}
@@ -228,23 +226,7 @@ class Tasks extends React.Component {
 	}
 
 	handleTaskClick = (id, index) => {
-		this.props.doAction('TASKS_SHOW', {id, index});
-	}
-
-	handleTaskActionsClick = (id) => {
-		this.props.doAction('TASKS_SHOW_ACTIONS', id);
-	}
-
-	handleActionsClose = () => {
-		this.props.dispatch('TASKS_CHANGED', {taskActionsData: null});	
-	}
-
-	handleTaskAction = (action) => {
-		if (action == 'edit') {
-			this.props.doAction('TASKS_EDIT', action);
-		} else {
-			this.props.doAction('TASKS_ACTION', action);
-		}
+		this.props.doAction('TASKS_SHOW_TASK_INFO', {id, index});
 	}
 
 	handleInfoClose = () => {

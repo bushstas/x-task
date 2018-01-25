@@ -1,5 +1,5 @@
 .self {
-	var .br6.p10.mb8.bo-ddd;
+	var .rel.br6.p10.mb8.bo-ddd;
 	.top {
 		var .mb10;
 	}
@@ -8,5 +8,11 @@
 	}
 	..avatar {
 		var .wh46;
+	}
+	..actions-button {
+		var .abs.r10.t10.o5;
+		..icon {
+			var .fs24;
+		}
 	}
 }

@@ -6,8 +6,7 @@ import ActionsButton from '../ActionsButton';
 
 export default class Task extends React.Component {
 	static defaultProps = {
-		onClick: () => {},
-		onActionsClick: () => {}
+		onClick: () => {}
 	}
 
 	render() {
@@ -48,7 +47,7 @@ export default class Task extends React.Component {
 					)}
 				</div>
 				{data.actions && (
-					<ActionsButton onClick={this.handleActionsClick}/>
+					<ActionsButton id={data.id} loc="tasks"/>
 				)}
 			</div>
 		)
@@ -56,9 +55,5 @@ export default class Task extends React.Component {
 
 	handleClick = () => {
 		this.props.onClick(this.props.data.id, this.props.index);
-	}
-
-	handleActionsClick = () => {
-		this.props.onActionsClick(this.props.data.id);
 	}
 }

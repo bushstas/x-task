@@ -55,22 +55,6 @@ const save_status = ({dispatch}, data) => {
 
 const show_board = ({dispatch}) => {
   dispatch('APP_CHANGED', {shown: 'board'});
-  get('load_board')
-  .then(boardData => {
-    dispatch('APP_CHANGED', boardData);
-  });
-}
-
-const show_modal = ({dispatch, state}, {name, props = {}}) => {
-  let {shownModals = {}} = state;
-  shownModals[name] = props;
-  dispatch('APP_CHANGED', {shownModals});
-}
-
-const hide_modal = ({dispatch, state}, name) => {
-  let {shownModals = {}} = state;
-  delete shownModals[name];
-  dispatch('APP_CHANGED', {shownModals});
 }
 
 export default {
@@ -79,9 +63,7 @@ export default {
   	change,
     show_status,
     save_status,
-    show_board,
-    show_modal,
-    hide_modal
+    show_board
   },
   reducers: {
     init,

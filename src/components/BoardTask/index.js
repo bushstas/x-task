@@ -2,10 +2,12 @@ import React from 'react';
 import {icons} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
+import ActionsButton from '../ActionsButton';
 
 export default class BoardTask extends React.Component {
 	render() {
 		let {data: {
+			id,
 			title,
 			avatar_id,
 			user_id,
@@ -22,6 +24,7 @@ export default class BoardTask extends React.Component {
 				<div class="title">
 					{title}
 				</div>
+				<ActionsButton id={id} loc="board"/>
 			</div>
 		)
 	}

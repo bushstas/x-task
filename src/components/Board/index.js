@@ -1,13 +1,18 @@
 import React from 'react';
+import Store from 'xstore';
 import {dict} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Loader from '../../ui/Loader';
 import BoardTask from '../BoardTask';
 
-export default class Board extends React.Component {
+class Board extends React.Component {
+
+	componentDidMount() {
+		this.props.doAction('BOARD_LOAD');
+	}
 
 	render() {
-		let {title = 'Board', tasks} = this.props;
+		let {title = 'Board', tasks, fetching} = this.props;
 		return (
 			<div class="self">
 				<div class="header">
@@ -19,25 +24,31 @@ export default class Board extends React.Component {
 						{title}
 					</div>
 				</div>
-				<Loader classes="content" fetching={!tasks}>
-					<div class="column column1">
-						{this.renderTasks('current')}
-					</div>
-					<div class="column column2">
-						{this.renderTasks('in_work')}
-					</div>
-					<div class="column column3">
-						{this.renderTasks('delayed')}
-					</div>
-					<div class="column column4">
-						{this.renderTasks('ready')}
-					</div>
-					<div class="column column5">
-						{this.renderTasks('frozen')}
-					</div>
+				<Loader classes="content" fetching={fetching}>
+					{!fetching && this.content}
 				</Loader>
 			</div>
 		)
+	}
+
+	get content() {
+		return [
+			<div class="column column1" key="current">
+				{this.renderTasks('current')}
+			</div>,
+			<div class="column column2" key="in_work">
+				{this.renderTasks('in_work')}
+			</div>,
+			<div class="column column3" key="delayed">
+				{this.renderTasks('delayed')}
+			</div>,
+			<div class="column column4" key="ready">
+				{this.renderTasks('ready')}
+			</div>,
+			<div class="column column5" key="frozen">
+				{this.renderTasks('frozen')}
+			</div>
+		];
 	}
 
 	renderTasks(key) {
@@ -65,3 +76,9 @@ export default class Board extends React.Component {
 		)
 	}
 }
+
+let params = {
+	has: 'board',
+	flat: true
+}
+export default Store.connect(Board, params);

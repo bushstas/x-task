@@ -189,7 +189,7 @@
 	.problems {
 		var .pt10;
 	}
-	.actions,
+	..actions-button,
 	.link {
 		var .abs.t-20.r100p.mr20.bc-fff.wh50.br50p.shad-333-2.cen.pntr.c-555.nosel;
 		..icon {
@@ -199,8 +199,8 @@
 			var .c-333.shad-000-2;		
 		}
 	}
-	.actions {
-		var .t40;
+	..actions-button {
+		var .t40.o10!;
 	}
 	.prev,
 	.next {

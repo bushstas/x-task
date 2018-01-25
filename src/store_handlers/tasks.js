@@ -92,25 +92,22 @@ const load = ({dispatch, state}, data = {}) => {
   });
 }
 
-const show = ({dispatch, doAction, state}, {id, index}) => {
+const show_task_info = ({dispatch, doAction, state}, {id, index}) => {
   let count = state.tasks.length;
-
   dispatch('TASKS_CHANGED', {
   	shownTaskId: id,
     shownTaskIndex: index
   });
-  doAction('APP_SHOW_MODAL', {name: 'task_info', props: {id}});
+  doAction('MODALS_SHOW', {name: 'task_info', props: {id}});
 }
 
 const show_prev = ({doAction, state}) => {  
   let {shownTaskIndex, tasks} = state;
-  console.log(tasks)
-  console.log(tasks)
   let prev = shownTaskIndex - 1;
   if (prev < 0) {
     prev = tasks.length - 1;
   }
-  doAction('TASKS_SHOW', {id: tasks[prev].id, index: prev});
+  doAction('TASKS_SHOW_TASK_INFO', {id: tasks[prev].id, index: prev});
 }
 
 const show_next = ({doAction, state}) => {
@@ -119,7 +116,7 @@ const show_next = ({doAction, state}) => {
   if (next > tasks.length - 1) {
     next = 0;
   }
-  doAction('TASKS_SHOW', {id: tasks[next].id, index: next});
+  doAction('TASKS_SHOW_TASK_INFO', {id: tasks[next].id, index: next});
 }
 
 const hide = ({dispatch, doAction}) => {
@@ -127,36 +124,7 @@ const hide = ({dispatch, doAction}) => {
   	shownTaskId: null,
     shownTaskIndex: null
   });
-  doAction('APP_HIDE_MODAL', 'task_info');
-}
-
-const show_actions = ({dispatch}, id) => {
-  dispatch('TASKS_CHANGED', {taskActionsData: {}});
-  get('load_task_actions', {id})
-  .then(data => {
-    dispatch('TASKS_CHANGED', {taskActionsData: data});
-  });
-}
-
-const action = ({doAction, state}, name) => {
-  let {shownTaskIndex: index, shownTaskId: id} = state;
-   get('task_action', {name, id})
-  .then(data => {
-    doAction('TASKS_LOAD');
-    doAction('TASKS_LOAD_COUNTS');
-    if (typeof index == 'number') {
-      doAction('TASKINFO_LOAD', id);
-    }    
-  });
-}
- 
-const edit = ({doAction, state, getState}) => {
-  let {taskActionsData: {task_id: id}, tasks} = state;
-  for (let t of tasks) {
-    if (t.id == id) {
-      editTask(id, t.data.urls[0]);
-    }
-  }
+  doAction('MODALS_HIDE', 'task_info');
 }
 
 const load_counts = ({dispatch}) => {
@@ -185,13 +153,10 @@ export default {
   onStateChanged,
   actions: {
     load,
-    show,
+    show_task_info,
     hide,
     show_prev,
     show_next,
-    show_actions,
-    action,
-    edit,
     load_counts,
     start_update,
     stop_update

@@ -8,6 +8,8 @@ import {load as dict} from './utils/Dictionary';
 import {load as user} from './utils/User';
 
 import app from './store_handlers/app';
+import board from './store_handlers/board';
+import modals from './store_handlers/modals';
 import mask from './store_handlers/mask';
 import team from './store_handlers/team';
 import projects from './store_handlers/projects';
@@ -16,9 +18,12 @@ import quicktask from './store_handlers/quicktask';
 import tooltip from './store_handlers/tooltip';
 import tasks from './store_handlers/tasks';
 import taskinfo from './store_handlers/taskinfo';
+import taskactions from './store_handlers/taskactions';
 
 Store.addHandlers({
 	app,
+	board,
+	modals,
 	mask,
 	team,
 	projects,
@@ -26,7 +31,8 @@ Store.addHandlers({
 	quicktask,
 	tooltip,
 	tasks,
-	taskinfo
+	taskinfo,
+	taskactions
 });
 
 let box = document.createElement('div');

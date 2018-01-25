@@ -8,6 +8,7 @@ import Loader from '../../ui/Loader';
 import Avatar from '../Avatar';
 import TaskComments from '../TaskComments';
 import TaskProblems from '../TaskProblems';
+import ActionsButton from '../ActionsButton';
 import Store from 'xstore';
 import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
@@ -47,9 +48,7 @@ class TaskInfo extends React.Component {
 					</a>
 				)}
 				{actions && (
-					<div class="actions" onClick={this.handleActionsClick}>
-						<Icon icon="settings"/>
-					</div>
+					<ActionsButton id={this.props.id} loc="task_info"/>
 				)}
 				{this.buttons}
 				<div class="content">
@@ -431,10 +430,6 @@ class TaskInfo extends React.Component {
 		let {id} = this.props;
 		checked = checked ? 1 : 0;
 		this.props.doAction('TASKINFO_CHECK_SUBTASK', {idx, checked, id});
-	}
-
-	handleActionsClick = () => {
-		this.props.doAction('TASKS_SHOW_ACTIONS', this.props.id);
 	}
 
 	handlePrevClick = () => {

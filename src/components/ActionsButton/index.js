@@ -1,4 +1,5 @@
 import React from 'react';
+import Store from 'xstore';
 import Icon from '../../ui/Icon';
 
 export default class ActionsButton extends React.Component {
@@ -16,6 +17,7 @@ export default class ActionsButton extends React.Component {
 
 	handleClick = (e) => {
 		e.stopPropagation();
-		this.props.onClick();
+		let {id, loc} = this.props;
+		Store.doAction('MODALS_SHOW', {name: 'task_actions', props: {id, loc}});
 	}
 }
