@@ -15,7 +15,7 @@ const changed = (state, data) => {
    return data;
 }
 
-const load = ({dispatch}, id) => {
+const load = ({dispatch, getState}, id) => {
   dispatch('TASKINFO_CHANGED', {fetching: true});
   get('load_task_info', {id})
   .then((data) => {

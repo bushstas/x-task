@@ -48,7 +48,7 @@ class TaskInfo extends React.Component {
 					</a>
 				)}
 				{actions && (
-					<ActionsButton id={this.props.id} loc="task_info"/>
+					<ActionsButton id={this.props.id} loc={this.loc}/>
 				)}
 				{this.buttons}
 				<div class="content">
@@ -64,6 +64,10 @@ class TaskInfo extends React.Component {
 				</div>
 			</div>
 		)
+	}
+
+	get loc() {
+		return this.props.store.toLowerCase();
 	}
 
 	get leftColumn() {
@@ -433,16 +437,16 @@ class TaskInfo extends React.Component {
 	}
 
 	handlePrevClick = () => {
-		this.props.doAction('TASKS_SHOW_PREV');
+		this.props.doAction(this.props.store + '_SHOW_PREV');
 	}
 
 	handleNextClick = () => {
-		this.props.doAction('TASKS_SHOW_NEXT');	
+		this.props.doAction(this.props.store + 'TASKS_SHOW_NEXT');	
 	}
 }
 
 let params = {
-	has: 'taskinfo, tasks:tasksCount|shownTaskId',
+	has: 'taskinfo',
 	flat: true
 }
 export default Store.connect(TaskInfo, params);

@@ -32,43 +32,41 @@ class Board extends React.Component {
 	}
 
 	get content() {
+		this.left = 0;
 		return [
-			<div class="column column1" key="current">
-				{this.renderTasks('current')}
-			</div>,
-			<div class="column column2" key="in_work">
-				{this.renderTasks('in_work')}
-			</div>,
-			<div class="column column3" key="delayed">
-				{this.renderTasks('delayed')}
-			</div>,
-			<div class="column column4" key="ready">
-				{this.renderTasks('ready')}
-			</div>,
-			<div class="column column5" key="frozen">
-				{this.renderTasks('frozen')}
-			</div>
+			this.renderTasks('current'),
+			this.renderTasks('in_work'),
+			this.renderTasks('delayed'),
+			this.renderTasks('ready'),
+			this.renderTasks('frozen')
 		];
 	}
 
 	renderTasks(key) {
 		let {tasks} = this.props;
 		tasks = tasks[key];
+		if (!tasks.length) {
+			return;
+		}
+		let left = this.left;
+		this.left += 20;
 		return (
-			<div class="tasks">
-				<div class="column-title">
-					{dict['status_' + key]}
+			<div class="column" key={key} style={{left: left + '%'}}>
+				<div class="tasks">
+					<div class="column-title">
+						{dict['status_' + key]}
+					</div>
+					{tasks.map((task, idx) => {
+						return (
+							<BoardTask 
+								key={task.id}
+								data={task}
+								index={idx}
+								status={key}
+								onClick={this.handleTaskClick}/>
+						)
+					})}
 				</div>
-				{tasks.map((task, idx) => {
-					return (
-						<BoardTask 
-							key={task.id}
-							data={task}
-							index={idx}
-							status={key}
-							onClick={this.handleTaskClick}/>
-					)
-				})}
 			</div>
 		)
 	}

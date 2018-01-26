@@ -1,18 +1,80 @@
 .self {
-	var .rel.br6.p10.mb8.bo-ddd;
+	var .rel.br6.p10.mb8.bo-ddd.pntr;
 	.top {
-		var .mb10;
+		var .mb10.rel.mnh46.box.pt30.pl60;
 	}
 	.title {
-		var .fs13.lh15;
+		var .fs16.lh20.p5.rel;
+		.title-inner {
+			var .rel.z2;
+		}
+		&:before {
+			var .cnt.abs.l-2.t-2.r-2.b-2.bc-000.o1.br3;
+		}
 	}
 	..avatar {
-		var .wh46;
+		var .wh46.abs.l.t;
 	}
 	..actions-button {
 		var .abs.r10.t10.o5;
 		..icon {
 			var .fs24;
 		}
+	}
+	.icons {
+		var .abs.l65.t;
+		..icon {
+			var .inb.fs22.c-000.mr8.o8;
+		}
+	}
+
+	&..status-ready {
+		var .boc-b9d29e.bc-f2ffe5;
+		.title {
+			&:before {
+				var .bc-2a5400.o1;
+			}
+		}
+	}
+	&..status-in_work {
+		var .boc-d0cc9e.bc-fffbe5;
+		.timeleft {
+			var .bc-b7b15f;
+		}
+		.title {
+			&:before {
+				var .bc-5d5500.o1;
+			}
+		}
+	}
+	&..status-delayed {
+		var .boc-aaa.bc-e8e8e8;
+	}
+	&..status-frozen {
+		var .boc-b9ccdc.bc-e5f3ff;
+		.title {
+			&:before {
+				var .bc-002e5d.o1;
+			}
+		}
+	}
+
+	&:hover {
+		var .boc-909090;
+		&..status-ready {
+			var .boc-91af70.bc-daf3c2;
+		}
+		&..status-in_work {
+			var .boc-b7b15f.bc-f7f6cf;
+		}
+		&..status-delayed {
+			var .boc-888.bc-d8d8d8;
+		}
+		&..status-frozen {
+			var .boc-829bb1.bc-d1e3f3;
+		}
+	}
+	.changed {
+		var .fs12.lh13;
 	}
 }

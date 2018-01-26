@@ -60,16 +60,14 @@ class TaskActions extends React.Component {
 
 	handleActionResult = () => {
 		let {loc, id, doAction} = this.props;
-		if (loc == 'tasks' || loc == 'task_info') {
+		if (loc == 'tasks') {
 			doAction('TASKS_START_UPDATE');	
-			if (loc == 'task_info') {
-				let index = Store.getState('tasks.shownTaskIndex');
-		    	if (typeof index == 'number') {
-		      		doAction('TASKINFO_LOAD', id);
-		    	}
-		    }
 		} else if (loc == 'board') {
 			doAction('BOARD_LOAD');
+		}
+		let modals = Store.getState('modals.modals');
+		if (modals.task_info) {
+			doAction('TASKINFO_LOAD', id);
 		}
 	}
 

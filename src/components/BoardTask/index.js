@@ -7,22 +7,47 @@ import ActionsButton from '../ActionsButton';
 export default class BoardTask extends React.Component {
 	render() {
 		let {data: {
+			type,
+			action,
+			importance,
+			status,
 			id,
 			title,
 			avatar_id,
 			user_id,
-			user_name
+			user_name,
+			changed
 		}} = this.props;
+
+		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
+
 		return (
-			<div class="self" onClick={this.handleClick}>
+			<div class="self $className" onClick={this.handleClick}>
 				<div class="top">
 					<Avatar
 						id={avatar_id}
 						userId={user_id}
 						userName={user_name}/>
+
+					<div class="icons">
+						<Icon>
+							{icons.task_type[type]}
+						</Icon>
+						<Icon>
+							{icons.task_act[action]}
+						</Icon>
+						<Icon>
+							{icons.task_imp[importance]}
+						</Icon>
+					</div>
+					<div class="changed">
+						{changed}
+					</div>
 				</div>
 				<div class="title">
-					{title}
+					<div class="title-inner">
+						{title}
+					</div>
 				</div>
 				<ActionsButton id={id} loc="board"/>
 			</div>

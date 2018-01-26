@@ -28,6 +28,8 @@ class Modals extends React.Component {
 					content: (
 						<TaskInfo 
 							id={data.id}
+							tasksCount={data.tasksCount}
+							store={data.store}
 							key="taskinfo"/>
 					)
 				});

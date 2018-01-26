@@ -86,19 +86,18 @@ const load = ({dispatch, state}, data = {}) => {
     dispatch('TASKS_CHANGED', {
     	tasksFetching: false,
     	tasks,
-    	dict,
-    	tasksCount: tasks.length
+    	dict
     });
   });
 }
 
 const show_task_info = ({dispatch, doAction, state}, {id, index}) => {
-  let count = state.tasks.length;
+  let tasksCount = state.tasks.length;
   dispatch('TASKS_CHANGED', {
   	shownTaskId: id,
     shownTaskIndex: index
   });
-  doAction('MODALS_SHOW', {name: 'task_info', props: {id}});
+  doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'TASKS'}});
 }
 
 const show_prev = ({doAction, state}) => {  
