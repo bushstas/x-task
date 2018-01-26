@@ -5,10 +5,6 @@ import Loader from '../../ui/Loader';
 import Tooltip from '../../ui/Tooltip';
 
 class TaskActions extends React.Component {
-	static defaultProps = {
-		onClose: () => {},
-		onAction: () => {}
-	}
 
 	componentDidMount() {
 		this.props.doAction('TASKACTIONS_LOAD', this.props.id);
@@ -52,26 +48,29 @@ class TaskActions extends React.Component {
 	}
 
 	handleAction = (action) => {
-		let {loc, id, doAction} = this.props;
+		let {doAction} = this.props;
 		if (action == 'edit') {
 			doAction('TASKACTIONS_EDIT', action);
 		} else {
 			doAction('TASKACTIONS_ACTION', action)
-			.then(data => {
-				if (loc == 'tasks' || loc == 'task_info') {
-					doAction('TASKS_START_UPDATE');	
-					if (loc == 'task_info') {
-						let index = Store.getState('tasks.shownTaskIndex');
-				    	if (typeof index == 'number') {
-				      		doAction('TASKINFO_LOAD', id);
-				    	}
-				    }
-				} else if (loc == 'board') {
-					doAction('BOARD_LOAD');
-			    }
-			});
+			.then(this.handleActionResult);
 		}
 		this.handleClickMask();
+	}
+
+	handleActionResult = () => {
+		let {loc, id, doAction} = this.props;
+		if (loc == 'tasks' || loc == 'task_info') {
+			doAction('TASKS_START_UPDATE');	
+			if (loc == 'task_info') {
+				let index = Store.getState('tasks.shownTaskIndex');
+		    	if (typeof index == 'number') {
+		      		doAction('TASKINFO_LOAD', id);
+		    	}
+		    }
+		} else if (loc == 'board') {
+			doAction('BOARD_LOAD');
+		}
 	}
 
 	handleClickMask = () => {

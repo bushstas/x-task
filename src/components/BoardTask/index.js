@@ -14,7 +14,7 @@ export default class BoardTask extends React.Component {
 			user_name
 		}} = this.props;
 		return (
-			<div class="self">
+			<div class="self" onClick={this.handleClick}>
 				<div class="top">
 					<Avatar
 						id={avatar_id}
@@ -27,5 +27,10 @@ export default class BoardTask extends React.Component {
 				<ActionsButton id={id} loc="board"/>
 			</div>
 		)
+	}
+
+	handleClick = () => {
+		let {data: {id}, index, status, onClick} = this.props;
+		onClick(id, index, status);
 	}
 }

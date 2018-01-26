@@ -59,9 +59,14 @@ class Board extends React.Component {
 				<div class="column-title">
 					{dict['status_' + key]}
 				</div>
-				{tasks.map((task) => {
+				{tasks.map((task, idx) => {
 					return (
-						<BoardTask key={task.id} data={task}/>
+						<BoardTask 
+							key={task.id}
+							data={task}
+							index={idx}
+							status={key}
+							onClick={this.handleTaskClick}/>
 					)
 				})}
 			</div>
@@ -74,6 +79,10 @@ class Board extends React.Component {
 
 			</div>
 		)
+	}
+
+	handleTaskClick = (id, index, status) => {
+		this.props.doAction('BOARD_SHOW_TASK_INFO', {id, index, status});
 	}
 }
 
