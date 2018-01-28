@@ -5,15 +5,21 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS");
 }
 
-$lang = $_POST['lang'];
+$lang = $_REQUEST['lang'];
 
 switch ($lang) {
 	case 'eng':
 		$data = array(
+			'by_type' => 'By type',
+			'by_status' => 'By status',
+			'by_importance' => 'By importance',
+			'board' => 'Board',
+			'all_projects' => 'All projects',
+			'current_task' => 'Current task',
 			'description' => 'Description',
 			'notifications' => 'Notifications',
 			'logo' => 'XTask',
-			'home' => 'Home',
+			'home' => 'My info',
 			'not_available' => 'not specified',
 			'my_account' => 'My account',
 			'users' => 'Users',
@@ -27,6 +33,7 @@ switch ($lang) {
 			'password' => 'Password',
 			'password2' => 'Repeat password',
 			'nothave' => 'none',
+			'none' => 'No tasks in work',
 			'title' => 'Title',
 			'name' => 'Name',
 			'role' => 'Role',
@@ -37,6 +44,7 @@ switch ($lang) {
 			'user_adding' => 'New user',
 			'add' => 'Add',
 			'add_task' => 'Add task',
+			'save_task' => 'Save task',
 			
 			'mark' => 'Task marker',
 			'selection' => 'Selection',
@@ -50,6 +58,8 @@ switch ($lang) {
 			
 			'save' => 'Save',
 			'cancel' => 'Cancel',
+			'yes' => 'Yes',
+			'no' => 'No',
 			'logout' => 'Log out',
 			'enter' => 'Log in',
 			'registration' => 'Registration',
@@ -61,20 +71,23 @@ switch ($lang) {
 			'my_tasks' => 'My tasks',
 			'task_inf' => 'Task information',
 			'tasks_from_me' => 'From me',
-			'tasks_for_me' => 'For me',
+			'tasks_for_me' => 'Available',
 			'all_tasks' => 'All tasks',
 			'all' => 'All',
+			'mine_tasks' => 'Mine',
 			
 			'status_frozen' => 'Back burner',
 			'status_closed' => 'Archive',
 			'status_ready' => 'Ready',
 			'status_in_work' => 'In work',
-			'status_none' => 'To do',
+			'status_current' => 'To do',
 			'status_cant_do' => 'Problematic',
 			'status_delayed' => 'Deferred',
 
 			'settings' => 'Settings',
 			'create_project' => 'Create project',
+			'create_task' => 'Create task',
+			'work_status' => 'Set status',
 			'activate_project' => 'Switch to this project',
 			'current_project' => 'This is the current project',
 			'request_access' => 'Request an access from administrator',
@@ -91,8 +104,6 @@ switch ($lang) {
 			'developer' => 'Developer',
 			'observer' => 'Observer',
 
-			'frontend' => 'Frontend',
-			'backend' => 'Backend',
 			'fullstack' => 'Full-stack',
 			'htmler' => 'HTML coder',
 			'designer' => 'Designer',
@@ -134,10 +145,10 @@ switch ($lang) {
 			'delayed' => 'Delayed',
 			'in_work' => 'In work',
 			'cant_do' => 'Can\'t do',
-			'note' => 'Note to self',
 
 			'assign_executors' => 'Assign executors',
 			'task_info' => 'Fill extended task info',
+			'terms' => 'Task terms and difficulty',
 
 			'importance' => 'Importance',
 			'category' => 'Category',
@@ -181,16 +192,42 @@ switch ($lang) {
 			'table' => 'Table',
 			'form' => 'Form',
 
-			'tooltip' => 'Tooltip'
+			'tooltip' => 'Tooltip',
+			'locked' => 'Temporarily locked for work',
+
+			'information' => 'Information',
+			'comments' => 'Comments',
+			'problems' => 'Problems',
+			'difficulties' => array(
+				'very easy',
+				'pretty easy',
+				'easy',
+				'simple',
+				'average',
+				'uneasy',
+				'complicated',
+				'difficult',
+				'hard',
+				'very hard'
+			),
+			'editmode' => 'Edit task mode',
+			'createmode' => 'Create task mode'
 		);
 	break;
 
 	default:	
 		$data = array(
+			'by_type' => 'По типу',
+			'by_status' => 'По статусу',
+			'by_importance' => 'По важности',
+			'board' => 'Доска',
+			'all_projects' => 'Все проекты',
+			
+			'current_task' => 'Текущая задача',
 			'description' => 'Описание',
 			'notifications' => 'Уведомления',
 			'logo' => 'XTask',
-			'home' => 'Главная',
+			'home' => 'Мое инфо',
 			'not_available' => 'не указана',
 			'my_account' => 'Мой аккаунт',
 			'users' => 'Пользователи',
@@ -204,6 +241,7 @@ switch ($lang) {
 			'password' => 'Пароль',
 			'password2' => 'Повторите пароль',
 			'nothave' => 'отсутствуют',
+			'none' => 'Нет задачи в работе',
 			'title' => 'Название',
 			'taskurl' => 'Адрес страниц(ы), где задача будет доступна',
 			'name' => 'Имя',
@@ -215,6 +253,7 @@ switch ($lang) {
 			'user_adding' => 'Созд. пользователя',
 			'add' => 'Добавить',
 			'add_task' => 'Добавить задачу',
+			'save_task' => 'Сохранить задачу',
 			'insertion' => 'Вставка',			
 
 			'mark' => 'Маркер задачи',
@@ -229,6 +268,8 @@ switch ($lang) {
 
 			'save' => 'Сохранить',
 			'cancel' => 'Отмена',
+			'yes' => 'Да',
+			'no' => 'Нет',
 			'logout' => 'Выйти',
 			'enter' => 'Войти',
 			'registration' => 'Регистрация',
@@ -240,21 +281,23 @@ switch ($lang) {
 			'my_tasks' => 'Мои задачи',
 			'task_inf' => 'Информация о задаче',
 			'tasks_from_me' => 'От меня',
-			'tasks_for_me' => 'Для меня',
+			'tasks_for_me' => 'Доступные',
 			'all_tasks' => 'Все задачи',
+			'mine_tasks' => 'Мои',
 
 			'all' => 'Все',
 			'status_frozen' => 'Долгий ящик',
 			'status_closed' => 'Архив',
 			'status_ready' => 'Готовые',
 			'status_in_work' => 'В работе',
-			'status_none' => 'Текущие',
+			'status_current' => 'Текущие',
 			'status_cant_do' => 'Проблемные',
 			'status_delayed' => 'Отложенные',
 			
 			'settings' => 'Настройки',
 			'create_project' => 'Создать проект',
 			'create_task' => 'Создать задачу',
+			'work_status' => 'Настроить статус',
 			'activate_project' => 'Переключиться на этот проект',
 			'current_project' => 'Это ваш текущий проект',
 			'request_access' => 'Запросить доступ у администраторов',
@@ -271,8 +314,6 @@ switch ($lang) {
 			'developer' => 'Разработчик',
 			'observer' => 'Наблюдатель',
 
-			'frontend' => 'Frontend',
-			'backend' => 'Backend',
 			'fullstack' => 'Full-stack',
 			'htmler' => 'Верстальщик',
 			'designer' => 'Дизайнер',
@@ -282,8 +323,8 @@ switch ($lang) {
 			'text' => 'Тексты',
 			'txt' => 'Текст',
 			'prototype' => 'Макеты',
-			'backend' => 'Backend',
-			'frontend' => 'Frontend',
+			'backend' => 'Бэкэнд',
+			'frontend' => 'Фронтэнд',
 			'test' => 'Тесты',
 			'page' => 'Страница',
 			'style' => 'Стили',
@@ -296,7 +337,6 @@ switch ($lang) {
 			'repairing' => 'Починка',
 			'debugging' => 'Отладка',
 			'planning' => 'Планирование',
-			'note' => 'Заметка для себя',
 
 			'burning' => 'Горящая',
 			'urgent' => 'Срочная',
@@ -318,6 +358,7 @@ switch ($lang) {
 
 			'assign_executors' => 'Назначить исполнителей',
 			'task_info' => 'Заполнить расширенную информацию',
+			'terms' => 'Сложность и сроки задачи',
 
 			'importance' => 'Важность',
 			'category' => 'Категория',
@@ -358,13 +399,34 @@ switch ($lang) {
 			'table' => 'Таблица',
 			'form' => 'Форма',
 
-			'tooltip' => 'Подсказка'
+			'tooltip' => 'Подсказка',
+			'locked' => 'Временно закрыта для работы',
+			'information' => 'Информация',
+			'comments' => 'Комментарии',
+			'problems' => 'Проблемы',
+			'difficulties' => array(
+				'очень легкая',
+				'довольно легкая',
+				'легкая',
+				'простая',
+				'средняя',
+				'непростая',
+				'сложноватая',
+				'сложная',
+				'тяжелая',
+				'очень тяжелая'
+			),
+			'editmode' => 'Режим редактирования задачи',
+			'createmode' => 'Режим создания задачи'
 		);
 }
 
 // material icons
 $icons = array(
+	'board' => 'picture_in_picture',
+	'locked' => 'https',
 	'assign' => 'supervisor_account',
+	'terms' => 'date_range',
 	'close' => 'close',
 	'logo' => 'developer_board',
 	'addtask' => 'add_to_photos',
@@ -390,11 +452,16 @@ $icons = array(
 	'left' => 'keyboard_arrow_left',
 	'right' => 'keyboard_arrow_right',
 	'tooltip' => 'help_outline',
+	'tooltip2' => 'help',
 	'open' => 'open_in_new',
 	'back' => 'arrow_back',
 	'forward' => 'arrow_forward',
 	'sad' => 'sentiment_dissatisfied',
-	'settings' => 'settings'
+	'settings' => 'settings',
+	'checked' => 'done',
+	'time' => 'schedule',
+	'list' => 'list',
+	'user' => 'free_breakfast'
 );
 
 // ui elements icons
@@ -466,17 +533,16 @@ $icons['task_act'] = array(
 	'removing' => 'block',
 	'repairing' => 'build',
 	'debugging' => 'tune',
-	'planning' => 'content_paste',
-	'note' => 'star_border'
+	'planning' => 'content_paste'
 );
 
 // main menu material icons
 $icons['menu'] = array(
-	'my_account' => 'person',
 	'tasks' => 'assignment_late',
+	'my_account' => 'person',
 	'projects' => 'layers',
 	'users' => 'people',
 	'logout' => 'exit_to_app'
 );
 
-die(json_encode(array('success' => true, 'dict' => $data, 'icons' => $icons)));
+die(json_encode(array('success' => true, 'body' => array('dict' => $data, 'icons' => $icons))));

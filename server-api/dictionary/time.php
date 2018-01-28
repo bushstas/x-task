@@ -27,15 +27,24 @@ switch ($language) {
 			'decade' => 'decade',
 			'decades' => 'decades',
 			'decades2' => 'decades',
-			'ago' => 'ago'
+			'ago' => 'ago',
+			'just_now' => 'just now',
+			'left' => array('left', 'left', 'left'),
+			'passed' => array('passed', 'passed', 'passed'),
+			'passed2' => array('passed', 'passed', 'passed'),
+			'waited' => 'Waited for executor during',
+			'in_work' => 'Was in work for',
+			'overdue' => 'Overdue for'
 		);
 	break;
 
 	default:
 		$dict = array(
 			'second' => 'секунда',
+			'_second' => 'секунду',
 			'seconds' => 'секунды',
 			'seconds2' => 'секунд',
+			'_minute' => 'минуту',
 			'minute' => 'минута',
 			'minutes' => 'минуты',
 			'minutes2' => 'минут',
@@ -57,6 +66,13 @@ switch ($language) {
 			'decade' => 'десятилетие',
 			'decades' => 'десятилетия',
 			'decades2' => 'десятилетий',
-			'ago' => 'назад'
+			'ago' => 'назад',
+			'just_now' => 'только что',
+			'left' => array('Остался', 'Осталось', 'Осталось'),
+			'passed' => array('Прошел', 'Прошло', 'Прошло'),
+			'passed2' => array('Прошла', 'Прошло', 'Прошло'),
+			'waited' => 'Ожидала исполнителя',
+			'in_work' => 'Была в работе',
+			'overdue' => 'Просрочено на'
 		);
 }

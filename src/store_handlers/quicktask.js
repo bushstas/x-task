@@ -346,7 +346,7 @@ const show_terms = ({dispatch, state}) => {
 const show_users = ({dispatch, state}) => {
   dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
   let {type = '', action = ''} = state;
-  get('load_task_users', {type, action})
+  get('load_task_users', {type, taskAction: action})
     .then(({dict}) => {
       let {users} = dict;
       let {execs} = state;

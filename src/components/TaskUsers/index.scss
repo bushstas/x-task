@@ -27,7 +27,7 @@
 		var .mt10;
 	}
 	.user {
-		var .inb.w195.vtop.p10.bc-eee.bo-e6e6e6.br5.mb10.mr10;
+		var .inb.w195.vtop.p10.bc-f2f2f2.bo-ddd.br5.mb10.mr10;
 		&.checked {
 			var .bc-eefddc.boc-c6d6b3;
 			.role {
@@ -46,6 +46,9 @@
 	}
 	..checkbox {		
 		var .pt;
+		..checkbox-control {
+			var .bc-fff;
+		}
 		&..checkbox-checked {
 			..checkbox-control {
 				var .bc-7c9065.boc-7c9065;

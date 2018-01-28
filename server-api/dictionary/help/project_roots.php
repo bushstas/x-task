@@ -32,29 +32,29 @@ switch ($language) {
 }
 
 $dict['codes'] = array( 
-	'site.com',
+	'https://site.com',
 	array(
-		'site.com',
-		'super.site.com',
-		'mega.super.site.com'
+		'http://site.com',
+		'http://super.site.com',
+		'http://mega.super.site.com'
 	),
 	array(
-		'site.com',
-		'*.site.com'
+		'https://site.com',
+		'https://*.site.com'
 	),
 	array(
-		'dev.project.com/beta,',
-		'dev.project.com/alpha',
-		'project.com/developer-john',
-		'project.com/developer-jack',
-		'project.com/repositories/john',
-		'project.com/repositories/jack'
+		'http://dev.project.com/beta,',
+		'http://dev.project.com/alpha',
+		'http://project.com/developer-john',
+		'http://project.com/developer-jack',
+		'http://project.com/repositories/john',
+		'http://project.com/repositories/jack'
 	),
 	array(
-		'dev.project.com/*',
-		'project.com/repositories/*',
-		'project.com/*/code',
-		'project.com/*/*'
+		'http://dev.project.com/*',
+		'http://project.com/repositories/*',
+		'http://project.com/*/code',
+		'http://project.com/*/*'
 	),
 	array(
 		'localhost:8080',

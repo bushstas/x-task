@@ -17,7 +17,8 @@ export default class User extends React.Component {
 			projects,
 			task,
 			status,
-			work_status_id
+			work_status_id,
+			project_name
 		}} = this.props;
 
 		if (!projects) {
@@ -26,8 +27,18 @@ export default class User extends React.Component {
 					{dict.nothave}
 				</span>
 			)
+		} else if (projects == '*') {
+			projects = dict.all_projects;
 		} else {
-			projects = projects.split(',').join(', ');
+			let ps = projects.split(',');
+			projects = [];			
+			for (let pr of ps) {
+				projects.push(
+					<span class="user-project $pr==project_name?active" key={pr}>
+						{pr}
+					</span>
+				);
+			}
 		}
 		let userClass = $classy(role, '.role-', ['head', 'admin', 'editor', 'analyst']);
 		let statusClass = $classy(work_status_id, 'status-', [1, 2, 3, 4, 5, 6]);
@@ -64,14 +75,21 @@ export default class User extends React.Component {
 						{projects}
 					</div>
 				</div>
-				<div class="data">
-					<div class="title">
-						{dict.current_task}
+				{role != 'head' && (
+					<div class="data">
+						<div class="title">
+							{dict.current_task}
+						</div>
+						{project_name && (
+							<span class="current-project">
+								{project_name}
+							</span>
+						)}
+						<div class="task">
+							{task}
+						</div>
 					</div>
-					<div class="task">
-						{task}
-					</div>
-				</div>
+				)}
 				{true && (
 					<ActionsButton onClick={this.handleActionsClick}/>
 				)}

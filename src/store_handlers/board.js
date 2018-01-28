@@ -1,9 +1,28 @@
 import {get} from '../utils/Fetcher';
+import StoreKeeper from '../utils/StoreKeeper';
+import {BOARD_STORAGE_KEY} from '../consts/storage';
+
+const getSavedData = () => {
+  return StoreKeeper.get(BOARD_STORAGE_KEY);
+}
+
+const getDefaultState = () => {
+  return {
+      filter: 'status'
+  }
+}
+let defaultState = getSavedData() || getDefaultState();
+
+const onStateChanged = (state) => {
+    let {filter} = state;
+    StoreKeeper.set(BOARD_STORAGE_KEY, {
+      filter
+    });
+}
 
 const init = () => {
-  return {
-    fetching: true
-  };
+  defaultState.fetching = true;
+  return defaultState;
 }
  
 const changed = (state, data) => {
@@ -17,8 +36,13 @@ const fetched = (state, data) => {
   };
 }
 
-const load = ({dispatch}) => {
-  get('load_board')
+const load = ({dispatch, state}, filter) => {
+  if (filter) {
+    dispatch('BOARD_CHANGED', {filter});
+  } else {
+   filter = state.filter;
+  }
+  get('load_board', {filter})
   .then(boardData => {
     dispatch('BOARD_FETCHED', boardData);
   });
@@ -56,6 +80,7 @@ const show_next = ({doAction, state}) => {
 
 
 export default {
+  onStateChanged,
   actions: {
   	load,
     show_task_info,

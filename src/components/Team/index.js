@@ -81,7 +81,16 @@ class Team extends React.Component {
 					</span>
 				)
 			} else {
-				projects = u.projects.split(',').join(', ');
+				projects = [];
+				let {project_name} = u;
+				let ps = u.projects.split(',');
+				for (let pr of ps) {
+					projects.push(
+						<span class="pr==project_name?active" key={pr}>
+							{pr}
+						</span>
+					);
+				}
 			}		
 			canEdit = token == u.token || (u.role != 'head' && (hasRight('edit_admin') || (u.role != 'admin' && hasRight('edit_user'))));
 			

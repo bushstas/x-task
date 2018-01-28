@@ -3,18 +3,24 @@ import Store from 'xstore';
 import Button from '../../ui/Button';
 import Loader from '../../ui/Loader';
 import Tooltip from '../../ui/Tooltip';
+import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
 class TaskActions extends React.Component {
 
 	componentDidMount() {
 		this.props.doAction('TASKACTIONS_LOAD', this.props.id);
+		addHandler(this.handleClose);
+	}
+
+	componentWillUnmount() {
+		removeHandler(this.handleClose);
 	}
 
 	render() {
 		let {dict} = this.props;
 		return (
 			<div class="self">
-				<div class="mask" onClick={this.handleClickMask}/>
+				<div class="mask" onClick={this.handleClose}/>
 				<Loader classes="content" fetching={!dict}>
 					<div class="tooltip">
 						<Tooltip dark>
@@ -55,7 +61,7 @@ class TaskActions extends React.Component {
 			doAction('TASKACTIONS_ACTION', action)
 			.then(this.handleActionResult);
 		}
-		this.handleClickMask();
+		this.handleClose();
 	}
 
 	handleActionResult = () => {
@@ -71,7 +77,7 @@ class TaskActions extends React.Component {
 		}
 	}
 
-	handleClickMask = () => {
+	handleClose = () => {
 		this.props.dispatch('TASKACTIONS_INIT');
 		this.props.doAction('MODALS_HIDE', 'task_actions');	
 	}

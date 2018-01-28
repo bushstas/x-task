@@ -3,6 +3,9 @@
 switch ($language) {
 	case 'eng':
 		$dict = array(
+			'unblock' => 'Unblock',
+			'edit' => 'Edit',
+			'start' => 'Into the work',
 			'complete' => 'Done',
 			'delay' => 'Defer',
 			'refuse' => 'Refuse',
@@ -15,12 +18,17 @@ switch ($language) {
 			'open' => 'Open',
 			'close' => 'Close',
 			'remove' => 'Remove',
-			'freeze' => 'Freeze'
+			'freeze' => 'Freeze',
+			'unfreeze' => 'Unfreeze',
+			'estimate' => 'Estimate'
 		);
 	break;
 
 	default:
 		$dict = array(
+			'unblock' => 'Разблокировать',
+			'edit' => 'Редактировать',
+			'start' => 'В работу',
 			'complete' => 'Готово',
 			'delay' => 'Отложить',
 			'refuse' => 'Отказаться',
@@ -33,6 +41,8 @@ switch ($language) {
 			'open' => 'Открыть',
 			'close' => 'Закрыть',
 			'remove' => 'Удалить',
-			'freeze' => 'Заморозить'
+			'freeze' => 'Заморозить',
+			'unfreeze' => 'Разморозить',
+			'estimate' => 'Оценить'
 		);
 }

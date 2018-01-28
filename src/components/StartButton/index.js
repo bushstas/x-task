@@ -16,12 +16,14 @@ class StartButton extends React.Component {
 				</div>
 				{isAuthorized() && (
 					<div class="menu">
-						<div 
-							class="board"
-							title={dict.create_task}
-							onClick={this.handleBoardClick}>
-							<Icon icon="board"/>
-						</div>
+						{shown != 'board' && (
+							<div 
+								class="board"
+								title={dict.board}
+								onClick={this.handleBoardClick}>
+								<Icon icon="board"/>
+							</div>
+						)}
 						<div 
 							class="user"
 							title={dict.work_status}

@@ -6,6 +6,7 @@ switch ($language) {
 		$dict = array(
 			'title' => 'Select executors of the task',
 			'proper' => 'Appropriate executors',
+			'testers' => 'Testers',
 			'rest' => 'Rest users',
 			'none' => 'No users'
 		);
@@ -16,6 +17,7 @@ switch ($language) {
 		$dict = array(
 			'title' => 'Выбор испольнителей задачи',
 			'proper' => 'Подходящие исполнители',
+			'testers' => 'Тестировщики',
 			'rest' => 'Остальные пользователи',
 			'none' => 'Нет пользователей'
 		);

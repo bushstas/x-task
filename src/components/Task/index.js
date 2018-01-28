@@ -10,44 +10,59 @@ export default class Task extends React.Component {
 	}
 
 	render() {
-		let {data, status, filter} = this.props;
-		let {data: d} = data;
-		let className = $classy(data.status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
+		let {data: {
+				status,
+				type,
+				action,
+				importance,
+				avatar_id,
+				user_id,
+				user_name,
+				locked,
+				title,
+				changed,
+				timeleft,
+				overdue,
+				actions,
+				id
+			}
+		} = this.props;
+		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		return (
 			<div class="self $className" onClick={this.handleClick}>
 				<div class="icons">
 					<Icon>
-						{icons.task_type[data.type]}
+						{icons.task_type[type]}
 					</Icon>
 					<Icon>
-						{icons.task_act[data.action]}
+						{icons.task_act[action]}
 					</Icon>
 					<Icon>
-						{icons.task_imp[data.importance]}
+						{icons.task_imp[importance]}
 					</Icon>
 				</div>
 				
 				<Avatar 
-					id={data.avatar_id}
-					userId={data.user_id}
-					userName={data.user_name}/>
+					id={avatar_id}
+					userId={user_id}
+					userName={user_name}/>
 				
 				<div class="title">
-					{data.locked && (
+					{locked && (
 						<Icon icon="locked"/>
 					)}
-					{data.title}
+					{title}
 				</div>
 				<div class="status">
-					{data.changed}
-					{data.timeleft && (
-						<div class="timeleft">
-							{data.timeleft}
+					{changed}
+					{timeleft && (
+						<div class="timeleft $?overdue">
+							{timeleft}
 						</div>
 					)}
 				</div>
-				{data.actions && (
-					<ActionsButton id={data.id} loc="tasks"/>
+				{actions && (
+					<ActionsButton id={id} loc="tasks"/>
 				)}
 			</div>
 		)

@@ -1,13 +1,11 @@
 <?php
 
-
-
-
 switch ($language) {
 	case 'eng':
 		$dict = array(
 			'title' => 'Extended task info',
-			'preview' => 'Preview task'
+			'preview' => 'Preview task',
+			'list' => 'List of subtasks'
 		);
 
 		$d = array(
@@ -29,7 +27,8 @@ switch ($language) {
 	default:
 		$dict = array(
 			'title' => 'Раширенное описание задачи',
-			'preview' => 'Предпросмотр задачи'
+			'preview' => 'Предпросмотр задачи',
+			'list' => 'Список подзадач'
 		);
 		$d = array(
 			'terms' => 'Сроки исполнения',
@@ -51,16 +50,16 @@ switch ($language) {
 $icons = array(
 	'terms' => 'update',
 	'sources' => 'folder_open',
-	'design' => 'folder_open',
-	'prototypes' => 'folder_open',
-	'use' => 'folder_open',
-	'implement' => 'folder_open',
-	'data' => 'folder_open',
-	'before' => 'folder_open',
-	'after' => 'folder_open',
-	'examples' => 'folder_open',
-	'diff' => 'folder_open',
-	'award' => 'folder_open'
+	'design' => 'palette',
+	'prototypes' => 'web',
+	'use' => 'dns',
+	'implement' => 'directions',
+	'data' => 'receipt',
+	'before' => 'location_searching',
+	'after' => 'check_circle',
+	'examples' => 'burst_mode',
+	'diff' => 'sentiment_very_dissatisfied',
+	'award' => 'card_giftcard'
 );
 
 
@@ -108,10 +107,18 @@ switch ($_POST['type']) {
 	case 'project':
 		array_push($items, 'examples');
 	break;
+
+	default:
+		array_push($items, 'examples');
+	
 }
 
 array_push($items, 'before', 'after', 'diff', 'award');
 $dict['captions'] = array();
+
+if (empty($_POST['type'])) {
+	$items = array_keys($d);
+}
 
 foreach ($items as $v) {
 	$dict['icons'][$v] = $icons[$v];

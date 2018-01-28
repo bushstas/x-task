@@ -57,13 +57,18 @@ const show_board = ({dispatch}) => {
   dispatch('APP_CHANGED', {shown: 'board'});
 }
 
+const hide = ({dispatch}) => {
+  dispatch('APP_CHANGED', {shown: null});
+}
+
 export default {
   onStateChanged,
   actions: {
   	change,
     show_status,
     save_status,
-    show_board
+    show_board,
+    hide
   },
   reducers: {
     init,

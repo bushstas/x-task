@@ -5,20 +5,60 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS");
 }
 
-include 'db.php';
+mb_internal_encoding("UTF-8");
 
-function getDict($name, $language = 'ru') {
-	$path = './dictionary/'.$name.'.php';
-	if (file_exists($path)) {
-		include $path;
-		if (is_array($dict)) {
-			return $dict;
-		}
-	}
-	return array();
+include 'db.php';
+$db = DB::getDb();
+
+function mb_lcfirst($text) {
+    return mb_strtolower(mb_substr($text, 0, 1)) . mb_substr($text, 1);
 }
 
-function getHelp($name, $language = 'ru') {
+function requireClasses() {
+	$names = func_get_args();
+	foreach ($names as $name) {
+		$path = __DIR__.'/classes/'.$name.'.php';
+		if (file_exists($path)) {
+			require_once $path;
+		}
+	}
+}
+
+function getLang($language = null) {
+	if (empty($language)) {
+		$language = $_GET['lang'];
+	}
+	if (empty($language)) {
+		$language = 'ru';
+	}
+	return $language;
+}
+
+function getDict($names, $language = null) {
+	$language = getLang($language);
+	$dicts = array();
+	if (!is_array($names)) {
+		$names = array($names);
+	}
+	foreach ($names as $name) {
+		$path = './dictionary/'.$name.'.php';
+		if (file_exists($path)) {
+			include $path;
+			if (is_array($dict)) {
+				$dicts = array_merge($dicts, $dict);
+			}
+		}
+	}
+	return $dicts;
+}
+
+function getHelp($name, $language = null) {
+	if (empty($language)) {
+		$language = $_GET['lang'];
+	}
+	if (empty($language)) {
+		$language = 'ru';
+	}
 	$path = './dictionary/help/'.$name.'.php';
 	if (file_exists($path)) {
 		include $path;
@@ -26,237 +66,6 @@ function getHelp($name, $language = 'ru') {
 			return array($name => $help);
 		}
 	}
-}
-
-function auth() {
-	$login    = $_POST['login'];
-	$password = $_POST['password'];
-	if (empty($login) || empty($password)) {
-		error('Введите логин и пароль');
-	}
-	$password = md5($password);
-	global $db;
-	$r = $db->prepare('
-		SELECT 
-			id,
-			blocked_by 
-		FROM 
-			users 
-		WHERE 
-			login = ? and password = ?
-	');
-	$r->execute(array($login, $password));
-	$user = $r->fetch(PDO::FETCH_ASSOC);
-	if ($user['blocked_by'] != null) {
-		error('Ваш аккаунт был заблокирован, авторизация невозможна');
-	}
-
-	createSession($user['id']);
-	error('Неверная связка логин/пароль');
-}
-
-function createSession($userId) {
-	global $db;
-	if (!empty($userId)) {
-		$r = $db->prepare('
-			SELECT 
-				token
-			FROM 
-				sessions 
-			WHERE 
-				user_id = ?
-		');
-		$r->execute(array($userId));
-		$session = $r->fetch(PDO::FETCH_ASSOC);
-		if (is_array($session)) {
-			$token = $session['token'];
-			$r = $db->prepare('
-				UPDATE 
-					sessions 
-				SET
-					timestamp = ?
-				WHERE 
-					user_id = ?
-			');
-			$r->execute(array(strtotime('now'), $userId));
-		} else {
-			$token = generateUniqueToken('sessions');
-			$r = $db->prepare('
-				INSERT INTO  
-					sessions
-				VALUES( 
-					"", ?, ?, ?
-				)
-			');
-			$r->execute(array($userId, $token, strtotime('now')));
-		}
-
-		success(array(
-			'token' => $token
-		));
-	}
-}
-
-function register($user = null) {
-	global $db;
-	$byAdmin = !empty($user);
-
-	if ($byAdmin && $user['role'] != 'head' && $user['role'] != 'admin') {
-		noRightsError();
-	}
-
-	$login    = validateLogin($_POST['login']);
-	$password = validatePassword($_POST['password'], $_POST['password2']);
-	$userName = validateUserName($_POST['userName']);
-	$email    = validateEmail($_POST['email']);
-	$code     = validateInvitationCode($_POST['code']);
-
-	$invitationRole = null;
-	$invitationTeam = null;
-	$byInvitation = false;
-	if ($byAdmin) {
-		$role     = validateRole($_POST['role']);
-		$spec     = validateSpec($_POST['spec'], $role);
-		$projects = validateProjects($_POST['projects'], $role);
-	} elseif (!empty($code)) {
-		$r = $db->prepare('
-			SELECT 
-				team_id,
-				role_id 
-			FROM 
-				invitations 
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($code));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		if (!is_array($row)) {
-			error('Приглашение на найдено');
-		}
-		$byInvitation = true;
-		$invitationRole = $row['role_id'];
-		$invitationTeam = $row['team_id'];
-	}
-	
-	$r = $db->prepare('
-		SELECT 
-			* 
-		FROM 
-			users 
-		WHERE 
-			login = ? OR
-			password = ? OR 
-			email = ?
-	');
-	$r->execute(array($login, $password, $email));
-	$row = $r->fetch(PDO::FETCH_ASSOC);
-	validateUniqueness($login, $password, $email, $row);
-
-	$token = generateUniqueToken('users');
-	$team = $byAdmin ? $user['team_id'] : null;
-	$role = $byAdmin ? $role : 1;
-	$spec = $byAdmin ? $spec : null;
-	if ($byInvitation === true) {
-		$role = $invitationRole;
-		$team = $invitationTeam;
-		$projects = getInvitaionProjects($code);
-
-		$r = $db->prepare('
-			DELETE FROM 
-				invitations_projects 
-			WHERE 
-				invitation_id = (SELECT id FROM invitations WHERE token = ?)
-		');
-		$r->execute(array($code));
-		$r = $db->prepare('
-			DELETE FROM 
-				invitations 
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($code));
-	}
-	$r = $db->prepare('
-		INSERT INTO  
-			users
-		VALUES( 
-			"", ?, ?, ?, ?, ?, ?, ?, null, ?, null, ?
-		)
-	');
-	$avatarId = getRandomAvatar($team);
-	$r->execute(array($userName, $email, $token, $login, md5($password), $role, $spec, $team, $avatarId));
-
-	$r = $db->prepare('
-		SELECT 
-			id
-		FROM 
-			users 
-		WHERE 
-			token = ?
-	');
-	$r->execute(array($token));
-	$row = $r->fetch(PDO::FETCH_ASSOC);
-	if (!is_array($row)) {
-		error('Во время регистрации произошла ошибка');
-	}
-	$newUserId = $row['id'];
-
-	if (!$byAdmin && !$byInvitation) {
-		
-		$teamToken = generateUniqueToken('teams');
-		$r = $db->prepare('
-			INSERT INTO  
-				teams
-			VALUES( 
-				"", ?, ?
-			)
-		');
-		$r->execute(array($newUserId, $teamToken));
-
-		$r = $db->prepare('
-			SELECT 
-				id
-			FROM 
-				teams 
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($teamToken));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		if (!is_array($row)) {
-			error('Во время регистрации произошла ошибка');
-		}
-		$newTeamId = $row['id'];
-
-		$r = $db->prepare('
-			UPDATE 
-				users 
-			SET
-				team_id = ?
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($newTeamId, $token));
-	} else if ($role > 2) {
-		if (is_array($projects)) {
-			$projects = getProjectsIds($projects);
-			foreach ($projects as $projectId) {
-				$r = $db->prepare('
-					INSERT INTO  
-						users_projects
-					VALUES( 
-						"", ?, ?
-					)
-				');
-				$r->execute(array($newUserId, $projectId));
-			}
-		}
-	}
-	if (!$byAdmin) {
-		createSession($newUserId);
-		unknownError();
-	}
-	success();
 }
 
 function getProjectsIds($projects) {
@@ -283,33 +92,8 @@ function getProjectsIds($projects) {
 	return $ids;
 }
 
-function getInvitaionProjects($token) {
-	global $db;
-	$r = $db->prepare('
-		SELECT 
-			p.token
-		FROM 
-			invitations i
-		JOIN 
-			invitations_projects ip
-			ON i.id = ip.invitation_id
-		JOIN 
-			projects p 
-			ON p.id = ip.project_id
-		WHERE 
-			i.token = ?
-	');
-	$r->execute(array($token));
-	$rows = $r->fetchAll(PDO::FETCH_ASSOC);
-	$projects = array();
-	foreach ($rows as $row) {
-		$projects[] = $row['token'];
-	}
-	return $projects;
-}
-
 function validateTokenAndRightsToEditUser($user, $action = null) {
-	$userToken = $_POST['userToken'];
+	$userToken = $_REQUEST['userToken'];
 	if (empty($userToken)) {
 		error('Ошибка при действии над пользователем');
 	}
@@ -329,7 +113,7 @@ function validateTokenAndRightsToEditUser($user, $action = null) {
 }
 
 function validateProjectToken() {
-	$projectToken = $_POST['projectToken'];
+	$projectToken = $_REQUEST['projectToken'];
 	if (empty($projectToken)) {
 		error('Ошибка при действии над проектом');
 	}
@@ -495,13 +279,17 @@ function noRightsError() {
 	error('У вас нет прав на данное действие');	
 }
 
-function success($params = null) {
+function success($params = null, $message = null) {
 	$data = array(
-		'success' => true
+		'success' => true,
+		'body' => array()
 	);
+	if (is_string($message) && !empty($message)) {
+		$data['message'] = $message;
+	}
 	if (is_array($params)) {		
 		foreach ($params as $k => $v) {
-			$data[$k] = $v;
+			$data['body'][$k] = $v;
 		}
 	}
 	die(json_encode($data));
@@ -533,101 +321,6 @@ function getRandomAvatar($teamId) {
 	return $randomId;
 }
 
-function getUser($token) {
-	global $db;
-	$r = $db->prepare('
-		SELECT 
-			u.id,
-			u.name,
-			u.token,
-			u.team_id,
-			u.project_id,
-			r.id AS role_id,
-			r.code AS role,
-			sp.code AS spec,
-			p.token AS project,
-			p.roots,
-			p.nohashes,
-			p.noparams,
-			p.getparams
-		FROM 
-			sessions s
-		JOIN 
-			users u 
-			ON u.id = s.user_id
-		JOIN 
-			roles r 
-			ON u.role = r.id 
-		LEFT JOIN 
-			specs sp 
-			ON u.spec = sp.id 
-		LEFT JOIN 
-			projects p 
-			ON u.project_id = p.id 
-		WHERE 
-			s.token = ?
-	');
-	$r->execute(array($token));
-	return $r->fetch(PDO::FETCH_ASSOC);
-}
-
-function getProjects($userId) {
-	global $db;
-	$r = $db->prepare('
-		SELECT 
-			p.name,
-			p.token
-		FROM 
-			users_projects up 
-		JOIN 
-			projects p 
-			ON up.project_id = p.id 
-		WHERE 
-			up.user_id = ?
-	');
-	$r->execute(array($userId));
-	return $r->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function getRights($role) {
-	global $db;
-	$r = $db->prepare('
-		SELECT 
-			rs.code
-		FROM 
-			roles r 
-		JOIN 
-			roles_rights rr 
-			ON r.id = rr.role_id
-		JOIN 
-			rights rs 
-			ON rs.id = rr.right_id
-		WHERE 
-			r.code = ?
-	');
-	$r->execute(array($role));
-	$rows = $r->fetchAll(PDO::FETCH_ASSOC);
-	$rights = array();
-	foreach ($rows as $r) {
-		$rights[] = $r['code'];
-	}
-	return $rights;
-}
-
-function getProject($token) {
-	global $db;
-	$r = $db->prepare('
-		SELECT 
-			p.*
-		FROM 
-			projects p 
-		WHERE 
-			p.token = ?
-	');
-	$r->execute(array($token));
-	return $r->fetch(PDO::FETCH_ASSOC);
-}
-
 function createProject($user) {
 	global $db;
 	if ($user['role'] != 'head' && $user['role'] != 'admin') {
@@ -635,7 +328,7 @@ function createProject($user) {
 	}
 
 	$userId = $user['id'];
-	$name = $_POST['projectName'];
+	$name = $_REQUEST['projectName'];
 	if (empty($name)) {
 		error('Введите название проекта');
 	}
@@ -772,17 +465,25 @@ function getRoles() {
 
 function getUsers($user, $refreshing = false) {
 	global $db;
+	$dict = getDict('work_statuses');
 	$r = $db->prepare('
 		SELECT 
 			u.id,
+			u.avatar_id,
 			u.token,
+			pr.name AS project_name,
 			u.name,
 			u2.name AS blockedBy,
 			r.code AS role,
 			s.code AS spec,
+			t.title AS task,
+			ws.work_status_id,
 			GROUP_CONCAT(p.name ORDER BY p.id) AS projects
 		FROM 
 			users u 
+		LEFT JOIN 
+			projects pr 
+			ON u.project_id = pr.id 
 		JOIN 
 			roles r 
 			ON u.role = r.id 
@@ -793,11 +494,17 @@ function getUsers($user, $refreshing = false) {
 			users_projects up 
 			ON up.user_id = u.id 
 		LEFT JOIN 
+			tasks t
+			ON t.changed_by = u.id AND t.status_id = 2
+		LEFT JOIN 
 			projects p 
 			ON up.project_id = p.id 
 		LEFT JOIN 
 			users u2 
 			ON u.blocked_by = u2.id 
+		LEFT JOIN 
+			user_work_statuses ws 
+			ON ws.user_id = u.id 
 		WHERE 
 			u.team_id = ?
 		GROUP BY u.id
@@ -808,8 +515,12 @@ function getUsers($user, $refreshing = false) {
 	$users = $r->fetchAll(PDO::FETCH_ASSOC);
 
 	foreach ($users as &$u) {
+		if (empty($u['work_status_id'])) {
+			$u['work_status_id'] = 2;
+		}
+		$u['status'] = $dict['statuses'][$u['work_status_id']];
 		if ($u['role'] == 'head' || $u['role'] == 'admin') {
-			$u['projects'] = 'Все проекты';
+			$u['projects'] = '*';
 		}
 	}
 
@@ -900,7 +611,7 @@ function getInvitations($user, $refreshing = false) {
 
 function getProjectData() {
 	global $db;
-	$token = $_POST['projectToken'];
+	$token = $_REQUEST['projectToken'];
 	if (empty($token)) {
 		error('Во время загрузки проекта возникла ошибка');
 	}
@@ -916,13 +627,13 @@ function getProjectData() {
 	$project = $r->fetch(PDO::FETCH_ASSOC);
 	success(array(
 		'project' => $project,
-		'dict' => getDict('projects', $lang)
+		'dict' => getDict('projects')
 	));
 }
 
 function getUserData() {
 	global $db;
-	$token = $_POST['userToken'];
+	$token = $_REQUEST['userToken'];
 	if (empty($token)) {
 		error('Во время загрузки пользователя возникла ошибка');
 	}
@@ -966,7 +677,7 @@ function getUserData() {
 
 function getInvitationData() {
 	global $db;
-	$token = $_POST['invToken'];
+	$token = $_REQUEST['invToken'];
 	if (empty($token)) {
 		error('Во время загрузки приглашения возникла ошибка');
 	}
@@ -1058,17 +769,35 @@ function requestProjectAccess($user) {
 	$insertSQL = 'INSERT INTO access_requests VALUES ("", ?, ?)';
 	$r = $db->prepare($insertSQL);
 	$r->execute(array($user['id'], $project['id']));
-	success(array(
-		'message' => 'Запрос на получение доступа к проекту успешно добавлен'
-	));
+	success(
+		null,
+		'Запрос на получение доступа к проекту успешно добавлен'
+	);
 }
 
 function saveProject($user) {
 	global $db;
+	$roots = $_REQUEST['roots'];
+	
+	$rootsArr = preg_split('/,|[\r\n]{1,}/', $roots);
+	foreach ($rootsArr as $url) {
+		$url = preg_replace('/\s/', '', $url);
+		if (empty($url)) {
+			continue;
+		}
+		$origUrl = $url;
+		if (!preg_match('/^https*:\/\//', $url)) {
+			error('Адреса корневых директорий должны начинаться с http(s)://');
+		}
+		$url = preg_replace('/^https*:\/\//', '', $url);
+		if (!preg_match('/^\w/', $url) && !preg_match('/^\*\.\w/i', $url)) {
+			error('Адрес корневой директории \"'.$origUrl.'\" не корректен');
+		}
+	}
 	
 	$projectToken = validateTokenAndRightsToEditProject($user);
 	validateProjectAccess($user, $projectToken);
-	$name  = validateTitle($_POST['name']);
+	$name  = validateTitle($_REQUEST['name']);
 
 	$r = $db->prepare('
 		SELECT 
@@ -1088,7 +817,7 @@ function saveProject($user) {
 		error('Проект с таким именем уже существует');
 	}
 
-	$homepage  = validateHomepage($_POST['homepage']);
+	$homepage  = validateHomepage($_REQUEST['homepage']);
 
 	$r = $db->prepare('
 		UPDATE 
@@ -1107,11 +836,11 @@ function saveProject($user) {
 	$r->execute(array(
 		$name,
 		$homepage,
-		$_POST['roots'],
-		$_POST['nohashes'],
-		$_POST['noparams'],
-		$_POST['getparams'],
-		$_POST['measure'],
+		$_REQUEST['roots'],
+		$_REQUEST['nohashes'],
+		$_REQUEST['noparams'],
+		$_REQUEST['getparams'],
+		$_REQUEST['measure'],
 		$projectToken
 	));
 	success();
@@ -1121,13 +850,13 @@ function saveUser($user) {
 	global $db;
 	
 	$userToken = validateTokenAndRightsToEditUser($user, 'save');	
-	$login     = validateLogin($_POST['login']);
-	$password  = validatePassword($_POST['password'], $_POST['password2'], true);
-	$userName  = validateUserName($_POST['userName']);
-	$email     = validateEmail($_POST['email']);
-	$role      = validateRole($_POST['role']);
-	$spec      = validateSpec($_POST['spec'], $role);
-	$projects  = validateProjects($_POST['projects'], $role);
+	$login     = validateLogin($_REQUEST['login']);
+	$password  = validatePassword($_REQUEST['password'], $_REQUEST['password2'], true);
+	$userName  = validateUserName($_REQUEST['userName']);
+	$email     = validateEmail($_REQUEST['email']);
+	$role      = validateRole($_REQUEST['role']);
+	$spec      = validateSpec($_REQUEST['spec'], $role);
+	$projects  = validateProjects($_REQUEST['projects'], $role);
 
 	$r = $db->prepare('
 		SELECT 
@@ -1265,10 +994,10 @@ function saveUser($user) {
 function saveInvitation($user) {
 	global $db;
 	
-	$role      = validateRole($_POST['role']);
-	$title     = validateTitle($_POST['name']);
-	$projects  = validateProjects($_POST['projects'], $role);
-	$invToken  = validateInvitationTokenAndRights($user, $role, $_POST['invToken']);	
+	$role      = validateRole($_REQUEST['role']);
+	$title     = validateTitle($_REQUEST['name']);
+	$projects  = validateProjects($_REQUEST['projects'], $role);
+	$invToken  = validateInvitationTokenAndRights($user, $role, $_REQUEST['invToken']);	
 
 	$r = $db->prepare('
 		UPDATE 
@@ -1305,71 +1034,12 @@ function blockUser($user) {
 	success();
 }
 
-function loadUser($user) {
-	$projects = getProjects($user['id']);
-	$data = array(
-		'user' => $user,
-		'rights' => getRights($user['role'])
-	);
-	if (count($projects) > 0) {
-		if (!empty($user['project'])) {
-			$currentProjectToken = $user['project'];
-			$data['project'] = getProject($user['project']);
-		}
-		if (empty($data['project'])) {
-			$currentProjectToken = $projects[0]['token'];
-			$data['project'] = getProject($projects[0]['token']);
-		}		
-		$properProjects = array();
-		foreach ($projects as $project) {
-			$properProjects[] = $project['token'];
-		}
-		$data['projects'] = $properProjects;		
-	}
-	$data['tasks_count'] = getTasksCounts($user);
-	success($data);
-}
-
-function getTasksCounts($user) {
-	global $db;
-	$counts = array();
-	if ($user['role_id'] > 1) {
-		$r = $db->prepare('
-			SELECT COUNT(id) AS count FROM tasks_users WHERE user_id = ?
-		');
-		$r->execute(array($user['id']));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		$counts['forme'] = (int)$row['count'];
-	} else {
-		$counts['forme'] = 0;
-	}
-
-	if ($user['role_id'] < 6) {
-		$r = $db->prepare('
-			SELECT COUNT(id) AS count FROM tasks WHERE user_id = ?
-		');
-		$r->execute(array($user['id']));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		$counts['fromme'] = (int)$row['count'];
-	} else {
-		$counts['fromme'] = 0;
-	}
-	$r = $db->prepare('
-		SELECT COUNT(id) AS count FROM tasks WHERE team_id = ? AND project_id = ? AND min_role >= ?
-	');
-	$r->execute(array($user['team_id'], $user['project_id'], $user['role_id']));
-	$row = $r->fetch(PDO::FETCH_ASSOC);
-	$counts['all'] = (int)$row['count'];
-				
-	return $counts;
-}
-
 function createInvitation($user) {
 	global $db;
 	
-	$title = validateTitle($_POST['name']);
-	$role = validateRole($_POST['role']);
-	$projects = validateProjects($_POST['projects'], $role);
+	$title = validateTitle($_REQUEST['name']);
+	$role = validateRole($_REQUEST['role']);
+	$projects = validateProjects($_REQUEST['projects'], $role);
 	$token = generateUniqueToken('invitations');
 	validateInvitationTokenAndRights($user, $role, $token);
 	
@@ -1401,18 +1071,6 @@ function createInvitation($user) {
 		');
 		$r->execute(array($row['id'], $projectId));
 	}
-	success();
-}
-
-function logout($token) {
-	global $db;
-	$r = $db->prepare('
-		DELETE FROM
-			sessions
-		WHERE 
-			token = ?
-	');
-	$r->execute(array($token));
 	success();
 }
 
@@ -1465,17 +1123,35 @@ function loadProjects($user) {
 
 function saveTask($user) {
 	global $db;
-	$data = json_decode($_POST['data'], true);
+	$data = json_decode($_REQUEST['data'], true);
 	if (!is_array($data)) {
 		unknownError();
 	}
 	extract($data);
+	$isEditing = !empty($task_id);
+	$noExecs = false;
+	if ($isEditing) {
+		$r = $db->prepare('
+			SELECT 
+				status_id
+			FROM 
+				tasks
+			WHERE 
+				id = ?
+		');
+		$r->execute(array($task_id));
+		$row = $r->fetch(PDO::FETCH_ASSOC);
+		if ($row['status_id'] == 2 || $row['status_id'] == 3) {
+			$noExecs = true;
+		}
+	}
 	if (is_array($formData)) {
 		extract($formData);
 	}
 	if (empty($title)) {
 		error('Введите заголовок задачи');
 	}
+	
 	if (!is_array($urls)) {
 		unknownError();
 	}
@@ -1489,107 +1165,236 @@ function saveTask($user) {
 	if (empty($properUrls)) {
 		error('Не найдено ни одного пути к задаче');
 	}
-	if (empty($type)) {
-		error('Укажите категорию задачи');
-	}
-	if (empty($action)) {
-		error('Укажите действие задачи');
-	}
-	if (!is_array($execs) || empty($execs)) {
-		$users = getExecutors($user, $type, $action);
-		if (empty($users['proper'])) {
-			error('Назначьте исполнителей задачи');		
+	if (!$noExecs) {
+		if (empty($type)) {
+			error('Укажите категорию задачи');
 		}
-		$execs = array();
-		foreach ($users['proper'] as $u) {
-			$execs[] = $u['token'];
+		if (empty($action)) {
+			error('Укажите действие задачи');
+		}
+		if (empty($difficulty)) {
+			error('Укажите предполагаемую сложность задачи');
+		}
+		if (empty($termsId)) {
+			error('Укажите предполагаемый срок выполнения задачи');
+		}
+		if (empty($until)) {
+			error('Укажите к какому времени задача должна быть выполнена');
+		}
+
+		if (!is_array($execs) || empty($execs)) {
+			$users = getExecutors($user, $type, $action);
+			if (empty($users['proper'])) {
+				error('Назначьте исполнителей задачи');		
+			}
+			$execs = array();
+			foreach ($users['proper'] as $u) {
+				$execs[] = $u['token'];
+			}
+		}
+	}
+	$properInfo = array();
+	if (is_array($info)) {		
+		foreach ($info as $k => $item) {
+			if (preg_replace('/\s/', '', $item) != '') {
+				$properInfo[$k] = $item;
+			}
+		}
+	}
+	if (!is_array($taskList)) {
+		$taskList = array();
+	}
+	$properTaskList = array();
+	foreach ($taskList as $item) {
+		if (!empty($item)) {
+			$properTaskList[] = $item;
 		}
 	}
 	$data = array(
-		'title' => $title,
 		'descr' => $description,
-		'urls' => $properUrls
+		'urls' => $properUrls,
+		'info' => $properInfo,
+		'elements' => $visualElements,
+		'bent' => $bent,
+		'nohashes' => $nohashes,
+		'noparams' => $noparams,
+		'markElement' => $markElement,
+		'selectionElement' => $selectionElement,
+		'taskList' => $properTaskList
 	);
-	$data = json_encode($data);
-	$taskToken = generateToken(6);
+	$data = json_encode($data, JSON_UNESCAPED_UNICODE);
 
-	$tokens = '"'.implode('","', $execs).'"';
-	$r = $db->prepare('SELECT id, role FROM users WHERE token IN ('.$tokens.')');
-	$r->execute();
-	$userRows = $r->fetchAll(PDO::FETCH_ASSOC);
 
-	$minRole = 0;
-	$changed = strtotime('now');
-	foreach ($userRows as $row) {
-		if ($row['role'] > $minRole) {
-			$minRole = $row['role'];
+	if (!$noExecs) {
+		$tokens = '"'.implode('","', $execs).'"';
+		$r = $db->prepare('SELECT id, role FROM users WHERE token IN ('.$tokens.')');
+		$r->execute();
+		$userRows = $r->fetchAll(PDO::FETCH_ASSOC);
+		$minRole = 0;
+		$forUser = 0;
+		if (count($userRows) == 1) {
+			$forUser = $userRows[0]['id'];
+		}
+		foreach ($userRows as $row) {
+			if ($row['role'] > $minRole) {
+				$minRole = $row['role'];
+			}
+		}	
+		$lockedTask = $lockedTask ? 1 : 0;
+	}
+
+	if (!$isEditing) {
+		$taskToken = generateToken(6);
+		$changed = strtotime('now');
+		$untilTimestamp = getUntilTimestamp($until);
+		$r = $db->prepare('
+			INSERT INTO
+				tasks
+			VALUES (
+				"",
+				?,
+				?,
+				?,
+				(SELECT id FROM task_types WHERE code = ?),
+				(SELECT id FROM task_actions WHERE code = ?),
+				(SELECT id FROM task_importance WHERE code = ?),
+				?,
+				?,
+				?,
+				null,
+				?,
+				?,
+				?,
+				null,
+				?,
+				?,
+				?,
+				?,
+				?,
+				?
+			)
+		');
+		$r->execute(array(
+			$user['team_id'],
+			$user['id'],
+			$user['project_id'],
+			$type,
+			$action,
+			$importance,
+			$title,
+			$data,
+			$taskToken,
+			$minRole,
+			$changed,
+			$changed,
+			$forUser,
+			$difficulty,
+			$termsId,
+			$until,
+			$untilTimestamp,
+			$lockedTask
+		));
+
+		$r = $db->prepare('
+			SELECT 
+				id
+			FROM 
+				tasks
+			WHERE 
+				token = ?
+			AND 
+				user_id = ?
+			ORDER BY 
+				id DESC
+			LIMIT 1
+		');
+		$r->execute(array($taskToken, $user['id']));
+		$row = $r->fetch(PDO::FETCH_ASSOC);
+		if (!is_array($row)) {
+			unknownError();	
+		}
+		$taskId = $row['id'];
+	} else {
+		$taskId = $task_id;
+		if (!$noExecs) {
+			$r = $db->prepare('
+				UPDATE
+					tasks
+				SET				
+					type_id = (SELECT id FROM task_types WHERE code = ?),
+					action_id = (SELECT id FROM task_actions WHERE code = ?),
+					importance_id = (SELECT id FROM task_importance WHERE code = ?),
+					data = ?,
+					min_role = ?,
+					for_user = ?,
+					difficulty = ?,
+					term_id = ?,
+					until = ?,
+					locked = ?
+				WHERE 
+					id = ?
+			');
+			$r->execute(array(
+				$type,
+				$action,
+				$importance,
+				$data,
+				$minRole,
+				$forUser,
+				$difficulty,
+				$termsId,
+				$until,
+				$lockedTask,
+				$task_id,
+			));
+
+			$r = $db->prepare('DELETE FROM tasks_users WHERE task_id = ?');
+			$r->execute(array($taskId));
+			$r = $db->prepare('DELETE FROM tasks_testers WHERE task_id = ?');
+			$r->execute(array($taskId));
+		} else {
+			$r = $db->prepare('
+				UPDATE
+					tasks
+				SET
+					data = ?
+				WHERE 
+					id = ?
+			');
+			$r->execute(array(
+				$data,
+				$task_id
+			));
 		}
 	}
 
-	$r = $db->prepare('
-		INSERT INTO
-			tasks
-		VALUES (
-			"",
-			?,
-			?,
-			?,
-			(SELECT id FROM task_types WHERE code = ?),
-			(SELECT id FROM task_actions WHERE code = ?),
-			(SELECT id FROM task_importance WHERE code = ?),
-			?,
-			?,
-			null,
-			?,
-			?
-		)
-	');
-	$r->execute(array(
-		$user['team_id'],
-		$user['id'],
-		$user['project_id'],
-		$type,
-		$action,
-		$importance,
-		$data,
-		$taskToken,
-		$minRole,
-		$changed
-	));
+	if (!$noExecs) {
+		$r = $db->prepare('INSERT INTO tasks_users VALUES ("", ?, ?, ?)');
+		foreach ($userRows as $row) {
+			$r->execute(array($taskId, $row['id'], $user['project_id']));
+		}
 
-	$r = $db->prepare('
-		SELECT 
-			id
-		FROM 
-			tasks
-		WHERE 
-			token = ?
-		AND 
-			user_id = ?
-		ORDER BY 
-			id DESC
-		LIMIT 1
-	');
-	$r->execute(array($taskToken, $user['id']));
-	$row = $r->fetch(PDO::FETCH_ASSOC);
-	if (!is_array($row)) {
-		unknownError();	
-	}
-	$taskId = $row['id'];
-	$r = $db->prepare('INSERT INTO tasks_users VALUES ("", ?, ?, ?)');
-	foreach ($userRows as $row) {
-		$r->execute(array($taskId, $row['id'], $user['project_id']));
+		if (!empty($testers)) {
+			$tokens = '"'.implode('","', $testers).'"';
+			$r = $db->prepare('SELECT id, role FROM users WHERE token IN ('.$tokens.')');
+			$r->execute();
+			$userRows = $r->fetchAll(PDO::FETCH_ASSOC);
+			$r = $db->prepare('INSERT INTO tasks_testers VALUES ("", ?, ?, ?)');
+			foreach ($userRows as $row) {
+				$r->execute(array($taskId, $row['id'], $user['project_id']));
+			}
+		}
 	}
 
-
-
-	success(array(
-		'message' => 'Задача успешно добавлена'
-	));
+	$successMessage = !$isEditing ? 'Задача успешно добавлена' : 'Задача успешно сохранена';
+	success(
+		null,
+		$successMessage
+	);
 }
 
 function getTooltip() {
-	$name = $_POST['name'];
+	$name = $_REQUEST['name'];
 	$tooltip = getHelp($name);
 
 	if (!is_array($tooltip)) {
@@ -1599,16 +1404,14 @@ function getTooltip() {
 }
 
 function loadUrlDialog() {
-	global $lang;
 	success(array(
-		'dict' => getDict('url_dialog', $lang)
+		'dict' => getDict('url_dialog')
 	));
 }
 
 function loadInfoDialog() {
-	global $lang;
 	success(array(
-		'dict' => getDict('info_dialog', $lang)
+		'dict' => getDict('info_dialog')
 	));
 }
 
@@ -1616,8 +1419,10 @@ function getExecutors($user, $taskType, $taskAction) {
 	global $db;
 	$r = $db->prepare('
 		SELECT 
+			u.id,
 			u.token,
 			u.name,
+			u.avatar_id,
 			r.code AS role,
 			s.code AS spec
 		FROM 
@@ -1697,17 +1502,55 @@ function getExecutors($user, $taskType, $taskAction) {
 		}
 		$rest[] = $row;
 	}
+	$testers = null;
+	if ($taskType == 'frontend' || $taskType == 'backend' || $taskType == 'html' || $taskType == 'style') {
+		$testers = array();
+		foreach ($rows as $row) {
+			if  ($row['role'] == 'tester') {
+				$row['tester'] = true;
+				$testers[] = $row;
+			}
+		}
+	}
 	
 	return array(
 		'proper' => $proper,
-		'rest' => $rest
+		'rest' => $rest,
+		'testers' => $testers
 	);
 }
 
 function loadTaskUsers($user) {
-	global $lang;
-	$dict = getDict('task_users_dialog', $lang);
-	$dict['users'] = getExecutors($user, $_POST['type'], $_POST['action']);
+	$dict = getDict('task_users_dialog');
+	$dict['users'] = getExecutors($user, $_REQUEST['type'], $_REQUEST['taskAction']);
+	success(array(
+		'dict' => $dict
+	));
+}
+
+function loadTaskCounts($user) {
+	requireClasses('task');
+	success(array(
+		'counts' => Task::getTasksCounts($user)
+	));
+}
+
+function loadTaskTerms($user) {
+	global $db;
+	$r = $db->prepare('SELECT * FROM task_terms ORDER BY id ASC');
+	$r->execute();
+	$dict = getDict('task_terms');
+	$terms = $r->fetchAll(PDO::FETCH_ASSOC);
+	$properTerms = array();
+	foreach ($terms as $t) {
+		if (!empty($prevCode) && $prevCode != $t['code']) {
+			$properTerms[] = '';
+		}
+		$properTerms[] = array('value' => $t['id'], 'name' => $t['value'].' '.decline($t['value'], $t['code']));
+		$prevCode = $t['code'];
+	}
+	
+	$dict['terms'] = $properTerms;
 	success(array(
 		'dict' => $dict
 	));
@@ -1715,28 +1558,784 @@ function loadTaskUsers($user) {
 
 function loadTaskInfo($user) {
 	global $db;
-	$id = $_POST['id'];
-	$r = $db->prepare('
-		SELECT 
-			id,
-			blocked_by 
-		FROM 
-			users 
-		WHERE 
-			login = ? and password = ?
-	');
-	$r->execute(array($login, $password));
-	$user = $r->fetch(PDO::FETCH_ASSOC);
-}
+	requireClasses('task');
 
-function loadTaskActions($user) {
-	global $db;
-	$id = $_POST['id'];
+	$id = $_REQUEST['id'];
 	$r = $db->prepare('
 		SELECT 
-			t.*
+			t.*,
+			u.name AS user_name,
+			u.avatar_id,
+			ts.code AS status,
+			tt.code AS type,
+			ta.code AS action,
+			ti.code AS importance,
+			tp.period
 		FROM 
 			tasks t
+		JOIN 
+			users u
+			ON u.id = t.user_id
+		LEFT JOIN 
+			task_statuses ts
+			ON t.status_id = ts.id
+		LEFT JOIN 
+			task_types tt
+			ON tt.id = t.type_id
+		LEFT JOIN 
+			task_actions ta
+			ON ta.id = t.action_id
+		LEFT JOIN 
+			task_importance ti
+			ON ti.id = t.importance_id
+		LEFT JOIN 
+			tasks_periods tp 
+			ON t.id = tp.task_id
+		WHERE 
+			t.id = ?
+	');
+
+	$r->execute(array($id));
+	$task = $r->fetch(PDO::FETCH_ASSOC);
+
+	$data = json_decode($task['data'], true);
+	foreach ($data as $k => $v) {
+		$task[$k] = $v;
+	}
+	unset($task['data']);
+
+	$r = $db->prepare('
+		SELECT 
+			tu.user_id,
+			u.name AS user_name,
+			u.avatar_id
+		FROM 
+			tasks_users tu
+		JOIN 
+			users u
+			ON u.id = tu.user_id
+		WHERE 
+			tu.task_id = ?
+	');
+	$r->execute(array($id));
+	$taskUsers = $r->fetchAll(PDO::FETCH_ASSOC);
+
+	$r = $db->prepare('
+		SELECT 
+			tt.user_id,
+			u.name AS user_name,
+			u.avatar_id
+		FROM 
+			tasks_testers tt
+		JOIN 
+			users u
+			ON u.id = tt.user_id
+		WHERE 
+			tt.task_id = ?
+	');
+	$r->execute(array($id));
+	$taskTesters = $r->fetchAll(PDO::FETCH_ASSOC);
+
+	$users = array(
+		'author' => array('id' => $task['user_id'], 'avatar_id' => $task['avatar_id'], 'name' => $task['user_name']),
+		'executors' => array(),
+		'testers' => array()
+	);
+	$actions = $task['user_id'] == $user['id'];
+	foreach ($taskUsers as $usr) {
+		if ($usr['user_id'] == $user['id']) {
+			$actions = true;
+		}
+		if ($usr['user_id'] == $task['changed_by']) {
+			$users['executor'] = array('id' => $usr['user_id'], 'avatar_id' => $usr['avatar_id'], 'name' => $usr['user_name']);
+		} else {
+			$users['executors'][] = array('id' => $usr['user_id'], 'avatar_id' => $usr['avatar_id'], 'name' => $usr['user_name']);
+		}
+	}
+
+	foreach ($taskTesters as $usr) {
+		$users['testers'][] = array('id' => $usr['user_id'], 'avatar_id' => $usr['avatar_id'], 'name' => $usr['user_name']);
+	}
+
+	$history = array(
+		array(
+			'action' => 'publish',
+			'time' => date('d.m.y H:i', $task['added']),
+			'ago' => getFormattedDate(time() - $task['added'], 'ago'),
+			'user_id' => $task['user_id'],
+			'user_name' => $task['user_name'],
+			'avatar_id' => $task['avatar_id']
+		)
+	);
+
+	$r = $db->prepare('
+		SELECT 
+			th.changed,
+			th.user_id,
+			tha.code,
+			u.name AS user_name,
+			u.avatar_id
+		FROM 
+			tasks_history th
+		JOIN 
+			users u
+			ON th.user_id = u.id
+		JOIN 
+			task_history_actions tha
+			ON tha.id = th.action_id
+		WHERE 
+			th.task_id = ?
+		ORDER BY
+			th.id ASC
+	');
+	$r->execute(array($id));
+	$taskActions = $r->fetchAll(PDO::FETCH_ASSOC);
+
+	foreach ($taskActions as $a) {
+		$history[] = array(
+			'action' => $a['code'],
+			'time' => date('d.m.y H:i', $a['changed']),
+			'ago' => getFormattedDate(time() - $a['changed'], 'ago'),
+			'user_id' => $a['user_id'],
+			'user_name' => $a['user_name'],
+			'avatar_id' => $a['avatar_id']
+		);
+		$lastAction = $a;
+	}
+	if (empty($task['status'])) {
+		$task['status'] = 'current';
+	}
+	if (empty($users['executors'])) {
+		unset($users['executors']);
+	}
+	if (empty($users['testers'])) {
+		unset($users['testers']);
+	}
+	$r = $db->prepare('
+		SELECT 
+			*
+		FROM 
+			subtasks
+		WHERE 
+			task_id = ?
+	');
+	$r->execute(array($id));
+	$subtasks = $r->fetchAll(PDO::FETCH_ASSOC);
+	$listChecked = array();
+	foreach ($subtasks as $i) {
+		$listChecked[] = (int)$i['idx'];
+	}
+
+
+	if ($task['status_id'] == 2 && !empty($task['period'])) {
+		$task['changed'] -= $task['period'];
+	}
+	$taskDict = getDict('task');
+	$ago = $task['status_id'] != 2 ? 'ago' : '';
+	$task['changed'] = $taskDict[$task['status']].' '.getFormattedDate(time() - $task['changed'], $ago);
+
+	$task['timeleft'] = (int)$task['until_timestamp'];
+	if ($task['status_id'] == 4) {
+		$add = strtotime('now') - $lastAction['changed'];
+		$task['timeleft'] += $add;	
+	}
+	if ($task['status_id'] != 1 && $task['status_id'] != 5) {
+		$allTime = $task['timeleft'] - $task['added'];
+		$percent = $allTime / 100;
+		$passedTime = time() - $task['added'];
+		$task['scale'] = min(100, max(1, round($passedTime / $percent)));
+	}
+	if ($task['status_id'] == 1) {
+		$r = $db->prepare('
+			SELECT 
+				period
+			FROM 
+				tasks_periods
+			WHERE 
+				task_id = ?
+		');
+		$r->execute(array($id));
+		$taskPeriod = $r->fetch(PDO::FETCH_ASSOC);
+
+		$task['added'] += strtotime('now') - $lastAction['changed'];
+		$task['timeleft'] = getFormattedDate($taskPeriod['period'], 'in_work');
+		$task['timepassed'] = getFormattedDate(time() - $task['added'] - $taskPeriod['period'], 'waited');
+	} else {
+		extract(Task::getTaskTimeLeft($task['timeleft']));
+		$task['timeleft'] = $timeleft;
+		$task['overdue'] = $overdue;
+		$task['timepassed'] = getFormattedDate(time() - $task['added'], 'passed');
+	}
+
+	unset($task['added'], $task['status_id'], $task['until_timestamp']);
+	
+	
+	$properInfo = array();
+	if (is_array($task['info'])) {
+		foreach ($task['info'] as $k => $v) {
+			$properInfo[] = array('key' => $k, 'value' => $v);
+		}
+	}
+	$task['info'] = $properInfo;
+	success(array(
+		'listChecked' => $listChecked,
+		'task' => $task,
+		'users' => $users,
+		'history' => $history,
+		'comments' => array(),
+		'problems' => array(),
+		'actions' => $actions,
+		'status' => $task['status'],
+		'dict' => getDict(array('task_info', 'info_dialog')),
+		'executor' => $task['changed_by'],
+		'own' => $task['changed_by'] == $user['id'] || $task['user_id'] == $user['id']
+	));
+}
+
+function loadBoard($user) {
+	requireClasses('board');
+	success(Board::getTasks($user));
+}
+
+function checkSubtask($user) {
+	$id = $_REQUEST['id'];
+	$idx = $_REQUEST['idx'];
+	$checked = $_REQUEST['checked'];
+	requireClasses('task');
+	
+	$sql = '
+		SELECT 
+			id
+		FROM 
+			tasks
+		WHERE
+			id = ?
+		AND 
+			status_id = 2
+		AND 
+			(changed_by = ? OR user_id = ?)
+	';
+	
+	$row = DB::get($sql, array($id, $user['id'], $user['id']));
+	if (!is_array($row)) {
+		noRightsError();
+	}
+	Task::checkSubtask($id, $idx, $checked);
+	success();
+}
+
+function getUntilTimestamp($value) {
+	if ($value[0] === 'n') {
+		$day = (int)str_replace('n', '', $value);
+		$currentDate = (int)date('d');
+		$month = (int)date('m');
+		$year = (int)date('Y');
+		if ($currentDate >= $day) {
+			$month++;
+			if ($month == 13) {
+				$month = 1;
+				$year++;
+			}
+		}
+		$timestamp = strtotime(($day < 10 ? '0'.$day : $day).'.'.($month < 10 ? '0'.$month : $month).'.'.$year);			
+	} else {
+		switch ((int)$value) {
+			case 0:
+				$timestamp = strtotime(date('d.m.Y 13:00:00'));
+			break;
+
+			case 1:
+				$timestamp = strtotime(date('d.m.Y 18:59:59'));
+			break;
+
+			case 2:
+				$timestamp = strtotime(date('d.m.Y 23:59:59'));
+			break;
+
+			case 3:
+				$timestamp = strtotime('tomorrow 13:00:00');
+			break;
+
+			case 4:
+				$timestamp = strtotime('tomorrow 18:59:59');
+			break;
+
+			case 6:
+				$timestamp = strtotime('next monday');
+			break;
+
+			case 7:
+				$timestamp = strtotime('next tuesday');
+			break;
+
+			case 8:
+				$timestamp = strtotime('next wednesday');
+			break;
+
+			case 9:
+				$timestamp = strtotime('next thursday');
+			break;
+
+			case 10:
+				$timestamp = strtotime('next friday');
+			break;
+
+			case 11:
+				$timestamp = strtotime('next saturday');
+			break;
+
+			case 12:
+				$timestamp = strtotime('next sunday');
+			break;
+
+			case 14:
+				$timestamp = strtotime('next monday');
+			break;
+
+			case 15:
+				$month = (int)date('m') + 1;
+				$year = (int)date('Y');
+				if ($month == 13) {
+					$month = 1;
+					$year++;
+				}
+				$date = '01.'.($month < 10 ? '0'.$month : $month).'.'.$year;
+				$timestamp = strtotime($date);
+			break;
+
+			case 16:
+				$year = (int)date('Y') + 1;
+				$date = '01.01.'.$year;
+				$timestamp = strtotime($date);
+			break;
+		}
+	}
+	return $timestamp;
+}
+
+function loadUntilDate() {
+	$timestamp = getUntilTimestamp($_REQUEST['value']);
+	$diff = $timestamp - time();
+	$left = 'left';
+    if ($diff < 0) {
+    	$diff = -$diff;
+    	$left = 'overdue';
+    }
+	$value = getFormattedDate($diff, $left);
+	success(
+		array(
+			'value' => $value
+		)
+	);
+	unknownError();
+}
+
+function doTaskAction($user) {
+	global $db;
+	$id = $_REQUEST['id'];
+	$name = $_REQUEST['name'];
+	$actions = getAccessableTaskActions($user, $id);
+	if (!in_array($name, $actions)) {
+		noRightsError();
+	}
+	switch ($name) {
+		case 'continue':
+		case 'take':
+			takeTask($user, $id);
+		break;
+
+		case 'delay':
+			logTaskInWorkTime($id);
+			delayTask($id);
+		break;
+
+		case 'complete':
+			logTaskInWorkTime($id);
+			completeTask($id);
+		break;
+
+		case 'resume':
+			resumeTask($id);
+		break;
+
+		case 'refuse':
+			logTaskInWorkTime($id);
+			refuseTask($id);
+		break;
+
+		case 'close':
+			closeTask($id);
+		break;
+
+		case 'unblock':
+			unblockTask($id);
+		break;
+
+		case 'freeze':
+			freezeTask($id);
+		break;
+
+		case 'unfreeze':
+			unfreezeTask($id);
+		break;
+
+		case 'open':
+			openTask($id);
+		break;
+	}
+	logTaskAction($id, $name, $user);
+	success();  
+}
+
+function logTaskInWorkTime($id) {
+	global $db;
+	$r = $db->prepare('
+		SELECT 
+			changed
+		FROM 
+			tasks
+		WHERE 
+			status_id = 2
+		AND
+			id = ?
+	');
+	$r->execute(array($id));
+	$task = $r->fetch(PDO::FETCH_ASSOC);
+	if (is_array($task)) {
+		$now = strtotime('now');
+		$period = $now - $task['changed'];
+	}
+	$r = $db->prepare('
+		SELECT 
+			period
+		FROM 
+			tasks_periods
+		WHERE 
+			task_id = ?
+	');
+	$r->execute(array($id));
+	$taskPeriod = $r->fetch(PDO::FETCH_ASSOC);
+	if (is_array($taskPeriod)) {
+		$period += (int)$taskPeriod['period'];
+	}
+	$r = $db->prepare('
+		INSERT INTO
+			tasks_periods
+		VALUES (?, ?) ON DUPLICATE KEY UPDATE
+			period = ?
+	');
+	$r->execute(array($id, $period, $period));
+}
+
+function logTaskAction($id, $name, $user) {
+	global $db;
+	$r = $db->prepare('
+		INSERT INTO
+			tasks_history
+		VALUES (
+			"",
+			?,
+			?,
+			(SELECT id FROM task_history_actions WHERE code = ?),
+			?
+		)
+	');
+	$r->execute(array(
+		$user['id'],
+		$id,
+		$name,
+		strtotime('now')
+	));
+}
+
+function unblockTask($id) {
+	global $db;
+
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET
+			locked = 0,
+			added = ?
+		WHERE
+			id = ?');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function freezeTask($id) {
+	global $db;
+	$r = $db->prepare('
+		SELECT 
+			importance_id
+		FROM 
+			tasks
+		WHERE 
+			id = ?
+	');
+	$r->execute(array($id));
+	$row = $r->fetch(PDO::FETCH_ASSOC);
+	
+	$r = $db->prepare('INSERT INTO frozen_tasks VALUES (?, ?)');
+	$r->execute(array($id, $row['importance_id']));
+	
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = 4,
+			importance_id = 6
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function unfreezeTask($id) {
+	global $db;
+	
+	$r = $db->prepare('
+		SELECT 
+			importance_id
+		FROM 
+			frozen_tasks
+		WHERE 
+			task_id = ?
+	');
+	$r->execute(array($id));
+	$row = $r->fetch(PDO::FETCH_ASSOC);
+
+	$r = $db->prepare('
+		DELETE FROM 
+			frozen_tasks
+		WHERE 
+			task_id = ?
+	');
+	$r->execute(array($id));
+	
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = NULL,
+			importance_id = ?
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $row['importance_id'], $id));
+}
+
+function closeTask($id) {
+	global $db;
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = 5
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function openTask($id) {
+	global $db;
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = NULL
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function completeTask($id) {
+	global $db;
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = 1
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function resumeTask($id) {
+	global $db;
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = 2
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function refuseTask($id) {
+	global $db;
+	$r = $db->prepare('
+		UPDATE 
+			tasks t
+		SET 
+			t.changed = t.added,
+			t.changed_by = NULL,
+			t.status_id = NULL
+		WHERE 
+			t.id = ?
+	');
+	$r->execute(array($id));
+}
+
+function takeTask($user, $id) {
+	global $db;
+	$currentTaskId = getCurrentTaskInWork($user);
+	if (!empty($currentTaskId)) {
+		delayTask($currentTaskId);
+	}
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			changed_by = ?,
+			status_id = 2
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $user['id'], $id));
+}
+
+
+function delayTask($id) {
+	global $db;
+	$r = $db->prepare('
+		UPDATE 
+			tasks
+		SET 
+			changed = ?,
+			status_id = 3
+		WHERE 
+			id = ?
+	');
+	$r->execute(array(strtotime('now'), $id));
+}
+
+function getCurrentTaskInWork($user) {
+	global $db;
+	$r = $db->prepare('
+		SELECT 
+			id
+		FROM 
+			tasks
+		WHERE 
+			status_id = 2
+		AND
+			changed_by = ?
+	');
+	$r->execute(array($user['id']));
+	$task = $r->fetch(PDO::FETCH_ASSOC);
+	if (is_array($task)) {
+		return $task['id'];
+	}
+}
+ 
+function loadTaskActions($user) {
+	$id = $_REQUEST['id'];
+	$accessibleActions = getAccessableTaskActions($user, $id);
+	if (in_array('admin', $accessibleActions)) {
+		$allActions = array(
+			'unblock', 'edit', 'start', 'assign', 'open', 'close', 'freeze', 'unfreeze', 'comment', 'remove'
+		);
+	} else {
+		$allActions = array(
+			'estimate', 'take', 'complete', 'continue', 'delay', 'refuse', 'resume', 'problem', 'comment'
+		);
+	}	
+	
+	$actions = array();
+	$availableActions = array();
+	foreach ($allActions as $a) {
+		if (in_array($a, $accessibleActions)) {
+			$availableActions[] = array('name' => $a, 'available' => true);	
+		} else {
+			$actions[] = array('name' => $a, 'available' => false);
+		}
+	}
+	$data = array(
+		'actions' => array_merge($availableActions, $actions),
+		'dict' => getDict('task_actions'),
+		'task_id' => $id
+	);
+	success($data);
+}
+
+function loadWorkStatus($user) {
+	global $db;
+	$r = $db->prepare('
+		SELECT 
+			work_status_id
+		FROM 
+			user_work_statuses
+		WHERE 
+			user_id = ?
+	');
+	$r->execute(array($user['id']));
+	$row = $r->fetch(PDO::FETCH_ASSOC);
+
+	$usersDict = getDict('work_statuses');
+	$dict = getDict('work_statuses');
+	$statuses = array();
+	foreach ($dict['statuses'] as $id => $name) {
+		$s = array('id' => $id, 'name' => $name);
+		if (is_array($row) && $row['work_status_id'] == $id) {
+			$s['current'] = true;
+		}
+		$statuses[] = $s;
+	}
+	$dict['statuses'] = $statuses;
+	success(
+		array(
+			'statusesDict' => $dict
+		)
+	);
+}
+
+function saveWorkStatus($user) {
+	global $db;
+	
+	$status = $_REQUEST['status'];
+	$r = $db->prepare('
+		INSERT INTO
+			user_work_statuses
+		VALUES (?, ?)
+		ON DUPLICATE KEY UPDATE 
+		work_status_id = ?
+	');
+	$r->execute(array($user['id'], $status, $status));
+	success(null, 'Статус успешно изменен');
+}
+
+function getAccessableTaskActions($user, $id) {
+	global $db;
+	$r = $db->prepare('
+		SELECT 
+			t.*,
+			u.role AS role_id
+		FROM 
+			tasks t
+		JOIN users u
+			ON t.user_id = u.id 
 		WHERE 
 			t.id = ?
 		AND 
@@ -1746,9 +2345,10 @@ function loadTaskActions($user) {
 	$task = $r->fetch(PDO::FETCH_ASSOC);
 	$changedBy = $task['changed_by'];
 	$status = $task['status_id'];
+	$minRole = $task['min_role'];
 
 	if (!is_array($task)) {
-		error('Задача не найдена или у вас нет на нее прав');
+		noRightsError();
 	}
 
 	$r = $db->prepare('
@@ -1764,62 +2364,135 @@ function loadTaskActions($user) {
 	$r->execute(array($id, $user['id']));
 	$taskUser = $r->fetch(PDO::FETCH_ASSOC);
 	
-	$isUserTask = is_array($taskUser) && ($changedBy == $user['id'] || empty($status));
+	$isUserTask = is_array($taskUser) && ($changedBy == $user['id'] || empty($status) || $status == 4);
 	$actions = array();
 	if ($isUserTask) {
 		// in_work
-		if ($status == 6) {
-			$actions[] = 'complete';
-			$actions[] = 'delay';
-			$actions[] = 'refuse';
-			$actions[] = 'problem';
-		}
-		// none
-		elseif (empty($status)) {
-			$actions[] = 'take';
-			$actions[] = 'problem';
-		}
-		// ready
-		elseif ($status == 1) {
-			$actions[] = 'resume';
-		}
-		// delayed
-		elseif ($status == 5) {
-			$actions[] = 'continue';
-			$actions[] = 'refuse';
-			$actions[] = 'problem';
-		}
-		
-	}
-	if ($user['id'] == $task['user_id']) {
-		//$actions[] = 'hand';
-		$actions[] = 'assign';
-		$actions[] = 'comment';
-		 
-		// ready
-		if ($status == 1) {
-			$actions[] = 'open';
-			$actions[] = 'close';
+		if (!empty($task['locked'])) {
+			$actions[] = 'estimate';
 		} else {
+			if ($status == 2) {
+				$actions[] = 'complete';
+				$actions[] = 'delay';
+				$actions[] = 'refuse';
+				$actions[] = 'problem';
+			}
+			// none
+			elseif (empty($status)) {
+				$actions[] = 'take';
+				$actions[] = 'problem';
+			}
+			// ready
+			elseif ($status == 1) {
+				$actions[] = 'resume';
+			}
+			// delayed
+			elseif ($status == 3) {
+				$actions[] = 'continue';
+				$actions[] = 'refuse';
+				$actions[] = 'problem';
+			}
+			if (empty($status) || $status == 4) {
+				$actions[] = 'estimate';
+			}
+			$actions[] = 'comment';
+		}
+	}
+	if ($user['role_id'] < $minRole) {
+		$hasPower = $user['role_id'] <= $task['role_id'];
+		$actions[] = 'admin';
+		if ($hasPower && $status != 2 && $task['locked'] == 0) {
+			$actions[] = 'start';
+		}
+		if ($hasPower && $task['locked'] == 1) {
+			$actions[] = 'unblock';	
+		}
+		if ($task['locked'] == 0 && ($status > 2 || empty($status))) {
+			$actions[] = 'assign';
+		}
+		if ($status != 1 && $status != 5 && $hasPower) {
+			$actions[] = 'edit';
+		}		 
+		// ready
+		if ($status == 1 || $status == 3) {
+			$actions[] = 'close';
+		} elseif ($status == 4) {
+			$actions[] = 'unfreeze';
+		} elseif ($status == 5) {
+			$actions[] = 'open';
+		}
+		if ($hasPower && $status != 2) {
 			$actions[] = 'remove';
 		}
-		if (empty($status) || $status == 5) {
+		if ($task['locked'] == 0 && $hasPower && (empty($status) || $status == 3)) {
 			$actions[] = 'freeze';	
 		}
+		$actions[] = 'comment';
 	}
-	$data = array(
-		'actions' => $actions,
-		'dict' => getDict('task_actions')
+	return $actions;
+}
+
+function loadTask($user) {
+	global $db;
+	$id = $_REQUEST['id'];
+	$r = $db->prepare('
+		SELECT 
+			t.*,
+			tt.code AS type,
+			ta.code AS action,
+			ti.code AS importance
+		FROM 
+			tasks t
+		JOIN task_types tt
+			ON t.type_id = tt.id
+		JOIN task_actions ta
+			ON t.action_id = ta.id
+		JOIN task_importance ti
+			ON t.importance_id = ti.id
+		WHERE 
+			t.id = ?
+		AND 
+			t.team_id = ?
+		AND 
+			t.min_role >= ?
+	');
+	$r->execute(array($id, $user['team_id'], $user['role_id']));
+	$task = $r->fetch(PDO::FETCH_ASSOC);
+	if (!is_array($task)) {
+		noRightsError();
+	}
+	$data = json_decode($task['data'], true);
+	if (!is_array($data)) {
+		unknownError();
+	}
+	$data['formData'] = array(
+		'title' => $task['title'],
+		'description' => $data['descr'],
 	);
+	$data['task_id'] = (int)$id;
+	$data['status'] = 'active';
+	$data['visualElements'] = $data['elements'];
+	$data['task_inwork'] = $task['status_id'] == 2 || $task['status_id'] == 3;
+	$data['type'] = $task['type'];
+	$data['action'] = $task['action'];
+	$data['importance'] = $task['importance'];
+	$data['difficulty'] = $task['difficulty'];
+	$data['termsId'] = $task['term_id'];
+	$data['until'] = $task['until'];
+	unset($data['descr'], $data['elements']);
 	success($data);
 }
 
 function loadTasks($user) {
 	global $db;
-	$filter = $_POST['filter'];
-	$status = $_POST['status'];
-	$type = $_POST['type'];
-	$importance = $_POST['importance'];
+	requireClasses('task');
+	$filter = $_REQUEST['filter'];
+	$status = $_REQUEST['status'];
+	if ($status[0] == '[') {
+		$status = json_decode($status, true);
+	}
+	$type = $_REQUEST['type'];
+	$importance = $_REQUEST['importance'];
 
 	if (empty($filter)) {
 		$filter = 'fromme';
@@ -1835,40 +2508,57 @@ function loadTasks($user) {
 		}
 	}
 
-	$sqlStatus = '(t.status_id < 8 OR t.status_id IS NULL)';
-	switch ($status) { 
-		case 'ready':
-			$sqlStatus = 't.status_id = 1';
-		break;
-		case 'in_work':
-			$sqlStatus = 't.status_id = 6';
-		break;
-		case 'cant_do':
-			$sqlStatus = 't.status_id = 7';
-		break;
-		case 'delayed':
-			$sqlStatus = 't.status_id = 5';
-		break;
-		case 'none':
-			$sqlStatus = 't.status_id IS NULL';
-		break;
+	$sqlStatus = ' AND (t.status_id < 5 OR t.status_id IS NULL)';
+	if (!empty($status)) {
+		if (!is_array($status)) {
+			$status = array($status);
+		}
+		$sqlStatus = '';
+		$statuses = array();
+		foreach ($status as $s) {
+			if (!empty($s)) {
+				switch ($s) { 
+					case 'ready':
+						$statuses[] = 't.status_id = 1';
+					break;
+					case 'in_work':
+						$statuses[] = 't.status_id = 2';
+					break;
+					case 'delayed':
+						$statuses[] = 't.status_id = 3';
+					break;
+					case 'frozen':
+						$statuses[] = 't.status_id = 4';
+					break;
+					case 'closed':
+						$statuses[] = 't.status_id = 5';
+					break;		
+					case 'current':
+						$statuses[] = 't.status_id IS NULL';
+					break;
+				}
+			}
+		}
+		if (!empty($statuses)) {
+			$sqlStatus = ' AND ('.implode(" OR ", $statuses).')';
+		}
 	}
+	
 
 	
 	$sqlParams = array(
-		$user['id'],
 		$user['project_id'],
 		$user['role_id']
 	);
 	$typeSql = '';
 	if (!empty($type)) {
-		$typeSql = ' AND type_id = (SELECT id FROM task_types WHERE code = ?) ';
-		$sqlParams[] = $type;
+		$types = '"'.implode(explode(",", $type), '","').'"';
+		$typeSql = ' AND type_id IN (SELECT id FROM task_types WHERE code IN ('.$types.')) ';
 	}
 	$impSql = '';
 	if (!empty($importance)) {
-		$impSql = ' AND importance_id = (SELECT id FROM task_importance WHERE code = ?) ';
-		$sqlParams[] = $importance;
+		$importances = '"'.implode(explode(",", $importance), '","').'"';
+		$impSql = ' AND importance_id IN (SELECT id FROM task_importance WHERE code IN ('.$importances.')) ';
 	}
 
 	if ($user['role_id'] < 4) {
@@ -1877,6 +2567,7 @@ function loadTasks($user) {
 
 	switch ($filter) {
 		case 'fromme':
+			array_unshift($sqlParams, $user['id']);
 			$r = $db->prepare('
 				SELECT 
 					t.*,
@@ -1887,19 +2578,21 @@ function loadTasks($user) {
 					u.name AS user_name,
 					u.avatar_id,
 					u2.name AS user_name2,
-					u2.avatar_id AS avatar_id2
+					u2.avatar_id AS avatar_id2,
+					tp.period
 					
 				FROM tasks t
-
-				JOIN task_types tt
+				LEFT JOIN tasks_periods tp
+					ON t.id = tp.task_id
+				LEFT JOIN task_types tt
 					ON tt.id = t.type_id
-				JOIN task_actions ta
+				LEFT JOIN task_actions ta
 					ON ta.id = t.action_id
-				JOIN task_importance ti
+				LEFT JOIN task_importance ti
 					ON ti.id = t.importance_id
 				LEFT JOIN task_statuses ts
 					ON ts.id = t.status_id
-				JOIN users u
+				LEFT JOIN users u
 					ON t.user_id = u.id
 				LEFT JOIN users u2
 					ON t.changed_by = u2.id
@@ -1909,18 +2602,17 @@ function loadTasks($user) {
 					t.project_id = ?
 				AND 
 					t.min_role >= ?
-				AND 
 					'.$sqlStatus.'
 					'.$typeSql.'
 					'.$impSql.'
 				ORDER BY 
-					ti.code ASC
+					t.importance_id ASC
 			');
 			$r->execute($sqlParams);
 
 		break;
 
-		case 'forme':
+		case 'my':
 			$r = $db->prepare('
 				SELECT 
 					t.*,
@@ -1931,21 +2623,65 @@ function loadTasks($user) {
 					u.name AS user_name,
 					u.avatar_id,
 					u2.name AS user_name2,
-					u2.avatar_id AS avatar_id2
+					u2.avatar_id AS avatar_id2,
+					tp.period
 					
-				FROM 
-					tasks_users tu
-				JOIN tasks t
-					ON t.id = tu.task_id
-				JOIN task_types tt
+				FROM tasks t
+				LEFT JOIN tasks_periods tp
+					ON t.id = tp.task_id
+				LEFT JOIN task_types tt
 					ON tt.id = t.type_id
-				JOIN task_actions ta
+				LEFT JOIN task_actions ta
 					ON ta.id = t.action_id
-				JOIN task_importance ti
+				LEFT JOIN task_importance ti
 					ON ti.id = t.importance_id
 				LEFT JOIN task_statuses ts
 					ON ts.id = t.status_id
-				JOIN users u
+				LEFT JOIN users u
+					ON t.user_id = u.id
+				LEFT JOIN users u2
+					ON t.changed_by = u2.id
+				WHERE 
+					(t.changed_by = ? OR t.for_user = ?)
+				AND
+					t.project_id = ?
+				'.$sqlStatus.'
+				ORDER BY 
+					t.importance_id ASC
+			');
+			$r->execute(array($user['id'], $user['id'], $user['project_id']));
+		break;
+
+		case 'forme':
+			array_unshift($sqlParams, $user['id']);
+			$r = $db->prepare('
+				SELECT 
+					t.*,
+					tt.code AS type,
+					ta.code AS action,
+					ti.code AS importance,
+					ts.code AS status,
+					u.name AS user_name,
+					u.avatar_id,
+					u2.name AS user_name2,
+					u2.avatar_id AS avatar_id2,
+					tp.period
+					
+				FROM 
+					tasks_users tu
+				LEFT JOIN tasks_periods tp
+					ON tu.task_id = tp.task_id
+				LEFT JOIN tasks t
+					ON t.id = tu.task_id
+				LEFT JOIN task_types tt
+					ON tt.id = t.type_id
+				LEFT JOIN task_actions ta
+					ON ta.id = t.action_id
+				LEFT JOIN task_importance ti
+					ON ti.id = t.importance_id
+				LEFT JOIN task_statuses ts
+					ON ts.id = t.status_id
+				LEFT JOIN users u
 					ON t.user_id = u.id
 				LEFT JOIN users u2
 					ON t.changed_by = u2.id
@@ -1955,18 +2691,18 @@ function loadTasks($user) {
 					tu.project_id = ?
 				AND 
 					t.min_role >= ?
-				AND 
 					'.$sqlStatus.'
 					'.$typeSql.'
 					'.$impSql.'
 				ORDER BY 
-					ti.code ASC
+					t.importance_id ASC
 			');
 			$r->execute($sqlParams);
 
 		break;
 		
 		default:
+			array_unshift($sqlParams, $user['id'], $user['team_id']);
 			$r = $db->prepare('
 				SELECT 
 					t.*,
@@ -1977,18 +2713,24 @@ function loadTasks($user) {
 					u.name AS user_name,
 					u.avatar_id,
 					u2.name AS user_name2,
-					u2.avatar_id AS avatar_id2
+					u2.avatar_id AS avatar_id2,
+					tu.id AS task_user,
+					tp.period
 				FROM 
 					tasks t
-				JOIN task_types tt
+				LEFT JOIN tasks_periods tp
+					ON t.id = tp.task_id
+				LEFT JOIN tasks_users tu
+					ON t.id = tu.task_id AND tu.user_id = ?
+				LEFT JOIN task_types tt
 					ON tt.id = t.type_id
-				JOIN task_actions ta
+				LEFT JOIN task_actions ta
 					ON ta.id = t.action_id
-				JOIN task_importance ti
+				LEFT JOIN task_importance ti
 					ON ti.id = t.importance_id
 				LEFT JOIN task_statuses ts
 					ON ts.id = t.status_id
-				JOIN users u
+				LEFT JOIN users u
 					ON t.user_id = u.id
 				LEFT JOIN users u2
 					ON t.changed_by = u2.id
@@ -1998,12 +2740,11 @@ function loadTasks($user) {
 					t.project_id = ?
 				AND 
 					t.min_role >= ?
-				AND 
 					'.$sqlStatus.'
 					'.$typeSql.'
 					'.$impSql.'
 				ORDER BY 
-					ti.code ASC
+					t.importance_id ASC
 			');
 			$r->execute($sqlParams);
 	}
@@ -2012,31 +2753,57 @@ function loadTasks($user) {
 	$tasks = array();
 	if ($user['role_id'] < 5) {
 		$byStatus = array(
-			'cant_do' => array(),
 			'ready' => array(),
 			'in_work' => array(),
+			'locked' => array(),
+			'current' => array(),
+			'delayed' => array(),
+			'frozen' => array(),
 			'rest' => array()
 		);
 	} else {
 		$byStatus = array(
 			'current' => array(),
+			'locked' => array(),
 			'in_work' => array(),
 			'ready' => array(),
-			'cant_do' => array(),			
+			'delayed' => array(),
+			'frozen' => array(),
 			'rest' => array()
 		);
 	}
 	$dict = getDict('task');
 	foreach ($rows as $row) {
+		$row['actions'] = true;
+		if ($user['role_id'] > 4 && 
+			(($filter == 'all' && empty($row['task_user'])) || 
+			!empty($row['changed_by']) && $row['changed_by'] != $user['id'])
+		) {
+			$row['actions'] = false;
+		}
 		if (!empty($row['user_name2'])) {
 			$row['user_name'] = $row['user_name2'];
 			$row['avatar_id'] = $row['avatar_id2'];
 			unset($row['user_name2'], $row['avatar_id2']);
 		}
+		$row['locked'] = $row['locked'] == 1;
 		if (empty($row['status'])) {
-			$row['status'] = 'current';
+			if (!empty($row['locked'])) {
+				$row['status'] = 'locked';
+			} else {
+				$row['status'] = 'current';
+			}
 		}
-		$row['changed'] = $dict[$row['status']].' '.getFormattedDate($row['changed'], $row['status'] != 'in_work');
+		if ($row['status'] == 'in_work' && !empty($row['period'])) {
+			$row['changed'] -= $row['period'];
+		}
+		if ($row['status'] == 'current' || $row['status'] == 'in_work') {
+			extract(Task::getTaskTimeLeft($row['until_timestamp']));
+			$row['timeleft'] = $timeleft;
+			$row['overdue'] = $overdue;
+		}
+		$ago = $row['status'] != 'in_work' ? 'ago' : '';
+		$row['changed'] = $dict[$row['status']].' '.getFormattedDate(time() - $row['changed'], $ago);
 		$row['data'] = json_decode($row['data'], true);
 		if (is_array($byStatus['current']) && $row['status'] == 'current') {
 			$byStatus['current'][] = $row;
@@ -2055,39 +2822,77 @@ function loadTasks($user) {
 	));
 }
 
-function getFormattedDate( $date, $ago = false ) {
+function getFormattedDate($date, $ago = null) {
+	$language = getLang();
 	$dict = getDict('time'); 
-    $stf      = 0;
-    $cur_time = time();
-    $diff     = $cur_time - $date;
- 
+ 	
+ 	if ($ago == 'waited' && $language == 'ru') {
+ 		$dict['second'] = $dict['_second'];
+ 		$dict['minute'] = $dict['_minute'];
+ 	}
     $seconds = array( $dict['second'], $dict['seconds'], $dict['seconds2'] );
     $minutes = array( $dict['minute'], $dict['minutes'], $dict['minutes2'] );
     $hours   = array( $dict['hour'], $dict['hours'], $dict['hours2'] );
     $days    = array( $dict['day'], $dict['days'], $dict['days2'] );
-    $weeks   = array( $dict['week'], $dict['weeks'], $dict['weeks2'] );
     $months  = array( $dict['month'], $dict['months'], $dict['months2'] );
     $years   = array( $dict['year'], $dict['years'], $dict['years2'] );
     $decades = array( $dict['decade'], $dict['decades'], $dict['decades2'] );
  
-    $phrase = array( $seconds, $minutes, $hours, $days, $weeks, $months, $years, $decades );
-    $length = array( 1, 60, 3600, 86400, 604800, 2630880, 31570560, 315705600 );
+    $phrase = array($decades, $years, $months,  $days, $hours,  $minutes, $seconds);
+    $length = array(315705600, 31570560, 2630880, 86400, 3600, 60, 1);
  
-    for ( $i = sizeof( $length ) - 1; ( $i >= 0 ) && ( ( $no = $diff / $length[ $i ] ) <= 1 ); $i -- ) {
-        ;
+    $str = array();
+    if ($date == 0) {
+    	return $dict['just_now'];
     }
-    if ( $i < 0 ) {
-        $i = 0;
+    $firstVal = 0;
+    $firstType = 999;
+    foreach ($length as $i => $l) {
+    	if ($date >= $l) {
+    		if (!empty($firstVal) && $l == 1) {
+    			break;
+    		}
+    		if ($firstType < 3 && $i > 3) {
+				break;
+    		}
+    		if ($firstType == 3 && $i > 4) {
+				break;
+    		}
+	    	$v = floor($date / $l);
+	    	if (empty($firstVal)) {
+	    		$firstVal = $v;
+	    		$firstType = $i;
+	    	}
+
+	    	$str[] = $v.' '.getPhrase($v, $phrase[$i]);
+	    	$date = $date - ($v * $l);	    	
+    	}
     }
-    $_time = $cur_time - ( $diff % $length[ $i ] );
-    $no    = floor( $no );
-    $value = sprintf( "%d %s ", $no, getPhrase( $no, $phrase[ $i ] ) );
- 
-    if ( ( $stf == 1 ) && ( $i >= 1 ) && ( ( $cur_time - $_time ) > 0 ) ) {
-        $value .= time_ago( $_time );
+    $str = implode(' ', $str);
+    if ($ago === 'overdue') {
+    	return  $dict['overdue'].' '.$str;
+    } elseif ($ago == 'left') {
+    	if ($language == 'ru') {
+    		return  getPhrase($firstVal, $dict['left']).' '.$str;
+    	}
+    	return  $str.' '.getPhrase($firstVal, $dict['left']);
+    } elseif ($ago == 'waited') {
+		return  $dict['waited'].' '.$str;
+    } elseif ($ago == 'in_work') {
+		return  $dict['in_work'].' '.$str;
+    } elseif ($ago == 'passed') {
+    	$key = 'passed';
+    	if ($firstType > 4) {
+    		$key = 'passed2';
+    	}
+    	if ($language == 'ru') {
+    		return  getPhrase($firstVal, $dict[$key]).' '.$str;
+    	}
+    	return  $str.' '.getPhrase($firstVal, $dict[$key]);
+    } elseif ($ago == 'ago') {
+		return $str.' '.$dict['ago'];
     }
- 
-    return $value . ( $ago === true ? ' '.$dict['ago'] : '');
+    return $str;
 }
  
 function getPhrase( $number, $titles ) {
@@ -2129,16 +2934,24 @@ function generateToken($length = 20) {
     return $randomString;
 }
 
+function decline($number, $keyword) {
+	$dict = getDict('declined');
+  	$cases = array (2, 0, 1, 1, 1, 2);
+  	return $dict[$keyword][ ($number % 100 > 4 && $number % 100 < 20) ? 2 : $cases[min($number % 10, 5)] ];
+}
+
 $action = $_GET['action'];
 $token = $_GET['token'];
-$lang = $_GET['lang'];
 
 if ($action == 'dictionary') {
 	include 'dictionary/index.php';
 }
 
-if (!empty($token)) {
-	$user = getUser($token);
+requireClasses('user');
+
+if (!empty($token)) {	
+	$user = User::get($token);
+
 	if (is_array($user)) {
 		switch ($action) {
 			case 'get_tooltip':
@@ -2154,15 +2967,15 @@ if (!empty($token)) {
 			break;
 
 			case 'set_project':
-				setCurrentProject($user, $_POST['project']);
+				setCurrentProject($user, $_REQUEST['project']);
 			break;
 
 			case 'load_user':
-				loadUser($user);
+				User::load($user);
 			break;
 
 			case 'logout':
-				logout($token);
+				User::logout($token);
 			break;
 
 			case 'create_project':
@@ -2245,8 +3058,44 @@ if (!empty($token)) {
 				loadTaskInfo($user);
 			break;
 
+			case 'load_task_terms':
+				loadTaskTerms($user);
+			break;
+
 			case 'load_task_actions':
 				loadTaskActions($user);
+			break;
+
+			case 'load_work_status':
+				loadWorkStatus($user);
+			break;
+
+			case 'save_work_status':
+				saveWorkStatus($user);
+			break;
+
+			case 'task_action':
+				doTaskAction($user);
+			break;
+
+			case 'load_task':
+				loadTask($user);
+			break;
+
+			case 'load_task_counts':
+				loadTaskCounts($user);
+			break;
+
+			case 'load_until_date':
+				loadUntilDate();
+			break;
+
+			case 'check_subtask':
+				checkSubtask($user);
+			break;
+
+			case 'load_board':
+				loadBoard($user);
 			break;
 
 		}
@@ -2254,11 +3103,11 @@ if (!empty($token)) {
 		error('По текущему токену сессии пользователь не найден, авторизуйтесь заново', 'invalid_token');
 	}
 } else {
-	if (isset($_POST['login'])) {
+	if (isset($_REQUEST['login'])) {
 		if ($action == 'auth') {
-			auth();
+			User::auth();
 		} elseif ($action == 'register') {
-			register();
+			User::register();
 		}
 	}
 }

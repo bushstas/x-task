@@ -6,7 +6,9 @@ switch ($language) {
 			'current' => 'Added',
 			'ready' => 'Completed',
 			'in_work' => 'In work',
-			'delayed' => 'Deferred'
+			'delayed' => 'Deferred',
+			'frozen' => 'Frozen',
+			'locked' => 'Created'
 		);
 	break;
 
@@ -15,6 +17,8 @@ switch ($language) {
 			'current' => 'Добавлена',
 			'ready' => 'Завершена',
 			'in_work' => 'В работе',
-			'delayed' => 'Отложена'
+			'delayed' => 'Отложена',
+			'frozen' => 'Заморожена',
+			'locked' => 'Создана'
 		);
 }

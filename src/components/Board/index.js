@@ -4,68 +4,91 @@ import {dict} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Loader from '../../ui/Loader';
 import BoardTask from '../BoardTask';
+import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
 class Board extends React.Component {
 
 	componentDidMount() {
 		this.props.doAction('BOARD_LOAD');
+		addHandler(this.handleClose);
+	}
+
+	componentWillUnmount() {
+		removeHandler(this.handleClose);
 	}
 
 	render() {
-		let {title = 'Board', tasks, fetching} = this.props;
+		let {
+			tasks,
+			fetching,
+			filter
+		} = this.props;
 		return (
 			<div class="self">
 				<div class="header">
+					<Icon icon="close" 
+						onClick={this.handleClose}
+						classes="close"/>
+
 					<div class="title">
 						<span class="logo">
 							<Icon size="22" icon="logo"/>
 							{dict.logo}
 						</span>
-						{title}
+						{dict.board}
+					</div>
+					<div class="right-menu" onClick={this.handleRightMenuClick}>
+						<span class="$filter=='status'?active" data-value="status">
+							{dict.by_status}
+						</span>
+						<span class="$filter=='type'?active" data-value="type">
+							{dict.by_type}
+						</span>
+						<span class="$filter=='importance'?active" data-value="importance">
+							{dict.by_importance}
+						</span>
 					</div>
 				</div>
-				<Loader classes="content" fetching={fetching}>
-					{!fetching && this.content}
+				<Loader classes="outer-content" fetching={fetching}>
+					<div class="content">
+						{!fetching && this.content}
+					</div>
 				</Loader>
+				<div class="footer">
+				</div>
 			</div>
 		)
 	}
 
 	get content() {
-		this.left = 0;
-		return [
-			this.renderTasks('current'),
-			this.renderTasks('in_work'),
-			this.renderTasks('delayed'),
-			this.renderTasks('ready'),
-			this.renderTasks('frozen')
-		];
+		let {order} = this.props;
+		return order.map(this.renderTasks);
 	}
 
-	renderTasks(key) {
-		let {tasks} = this.props;
+	renderTasks = (key) => {
+		let {tasks, dict} = this.props;
 		tasks = tasks[key];
 		if (!tasks.length) {
 			return;
 		}
-		let left = this.left;
-		this.left += 20;
 		return (
-			<div class="column" key={key} style={{left: left + '%'}}>
+			<div class="column" key={key}>
 				<div class="tasks">
 					<div class="column-title">
-						{dict['status_' + key]}
+						{dict[key]}
 					</div>
-					{tasks.map((task, idx) => {
-						return (
-							<BoardTask 
-								key={task.id}
-								data={task}
-								index={idx}
-								status={key}
-								onClick={this.handleTaskClick}/>
-						)
-					})}
+					<div class="column-content">
+						{tasks.map((task, idx) => {
+							return (
+								<BoardTask 
+									key={task.id}
+									data={task}
+									index={idx}
+									status={key}
+									onClick={this.handleTaskClick}/>
+							)
+						})}
+					</div>
 				</div>
 			</div>
 		)
@@ -81,6 +104,22 @@ class Board extends React.Component {
 
 	handleTaskClick = (id, index, status) => {
 		this.props.doAction('BOARD_SHOW_TASK_INFO', {id, index, status});
+	}
+
+	handleRightMenuClick = ({target: {dataset: {value: filter}}}) => {
+		if (filter) {
+			this.props.doAction('BOARD_LOAD', filter);
+		} 
+	}
+
+	handleClose = () => {
+		this.props.doAction('APP_HIDE');
+	}
+
+	handleKeyDown = ({keyCode}) => {
+		if (keyCode == 27) {
+			this.handleClose();
+		}
 	}
 }
 
