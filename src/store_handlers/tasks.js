@@ -5,6 +5,7 @@ import {TASKS_STORAGE_KEY} from '../consts/storage';
  
 const getDefaultState = () => {
   return {
+    filter: 'all',
     tasksFetching: false,
     taskInfoFetching: false
   }

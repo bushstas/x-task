@@ -55,11 +55,18 @@ class TaskActions extends React.Component {
 
 	handleAction = (action) => {
 		let {doAction} = this.props;
-		if (action == 'edit') {
-			doAction('TASKACTIONS_EDIT', action);
-		} else {
-			doAction('TASKACTIONS_ACTION', action)
-			.then(this.handleActionResult);
+		switch (action) {
+			case 'edit':
+				doAction('TASKACTIONS_EDIT', action);
+			break;
+
+			case 'assign':
+				doAction('TASKACTIONS_ASSIGN', action);
+			break;
+
+			default:
+				doAction('TASKACTIONS_ACTION', action)
+				.then(this.handleActionResult);
 		}
 		this.handleClose();
 	}

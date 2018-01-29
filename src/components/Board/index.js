@@ -47,6 +47,12 @@ class Board extends React.Component {
 						<span class="$filter=='importance'?active" data-value="importance">
 							{dict.by_importance}
 						</span>
+						<span class="$filter=='author'?active" data-value="author">
+							{dict.by_author}
+						</span>
+						<span class="$filter=='exec'?active" data-value="exec">
+							{dict.by_exec}
+						</span>
 					</div>
 				</div>
 				<Loader classes="outer-content" fetching={fetching}>
@@ -68,7 +74,7 @@ class Board extends React.Component {
 	renderTasks = (key) => {
 		let {tasks, dict} = this.props;
 		tasks = tasks[key];
-		if (!tasks.length) {
+		if (!tasks || !tasks.length) {
 			return;
 		}
 		return (

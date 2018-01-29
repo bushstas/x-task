@@ -67,14 +67,16 @@ export default class User extends React.Component {
 						{status}
 					</div>
 				</div>
-				<div class="projects">
-					<div class="title">
-						{dict.projects}
+				{role != 'head' && (
+					<div class="projects">
+						<div class="title">
+							{dict.projects}
+						</div>
+						<div class="projects-list">
+							{projects}
+						</div>
 					</div>
-					<div class="projects-list">
-						{projects}
-					</div>
-				</div>
+				)}
 				{role != 'head' && (
 					<div class="data">
 						<div class="title">
