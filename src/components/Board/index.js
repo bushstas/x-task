@@ -4,7 +4,9 @@ import {dict} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Loader from '../../ui/Loader';
 import BoardTask from '../BoardTask';
+import Avatar from '../../components/Avatar';
 import {addHandler, removeHandler} from '../../utils/EscapeHandler';
+import {getProjectName, getProjectColor} from '../../utils/User';
 
 class Board extends React.Component {
 
@@ -21,8 +23,11 @@ class Board extends React.Component {
 		let {
 			tasks,
 			fetching,
-			filter
+			filter,
+			users,
+			addedUsers
 		} = this.props;
+
 		return (
 			<div class="self">
 				<div class="header">
@@ -36,6 +41,9 @@ class Board extends React.Component {
 							{dict.logo}
 						</span>
 						{dict.board}
+						<div class="project" style={{backgroundColor: '#' + getProjectColor()}}>
+							{getProjectName()}
+						</div>
 					</div>
 					<div class="right-menu" onClick={this.handleRightMenuClick}>
 						<span class="$filter=='status'?active" data-value="status">
@@ -61,13 +69,46 @@ class Board extends React.Component {
 					</div>
 				</Loader>
 				<div class="footer">
+					<div class="added-users">
+						{Object.keys(addedUsers).map(userId => {
+							return (
+								<Avatar
+									key={userId}
+									userId={userId}
+									userName={addedUsers[userId].userName}
+									id={addedUsers[userId].avatarId}
+									onClick={this.handleRemoveUserClick}
+								/>
+							)
+						})}
+					</div>
+					{users && (
+						<div class="users">
+							{users.map(user => {
+								if (!addedUsers[user.userId]) {
+									return (
+										<Avatar
+											key={user.userId}
+											userId={user.userId}
+											userName={user.userName}
+											id={user.avatarId}
+											onClick={this.handleAddUserClick}
+										/>
+									)
+								}
+							})}
+						</div>
+					)}
 				</div>
 			</div>
 		)
 	}
 
 	get content() {
-		let {order} = this.props;
+		let {order, tasks} = this.props;
+		if (Object.keys(tasks).length == 0) {
+			return this.empty;
+		}
 		return order.map(this.renderTasks);
 	}
 
@@ -80,8 +121,10 @@ class Board extends React.Component {
 		return (
 			<div class="column" key={key}>
 				<div class="tasks">
-					<div class="column-title">
-						{dict[key]}
+					<div class="column-title" style={{backgroundColor: '#' + getProjectColor()}}>
+						<div class="column-title-inner">
+							{dict[key]}
+						</div>
 					</div>
 					<div class="column-content">
 						{tasks.map((task, idx) => {
@@ -103,7 +146,7 @@ class Board extends React.Component {
 	get empty() {
 		return (
 			<div class="empty">
-
+				111111
 			</div>
 		)
 	}
@@ -126,6 +169,14 @@ class Board extends React.Component {
 		if (keyCode == 27) {
 			this.handleClose();
 		}
+	}
+
+	handleAddUserClick = (data) => {
+		this.props.doAction('BOARD_ADD_USER', data);
+	}
+
+	handleRemoveUserClick = ({userId}) => {
+		this.props.doAction('BOARD_REMOVE_USER', userId);
 	}
 }
 

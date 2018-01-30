@@ -30,7 +30,12 @@ export default class Avatar extends React.Component {
 
 	handleClick = (e) => {
 		e.stopPropagation();
-		this.setState({dialogShown: true});
+		const {onClick, userId, userName, id} = this.props;
+		if (onClick instanceof Function) {
+			onClick({userId, userName, id});
+		} else {
+			this.setState({dialogShown: true});
+		}
 	}
 
 	handleDialogClose = () => {

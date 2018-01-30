@@ -22,6 +22,7 @@ const onStateChanged = (state) => {
 
 const init = () => {
   defaultState.fetching = true;
+  defaultState.addedUsers = {};
   return defaultState;
 }
  
@@ -42,10 +43,26 @@ const load = ({dispatch, state}, filter) => {
   } else {
    filter = state.filter;
   }
-  get('load_board', {filter})
+  const {addedUsers} = state;
+  const users = Object.keys(addedUsers).join(',');
+  get('load_board', {filter, users})
   .then(boardData => {
     dispatch('BOARD_FETCHED', boardData);
   });
+}
+
+const add_user = ({dispatch, state, doAction}, {id, userId, userName}) => {
+  const {addedUsers} = state;
+  addedUsers[userId] = {avatarId: id, userName};
+  dispatch('BOARD_CHANGED', {addedUsers});
+  doAction('BOARD_LOAD');
+}
+
+const remove_user = ({dispatch, state, doAction}, userId) => {
+  const {addedUsers} = state;
+  delete addedUsers[userId];
+  dispatch('BOARD_CHANGED', {addedUsers});
+  doAction('BOARD_LOAD');
 }
 
 const show_task_info = ({dispatch, doAction, state}, {id, index, status}) => {
@@ -83,6 +100,8 @@ export default {
   onStateChanged,
   actions: {
   	load,
+    add_user,
+    remove_user,
     show_task_info,
     show_prev,
     show_next

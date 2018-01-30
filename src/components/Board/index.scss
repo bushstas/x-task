@@ -22,6 +22,10 @@
 		
 		.title {
 			var .abs.l.t.fs18.pl20;
+
+			.project {
+				var .abs.l100p.t.ml30.fs14.nowr.bc-555.c-fff.p0-10.pntr.cen.mnw100.box;
+			}
 		}
 		.logo {
 			var .c-555.tshad-fff-3.bold.it.fs20.inb.mr15;
@@ -42,6 +46,17 @@
 	}
 	.footer {
 		var .h45.lh45.bc-e1e1e1.abs.nosel.l.r.b.h55;
+
+		.added-users {
+			var .abs.t.pt6.l100;
+			
+		}
+		..avatar {
+			var .wh44.inb.mr5.vtop;
+		}
+		.users {
+			var .abs.t.r.pt6;
+		}
 	}
 	.outer-content {
 		position: relative;
@@ -81,6 +96,12 @@
 	}
 	.column-title {
 		var .abs.t.l.r.bc-555.c-fff.br5-5-0-0.box.p5-10.fs14;
+		&:before {
+			var .cnt.abs.rubb.br5-5-0-0.o4.bc-000;
+		}
+		.column-title-inner {
+			var .rel.z2;
+		}
 	}
 	.column-content {
 		var .pr7.z1.mb;

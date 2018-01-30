@@ -156,20 +156,10 @@ export const getRoleId = () => {
 	return user.role_id;
 }
 
-export default {
-	isAuthorized,
-	isCurrentUser,
-	getToken,
-	hasRight,
-	isAdmin,
-	isHead,
-	isAdminLike,
-	getData,
-	isCurrentProject,
-	inProject,
-	auth,
-	register,
-	logout,
-	getRole,
-	getRoleId
+export const getProjectName = () => {
+	return user.project_name;
+}
+
+export const getProjectColor = () => {
+	return user.project_color;
 }
