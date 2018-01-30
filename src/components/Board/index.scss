@@ -11,10 +11,17 @@
 
 
 	.header {
-		var .h45.lh45.bc-e1e1e1.rel.nosel;
+		var .bc-e1e1e1.rel.nosel;
 		-webkit-box-flex: 0;
     	-ms-flex: none;
     	flex: none;
+
+    	.header-inner {
+    		var .h45.lh45.rel.z2;
+    	}
+    	.header-bg {
+    		var .abs.rubb.o1.z1;
+    	}
 
     	.close {
     		var .abs.r12.t10.pntr.fs24;
@@ -24,28 +31,47 @@
 			var .abs.l.t.fs18.pl20;
 
 			.project {
-				var .abs.l100p.t.ml30.fs14.nowr.bc-555.c-fff.p0-10.pntr.cen.mnw100.box;
+				var .abs.l100p.t.ml30.fs14.nowr.c-fff.p0-10.pntr.cen.mnw100.box.lh36.mt4.br3;
 			}
 		}
 		.logo {
-			var .c-555.tshad-fff-3.bold.it.fs20.inb.mr15;
+			var .c-222.tshad-fff-3.bold.it.fs20.inb.mr15;
 			
 			..icon {
-				var .fl.mt11.mr1.c-555;
+				var .fl.mt11.mr1.c-222;
 			}
 		}
 		.right-menu {
-			var .abs.r50.t50p.mt-15.fs13.lh16;
-			span {
-				var .inb.ml5.pntr.p5-10.br4;
+			var .abs.r50.t50p.mt-14.fs13.lh16;
+			.menu-item  {
+				var .inb.ml5.pntr.p5-10.br4.rel;
 				&.active {
-					var .bc-777.c-eee;
+					var .bc-555.c-eee;
+					.menu-item-bg {
+						var .bl;
+					}
+				}
+				.menu-item-inner {
+					var .rel.z2;
+				}
+				.menu-item-bg {
+					var .abs.rubb.br4.none.o5;
+				}
+				&:after {
+					var .cnt.abs.rubb.z3;
 				}
 			}
 		}
 	}
 	.footer {
-		var .h45.lh45.bc-e1e1e1.abs.nosel.l.r.b.h55;
+		var .bc-e1e1e1.abs.nosel.l.r.b.h55;
+
+		.footer-inner {
+			var .h45.lh45.rel.z2;
+		}
+		.footer-bg {
+    		var .abs.rubb.o1.z1;
+    	}
 
 		.added-users {
 			var .abs.t.pt6.l100;
@@ -80,7 +106,7 @@
 		}
 	}
 	.tasks {
-		var .rel.bc-fff.br5.p7.pr.pt35.box.shad-eee-10.mxh100p;
+		var .rel.bc-fff.br5.p7.pr.pt35.box.shad-c1c1c1-3.mxh100p;
 
 	    display: -webkit-box;
 	    display: -ms-flexbox;

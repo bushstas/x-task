@@ -16,7 +16,8 @@ export default class BoardTask extends React.Component {
 			avatar_id,
 			user_id,
 			user_name,
-			changed
+			changed,
+			actions
 		}} = this.props;
 
 		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
@@ -49,7 +50,9 @@ export default class BoardTask extends React.Component {
 						{title}
 					</div>
 				</div>
-				<ActionsButton id={id} loc="board"/>
+				{actions && (
+					<ActionsButton id={id} loc="board"/>
+				)}
 			</div>
 		)
 	}

@@ -28,39 +28,59 @@ class Board extends React.Component {
 			addedUsers
 		} = this.props;
 
+		const style = {backgroundColor: '#' + getProjectColor()};
+
 		return (
 			<div class="self">
 				<div class="header">
-					<Icon icon="close" 
-						onClick={this.handleClose}
-						classes="close"/>
+					<div class="header-bg" style={style}/>
+					<div class="header-inner">
+						<Icon icon="close" 
+							onClick={this.handleClose}
+							classes="close"/>
 
-					<div class="title">
-						<span class="logo">
-							<Icon size="22" icon="logo"/>
-							{dict.logo}
-						</span>
-						{dict.board}
-						<div class="project" style={{backgroundColor: '#' + getProjectColor()}}>
-							{getProjectName()}
+						<div class="title">
+							<span class="logo">
+								<Icon size="22" icon="logo"/>
+								{dict.logo}
+							</span>
+							{dict.board}
+							<div class="project" style={style}>
+								{getProjectName()}
+							</div>
 						</div>
-					</div>
-					<div class="right-menu" onClick={this.handleRightMenuClick}>
-						<span class="$filter=='status'?active" data-value="status">
-							{dict.by_status}
-						</span>
-						<span class="$filter=='type'?active" data-value="type">
-							{dict.by_type}
-						</span>
-						<span class="$filter=='importance'?active" data-value="importance">
-							{dict.by_importance}
-						</span>
-						<span class="$filter=='author'?active" data-value="author">
-							{dict.by_author}
-						</span>
-						<span class="$filter=='exec'?active" data-value="exec">
-							{dict.by_exec}
-						</span>
+						<div class="right-menu" onClick={this.handleRightMenuClick}>
+							<span class="menu-item $filter=='status'?active" data-value="status">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_status}
+								</span>
+							</span>
+							<span class="menu-item $filter=='type'?active" data-value="type">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_type}
+								</span>
+							</span>
+							<span class="menu-item $filter=='importance'?active" data-value="importance">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_importance}
+								</span>
+							</span>
+							<span class="menu-item $filter=='author'?active" data-value="author">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_author}
+								</span>
+							</span>
+							<span class="menu-item $filter=='exec'?active" data-value="exec">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_exec}
+								</span>
+							</span>
+						</div>
 					</div>
 				</div>
 				<Loader classes="outer-content" fetching={fetching}>
@@ -69,36 +89,39 @@ class Board extends React.Component {
 					</div>
 				</Loader>
 				<div class="footer">
-					<div class="added-users">
-						{Object.keys(addedUsers).map(userId => {
-							return (
-								<Avatar
-									key={userId}
-									userId={userId}
-									userName={addedUsers[userId].userName}
-									id={addedUsers[userId].avatarId}
-									onClick={this.handleRemoveUserClick}
-								/>
-							)
-						})}
-					</div>
-					{users && (
-						<div class="users">
-							{users.map(user => {
-								if (!addedUsers[user.userId]) {
-									return (
-										<Avatar
-											key={user.userId}
-											userId={user.userId}
-											userName={user.userName}
-											id={user.avatarId}
-											onClick={this.handleAddUserClick}
-										/>
-									)
-								}
+					<div class="footer-bg" style={style}/>
+					<div class="footer-inner">
+						<div class="added-users">
+							{Object.keys(addedUsers).map(userId => {
+								return (
+									<Avatar
+										key={userId}
+										userId={userId}
+										userName={addedUsers[userId].userName}
+										id={addedUsers[userId].avatarId}
+										onClick={this.handleRemoveUserClick}
+									/>
+								)
 							})}
 						</div>
-					)}
+						{users && (
+							<div class="users">
+								{users.map(user => {
+									if (!addedUsers[user.userId]) {
+										return (
+											<Avatar
+												key={user.userId}
+												userId={user.userId}
+												userName={user.userName}
+												id={user.avatarId}
+												onClick={this.handleAddUserClick}
+											/>
+										)
+									}
+								})}
+							</div>
+						)}
+					</div>
 				</div>
 			</div>
 		)
