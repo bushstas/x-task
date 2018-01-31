@@ -211,11 +211,23 @@
 		&:hover {
 			var .bc-333;
 		}
+		.numbers {
+			var .fs24.abs.t50p.mt-15.c-fff.bold.nowr;
+			span {
+				var .o7.fs18;
+			}
+		}
 	}
 	.prev {
 		var .l-70.rt.pr15;
+		.numbers {
+			var .l100p.ml20;
+		}
 	}
 	.next {
 		var .r-70.pl15;
+		.numbers {
+			var .r100p.mr20;
+		}
 	}
 }

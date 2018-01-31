@@ -25,10 +25,12 @@ class Board extends React.Component {
 			fetching,
 			filter,
 			users,
-			addedUsers
+			addedUsers,
+			order
 		} = this.props;
 
 		const style = {backgroundColor: '#' + getProjectColor()};
+		const userKeys = Object.keys(addedUsers);
 
 		return (
 			<div class="self">
@@ -45,7 +47,7 @@ class Board extends React.Component {
 								{dict.logo}
 							</span>
 							{dict.board}
-							<div class="project" style={style}>
+							<div class="project" style={style} onClick={this.handleProjectClick}>
 								{getProjectName()}
 							</div>
 						</div>
@@ -85,14 +87,14 @@ class Board extends React.Component {
 				</div>
 				<Loader classes="outer-content" fetching={fetching}>
 					<div class="content">
-						{!fetching && this.content}
+						{order && this.content}
 					</div>
 				</Loader>
 				<div class="footer">
 					<div class="footer-bg" style={style}/>
 					<div class="footer-inner">
 						<div class="added-users">
-							{Object.keys(addedUsers).map(userId => {
+							{userKeys.map(userId => {
 								return (
 									<Avatar
 										key={userId}
@@ -103,6 +105,12 @@ class Board extends React.Component {
 									/>
 								)
 							})}
+							{userKeys.length > 1 && (
+								<div class="reset-users" onClick={this.handleResetUsers}>
+									<div class="reset-users-bg" style={style}/>
+									<Icon icon="close"/>
+								</div>
+							)}
 						</div>
 						{users && (
 							<div class="users">
@@ -188,18 +196,20 @@ class Board extends React.Component {
 		this.props.doAction('APP_HIDE');
 	}
 
-	handleKeyDown = ({keyCode}) => {
-		if (keyCode == 27) {
-			this.handleClose();
-		}
-	}
-
 	handleAddUserClick = (data) => {
 		this.props.doAction('BOARD_ADD_USER', data);
 	}
 
 	handleRemoveUserClick = ({userId}) => {
 		this.props.doAction('BOARD_REMOVE_USER', userId);
+	}
+
+	handleResetUsers = () => {
+		this.props.doAction('BOARD_RESET_USERS');
+	}
+
+	handleProjectClick = () => {
+		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {}});	
 	}
 }
 

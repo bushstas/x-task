@@ -414,13 +414,30 @@ class TaskInfo extends React.Component {
 	}
 
 	get buttons() {
-		if (this.props.tasksCount > 1) {
+		const {tasksCount, index} = this.props;
+		if (tasksCount > 1) {
+			let prev = index - 1, 
+			      next = index + 1;
+			if (prev < 0) {
+				prev = tasksCount - 1;
+			}
+			if (next >= tasksCount) {
+				next = 0;
+			}
+			prev++;
+			next++;
 			return [
 				<div class="prev" onClick={this.handlePrevClick} key="prev">
 					<Icon icon="back"/>
+					<div class="numbers">
+						{prev}<span> / {tasksCount}</span>
+					</div>
 				</div>,
 				<div class="next" onClick={this.handleNextClick} key="next">
 					<Icon icon="forward"/>
+					<div class="numbers">
+						{next}<span> / {tasksCount}</span>
+					</div>
 				</div>
 			]
 		}
@@ -441,7 +458,7 @@ class TaskInfo extends React.Component {
 	}
 
 	handleNextClick = () => {
-		this.props.doAction(this.props.store + 'TASKS_SHOW_NEXT');	
+		this.props.doAction(this.props.store + '_SHOW_NEXT');	
 	}
 }
 

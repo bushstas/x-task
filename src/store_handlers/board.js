@@ -8,21 +8,22 @@ const getSavedData = () => {
 
 const getDefaultState = () => {
   return {
-      filter: 'status'
+      filter: 'status',
+      addedUsers: {}
   }
 }
 let defaultState = getSavedData() || getDefaultState();
 
 const onStateChanged = (state) => {
-    let {filter} = state;
+    let {filter, addedUsers} = state;
     StoreKeeper.set(BOARD_STORAGE_KEY, {
-      filter
+      filter,
+      addedUsers
     });
 }
 
 const init = () => {
   defaultState.fetching = true;
-  defaultState.addedUsers = {};
   return defaultState;
 }
  
@@ -38,6 +39,7 @@ const fetched = (state, data) => {
 }
 
 const load = ({dispatch, state}, filter) => {
+  dispatch('BOARD_CHANGED', {fetching: true});
   if (filter) {
     dispatch('BOARD_CHANGED', {filter});
   } else {
@@ -65,6 +67,11 @@ const remove_user = ({dispatch, state, doAction}, userId) => {
   doAction('BOARD_LOAD');
 }
 
+const reset_users = ({dispatch, doAction}) => {
+  dispatch('BOARD_CHANGED', {addedUsers: {}});
+  doAction('BOARD_LOAD');
+}
+
 const show_task_info = ({dispatch, doAction, state}, {id, index, status}) => {
   let tasksCount = state.tasks[status].length;
   dispatch('BOARD_CHANGED', {
@@ -72,7 +79,7 @@ const show_task_info = ({dispatch, doAction, state}, {id, index, status}) => {
     shownTaskIndex: index,
     showTaskStatus: status
   });
-  doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'BOARD'}});
+  doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'BOARD', index}});
 }
 
 const show_prev = ({doAction, state}) => {  
@@ -102,6 +109,7 @@ export default {
   	load,
     add_user,
     remove_user,
+    reset_users,
     show_task_info,
     show_prev,
     show_next

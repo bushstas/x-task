@@ -5,6 +5,7 @@ import Dialog from '../../ui/Dialog';
 
 import TaskInfo from '../TaskInfo';
 import TaskActions from '../TaskActions';
+import ProjectsList from '../ProjectsList';
 
 class Modals extends React.Component {	
 	render() {
@@ -29,6 +30,7 @@ class Modals extends React.Component {
 						<TaskInfo 
 							id={data.id}
 							tasksCount={data.tasksCount}
+							index={data.index}
 							store={data.store}
 							key="taskinfo"/>
 					)
@@ -41,6 +43,12 @@ class Modals extends React.Component {
 						id={data.id}  
 						loc={data.loc} 
 						key="taskactions"/>
+				)
+			break;
+
+			case 'projects_list':
+				dialog = (
+					<ProjectsList key="projectslist"/>
 				)
 			break;
 		}

@@ -31,6 +31,11 @@ const loaded = (state, data) => {
   }
 }
 
+const changed = (state, data) => {
+  return data;
+}
+
+
 const edit_form_shown = (state, {project, projectToken, dict}) => {
   let {dict: dictionary} = state;
   return {
@@ -60,18 +65,19 @@ const form_data_changed = (state, formData) => {
   return {formData}
 }
 
- 
-/**
- ===============
- Actions
- ===============
-*/
- 
+
 const load = ({dispatch}) => {
   dispatch('PROJECTS_FETCHING');
   get('load_projects')
   .then((data) => {
     dispatch('PROJECTS_LOADED', data);
+  });
+}
+
+const load_list = ({dispatch}) => {
+  get('load_projects_list')
+  .then((data) => {
+    dispatch('PROJECTS_CHANGED', data);
   });
 }
 
@@ -120,7 +126,8 @@ export default {
     save,
     show_edit_form,
     request_access,
-    activate
+    activate,
+    load_list
   },
   reducers: {
     init,
@@ -129,6 +136,7 @@ export default {
     edit_form_shown,
     add_form_shown,
     canceled,
-    form_data_changed
+    form_data_changed,
+    changed
   }
 } 

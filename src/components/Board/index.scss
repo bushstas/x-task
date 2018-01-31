@@ -67,15 +67,26 @@
 		var .bc-e1e1e1.abs.nosel.l.r.b.h55;
 
 		.footer-inner {
-			var .h45.lh45.rel.z2;
+			var .h55.lh55.rel.z2;
 		}
 		.footer-bg {
     		var .abs.rubb.o1.z1;
     	}
 
 		.added-users {
-			var .abs.t.pt6.l100;
-			
+			var .abs.t.pt6.l100.b;			
+		}
+		.reset-users {
+			var .abs.l100p.ml10.t50p.mt-15.bc-555.br50p.wh30.c-fff.cen.pntr;
+			..icon {
+				var .lh30.rel.z2;
+			}
+			&:hover {
+				var .bc-333;
+			}
+			.reset-users-bg {
+				var .abs.z1.rubb.br50p.o5;
+			}
 		}
 		..avatar {
 			var .wh44.inb.mr5.vtop;
