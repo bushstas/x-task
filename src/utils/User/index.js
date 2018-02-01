@@ -163,3 +163,8 @@ export const getProjectName = () => {
 export const getProjectColor = () => {
 	return user.project_color;
 }
+
+export const setProject = (id) => {
+	return post('set_project', {id})
+			.then(onLoad, onFail);
+}

@@ -48,7 +48,9 @@ class Modals extends React.Component {
 
 			case 'projects_list':
 				dialog = (
-					<ProjectsList key="projectslist"/>
+					<ProjectsList 
+						key="projectslist"
+						store={data.store}/>
 				)
 			break;
 		}

@@ -1,5 +1,6 @@
 import {get} from '../utils/Fetcher';
 import StoreKeeper from '../utils/StoreKeeper';
+import {setProject} from '../utils/User';
 import {BOARD_STORAGE_KEY} from '../consts/storage';
 
 const getSavedData = () => {
@@ -102,6 +103,12 @@ const show_next = ({doAction, state}) => {
   doAction('BOARD_SHOW_TASK_INFO', {id: tasks[next].id, index: next, status: showTaskStatus});
 }
 
+const set_project = ({dispatch, state}, projectId) => {
+  setProject(id).then(() => {
+    doAction('BOARD_LOAD');
+  });
+}
+
 
 export default {
   onStateChanged,
@@ -112,7 +119,8 @@ export default {
     reset_users,
     show_task_info,
     show_prev,
-    show_next
+    show_next,
+    set_project
   },
   reducers: {
     init,

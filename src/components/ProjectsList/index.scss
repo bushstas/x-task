@@ -6,7 +6,11 @@
 	}
 
 	.content {
-		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box.flex.flcen;
+		var .abs.z2.bc-fff.p20.br5.mxw600.box.flex.flcen;
+	}
+
+	..button {
+		var .m7.mnw100;
 	}
 
 }

@@ -209,7 +209,7 @@ class Board extends React.Component {
 	}
 
 	handleProjectClick = () => {
-		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {}});	
+		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {store: 'BOARD'}});	
 	}
 }
 

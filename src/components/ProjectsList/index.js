@@ -20,7 +20,7 @@ class ProjectsList extends React.Component {
 		return (
 			<div class="self">
 				<div class="mask" onClick={this.handleClose}/>
-				<Loader classes="content" fetching={!dict}>					
+				<Loader classes="content" fetching={!dict}>
 					{this.buttons}
 				</Loader>
 			</div>
@@ -28,18 +28,17 @@ class ProjectsList extends React.Component {
 	}
 
 	get buttons() {
-		let {actions, dict} = this.props;
+		let {projectsList, dict} = this.props;
 		return (
 			<div class="actions">
-				{actions && actions.map((action) => {
-					let {name, available} = action;
+				{projectsList && projectsList.map((project) => {
+					let {name, id} = project;
 					return (
 						<Button 
-							key={name}
-							value={name}
-							onClick={this.handleAction}
-							disabled={!available}>
-							{dict[name]}
+							key={id}
+							value={id}
+							onClick={this.handleClick}>
+							{name}
 						</Button>
 					)
 				})}
@@ -47,40 +46,13 @@ class ProjectsList extends React.Component {
 		)
 	}
 
-	handleAction = (action) => {
-		let {doAction} = this.props;
-		switch (action) {
-			case 'edit':
-				doAction('TASKACTIONS_EDIT', action);
-			break;
-
-			case 'assign':
-				doAction('TASKACTIONS_ASSIGN', action);
-			break;
-
-			default:
-				doAction('TASKACTIONS_ACTION', action)
-				.then(this.handleActionResult);
-		}
+	handleClick = (id) => {
+		this.props.doAction(this.props.store + '_SET_PROJECT', id);
 		this.handleClose();
 	}
 
-	handleActionResult = () => {
-		let {loc, id, doAction} = this.props;
-		if (loc == 'tasks') {
-			doAction('TASKS_START_UPDATE');	
-		} else if (loc == 'board') {
-			doAction('BOARD_LOAD');
-		}
-		let modals = Store.getState('modals.modals');
-		if (modals.task_info) {
-			doAction('TASKINFO_LOAD', id);
-		}
-	}
-
 	handleClose = () => {
-		this.props.dispatch('TASKACTIONS_INIT');
-		this.props.doAction('MODALS_HIDE', 'task_actions');	
+		this.props.doAction('MODALS_HIDE', 'projects_list');	
 	}
 }
 
