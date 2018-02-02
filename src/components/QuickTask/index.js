@@ -370,8 +370,8 @@ class QuickTask extends React.Component {
 		}
 	}
 
-	handleFormChanged = (data) => {
-		this.props.dispatch('QUICKTASK_FORM_DATA_CHANGED', data);
+	handleFormChanged = (formData) => {
+		this.props.doAction('QUICKTASK_CHANGE', {formData});
 	}
 
 	handleAddElementClick = (e) => {
@@ -444,7 +444,7 @@ class QuickTask extends React.Component {
 	}
 
 	handleSelectUser = (role, token, assigned) => {
-		this.props.dispatch('QUICKTASK_USER_ASSIGNED', {token, assigned, role});
+		this.props.doAction('QUICKTASK_ASSIGN_USER', {token, assigned, role});
 	}
 
 	handleLayersClick = (e) => {
@@ -501,11 +501,11 @@ class QuickTask extends React.Component {
 	}
 
 	handleUrlDialogClose = () => {
-		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {urlDialogData: null});
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {urlDialogData: null});
 	}
 
 	handleChange = (data) => {
-		this.props.dispatch('QUICKTASK_PARAM_CHANGED', data);
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', data);
 	}
 
 	handleSubmit = () => {
@@ -514,7 +514,7 @@ class QuickTask extends React.Component {
 
 	handleLockTaskClick = () => {
 		let {lockedTask} = this.props;
-		this.props.dispatch('QUICKTASK_PARAM_CHANGED', {lockedTask: !lockedTask});
+		this.props.doAction('QUICKTASK_CHANGE_PARAM', {lockedTask: !lockedTask});
 	}
 }
 

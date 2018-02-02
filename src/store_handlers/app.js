@@ -1,6 +1,7 @@
 import StoreKeeper from '../utils/StoreKeeper';
-import {APP_STORAGE_KEY} from '../consts/storage';
+import {APP_STORAGE_KEY, LOCAL_STORAGE_DICTIONARY} from '../consts/storage';
 import {get, post} from '../utils/Fetcher';
+import {set as setDictionary} from '../utils/Dictionary';
 
 const getSavedData = () => {
   return StoreKeeper.get(APP_STORAGE_KEY);
@@ -61,6 +62,14 @@ const hide = ({dispatch}) => {
   dispatch('APP_CHANGED', {shown: null});
 }
 
+const load_dictionary = ({dispatch}) => {
+  return get('dictionary')
+  .then(data => {
+    dispatch('APP_CHANGED', data);
+    setDictionary(data);
+  });
+}
+
 export default {
   onStateChanged,
   actions: {
@@ -68,7 +77,8 @@ export default {
     show_status,
     save_status,
     show_board,
-    hide
+    hide,
+    load_dictionary
   },
   reducers: {
     init,

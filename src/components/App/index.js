@@ -17,20 +17,12 @@ import Tasks from '../Tasks';
 import Account from '../Account';
 
 import {dict} from '../../utils/Dictionary';
-import {isAuthorized, auth, register, logout, hasRight} from '../../utils/User';
 import Store from 'xstore';
 
 class App extends React.PureComponent {
-  constructor() {
-    super();
-    this.state = {
-      isAuthorized: isAuthorized()
-    };
-  }
 
   render() {
-    let {shown} = this.props;
-    let authorized = isAuthorized();
+    let {shown, isAuthorized} = this.props;
 
     let elements = [
       this.notifications,
@@ -38,7 +30,7 @@ class App extends React.PureComponent {
       this.modals
     ];
     
-    if (isAuthorized()) {
+    if (isAuthorized) {
       if (shown == 'quicktask') {
         elements.push(
           this.mask,
@@ -51,7 +43,7 @@ class App extends React.PureComponent {
       } else if (shown == 'board') {
         elements.push(this.board);  
       }
-    } else {
+    } else if (shown == 'main') {
       elements.push(this.authForm);
     }
     return elements;
@@ -59,7 +51,12 @@ class App extends React.PureComponent {
 
   get board() {
     let {boardTasks, boardDict} = this.props;
-    return <Board key="board" tasks={boardTasks} dict={boardDict}/>
+    return (
+      <Board 
+        key="board"
+        tasks={boardTasks}
+        dict={boardDict}/>
+    )
   }
 
   get modals() {
@@ -75,9 +72,7 @@ class App extends React.PureComponent {
   }
 
   get mask() {
-    return (
-      <Mask key="mask"/>
-    )
+    return <Mask key="mask"/>
   }
 
   get notifications() {
@@ -89,9 +84,7 @@ class App extends React.PureComponent {
   }
 
   get startButton() {
-    return (
-      <StartButton key="startButton"/>
-    )
+    return <StartButton key="startButton"/>
   }
 
   get dialog() {
@@ -162,18 +155,13 @@ class App extends React.PureComponent {
   }
 
   handleSubmitAuthForm = (data, action) => {
-    if (action == 'r') {
-      register(data).then(this.handleAuthStatusChanged);  
-    } else {
-      auth(data).then(this.handleAuthStatusChanged);
-    }
+    this.props.doAction(action == 'r' ? 'USER_REGISTER' : 'USER_AUTH', data);
   }
 
   handleNavigate = ({target: {dataset: {name}}}) => {
     if (name == 'logout') {
       logout()
       .then((isAuthorized) => {
-        this.state.isAuthorized = false;
         this.forceUpdate();
       });
     } else if (name) {
@@ -183,7 +171,7 @@ class App extends React.PureComponent {
 }
 
 const params = {
-  has: 'app',
+  has: 'app, user:isAuthorized',
   flat: true
 }
 export default Store.connect(App, params);

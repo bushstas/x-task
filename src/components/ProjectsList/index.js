@@ -47,7 +47,10 @@ class ProjectsList extends React.Component {
 	}
 
 	handleClick = (id) => {
-		this.props.doAction(this.props.store + '_SET_PROJECT', id);
+		this.props.doAction('USER_SET_PROJECT', id)
+		.then(() => {
+			this.props.doAction(this.props.store + '_LOAD');
+		});
 		this.handleClose();
 	}
 

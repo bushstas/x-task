@@ -10,6 +10,25 @@ import {getProjectName, getProjectColor} from '../../utils/User';
 
 class Board extends React.Component {
 
+	constructor(props) {
+		super();
+		if (props.project) {
+			this.initBgStyle(props.project.color);
+		}
+	}
+
+	componentWillUpdate(props) {
+		const {project: p1 = {}} = this.props;
+		const {project: p2} = props;
+		if (p2 && p1.id != p2.id) {
+			this.initBgStyle(props.project.color);
+		}
+	}
+
+	initBgStyle(color) {
+		this.bgStyle = {backgroundColor: '#' + color};
+	}
+
 	componentDidMount() {
 		this.props.doAction('BOARD_LOAD');
 		addHandler(this.handleClose);
@@ -26,11 +45,12 @@ class Board extends React.Component {
 			filter,
 			users,
 			addedUsers,
-			order
+			order,
+			project = {}
 		} = this.props;
 
-		const style = {backgroundColor: '#' + getProjectColor()};
 		const userKeys = Object.keys(addedUsers);
+		const style = this.bgStyle;
 
 		return (
 			<div class="self">
@@ -48,7 +68,7 @@ class Board extends React.Component {
 							</span>
 							{dict.board}
 							<div class="project" style={style} onClick={this.handleProjectClick}>
-								{getProjectName()}
+								{project.name}
 							</div>
 						</div>
 						<div class="right-menu" onClick={this.handleRightMenuClick}>
@@ -214,7 +234,7 @@ class Board extends React.Component {
 }
 
 let params = {
-	has: 'board',
+	has: 'board, user:project',
 	flat: true
 }
 export default Store.connect(Board, params);

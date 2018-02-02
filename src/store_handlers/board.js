@@ -103,13 +103,6 @@ const show_next = ({doAction, state}) => {
   doAction('BOARD_SHOW_TASK_INFO', {id: tasks[next].id, index: next, status: showTaskStatus});
 }
 
-const set_project = ({dispatch, state}, projectId) => {
-  setProject(id).then(() => {
-    doAction('BOARD_LOAD');
-  });
-}
-
-
 export default {
   onStateChanged,
   actions: {
@@ -119,8 +112,7 @@ export default {
     reset_users,
     show_task_info,
     show_prev,
-    show_next,
-    set_project
+    show_next
   },
   reducers: {
     init,

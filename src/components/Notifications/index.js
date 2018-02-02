@@ -52,3 +52,13 @@ let params = {
 	flat: true
 }
 export default Store.connect(Notifications, params);
+
+export const showSuccessNotification = (message) => {
+	const classes = $classy(".notification-success");
+	Store.doAction('NOTIFICATIONS_ADD', {message: message, classes, showtime: 4000});
+}
+
+export const showErrorNotification = (message) => {
+	Store.doAction('NOTIFICATIONS_ADD', {message, showtime: 4000});
+}
+

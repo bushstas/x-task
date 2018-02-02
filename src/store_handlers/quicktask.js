@@ -89,10 +89,6 @@ const param_changed = (state, data) => {
   return data;
 }
 
-const form_data_changed = (state, formData) => {
-  return {formData}
-}
-
 const visual_element_changed = (state, data) => {
   let {visualElements, currentElement} = state;
   let visualElement = visualElements[currentElement];
@@ -108,21 +104,11 @@ const visual_element_changed = (state, data) => {
   }
 }
 
-const user_assigned = (state, {token, assigned, role}) => {
-  let key = role == 'exec' ? 'execs' : 'testers';
-  let list = state[key] || [];
-  if (!assigned) {
-    let idx = list.indexOf(token);
-    if (idx > -1) {
-      list.splice(idx, 1);
-    }
-  } else {
-    list.push(token);
-  }
-  return {[key]: list};
-}
-
 //===========================================
+
+const change = ({dispatch}, data) => {
+  dispatch('QUICKTASK_PARAM_CHANGED', data);
+}
 
 const change_param = ({dispatch, doAction}, data) => {
   let state = dispatch('QUICKTASK_PARAM_CHANGED', data);
@@ -397,10 +383,25 @@ const load_edited_task = ({dispatch, doAction, state}, id) => {
   });
 }
 
+const assign_user = ({dispatch, state}, {token, assigned, role}) => {
+  let key = role == 'exec' ? 'execs' : 'testers';
+  let list = state[key] || [];
+  if (!assigned) {
+    let idx = list.indexOf(token);
+    if (idx > -1) {
+      list.splice(idx, 1);
+    }
+  } else {
+    list.push(token);
+  }
+  dispatch('QUICKTASK_CHANGE', {[key]: list});
+}
+
 export default {
   onStateChanged,
   actions: {
     add_element,
+    change,
     change_param,
     change_visual_element,
     remove_element,
@@ -414,15 +415,14 @@ export default {
     show_users,
     show_terms,
     load_until_date,
-    load_edited_task
+    load_edited_task,
+    assign_user
   },
   reducers: {
     init,
     reset,
     activated,    
     param_changed,
-    form_data_changed,
-    visual_element_changed,
-    user_assigned
+    visual_element_changed
   }
 } 

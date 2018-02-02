@@ -3,11 +3,9 @@ import {render} from 'react-dom';
 import Store from 'xstore';
 
 import App from './components/App';
-import {load} from './utils/Loader';
-import {load as dict} from './utils/Dictionary';
-import {load as user} from './utils/User';
 
 import app from './store_handlers/app';
+import user from './store_handlers/user';
 import board from './store_handlers/board';
 import modals from './store_handlers/modals';
 import mask from './store_handlers/mask';
@@ -22,6 +20,7 @@ import taskactions from './store_handlers/taskactions';
 
 Store.addHandlers({
 	app,
+	user,
 	board,
 	modals,
 	mask,
@@ -35,15 +34,16 @@ Store.addHandlers({
 	taskactions
 });
 
-let box = document.createElement('div');
+const box = document.createElement('div');
 box.className = $classy('.main-box');
-document.body.appendChild(box);
 
-load(dict, user).then(() => {
-	render(		
-		<App/>,
-		box
-	);
+Promise.all([
+	Store.doAction('USER_LOAD'),
+	Store.doAction('APP_LOAD_DICTIONARY')
+])
+.then(() => {
+	document.body.appendChild(box);
+	render(<App/>, box);
 });
-
+	
 export const APP_MAIN_CONTAINER = box;

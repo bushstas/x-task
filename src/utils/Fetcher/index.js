@@ -1,10 +1,10 @@
-import {PATH_TO_API, LOCAL_STORAGE_TOKEN} from '../../consts';
+import {PATH_TO_API, LOCAL_STORAGE_TOKEN} from '../../consts/storage';
 import StoreKeeper from '../StoreKeeper';
 import Store from 'xstore';
+import {showSuccessNotification, showErrorNotification} from '../../components/Notifications';
 
 class Fetcher {
 	getPathToApi(action, data) {
-		var path = PATH_TO_API;
 		var token = StoreKeeper.get(LOCAL_STORAGE_TOKEN);
 		var query = [];
 		if (typeof XTaskLang != 'undefined') {
@@ -32,7 +32,7 @@ class Fetcher {
 			}
 		}
 		query = query.join('&');
-		return path + (!!query ? '?' + query : '');
+		return PATH_TO_API + (!!query ? '?' + query : '');
 	}
 
 	getFormData(data) {
@@ -52,11 +52,11 @@ class Fetcher {
 		return formData;
 	}
 
-	get(action, data) {
+	get = (action, data) => {
 		return this.send('GET', action, data);
 	}
 
-	post(action, data) {
+	post = (action, data) => {
 		return this.send('POST', action, data);
 	}
 
@@ -67,18 +67,15 @@ class Fetcher {
 			url = this.getPathToApi(action, data);
 		} else {
 			url = this.getPathToApi(action);
-			params.body = this.getFormData(data) || new FormData;
+			params.body = this.getFormData(data);
 		}
 		return fetch(url, params)
-		.then(function(response) {
-			return response.json();
-		})
-		.then(function(data) {
+		.then(response => response.json())
+		.then(data => {
 			let {success, message, body = {}, error} = data;
 			if (success === true) {
 		   		if (message) {
-					let classes = $classy(".notification-success");
-      				Store.doAction('NOTIFICATIONS_ADD', {message: message, classes, showtime: 4000});
+      				showSuccessNotification(message);
 				}
 		   		return body;
 		    }
@@ -87,8 +84,8 @@ class Fetcher {
 		    }
 		    throw new Error('Неизвестная ошибка операции ' + action);
 		})
-		.catch(function({message}) {  
-		    Store.doAction('NOTIFICATIONS_ADD', {message, showtime: 4000});
+		.catch(function({message}) {
+			showErrorNotification(message);
 		    return Promise.reject(message);
 		});
 	}
@@ -96,5 +93,5 @@ class Fetcher {
 }
 
 let fetcher = new Fetcher;
-export const get = fetcher.get.bind(fetcher);
-export const post = fetcher.post.bind(fetcher);
+export const get = fetcher.get;
+export const post = fetcher.post;

@@ -10,29 +10,31 @@ let EDIT_TASK_PARAM = 'edit_x_task=',
     TASK_URL_PARTS;
 
 export const init = (data) => {
-	parseGetParams();
-	let {roots, nohashes, noparams, getparams} = data;
-	if (typeof roots != 'string') {
-		roots = '';
-	}
-	roots = roots.trim().replace(/[\r\n]+/g, ',').replace(/,{2,}/g, '').replace(/\s/g, '').split(',');
-	if (!!roots[0]) {
-		ROOTS = roots;
-	}
-	OPTIONS = {
-		nohashes: nohashes == 1,
-		noparams: noparams == 1,
-		getparams
-	}
-	initUrls();
-	let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
-	if (editedTask) {
-		Store.doAction('QUICKTASK_LOAD_EDITED_TASK', editedTask);
-		return;
-	}
-	let viewedTask = StoreKeeper.get(VIEWED_TASK_STORAGE_KEY);
-	if (viewedTask) {
-		
+	if (data instanceof Object) {
+		parseGetParams();
+		let {roots, nohashes, noparams, getparams} = data;
+		if (typeof roots != 'string') {
+			roots = '';
+		}
+		roots = roots.trim().replace(/[\r\n]+/g, ',').replace(/,{2,}/g, '').replace(/\s/g, '').split(',');
+		if (!!roots[0]) {
+			ROOTS = roots;
+		}
+		OPTIONS = {
+			nohashes: nohashes == 1,
+			noparams: noparams == 1,
+			getparams
+		}
+		initUrls();
+		let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
+		if (editedTask) {
+			Store.doAction('QUICKTASK_LOAD_EDITED_TASK', editedTask);
+			return;
+		}
+		let viewedTask = StoreKeeper.get(VIEWED_TASK_STORAGE_KEY);
+		if (viewedTask) {
+			
+		}
 	}
 }
 

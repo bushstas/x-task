@@ -4,3 +4,7 @@ export const EDITED_TASK_STORAGE_KEY = 'current_edited_task';
 export const VIEWED_TASK_STORAGE_KEY = 'current_viewed_task';
 export const APP_STORAGE_KEY = 'app_state';
 export const BOARD_STORAGE_KEY = 'board_state';
+export const SOURCE_DOMAIN = 'https://xtask.tech/';
+export const PATH_TO_API = SOURCE_DOMAIN + 'api/index.php';
+export const LOCAL_STORAGE_TOKEN = 'token';
+export const LOCAL_STORAGE_DICTIONARY = 'dictionary';
