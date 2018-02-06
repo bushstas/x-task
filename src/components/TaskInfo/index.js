@@ -14,16 +14,18 @@ import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
-	widthStyle = {}
-
 	componentDidMount() {
 		this.load(this.props.id);
 	}
 
 	componentWillUpdate(props) {
-		if (this.props.id != props.id) {
+		if (props.id && this.props.id != props.id) {
 			this.load(props.id);
 		}
+	}
+
+	componentWillUnmount() {
+		this.props.doAction('TASKINFO_DISPOSE');
 	}
 
 	load(id) {
@@ -104,7 +106,7 @@ class TaskInfo extends React.Component {
 		let scaleClass = this.scaleClass;
 		let titleClassName = $classy(importance, '.importance-', ['burning', 'urgent']);
 		let statusClassName = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
-		this.widthStyle.width = scale + '%';
+		const widthStyle = {width: scale + '%'};
 		return (
 			<td>
 				<div class="status $statusClassName">
@@ -145,7 +147,7 @@ class TaskInfo extends React.Component {
 					<Icon icon="time"/>
 					{scale && (
 						<div class="scale-outer">
-							<div class="scale $scaleClass" style={this.widthStyle}/>
+							<div class="scale $scaleClass" style={widthStyle}/>
 						</div>
 					)}
 					<div class="timepassed">

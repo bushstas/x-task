@@ -1,7 +1,7 @@
 import {get, post} from '../utils/Fetcher';
 import StoreKeeper from '../utils/StoreKeeper';
 import {set as setUser} from '../utils/User';
-import {LOCAL_STORAGE_TOKEN} from '../consts/storage';
+import {LOCAL_STORAGE_TOKEN, APP_STORAGE_KEY, TASKS_STORAGE_KEY, QUICKTASK_STORAGE_KEY} from '../consts/storage';
 import {init as initTaskResolver} from '../utils/TaskResolver';
 
 const init = () => {
@@ -30,7 +30,7 @@ const loaded = (state, data) => {
   }
 }
 
-const load = ({dispatch, state}, filter) => {
+const load = ({then, state}, filter) => {
   if (StoreKeeper.get(LOCAL_STORAGE_TOKEN)) {
     return (
       get('load_user')
@@ -38,7 +38,7 @@ const load = ({dispatch, state}, filter) => {
         data => {
           setUser(data);
           initTaskResolver(data.user);
-          dispatch('USER_LOADED', data);
+          then('LOADED', data);
         },
         () => StoreKeeper.remove(LOCAL_STORAGE_TOKEN)
       )
@@ -47,33 +47,43 @@ const load = ({dispatch, state}, filter) => {
   return Promise.resolve();
 }
 
-const set_project = ({dispatch}, id) => {
+const set_project = ({then}, id) => {
   return post('set_project', {id})
   .then(data => {
     setUser(data);
-    dispatch('USER_CHANGED', data);
+    then('CHANGED', data);
   });
 }
 
-const auth = ({doAction}, data) => {
+const auth = ({and}, data) => {
   post('auth', data)
   .then(({token}) => {
     if (token) {
       StoreKeeper.set(LOCAL_STORAGE_TOKEN, token);
-      doAction('USER_LOAD');
+      and('LOAD');
     }
   });
 }
 
-const register = ({doAction}, data) => {
+const register = ({and}, data) => {
   post('auth', data)
   .then(({token}) => {
     if (token) {
       StoreKeeper.set(LOCAL_STORAGE_TOKEN, token);
-      doAction('USER_LOAD');
+      and('LOAD');
     }
   });
 }
+
+const logout = ({reset}, data) => {
+  post('logout');
+  StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
+  StoreKeeper.remove(APP_STORAGE_KEY);
+  StoreKeeper.remove(TASKS_STORAGE_KEY);
+  StoreKeeper.remove(QUICKTASK_STORAGE_KEY);
+  reset();
+}
+
 
 export default {
   actions: {
@@ -81,48 +91,11 @@ export default {
     set_project,
     auth,
     register,
-    // logout
+    logout
   },
   reducers: {
     init,
     changed,
     loaded
   }
-} 
-
-
-
-
-// export const setProject = (id) => {
-//   return post('set_project', {id})
-//       .then(onLoad, onFail);
-// }
-
-// const doAction = (action, data) => {
-//   loaded = false;
-//   let cb = function(data) {
-//     StoreKeeper.set(LOCAL_STORAGE_TOKEN, data.token);
-//     load();
-//   };
-//   post(action, data).then(cb);
-// }
-
-// export const register = (data) => {
-//   if (!data.login) {
-//     data.login = '';
-//   }
-//   doAction('register', data);
-//   return {then}
-// }
-
-// export const logout = () => {
-//   post('logout');
-//   user = null;
-//   currentProject = null;
-//   StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
-//   StoreKeeper.remove(APP_STORAGE_KEY);
-//   StoreKeeper.remove(TASKS_STORAGE_KEY);
-//   StoreKeeper.remove(QUICKTASK_STORAGE_KEY);
-//   Store.reset();
-//   return {then}
-// }
+}

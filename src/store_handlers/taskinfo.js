@@ -15,11 +15,11 @@ const changed = (state, data) => {
    return data;
 }
 
-const load = ({dispatch, getState}, id) => {
-  dispatch('TASKINFO_CHANGED', {fetching: true});
+const load = ({then, getState}, id) => {
+  then('CHANGED', {fetching: true});
   get('load_task_info', {id})
   .then((data) => {
-    dispatch('TASKINFO_CHANGED', {
+    then('CHANGED', {
       fetching: false,
       data
     });
@@ -39,12 +39,17 @@ const check_subtask = ({dispatch, state}, {idx, checked, id}) => {
   dispatch('TASKINFO_CHANGED', {listChecked});
   post('check_subtask', {id, idx, checked});
 }
- 
+
+const dispose = ({then}) => {
+   then('INIT');
+}
+
  
 export default {
   actions: {
     load,
-    check_subtask
+    check_subtask,
+    dispose
   },
   reducers: {
     init,

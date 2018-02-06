@@ -160,10 +160,7 @@ class App extends React.PureComponent {
 
   handleNavigate = ({target: {dataset: {name}}}) => {
     if (name == 'logout') {
-      logout()
-      .then((isAuthorized) => {
-        this.forceUpdate();
-      });
+      this.props.doAction('USER_LOGOUT');
     } else if (name) {
       this.props.doAction('APP_CHANGE', {appActiveTab: name});
     }

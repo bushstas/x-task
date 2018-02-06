@@ -22,13 +22,14 @@ class Tasks extends React.Component {
 
 	render() {
 		let {
-			tasksFetching
+			tasks,
+			fetching
 		} = this.props;
 	 	return (
 	 		<div class="self">
 		 		{this.tabs}
-		 		<Loader fetching={tasksFetching} classes="content">
-					{this.tasks}
+		 		<Loader fetching={fetching} classes="content">
+					{tasks && this.tasks}
 				</Loader>
 				{this.leftMenu}
 				{this.rightMenu}

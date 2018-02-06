@@ -105,11 +105,11 @@ class Board extends React.Component {
 						</div>
 					</div>
 				</div>
-				<Loader classes="outer-content" fetching={fetching}>
-					<div class="content">
+				<div class="outer-content">
+					<Loader classes="content" fetching={fetching}>						
 						{order && this.content}
-					</div>
-				</Loader>
+					</Loader>
+				</div>
 				<div class="footer">
 					<div class="footer-bg" style={style}/>
 					<div class="footer-inner">
@@ -196,8 +196,11 @@ class Board extends React.Component {
 
 	get empty() {
 		return (
-			<div class="empty">
-				111111
+			<div class="no-tasks">
+				<Icon icon="sad"/>
+				<div class="no-tasks-text">
+					{dict.no_tasks}
+				</div>
 			</div>
 		)
 	}

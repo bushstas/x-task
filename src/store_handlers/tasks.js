@@ -6,7 +6,7 @@ import {TASKS_STORAGE_KEY} from '../consts/storage';
 const getDefaultState = () => {
   return {
     filter: 'all',
-    tasksFetching: false,
+    fetching: false,
     taskInfoFetching: false
   }
 }
@@ -43,7 +43,7 @@ const changed = (state, data) => {
 }
 
 const load = ({dispatch, state}, data = {}) => {
-  dispatch('TASKS_CHANGED', {tasksFetching: true});
+  dispatch('TASKS_CHANGED', {fetching: true});
   let {filter, status, importance = [], type = []} = state;
   if (data.importance) {
     let idx = importance.indexOf(data.importance);
@@ -85,7 +85,7 @@ const load = ({dispatch, state}, data = {}) => {
   get('load_tasks', params)
   .then(({tasks, dict}) => {
     dispatch('TASKS_CHANGED', {
-    	tasksFetching: false,
+    	fetching: false,
     	tasks,
     	dict
     });

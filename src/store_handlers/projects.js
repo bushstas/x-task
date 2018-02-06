@@ -74,11 +74,15 @@ const load = ({dispatch}) => {
   });
 }
 
-const load_list = ({dispatch}) => {
+const load_list = ({then}) => {
   get('load_projects_list')
   .then((data) => {
-    dispatch('PROJECTS_CHANGED', data);
+    then('CHANGED', data);
   });
+}
+
+const reset_list = ({then}) => {
+  then('CHANGED', {projectsList: null});
 }
 
 const show_edit_form = ({dispatch}, projectToken) => {
@@ -127,7 +131,8 @@ export default {
     show_edit_form,
     request_access,
     activate,
-    load_list
+    load_list,
+    reset_list
   },
   reducers: {
     init,

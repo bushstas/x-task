@@ -16,11 +16,11 @@ class ProjectsList extends React.Component {
 	}
 
 	render() {
-		let {dict} = this.props;
+		let {projectsList} = this.props;
 		return (
 			<div class="self">
 				<div class="mask" onClick={this.handleClose}/>
-				<Loader classes="content" fetching={!dict}>
+				<Loader classes="content" fetching={!projectsList}>
 					{this.buttons}
 				</Loader>
 			</div>
@@ -32,12 +32,13 @@ class ProjectsList extends React.Component {
 		return (
 			<div class="actions">
 				{projectsList && projectsList.map((project) => {
-					let {name, id} = project;
+					let {name, id, current} = project;
 					return (
 						<Button 
 							key={id}
 							value={id}
-							onClick={this.handleClick}>
+							onClick={this.handleClick}
+							disabled={current}>
 							{name}
 						</Button>
 					)
@@ -49,13 +50,14 @@ class ProjectsList extends React.Component {
 	handleClick = (id) => {
 		this.props.doAction('USER_SET_PROJECT', id)
 		.then(() => {
-			this.props.doAction(this.props.store + '_LOAD');
+			this.props.doAction(this.props.store + '_LOAD_ON_PROJECT_SET');
 		});
 		this.handleClose();
 	}
 
 	handleClose = () => {
-		this.props.doAction('MODALS_HIDE', 'projects_list');	
+		this.props.doAction('MODALS_HIDE', 'projects_list');
+		this.props.doAction('PROJECTS_RESET_LIST');
 	}
 }
 

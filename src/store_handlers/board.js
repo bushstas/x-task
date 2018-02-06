@@ -39,10 +39,10 @@ const fetched = (state, data) => {
   };
 }
 
-const load = ({dispatch, state}, filter) => {
-  dispatch('BOARD_CHANGED', {fetching: true});
+const load = ({then, state}, filter) => {
+  then('CHANGED', {fetching: true});
   if (filter) {
-    dispatch('BOARD_CHANGED', {filter});
+    then('CHANGED', {filter});
   } else {
    filter = state.filter;
   }
@@ -50,32 +50,32 @@ const load = ({dispatch, state}, filter) => {
   const users = Object.keys(addedUsers).join(',');
   get('load_board', {filter, users})
   .then(boardData => {
-    dispatch('BOARD_FETCHED', boardData);
+    then('FETCHED', boardData);
   });
 }
 
-const add_user = ({dispatch, state, doAction}, {id, userId, userName}) => {
+const add_user = ({then, state, and}, {id, userId, userName}) => {
   const {addedUsers} = state;
   addedUsers[userId] = {avatarId: id, userName};
-  dispatch('BOARD_CHANGED', {addedUsers});
-  doAction('BOARD_LOAD');
+  then('CHANGED', {addedUsers});
+  and('LOAD');
 }
 
-const remove_user = ({dispatch, state, doAction}, userId) => {
+const remove_user = ({then, state, and}, userId) => {
   const {addedUsers} = state;
   delete addedUsers[userId];
-  dispatch('BOARD_CHANGED', {addedUsers});
-  doAction('BOARD_LOAD');
+  then('CHANGED', {addedUsers});
+  and('LOAD');
 }
 
-const reset_users = ({dispatch, doAction}) => {
-  dispatch('BOARD_CHANGED', {addedUsers: {}});
-  doAction('BOARD_LOAD');
+const reset_users = ({then, and}) => {
+  then('CHANGED', {addedUsers: {}});
+  and('LOAD');
 }
 
-const show_task_info = ({dispatch, doAction, state}, {id, index, status}) => {
+const show_task_info = ({then, doAction, state}, {id, index, status}) => {
   let tasksCount = state.tasks[status].length;
-  dispatch('BOARD_CHANGED', {
+  then('CHANGED', {
     shownTaskId: id,
     shownTaskIndex: index,
     showTaskStatus: status
@@ -83,24 +83,29 @@ const show_task_info = ({dispatch, doAction, state}, {id, index, status}) => {
   doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'BOARD', index}});
 }
 
-const show_prev = ({doAction, state}) => {  
+const show_prev = ({and, state}) => {  
   let {shownTaskIndex, showTaskStatus, tasks} = state;
   tasks = tasks[showTaskStatus];
   let prev = shownTaskIndex - 1;
   if (prev < 0) {
     prev = tasks.length - 1;
   }
-  doAction('BOARD_SHOW_TASK_INFO', {id: tasks[prev].id, index: prev, status: showTaskStatus});
+  and('SHOW_TASK_INFO', {id: tasks[prev].id, index: prev, status: showTaskStatus});
 }
 
-const show_next = ({doAction, state}) => {
+const show_next = ({and, state}) => {
   let {shownTaskIndex, showTaskStatus, tasks} = state;
   tasks = tasks[showTaskStatus];
   let next = shownTaskIndex + 1;
   if (next > tasks.length - 1) {
     next = 0;
   }
-  doAction('BOARD_SHOW_TASK_INFO', {id: tasks[next].id, index: next, status: showTaskStatus});
+  and('SHOW_TASK_INFO', {id: tasks[next].id, index: next, status: showTaskStatus});
+}
+
+const load_on_project_set = ({and}) => {
+  and('RESET_USERS');
+  and('LOAD');
 }
 
 export default {
@@ -112,7 +117,8 @@ export default {
     reset_users,
     show_task_info,
     show_prev,
-    show_next
+    show_next,
+    load_on_project_set
   },
   reducers: {
     init,

@@ -128,8 +128,14 @@
     	flex-direction: column;
    		white-space: normal;
 	}
-	.empty {
-		var .abs.l5.r5.t.b.bc-fff.br5.p7.pt35.box.shad-eee-10;
+	.no-tasks {
+		var .abs.l5.r5.t5.b10.bc-fff.br5;
+		..icon {
+			var .abs.fs200.l.r.t50p.mt-140.cen.c-d6d6d6;
+		}
+	}
+	.no-tasks-text {
+		var .abs.t50p.cen.l.r.fs18.c-a9a9a9.mt65;
 	}
 	.column-title {
 		var .abs.t.l.r.bc-555.c-fff.br5-5-0-0.box.p5-10.fs14;
