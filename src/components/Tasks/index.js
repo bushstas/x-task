@@ -245,6 +245,7 @@ class Tasks extends React.Component {
 
 const params = {
   has: 'tasks',
-  flat: true
+  flat: true,
+  pure: true
 }
 export default Store.connect(Tasks, params);

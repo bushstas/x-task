@@ -42,8 +42,8 @@ const changed = (state, data) => {
   return data;
 }
 
-const load = ({dispatch, state}, data = {}) => {
-  dispatch('TASKS_CHANGED', {fetching: true});
+const load = ({dispatchAsync, then, state}, data = {}) => {
+  dispatchAsync('TASKS_CHANGED', {fetching: true});
   let {filter, status, importance = [], type = []} = state;
   if (data.importance) {
     let idx = importance.indexOf(data.importance);
@@ -52,7 +52,7 @@ const load = ({dispatch, state}, data = {}) => {
     } else {
       importance.push(data.importance);
     }
-    dispatch('TASKS_CHANGED', {importance});
+    then('CHANGED', {importance});
   }
   importance = importance.toString();
   if (data.type) {
@@ -62,16 +62,16 @@ const load = ({dispatch, state}, data = {}) => {
     } else {
       type.push(data.type);
     }
-    dispatch('TASKS_CHANGED', {type});
+    then('CHANGED', {type});
   }
   type = type.toString();
   if (data.filter) {
     filter = data.filter;
-    dispatch('TASKS_CHANGED', data);
+    then('CHANGED', data);
   }
   if (data.status) {
     status = data.status;
-    dispatch('TASKS_CHANGED', data);
+    then('CHANGED', data);
   }
   if (data.my) {
     filter = 'my';
@@ -84,7 +84,7 @@ const load = ({dispatch, state}, data = {}) => {
   };
   get('load_tasks', params)
   .then(({tasks, dict}) => {
-    dispatch('TASKS_CHANGED', {
+    then('CHANGED', {
     	fetching: false,
     	tasks,
     	dict
@@ -92,54 +92,54 @@ const load = ({dispatch, state}, data = {}) => {
   });
 }
 
-const show_task_info = ({dispatch, doAction, state}, {id, index}) => {
+const show_task_info = ({then, doAction, state}, {id, index}) => {
   let tasksCount = state.tasks.length;
-  dispatch('TASKS_CHANGED', {
+  then('CHANGED', {
   	shownTaskId: id,
     shownTaskIndex: index
   });
-  doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'TASKS'}});
+  doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'TASKS', index}});
 }
 
-const show_prev = ({doAction, state}) => {  
+const show_prev = ({and, state}) => {  
   let {shownTaskIndex, tasks} = state;
   let prev = shownTaskIndex - 1;
   if (prev < 0) {
     prev = tasks.length - 1;
   }
-  doAction('TASKS_SHOW_TASK_INFO', {id: tasks[prev].id, index: prev});
+  and('SHOW_TASK_INFO', {id: tasks[prev].id, index: prev});
 }
 
-const show_next = ({doAction, state}) => {
+const show_next = ({and, state}) => {
   let {shownTaskIndex, tasks} = state;
   let next = shownTaskIndex + 1;
   if (next > tasks.length - 1) {
     next = 0;
   }
-  doAction('TASKS_SHOW_TASK_INFO', {id: tasks[next].id, index: next});
+  and('SHOW_TASK_INFO', {id: tasks[next].id, index: next});
 }
 
-const hide = ({dispatch, doAction}) => {
-   dispatch('TASKS_CHANGED', {
+const hide = ({then, doAction}) => {
+   then('CHANGED', {
   	shownTaskId: null,
     shownTaskIndex: null
   });
   doAction('MODALS_HIDE', 'task_info');
 }
 
-const load_counts = ({dispatch}) => {
+const load_counts = ({then}) => {
   get('load_task_counts')
   .then(({counts}) => {
-    dispatch('TASKS_CHANGED', {counts});
+    then('CHANGED', {counts});
   });
 }
 
 let interval;
-const start_update = ({doAction}, data) => {
-  doAction('TASKS_STOP_UPDATE');
+const start_update = ({and}, data) => {
+  and('STOP_UPDATE');
   let cb = () => {
-    doAction('TASKS_LOAD', data);
-    doAction('TASKS_LOAD_COUNTS');  
+    and('LOAD', data);
+    and('LOAD_COUNTS');  
   };    
   interval = setInterval(cb, 30000);
   cb();

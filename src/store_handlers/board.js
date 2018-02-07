@@ -39,8 +39,8 @@ const fetched = (state, data) => {
   };
 }
 
-const load = ({then, state}, filter) => {
-  then('CHANGED', {fetching: true});
+const load = ({then, dispatchAsync, state}, filter) => {
+  dispatchAsync('BOARD_CHANGED', {fetching: true});
   if (filter) {
     then('CHANGED', {filter});
   } else {

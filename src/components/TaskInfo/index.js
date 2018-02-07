@@ -25,7 +25,7 @@ class TaskInfo extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.doAction('TASKINFO_DISPOSE');
+		this.props.dispatch('TASKINFO_INIT');
 	}
 
 	load(id) {
@@ -469,6 +469,7 @@ class TaskInfo extends React.Component {
 
 let params = {
 	has: 'taskinfo',
-	flat: true
+	flat: true,
+	pure: true
 }
 export default Store.connect(TaskInfo, params);

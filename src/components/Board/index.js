@@ -238,6 +238,7 @@ class Board extends React.Component {
 
 let params = {
 	has: 'board, user:project',
-	flat: true
+	flat: true,
+	pure: true
 }
 export default Store.connect(Board, params);
