@@ -1,37 +1,18 @@
 import {get} from '../utils/Fetcher';
-import StoreKeeper from '../utils/StoreKeeper';
 import {setProject} from '../utils/User';
 import {BOARD_STORAGE_KEY} from '../consts/storage';
 
-const getSavedData = () => {
-  return StoreKeeper.get(BOARD_STORAGE_KEY);
-}
-
-const getDefaultState = () => {
+const init = () => {
   return {
       filter: 'status',
       addedUsers: {}
-  }
-}
-let defaultState = getSavedData() || getDefaultState();
-
-const onStateChanged = (state) => {
-    let {filter, addedUsers} = state;
-    StoreKeeper.set(BOARD_STORAGE_KEY, {
-      filter,
-      addedUsers
-    });
+  };
 }
 
-const init = () => {
-  defaultState.fetching = true;
-  return defaultState;
-}
- 
 const changed = (state, data) => {
   return data;
 }
-
+ 
 const fetched = (state, data) => {
   return {
     fetching: false,
@@ -39,10 +20,10 @@ const fetched = (state, data) => {
   };
 }
 
-const load = ({then, dispatchAsync, state}, filter) => {
+const load = ({then, setState, dispatchAsync, state}, filter) => {
   dispatchAsync('BOARD_CHANGED', {fetching: true});
   if (filter) {
-    then('CHANGED', {filter});
+    setState({filter});
   } else {
    filter = state.filter;
   }
@@ -54,28 +35,28 @@ const load = ({then, dispatchAsync, state}, filter) => {
   });
 }
 
-const add_user = ({then, state, and}, {id, userId, userName}) => {
+const add_user = ({setState, state, and}, {id, userId, userName}) => {
   const {addedUsers} = state;
   addedUsers[userId] = {avatarId: id, userName};
-  then('CHANGED', {addedUsers});
+  setState({addedUsers});
   and('LOAD');
 }
 
-const remove_user = ({then, state, and}, userId) => {
+const remove_user = ({setState, state, and}, userId) => {
   const {addedUsers} = state;
   delete addedUsers[userId];
-  then('CHANGED', {addedUsers});
+  setState({addedUsers});
   and('LOAD');
 }
 
-const reset_users = ({then, and}) => {
-  then('CHANGED', {addedUsers: {}});
+const reset_users = ({setState, and}) => {
+  setState({addedUsers: {}});
   and('LOAD');
 }
 
-const show_task_info = ({then, doAction, state}, {id, index, status}) => {
+const show_task_info = ({setState, doAction, state}, {id, index, status}) => {
   let tasksCount = state.tasks[status].length;
-  then('CHANGED', {
+  setState({
     shownTaskId: id,
     shownTaskIndex: index,
     showTaskStatus: status
@@ -109,7 +90,13 @@ const load_on_project_set = ({and}) => {
 }
 
 export default {
-  onStateChanged,
+  localStore: {
+    key: BOARD_STORAGE_KEY,
+    names: [
+      'filter',
+      'addedUsers'
+    ]
+  },
   actions: {
   	load,
     add_user,
@@ -122,7 +109,7 @@ export default {
   },
   reducers: {
     init,
-    changed,
-    fetched
+    fetched,
+    changed
   }
 } 

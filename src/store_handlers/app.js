@@ -3,75 +3,52 @@ import {APP_STORAGE_KEY, LOCAL_STORAGE_DICTIONARY} from '../consts/storage';
 import {get, post} from '../utils/Fetcher';
 import {set as setDictionary} from '../utils/Dictionary';
 
-const getSavedData = () => {
-  return StoreKeeper.get(APP_STORAGE_KEY);
-}
-
-const getDefaultState = () => {
-	return {
-  		usersActiveTab: 'team',
-  		appActiveTab: 'tasks',
-  		accountActiveTab: 'home'
-	}
-}
-let defaultState = getSavedData() || getDefaultState();
-
-const onStateChanged = (state) => {
-    let {
-      appActiveTab,
-      usersActiveTab,
-      accountActiveTab,
-      shown
-    } = state;
-    StoreKeeper.set(APP_STORAGE_KEY, {
-      appActiveTab,
-      usersActiveTab,
-      accountActiveTab,
-      shown
-    });
-}
-
 const init = () => {
-  return defaultState;
+  return {
+      usersActiveTab: 'team',
+      appActiveTab: 'tasks',
+      accountActiveTab: 'home'
+  };
 }
  
-const changed = (state, data) => {
-  return data;
+const change = ({setState}, data) => {
+  setState(data);
 }
 
-const change = ({dispatch}, data) => {
-  dispatch('APP_CHANGED', data);
-}
-
-const show_status = ({dispatch}, data) => {
-  get('load_work_status')
-  .then(data => {
-    dispatch('APP_CHANGED', data);
-  });
+const show_status = ({setState}, data) => {
+  get('load_work_status').then(setState);
 }
 
 const save_status = ({dispatch}, data) => {
   post('save_work_status', data);
 }
 
-const show_board = ({dispatch}) => {
-  dispatch('APP_CHANGED', {shown: 'board'});
+const show_board = ({setState}) => {
+  setState({shown: 'board'});
 }
 
-const hide = ({dispatch}) => {
-  dispatch('APP_CHANGED', {shown: null});
+const hide = ({setState}) => {
+  setState({shown: null});
 }
 
-const load_dictionary = ({dispatch}) => {
+const load_dictionary = ({setState}) => {
   return get('dictionary')
   .then(data => {
-    dispatch('APP_CHANGED', data);
+    setState(data);
     setDictionary(data);
   });
 }
 
 export default {
-  onStateChanged,
+  localStore: {
+    key: APP_STORAGE_KEY,
+    names: [
+      'appActiveTab',
+      'usersActiveTab',
+      'accountActiveTab',
+      'shown'
+    ]
+  },
   actions: {
   	change,
     show_status,
@@ -81,7 +58,6 @@ export default {
     load_dictionary
   },
   reducers: {
-    init,
-    changed
+    init
   }
 } 
