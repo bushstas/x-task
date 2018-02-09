@@ -39,19 +39,19 @@ const add_user = ({setState, state, and}, {id, userId, userName}) => {
   const {addedUsers} = state;
   addedUsers[userId] = {avatarId: id, userName};
   setState({addedUsers});
-  and('LOAD');
+  and('START_UPDATE');
 }
 
 const remove_user = ({setState, state, and}, userId) => {
   const {addedUsers} = state;
   delete addedUsers[userId];
   setState({addedUsers});
-  and('LOAD');
+  and('START_UPDATE');
 }
 
 const reset_users = ({setState, and}) => {
   setState({addedUsers: {}});
-  and('LOAD');
+  and('START_UPDATE');
 }
 
 const show_task_info = ({setState, doAction, state}, {id, index, status}) => {
@@ -86,7 +86,20 @@ const show_next = ({and, state}) => {
 
 const load_on_project_set = ({and}) => {
   and('RESET_USERS');
-  and('LOAD');
+  and('START_UPDATE');
+}
+
+let interval;
+const start_update = ({and}, filter) => {
+  and('STOP_UPDATE');
+  and('LOAD', filter);
+  interval = setInterval(() => {
+    and('LOAD');
+  }, 30000);
+}
+
+const stop_update = () => {
+  clearInterval(interval);
 }
 
 export default {
@@ -108,7 +121,9 @@ export default {
     show_task_info,
     show_prev,
     show_next,
-    load_on_project_set
+    load_on_project_set,
+    start_update,
+    stop_update
   },
   reducers: {
     init,

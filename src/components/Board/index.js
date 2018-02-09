@@ -30,7 +30,7 @@ class Board extends React.Component {
 	}
 
 	componentDidMount() {
-		this.props.doAction('BOARD_LOAD');
+		this.props.doAction('BOARD_START_UPDATE');
 		addHandler(this.handleClose);
 	}
 
@@ -211,7 +211,7 @@ class Board extends React.Component {
 
 	handleRightMenuClick = ({target: {dataset: {value: filter}}}) => {
 		if (filter) {
-			this.props.doAction('BOARD_LOAD', filter);
+			this.props.doAction('BOARD_START_UPDATE', filter);
 		} 
 	}
 
