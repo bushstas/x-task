@@ -1,23 +1,15 @@
 import {get, post} from '../utils/Fetcher';
 import {init as initTaskResolver} from '../utils/TaskResolver';
- 
-const DEFAULT_STATE = {
-  fetching: true,
-  projects: [],
-  formShown: null,
-  formData: {},
-  editedProject: null,
-  dict: {}
-}
- 
-/**
- ===============
- Reducers
- ===============
-*/
- 
+  
 const init = () => {
-  return DEFAULT_STATE;
+  return {
+    fetching: true,
+    projects: [],
+    formShown: null,
+    formData: {},
+    editedProject: null,
+    dict: {}
+  }
 }
  
 const fetching = (state) => {
@@ -30,11 +22,6 @@ const loaded = (state, data) => {
     fetching: false
   }
 }
-
-const changed = (state, data) => {
-  return data;
-}
-
 
 const edit_form_shown = (state, {project, projectToken, dict}) => {
   let {dict: dictionary} = state;
@@ -66,40 +53,37 @@ const form_data_changed = (state, formData) => {
 }
 
 
-const load = ({dispatch}) => {
-  dispatch('PROJECTS_FETCHING');
+const load = ({then, dispatchAsync}) => {
+  dispatchAsync('PROJECTS_FETCHING');
   get('load_projects')
   .then((data) => {
-    dispatch('PROJECTS_LOADED', data);
+    then('LOADED', data);
   });
 }
 
-const load_list = ({then}) => {
-  get('load_projects_list')
-  .then((data) => {
-    then('CHANGED', data);
-  });
+const load_list = ({setState}) => {
+  get('load_projects_list').then(setState);
 }
 
-const reset_list = ({then}) => {
-  then('CHANGED', {projectsList: null});
+const reset_list = ({setState}) => {
+  setState({projectsList: null});
 }
 
-const show_edit_form = ({dispatch}, projectToken) => {
+const show_edit_form = ({then}, projectToken) => {
   post('get_project_data', {projectToken})
     .then(({project, dict}) => {
-      dispatch('PROJECTS_EDIT_FORM_SHOWN', {projectToken, project, dict});
+      then('EDIT_FORM_SHOWN', {projectToken, project, dict});
     });   
 }
 
-const save = ({dispatch, state, doAction}, {token}) => {
+const save = ({then, state, and}, {token}) => {
     let {formData} = state;
     post('save_project', {projectToken: token, ...formData})
     .then(
         () => {
           initTaskResolver(formData);
-          dispatch('PROJECTS_CANCELED');
-          doAction('PROJECTS_LOAD');
+          then('CANCELED');
+          and('LOAD');
         }
     );
 }
@@ -111,14 +95,14 @@ const request_access = ({doAction}, projectToken) => {
     });   
 }
 
-const activate = ({doAction}, {token, homepage}) => {
+const activate = ({and}, {token, homepage}) => {
     post('activate_project', {projectToken: token})
     .then(
         () => {
           if (homepage) {
             location.href = homepage;
           } else {
-            doAction('PROJECTS_LOAD');
+            and('LOAD');
           }
         }
     ); 
@@ -141,7 +125,6 @@ export default {
     edit_form_shown,
     add_form_shown,
     canceled,
-    form_data_changed,
-    changed
+    form_data_changed
   }
 } 

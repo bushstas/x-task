@@ -4,20 +4,16 @@ const init = () => {
   };
 }
  
-const changed = (state, data) => {
-  return data;
-}
-
-const show = ({dispatch, state}, {name, props = {}}) => {
+const show = ({setState, state}, {name, props = {}}) => {
   let {modals} = state;
   modals[name] = props;
-  dispatch('MODALS_CHANGED', {modals});
+  setState({modals});
 }
 
-const hide = ({dispatch, state}, name) => {
+const hide = ({setState, state}, name) => {
   let {modals} = state;
   delete modals[name];
-  dispatch('MODALS_CHANGED', {modals});
+  setState({modals});
 }
 
 export default {
@@ -26,7 +22,6 @@ export default {
     hide
   },
   reducers: {
-    init,
-    changed
+    init
   }
 } 

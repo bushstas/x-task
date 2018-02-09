@@ -1,48 +1,20 @@
-import StoreKeeper from '../utils/StoreKeeper';
 import {editTask} from '../utils/TaskResolver';
 import {get, post} from '../utils/Fetcher';
 import {TASKS_STORAGE_KEY} from '../consts/storage';
  
-const getDefaultState = () => {
+const init = () => {
   return {
     filter: 'all',
     fetching: false,
     taskInfoFetching: false
   }
 }
-let savedState = StoreKeeper.get(TASKS_STORAGE_KEY);
-
-let defaultState = {
-  ...getDefaultState(),
-  ...savedState
-};
-let timeout;
-const onStateChanged = (state) => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    StoreKeeper.set(TASKS_STORAGE_KEY, {
-      filter: state.filter,
-      status: state.status,
-      type: state.type,
-      importance: state.importance
-    });
-  }, 500);
-}
-
- 
-const init = () => {
-  return defaultState;
-}
-
-const reset = () => {
-  return getDefaultState();
-}
 
 const changed = (state, data) => {
   return data;
 }
 
-const load = ({dispatchAsync, then, state}, data = {}) => {
+const load = ({dispatchAsync, setState, state}, data = {}) => {
   dispatchAsync('TASKS_CHANGED', {fetching: true});
   let {filter, status, importance = [], type = []} = state;
   if (data.importance) {
@@ -52,7 +24,7 @@ const load = ({dispatchAsync, then, state}, data = {}) => {
     } else {
       importance.push(data.importance);
     }
-    then('CHANGED', {importance});
+    setState({importance});
   }
   importance = importance.toString();
   if (data.type) {
@@ -62,16 +34,16 @@ const load = ({dispatchAsync, then, state}, data = {}) => {
     } else {
       type.push(data.type);
     }
-    then('CHANGED', {type});
+    setState({type});
   }
   type = type.toString();
   if (data.filter) {
     filter = data.filter;
-    then('CHANGED', data);
+    setState(data);
   }
   if (data.status) {
     status = data.status;
-    then('CHANGED', data);
+    setState(data);
   }
   if (data.my) {
     filter = 'my';
@@ -84,17 +56,17 @@ const load = ({dispatchAsync, then, state}, data = {}) => {
   };
   get('load_tasks', params)
   .then(({tasks, dict}) => {
-    then('CHANGED', {
-    	fetching: false,
+    dispatchAsync('TASKS_CHANGED', {fetching: false});
+    setState({
     	tasks,
     	dict
     });
   });
 }
 
-const show_task_info = ({then, doAction, state}, {id, index}) => {
+const show_task_info = ({setState, doAction, state}, {id, index}) => {
   let tasksCount = state.tasks.length;
-  then('CHANGED', {
+  setState({
   	shownTaskId: id,
     shownTaskIndex: index
   });
@@ -119,30 +91,27 @@ const show_next = ({and, state}) => {
   and('SHOW_TASK_INFO', {id: tasks[next].id, index: next});
 }
 
-const hide = ({then, doAction}) => {
-   then('CHANGED', {
+const hide = ({setState, doAction}) => {
+   setState({
   	shownTaskId: null,
     shownTaskIndex: null
   });
   doAction('MODALS_HIDE', 'task_info');
 }
 
-const load_counts = ({then}) => {
-  get('load_task_counts')
-  .then(({counts}) => {
-    then('CHANGED', {counts});
-  });
+const load_counts = ({setState}) => {
+  get('load_task_counts').then(setState);
 }
 
 let interval;
 const start_update = ({and}, data) => {
   and('STOP_UPDATE');
-  let cb = () => {
-    and('LOAD', data);
+  and('LOAD', data);
+  and('LOAD_COUNTS');  
+  interval = setInterval(() => {
+    and('LOAD');
     and('LOAD_COUNTS');  
-  };    
-  interval = setInterval(cb, 30000);
-  cb();
+  }, 30000);
 }
 
 const stop_update = () => {
@@ -150,7 +119,16 @@ const stop_update = () => {
 }
 
 export default {
-  onStateChanged,
+  localStore: {
+    key: TASKS_STORAGE_KEY,
+    names: [
+        'filter',
+        'status',
+        'type',
+        'importance'
+    ],
+    timeout: 500
+  },
   actions: {
     load,
     show_task_info,
@@ -163,7 +141,6 @@ export default {
   },
   reducers: {
     init,
-    reset,
     changed
   }
 } 

@@ -1,32 +1,29 @@
 import {get, post} from '../utils/Fetcher';
  
-const DEFAULT_STATE = {
-  data: null,
-  fetching: false,
-  listChecked: []
-}
- 
-
 const init = () => {
-  return DEFAULT_STATE;
+  return {
+    data: null,
+    fetching: false,
+    listChecked: []
+  }
 }
 
 const changed = (state, data) => {
    return data;
 }
 
-const load = ({dispatchAsync, then, getState}, id) => {
+const load = ({dispatchAsync, setState, getState}, id) => {
   dispatchAsync('TASKINFO_CHANGED', {fetching: true}); 
   get('load_task_info', {id})
   .then((data) => {
-    then('CHANGED', {
+    setState({
       fetching: false,
       data
     });
   });
 }
 
-const check_subtask = ({dispatch, state}, {idx, checked, id}) => {
+const check_subtask = ({setState, state}, {idx, checked, id}) => {
   let {listChecked} = state;
   if (checked) {
     listChecked.push(~~idx);
@@ -36,7 +33,7 @@ const check_subtask = ({dispatch, state}, {idx, checked, id}) => {
       listChecked.splice(index, 1);
     }
   }
-  dispatch('TASKINFO_CHANGED', {listChecked});
+  setState({listChecked});
   post('check_subtask', {id, idx, checked});
 }
  

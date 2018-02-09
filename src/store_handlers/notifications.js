@@ -1,17 +1,9 @@
 const DEFAULT_SHOWTIME = 30000;
 
-const DEFAULT_STATE = {
-   items: []
-}
- 
-/**
- ===============
- Reducers
- ===============
-*/
- 
 const init = () => {
-  return DEFAULT_STATE;
+  return {
+     items: []
+  };
 }
  
 const added = (state, data) => {
@@ -42,25 +34,25 @@ const removed_special = (state, special) => {
 }
 
 
-const add = ({dispatch}, {message, messageFromDict, classes, showtime}) => {
-  dispatch('NOTIFICATIONS_ADDED', {message, classes, messageFromDict});
+const add = ({then}, {message, messageFromDict, classes, showtime}) => {
+  then('ADDED', {message, classes, messageFromDict});
   if (typeof showtime != 'number') {
     showtime = DEFAULT_SHOWTIME;
   }
   setTimeout(() => {
-    dispatch('NOTIFICATIONS_REMOVED');
+    then('REMOVED');
   }, showtime);
 }
 
-const add_special = ({dispatch}, {message, messageFromDict, classes}) => {
-  dispatch('NOTIFICATIONS_ADDED_SPECIAL', {message, classes, messageFromDict});
+const add_special = ({then}, {message, messageFromDict, classes}) => {
+  then('ADDED_SPECIAL', {message, classes, messageFromDict});
   setTimeout(() => {
-    dispatch('NOTIFICATIONS_REMOVED_SPECIAL');
+    then('REMOVED_SPECIAL');
   }, 2000);
 }
 
-const add_success = ({doAction}, message) => {
-  doAction('NOTIFICATIONS_ADD', {message, type: 'success'})
+const add_success = ({and}, message) => {
+  and('ADD', {message, type: 'success'})
 }
  
 export default {

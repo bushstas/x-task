@@ -6,20 +6,7 @@ import {get, post} from '../utils/Fetcher';
 import {getUrls, stopEditTask} from '../utils/TaskResolver';
 import {QUICKTASK_STORAGE_KEY, EDITED_TASK_STORAGE_KEY} from '../consts/storage';
 
-let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
-let savedState;
-const getSavedData = () => {
-  let state = StoreKeeper.get(QUICKTASK_STORAGE_KEY);
-  if (state) {
-    delete state.urlDialogData;
-  }
-  return state;
-}
-if (!editedTask) {
-  savedState = getSavedData();
-}
-
-const getDefaultState = () => {
+const init = () => {
   return {
     status: 'active',
     formData: {},
@@ -47,36 +34,11 @@ const getDefaultState = () => {
   }
 }
 
-let defaultState = savedState || getDefaultState();
-let timeout;
-const onStateChanged = (state) => {
-  let {status} = state;
-  if (state.task_id) {
-    return;
+const reset = (state, savedState) => {
+  if (state.task_id && savedState) {
+      return savedState;
   }
-  if (!status) {
-    StoreKeeper.remove(QUICKTASK_STORAGE_KEY);
-  } else {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      StoreKeeper.set(QUICKTASK_STORAGE_KEY, state);
-    }, 500);
-  }
-}
- 
-const init = () => {
-  return defaultState;
-}
-
-const reset = (state) => {
-  let {task_id} = state;
-  if (task_id) {
-    state = getSavedData();
-    if (state) {
-      return state;
-    }
-  }
-  state = getDefaultState();
+  state = init();
   state.urls = getUrls();
   return state;
 }
@@ -278,10 +240,10 @@ const unset_active_element = ({doAction}) => {
   });
 }
 
-const cancel = ({dispatch, doAction, state}) => {
+const cancel = ({dispatch, doAction, state, getSavedState}) => {
   if (state.task_id) {
     stopEditTask();
-    if (getSavedData()) {    
+    if (getSavedState('quicktask')) {    
      doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'createmode'});
     }
   }
@@ -397,8 +359,28 @@ const assign_user = ({dispatch, state}, {token, assigned, role}) => {
   dispatch('QUICKTASK_CHANGE', {[key]: list});
 }
 
+const editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
 export default {
-  onStateChanged,
+  localStore: {
+    key: QUICKTASK_STORAGE_KEY,
+    shouldLoad: () => {
+      return !editedTask;
+    },
+    shouldSave: (state) => {
+      return !state.task_id;
+    },
+    shouldRemove: (state) => {
+      return !editedTask && !state.status;
+    },
+    getInitialData: (defaultState, savedState) => {
+      delete savedState.urlDialogData;
+      return {
+        ...defaultState,
+        ...savedState 
+      }
+    },
+    timeout: 500
+  },
   actions: {
     add_element,
     change,

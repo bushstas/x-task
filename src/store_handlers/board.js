@@ -95,7 +95,10 @@ export default {
     names: [
       'filter',
       'addedUsers'
-    ]
+    ],
+    shouldSave: (state) => {
+      return !!state
+    }
   },
   actions: {
   	load,

@@ -1,28 +1,5 @@
-import StoreKeeper from '../utils/StoreKeeper';
+import {MASK_STORAGE_KEY} from '../consts/storage';
 
-const STORAGE_KEY = 'mask';
-let savedState = StoreKeeper.get(STORAGE_KEY);
-
-let timeout;
-const onStateChanged = (state) => {
-  clearTimeout(timeout);
-  delete state.added;
-  delete state.removed;
-  timeout = setTimeout(() => {
-    StoreKeeper.set(STORAGE_KEY, state);
-  }, 1000);
-}
-
-const DEFAULT_STATE = {
-	maskShown: false,
-	maskOpacity: 0.7,
-	cuts: {},
-	added: null,
-	removed: null
-}
-
-let defaultState = savedState || DEFAULT_STATE;
- 
 const getCoords = (data) => {
 	let {mx, my, width, height, fixed, id} = data;
 	let x = document.body.clientWidth / 2 + mx,
@@ -33,7 +10,13 @@ const getCoords = (data) => {
 }
 
 const init = () => {
-	return defaultState;
+	return {
+		maskShown: false,
+		maskOpacity: 0.7,
+		cuts: {},
+		added: null,
+		removed: null
+	};
 }
  
 const param_changed = (state, props) => {
@@ -112,7 +95,15 @@ const change = ({dispatch}, data) => {
 
  
 export default {
-	onStateChanged,
+	localStore: {
+	    key: MASK_STORAGE_KEY,
+	    getData: (state) => {
+			delete state.added;
+  			delete state.removed;
+  			return state;
+	    },
+	    timeout: 1000
+	},
 	actions: {
 		toggle_param,
 		cut_mask,

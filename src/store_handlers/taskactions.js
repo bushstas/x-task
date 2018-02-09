@@ -9,28 +9,25 @@ const init = (state, taskId = null) => {
   };
 }
 
-const changed = (state, data) => {
-  return data;
-}
-
-const load = ({dispatch}, id) => {
-  dispatch('TASKACTIONS_INIT', id);
+const load = ({then, setState}, id) => {
+  then('INIT', id);
   get('load_task_actions', {id})
   .then(({actions, dict}) => {
-    dispatch('TASKACTIONS_CHANGED', {actions, dict});
+    setState({actions, dict});
   });
 }
 
-const action = ({doAction, state, getState}, name) => {
+const action = ({state}, name) => {
   let {taskId: id} = state;
   return get('task_action', {name, id});
 }
  
-const edit = ({doAction, state, getState}) => {
-  let {taskActionsData: {task_id: id}, tasks} = state;
+const edit = ({state, getState}) => {
+  let {taskId} = state;
+  let tasks = getState('tasks.tasks');
   for (let t of tasks) {
-    if (t.id == id) {
-      editTask(id, t.data.urls[0]);
+    if (t.id == taskId) {
+      editTask(taskId, t.data.urls[0]);
       break;
     }
   }
@@ -43,7 +40,6 @@ export default {
     edit
   },
   reducers: {
-    init,
-    changed
+    init
   }
 } 
