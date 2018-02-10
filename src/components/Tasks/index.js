@@ -27,6 +27,7 @@ class Tasks extends React.Component {
 		} = this.props;
 	 	return (
 	 		<div class="self">
+		 		{this.projectInfo}
 		 		{this.tabs}
 		 		<Loader fetching={fetching} classes="content">
 					{tasks && this.tasks}
@@ -43,7 +44,7 @@ class Tasks extends React.Component {
 			status = []
 		} = this.props;
 		return (
-			<div>
+			<div class="tabs">
 				{getRoleId() != 7 && (
 			 		<Tabs 
 						classes="main-tabs"
@@ -66,6 +67,17 @@ class Tasks extends React.Component {
 					{this.statusTabs}
 				</Tabs>
 				
+			</div>
+		)
+	}
+
+	get projectInfo() {
+		let {project} = this.props;
+		return (
+			<div class="project-info">
+				<div class="project-name" style={project.bgStyle} onClick={this.handleProjectClick}>
+					{project.name}
+				</div>
 			</div>
 		)
 	}
@@ -197,7 +209,7 @@ class Tasks extends React.Component {
 							filter={filter}
 							status={status}
 							data={task}
-							key={i}
+							key={task.id}
 							index={i}
 							onClick={this.handleTaskClick}/>
 					)
@@ -241,11 +253,10 @@ class Tasks extends React.Component {
 	handleImportanceSelect = (importance) => {
 		this.props.doAction('TASKS_START_UPDATE', {importance});
 	}
+
+	handleProjectClick = () => {
+		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {store: 'TASKS'}});	
+	}
 }
 
-const params = {
-  has: 'tasks',
-  flat: true,
-  pure: true
-}
-export default Store.connect(Tasks, params);
+export default Store.connect(Tasks, 'tasks, user:project');

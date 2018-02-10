@@ -5,6 +5,7 @@ import Store from 'xstore';
 import App from './components/App';
 
 import app from './store_handlers/app';
+import statuses from './store_handlers/statuses';
 import user from './store_handlers/user';
 import board from './store_handlers/board';
 import modals from './store_handlers/modals';
@@ -18,8 +19,12 @@ import tasks from './store_handlers/tasks';
 import taskinfo from './store_handlers/taskinfo';
 import taskactions from './store_handlers/taskactions';
 
+Store.setDefaultParams({
+	flat: true
+});
 Store.addHandlers({
 	app,
+	statuses,
 	user,
 	board,
 	modals,

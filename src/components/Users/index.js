@@ -126,8 +126,4 @@ class Users extends React.Component {
 	}
 }
 
-const params = {
-  has: 'app, team',
-  flat: true
-}
-export default Store.connect(Users, params);
+export default Store.connect(Users, 'app, team');

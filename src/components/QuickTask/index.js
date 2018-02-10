@@ -518,8 +518,4 @@ class QuickTask extends React.Component {
 	}
 }
 
-const params = {
-  has: 'quicktask',
-  flat: true
-}
-export default Store.connect(QuickTask, params);
+export default Store.connect(QuickTask, 'quicktask');

@@ -34,8 +34,4 @@ class MaskModeButton extends React.PureComponent {
 	}
 }
 
-const params = {
-  has: 'mask',
-  flat: true
-}
-export default Store.connect(MaskModeButton, params);
+export default Store.connect(MaskModeButton, 'mask');

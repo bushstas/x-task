@@ -467,9 +467,4 @@ class TaskInfo extends React.Component {
 	}
 }
 
-let params = {
-	has: 'taskinfo',
-	flat: true,
-	pure: true
-}
-export default Store.connect(TaskInfo, params);
+export default Store.connect(TaskInfo, 'taskinfo');

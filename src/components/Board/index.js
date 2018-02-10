@@ -10,25 +10,6 @@ import {getProjectName, getProjectColor} from '../../utils/User';
 
 class Board extends React.Component {
 
-	constructor(props) {
-		super();
-		if (props.project) {
-			this.initBgStyle(props.project.color);
-		}
-	}
-
-	componentWillUpdate(props) {
-		const {project: p1 = {}} = this.props;
-		const {project: p2} = props;
-		if (p2 && p1.id != p2.id) {
-			this.initBgStyle(props.project.color);
-		}
-	}
-
-	initBgStyle(color) {
-		this.bgStyle = {backgroundColor: '#' + color};
-	}
-
 	componentDidMount() {
 		this.props.doAction('BOARD_START_UPDATE');
 		addHandler(this.handleClose);
@@ -50,7 +31,7 @@ class Board extends React.Component {
 		} = this.props;
 
 		const userKeys = Object.keys(addedUsers);
-		const style = this.bgStyle;
+		const style = project.bgStyle;
 
 		return (
 			<div class="self">
@@ -236,9 +217,4 @@ class Board extends React.Component {
 	}
 }
 
-let params = {
-	has: 'board, user:project',
-	flat: true,
-	pure: true
-}
-export default Store.connect(Board, params);
+export default Store.connect(Board, 'board, user:project');

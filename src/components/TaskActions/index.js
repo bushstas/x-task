@@ -90,8 +90,4 @@ class TaskActions extends React.Component {
 	}
 }
 
-let params = {
-	has: 'taskactions',
-	flat: true
-}
-export default Store.connect(TaskActions, params);
+export default Store.connect(TaskActions, 'taskactions');

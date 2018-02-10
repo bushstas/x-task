@@ -61,8 +61,4 @@ class ProjectsList extends React.Component {
 	}
 }
 
-let params = {
-	has: 'projects',
-	flat: true
-}
-export default Store.connect(ProjectsList, params);
+export default Store.connect(ProjectsList, 'projects');

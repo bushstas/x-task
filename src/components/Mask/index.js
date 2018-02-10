@@ -66,8 +66,4 @@ class Mask extends React.Component {
 	}
 }
 
-const params = {
-  has: 'mask',
-  flat: true
-}
-export default Store.connect(Mask, params);
+export default Store.connect(Mask, 'mask');

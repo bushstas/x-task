@@ -147,8 +147,4 @@ class VisualElements extends React.Component {
 	}
 }
 
-const params = {
-  has: 'quicktask',
-  flat: true
-}
-export default Store.connect(VisualElements, params);
+export default Store.connect(VisualElements, 'quicktask');

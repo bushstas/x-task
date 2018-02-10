@@ -98,8 +98,4 @@ class Account extends React.Component {
 	}
 }
 
-const params = {
-  has: 'app',
-  flat: true
-}
-export default Store.connect(Account, params);
+export default Store.connect(Account, 'app');

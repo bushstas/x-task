@@ -13,16 +13,15 @@ const init = () => {
   };
 }
  
-const changed = (state, data) => {
-  return data;
-}
-
 const loaded = (state, data) => {
   let isAuthorized = false;
   if (data.errcode) {
     StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
   } else if (data.user instanceof Object) {
     isAuthorized = true;
+  }
+  data.project.bgStyle =  {
+    backgroundColor: '#' + data.project.color
   }
   return {
     ...data,
@@ -47,11 +46,14 @@ const load = ({then, state}, filter) => {
   return Promise.resolve();
 }
 
-const set_project = ({then}, id) => {
+const set_project = ({setState}, id) => {
   return post('set_project', {id})
   .then(data => {
+    data.project.bgStyle =  {
+      backgroundColor: '#' + data.project.color
+    }
     setUser(data);
-    then('CHANGED', data);
+    setState(data);
   });
 }
 
@@ -95,7 +97,6 @@ export default {
   },
   reducers: {
     init,
-    changed,
     loaded
   }
 }

@@ -1,6 +1,6 @@
 import StoreKeeper from '../utils/StoreKeeper';
 import {APP_STORAGE_KEY, LOCAL_STORAGE_DICTIONARY} from '../consts/storage';
-import {get, post} from '../utils/Fetcher';
+import {get} from '../utils/Fetcher';
 import {set as setDictionary} from '../utils/Dictionary';
 
 const init = () => {
@@ -13,14 +13,6 @@ const init = () => {
  
 const change = ({setState}, data) => {
   setState(data);
-}
-
-const show_status = ({setState}, data) => {
-  get('load_work_status').then(setState);
-}
-
-const save_status = ({dispatch}, data) => {
-  post('save_work_status', data);
 }
 
 const show_board = ({setState}) => {
@@ -51,8 +43,6 @@ export default {
   },
   actions: {
   	change,
-    show_status,
-    save_status,
     show_board,
     hide,
     load_dictionary

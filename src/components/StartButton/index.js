@@ -1,13 +1,12 @@
 import React from 'react';
 import Store from 'xstore';
-import WorkStatuses from '../WorkStatuses';
 import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
 import {hasRight, isAuthorized} from '../../utils/User';
 
 class StartButton extends React.Component {
 	render() {
-		let {shown, statusesDict} = this.props;
+		let {shown} = this.props;
 		let active = shown == 'main';
 		return (
 			<div class="self $?active">
@@ -40,12 +39,6 @@ class StartButton extends React.Component {
 						)}
 					</div>
 				)}
-				{statusesDict && (
-					<WorkStatuses 
-						dict={statusesDict}
-						onClose={this.handleStatusesClose}
-						onSelect={this.handleStatusesSelect}/>
-				)}
 			</div>
 		)
 	}
@@ -57,7 +50,7 @@ class StartButton extends React.Component {
   	}
 
   	handleStatusClick = () => {
-  		this.props.doAction('APP_SHOW_STATUS');
+  		this.props.doAction('MODALS_SHOW', {name: 'work_statuses'});
   	}
 
 	get hasCreateButton() {
@@ -68,21 +61,9 @@ class StartButton extends React.Component {
 		this.props.doAction('APP_CHANGE', {shown: 'quicktask'});
   	}
 
-  	handleStatusesClose = () => {
-  		this.props.doAction('APP_CHANGE', {statusesDict: null});
-  	}
-
-  	handleStatusesSelect = (status) => {
-  		this.props.doAction('APP_SAVE_STATUS', {status});	
-  	}
-
   	handleBoardClick = () => {
   		this.props.doAction('APP_SHOW_BOARD');
   	}
 }
 
-const params = {
-  has: 'app',
-  flat: true
-}
-export default Store.connect(StartButton, params);
+export default Store.connect(StartButton, 'app');

@@ -154,8 +154,4 @@ class Team extends React.Component {
 	}
 }
 
-const params = {
-  has: 'team',
-  flat: true
-}
-export default Store.connect(Team, params);
+export default Store.connect(Team, 'team');

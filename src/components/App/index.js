@@ -167,9 +167,4 @@ class App extends React.PureComponent {
   }
 }
 
-const params = {
-  has: 'app, user:isAuthorized',
-  flat: true,
-  pure: true
-}
-export default Store.connect(App, params);
+export default Store.connect(App, 'app, user:isAuthorized');

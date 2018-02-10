@@ -1,45 +1,53 @@
 import React from 'react';
+import Store from 'xstore';
 import Button from '../../ui/Button';
 import Loader from '../../ui/Loader';
 import Input from '../../ui/Input';
 
-export default class WorkStatuses extends React.Component {
-	static defaultProps = {
-		onClose: () => {},
-		onSelect: () => {}
-	}
+class WorkStatuses extends React.Component {
 
-	constructor() {
-		super();
-		this.state = {};
+	componentDidMount() {
+		this.props.doAction('STATUSES_LOAD');
 	}
 
 	render() {
-		let {reasonShown} = this.state;
-		let {dict} = this.props;
+		let {statuses} = this.props;
 		return (
 			<div class="self">
-				<div class="mask" onClick={this.handleClickMask}/>
+				<div class="mask" onClick={this.handleClose}/>
 				<Loader classes="content">
+					{statuses && this.content}
+				</Loader>
+			</div>
+		)
+	}
+
+	get content() {
+		let {dict, reasonShown, reason} = this.props;
+		return (
+			<div class="inner-content">
 					{this.buttons}
 					{reasonShown && (
 						<div class="reason">
 							<div class="reason-title">
 								{dict.reason}
 							</div>
-							<Input name="reason" textarea/>
+							<Input 
+								name="reason"
+								value={reason}
+								onChange={this.handleChangeReason}
+								textarea/>
 							<div class="reason-note">
 								* {dict.click}
 							</div>
 						</div>
 					)}
-				</Loader>
 			</div>
 		)
 	}
 
 	get buttons() {
-		let {dict: {statuses}, onAction} = this.props;
+		let {statuses} = this.props;
 		return (
 			<div class="actions">
 				{statuses.map((status) => {
@@ -48,7 +56,7 @@ export default class WorkStatuses extends React.Component {
 						<Button 
 							key={id}
 							value={id}
-							onClick={this.handleAction}
+							onClick={this.handleStatusesSelect}
 							disabled={current}>
 							{name}
 						</Button>
@@ -58,17 +66,23 @@ export default class WorkStatuses extends React.Component {
 		)
 	}
 
-	handleAction = (status) => {
-		let {reasonShown} = this.state;
-		if (!reasonShown && status == 2) {
-			this.setState({reasonShown: true});
-		} else {
-			this.props.onSelect(status);
-			this.handleClickMask();
-		}
+	handleClose = () => {
+		this.props.doAction('MODALS_HIDE', 'work_statuses');
 	}
 
-	handleClickMask = () => {
-		this.props.onClose();
-	}
+  	handleChangeReason = (name, reason) => {
+  		this.props.doAction('STATUSES_CHANGE', {reason});
+  	}
+
+  	handleStatusesSelect = (status) => {
+		let {reasonShown, reason} = this.props;
+		if (!reasonShown && status == 2) {
+			this.props.doAction('STATUSES_CHANGE', {reasonShown: true});
+		} else {
+			this.props.doAction('STATUSES_SAVE', {status, reason});	
+			this.handleClose();
+		}  		
+  	}
 }
+
+export default Store.connect(WorkStatuses, 'statuses');

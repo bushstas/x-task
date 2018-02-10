@@ -99,8 +99,4 @@ class UserForm extends React.Component {
 	}
 }
 
-const params = {
-  has: 'team',
-  flat: true
-}
-export default Store.connect(UserForm, params);
+export default Store.connect(UserForm, 'team');

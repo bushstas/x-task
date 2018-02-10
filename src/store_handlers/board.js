@@ -31,7 +31,8 @@ const load = ({then, setState, dispatchAsync, state}, filter) => {
   const users = Object.keys(addedUsers).join(',');
   get('load_board', {filter, users})
   .then(boardData => {
-    then('FETCHED', boardData);
+    dispatchAsync('BOARD_CHANGED', {fetching: false});
+    setState(boardData);
   });
 }
 

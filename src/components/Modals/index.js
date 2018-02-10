@@ -6,6 +6,7 @@ import Dialog from '../../ui/Dialog';
 import TaskInfo from '../TaskInfo';
 import TaskActions from '../TaskActions';
 import ProjectsList from '../ProjectsList';
+import WorkStatuses from '../WorkStatuses';
 
 class Modals extends React.Component {	
 	render() {
@@ -53,6 +54,12 @@ class Modals extends React.Component {
 						store={data.store}/>
 				)
 			break;
+
+			case 'work_statuses':
+				dialog = (
+					<WorkStatuses key="workstatuses"/>
+				)
+			break;
 		}
 		return dialog;
 	}
@@ -80,6 +87,6 @@ class Modals extends React.Component {
 
 let params = {
 	has: 'modals',
-	flat: true
+	pure: false
 }
 export default Store.connect(Modals, params);

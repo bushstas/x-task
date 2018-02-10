@@ -47,11 +47,7 @@ class Notifications extends React.Component {
 	}
 }
 
-let params = {
-	has: 'notifications',
-	flat: true
-}
-export default Store.connect(Notifications, params);
+export default Store.connect(Notifications, 'notifications');
 
 export const showSuccessNotification = (message) => {
 	const classes = $classy(".notification-success");

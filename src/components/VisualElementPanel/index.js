@@ -166,8 +166,4 @@ class VisualElementPanel extends React.Component {
 	}
 }
 
-const params = {
-  has: 'quicktask:visualElement|selectionElement|markElement|bent|currentType',
-  flat: true
-}
-export default Store.connect(VisualElementPanel, params);
+export default Store.connect(VisualElementPanel, 'quicktask:visualElement|selectionElement|markElement|bent|currentType');

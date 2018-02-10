@@ -82,8 +82,4 @@ class ProjectForm extends React.Component {
 	}
 }
 
-const params = {
-  has: 'projects',
-  flat: true
-}
-export default Store.connect(ProjectForm, params);
+export default Store.connect(ProjectForm, 'projects');

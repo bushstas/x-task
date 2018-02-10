@@ -64,6 +64,10 @@ const load = ({dispatchAsync, setState, state}, data = {}) => {
   });
 }
 
+const load_on_project_set = ({and}) => {
+  and('START_UPDATE');
+}
+
 const show_task_info = ({setState, doAction, state}, {id, index}) => {
   let tasksCount = state.tasks.length;
   setState({
@@ -131,6 +135,7 @@ export default {
   },
   actions: {
     load,
+    load_on_project_set,
     show_task_info,
     hide,
     show_prev,
