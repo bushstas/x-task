@@ -25,7 +25,6 @@ export default class Dialog extends React.Component {
 					<div class="title">
 						{this.title}
 						{titleContent}
-						
 						<Icon icon="close" 
 							onClick={this.handleClose}
 							classes="close"/>
@@ -65,4 +64,5 @@ export default class Dialog extends React.Component {
 			this.handleClose(e);
 		}
 	}
+
 }

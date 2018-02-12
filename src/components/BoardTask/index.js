@@ -12,6 +12,7 @@ export default class BoardTask extends React.Component {
 			importance,
 			status,
 			id,
+			idn,
 			title,
 			avatar_id,
 			user_id,
@@ -31,6 +32,9 @@ export default class BoardTask extends React.Component {
 						userName={user_name}/>
 
 					<div class="icons">
+						<span class="id">
+							<span class=".gray">#</span>{idn}
+						</span>
 						<Icon>
 							{icons.task_type[type]}
 						</Icon>

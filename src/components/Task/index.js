@@ -24,12 +24,17 @@ export default class Task extends React.Component {
 				timeleft,
 				overdue,
 				actions,
-				id
+				id,
+				idn
 			}
 		} = this.props;
 		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		return (
 			<div class="self $className" onClick={this.handleClick}>
+				<div class="id">
+					<span class=".gray">#</span>{idn}
+				</div>
+
 				<div class="icons">
 					<Icon>
 						{icons.task_type[type]}

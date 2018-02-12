@@ -20,13 +20,19 @@
 		var .fs13.lh17.c-777;
 	}
 	.timeleft {
-		var .fs13.lh18.m3-10.br3.p0-4-1-4.bc-aaa.c-fff.inb;
+		var .fs13.lh18.m3-10.br3.p0-4.bc-aaa.c-fff.inb;
 		&.overdue {
 			var .bc-ce002f!;
 		}
 	}
+	.id {
+		var .abs.l7.t3.fs18;
+		..gray {
+			var .c-989898;
+		}
+	}
 	.icons {
-		var .abs.l7.t11;
+		var .abs.l7.t30;
 		..icon {
 			var .inb.fs22.c-000.mr6.o3;
 		}

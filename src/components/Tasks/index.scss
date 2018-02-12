@@ -1,4 +1,5 @@
 .self {
+	var .mt-15;
 	.content {
 		var .abs.t102.l.r.b15.ova.p0-20;
 		&.my {
@@ -12,6 +13,12 @@
 		var .p0-20;	
 		.project-name {
 		    var .inb.fs14.nowr.c-fff.p0-10.pntr.cen.mnw100.box.lh36.br3;
+		}
+		.project-info-inner {
+			var .rel.z2.p6-0;
+		}
+		&:before {
+			var .cnt.bc-fff.o9.abs.rubb;
 		}
 	}
 	.statuses {

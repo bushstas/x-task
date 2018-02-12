@@ -74,9 +74,11 @@ class Tasks extends React.Component {
 	get projectInfo() {
 		let {project} = this.props;
 		return (
-			<div class="project-info">
-				<div class="project-name" style={project.bgStyle} onClick={this.handleProjectClick}>
-					{project.name}
+			<div class="project-info" style={project.bgStyle}>
+				<div class="project-info-inner">
+					<div class="project-name" style={project.bgStyle} onClick={this.handleProjectClick}>
+						{project.name}
+					</div>
 				</div>
 			</div>
 		)
