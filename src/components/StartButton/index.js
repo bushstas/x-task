@@ -27,6 +27,12 @@ class StartButton extends React.Component {
 							class="user"
 							title={dict.work_status}
 							onClick={this.handleStatusClick}>
+							#
+						</div>
+						<div 
+							class="user"
+							title={dict.work_status}
+							onClick={this.handleStatusClick}>
 							<Icon icon="user"/>
 						</div>
 						{this.hasCreateButton && (
