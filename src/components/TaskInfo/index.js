@@ -91,7 +91,8 @@ class TaskInfo extends React.Component {
 					type,
 					action,
 					info,
-					changed
+					changed,
+					idn
 				},	
 				taskList
 			}
@@ -138,6 +139,9 @@ class TaskInfo extends React.Component {
 					</div>
 				</div>
 				<div class="title $titleClassName">
+					<span class="id">
+						<span>#</span>{idn}
+					</span>
 					{title}
 				</div>
 				<div class="description">

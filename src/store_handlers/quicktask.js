@@ -366,8 +366,8 @@ export default {
     shouldLoad: () => {
       return !editedTask;
     },
-    shouldSave: (state) => {
-      return !state.task_id;
+    shouldSave: (state) => {console.log(state)
+      return !editedTask;
     },
     shouldRemove: (state) => {
       return !editedTask && !state.status;
