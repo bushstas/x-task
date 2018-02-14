@@ -95,14 +95,6 @@ const show_next = ({and, state}) => {
   and('SHOW_TASK_INFO', {id: tasks[next].id, index: next});
 }
 
-const hide = ({setState, doAction}) => {
-   setState({
-  	shownTaskId: null,
-    shownTaskIndex: null
-  });
-  doAction('MODALS_HIDE', 'task_info');
-}
-
 const load_counts = ({setState}) => {
   get('load_task_counts').then(setState);
 }
@@ -137,7 +129,6 @@ export default {
     load,
     load_on_project_set,
     show_task_info,
-    hide,
     show_prev,
     show_next,
     load_counts,

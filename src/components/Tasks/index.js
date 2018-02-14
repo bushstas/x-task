@@ -79,6 +79,14 @@ class Tasks extends React.Component {
 					<div class="project-name" style={project.bgStyle} onClick={this.handleProjectClick}>
 						{project.name}
 					</div>
+					<div class="project-release">
+						<div class="project-release-name">
+							Релиз: 2.0.4
+						</div>
+						<div class="project-release-date">
+							Намечен на 12.05.18
+						</div>
+					</div>
 				</div>
 			</div>
 		)
@@ -163,8 +171,7 @@ class Tasks extends React.Component {
 		let role = getRoleId();
 		let caption = role > 4  ? dict.tasks_for_me : dict.tasks_from_me;
 		let value = role > 4 ? 'forme' : 'fromme';
-		return this.renderTab(caption, value);
-		
+		return this.renderTab(caption, value);		
 	}
 
 	get thirdTab() {
@@ -242,10 +249,6 @@ class Tasks extends React.Component {
 
 	handleTaskClick = (id, index) => {
 		this.props.doAction('TASKS_SHOW_TASK_INFO', {id, index});
-	}
-
-	handleInfoClose = () => {
-		this.props.doAction('TASKS_HIDE');
 	}
 
 	handleTypeSelect = (type) => {
