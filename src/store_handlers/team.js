@@ -1,21 +1,17 @@
 import {get, post} from '../utils/Fetcher';
- 
-const DEFAULT_STATE = {
-  users: [],
-  userFormShown: null,
-  userFormData: {},
-  editedUserToken: null,
-  teamFetching: false 
-}
- 
-/**
- ===============
- Reducers
- ===============
-*/
+import {USERS_STORAGE_KEY} from '../consts/storage';
  
 const init = () => {
-  return DEFAULT_STATE;
+  return {
+    users: [],
+    userFormShown: null,
+    userFormData: {},
+    editedUserToken: null,
+    teamFetching: false,
+    typeFilter: null,
+    statusFilter: null,
+    usersActiveTab: 'team'
+  }
 }
 
 const fetching = (state) => {
@@ -63,17 +59,19 @@ const changed = (state, users) => {
   }
 }
  
-/**
- ===============
- Actions
- ===============
-*/
-
-const load = ({dispatch}) => {
-  dispatch('TEAM_FETCHING');
-  get('load_users')
+const load = ({dispatchAsync, state}) => {
+  const {typeFilter, statusFilter} = state;
+  const params = {};
+  if (typeFilter) {
+    params.typeFilter = typeFilter;
+  }
+  if (statusFilter) {
+    params.statusFilter = statusFilter;
+  }
+  dispatchAsync('TEAM_FETCHING');
+  get('load_users', params)
   .then((data) => {
-    dispatch('TEAM_LOADED', data);
+    dispatchAsync('TEAM_LOADED', data);
   });
 }
 
@@ -99,14 +97,26 @@ const show_edit_form = ({dispatch}, userToken) => {
       dispatch('TEAM_EDIT_FORM_SHOWN', {userToken, user});
     });   
 }
- 
+
+const change = ({setState}, data) => {
+  setState(data);
+} 
  
 export default {
+  localStore: {
+    key: USERS_STORAGE_KEY,
+    names: [
+      'usersActiveTab',
+      'typeFilter',
+      'statusFilter'
+    ]
+  },
   actions: {
     load,
     save,
     refresh,
-    show_edit_form
+    show_edit_form,
+    change
   },
   reducers: {
     init,

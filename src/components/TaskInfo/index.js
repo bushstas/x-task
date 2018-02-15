@@ -453,6 +453,8 @@ class TaskInfo extends React.Component {
 	}
 
 	handleLinkMouseDown = () => {
+		this.props.doAction('MODALS_HIDE,');
+		this.props.doAction('APP_HIDE');
 		StoreKeeper.set('current_viewed_task', this.props.id);
 	}
 

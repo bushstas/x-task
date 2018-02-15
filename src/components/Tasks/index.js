@@ -73,6 +73,7 @@ class Tasks extends React.Component {
 
 	get projectInfo() {
 		let {project} = this.props;
+		let {progress = {}} = this.props;
 		return (
 			<div class="project-info" style={project.bgStyle}>
 				<div class="project-info-inner">
@@ -86,6 +87,9 @@ class Tasks extends React.Component {
 						<div class="project-release-date">
 							Намечен на 12.05.18
 						</div>
+					</div>
+					<div class="project-stat">
+						Завершено задач: {progress.done} / {progress.all}
 					</div>
 				</div>
 			</div>

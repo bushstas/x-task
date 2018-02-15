@@ -12,6 +12,8 @@ class Users extends React.Component {
 	render() {
 	 	return (
 	 		<div class=".users">
+				{this.statusFilterTabs}
+				{this.typeFilterTabs}
 				{this.tabs}
 				{this.actionButtons}
 			</div>
@@ -36,6 +38,40 @@ class Users extends React.Component {
 				</Tab>
 			</Tabs>
 		)
+	}
+
+	get typeFilterTabs() {
+		let {usersActiveTab, typeFilter} = this.props;
+		if (usersActiveTab == 'team') {
+			return (
+				<Tabs 
+					onSelect={this.handleSelectTypeFilterTab}
+					classes="type-filter-tabs"
+					value={typeFilter}
+					simple
+					optional>
+					<Tab caption={dict.admins} value="admins"/>
+					<Tab caption={dict.execs} value="execs"/>
+				</Tabs>
+			)
+		}
+	}
+
+	get statusFilterTabs() {
+		let {usersActiveTab, statusFilter} = this.props;
+		if (usersActiveTab == 'team') {
+			return (
+				<Tabs 
+					onSelect={this.handleSelectStatusFilterTab}
+					classes="status-filter-tabs"
+					value={statusFilter}
+					simple
+					optional>
+					<Tab caption={dict.free} value="free"/>
+					<Tab caption={dict.busy} value="busy"/>
+				</Tabs>
+			)
+		}
 	}
 
 	get teamTabCaption() {
@@ -100,7 +136,17 @@ class Users extends React.Component {
 	}
 
 	handleSelectTab = (usersActiveTab) => {
-		this.props.doAction('APP_CHANGE', {usersActiveTab});
+		this.props.doAction('TEAM_CHANGE', {usersActiveTab});
+	}
+
+	handleSelectTypeFilterTab = (typeFilter) => {
+		this.props.doAction('TEAM_CHANGE', {typeFilter});
+		this.props.doAction('TEAM_LOAD');
+	}
+
+	handleSelectStatusFilterTab = (statusFilter) => {
+		this.props.doAction('TEAM_CHANGE', {statusFilter});	
+		this.props.doAction('TEAM_LOAD');
 	}
 
 	handleAction = (action, data) => {

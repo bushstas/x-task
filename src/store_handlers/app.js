@@ -5,7 +5,6 @@ import {set as setDictionary} from '../utils/Dictionary';
 
 const init = () => {
   return {
-      usersActiveTab: 'team',
       appActiveTab: 'tasks',
       accountActiveTab: 'home'
   };
@@ -36,7 +35,6 @@ export default {
     key: APP_STORAGE_KEY,
     names: [
       'appActiveTab',
-      'usersActiveTab',
       'accountActiveTab',
       'shown'
     ]

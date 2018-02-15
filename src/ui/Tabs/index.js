@@ -1,6 +1,6 @@
 import React from 'react';
 
-export class Tabs extends React.PureComponent {
+export class Tabs extends React.Component {
 	static defaultProps = {
 		onSelect: () => {}
 	}
@@ -68,7 +68,7 @@ export class Tabs extends React.PureComponent {
 	}
 
 	handleSelectTab = (value, single) => {
-		let {multiple} = this.props;
+		let {multiple, optional} = this.props;
 		let {activeTab} = this.state;
 		if (multiple) {
 			if (!(activeTab instanceof Array)) {
@@ -97,6 +97,8 @@ export class Tabs extends React.PureComponent {
 			}
 		} else if (activeTab != value) {
 			activeTab = value;
+		} else if (optional) {
+			activeTab = null;
 		}
 		this.setState({activeTab});
 		this.props.onSelect(activeTab);
