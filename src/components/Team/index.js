@@ -1,6 +1,8 @@
 import React from 'react';
 import User from '../User';
 import UserForm from '../UserForm';
+import {dict} from '../../utils/Dictionary';
+import Icon from '../../ui/Icon';
 import Store from 'xstore';
 import Loader from '../../ui/Loader';
 
@@ -14,19 +16,38 @@ class Team extends React.Component {
 	}
 
 	render() {
-		let {userFormShown, teamFetching, users} = this.props;
+		let {userFormShown, teamFetching} = this.props;
 	 	if (userFormShown) {
 	 		return this.form;
 	 	}
 	 	return (
 	 		<Loader classes="self" fetching={teamFetching}>
-	 			{users.map((user) => {
-	 				return (
-	 					<User data={user} key={user.token}/>
-	 				)
-	 			})}
+	 			{this.users}
 	 		</Loader>
 	 	)
+	}
+
+	get users() {
+		let {users} = this.props;
+		if (users.length > 0) {
+			return users.map((user) => {
+	 			return (
+	 				<User data={user} key={user.token}/>
+	 			)
+	 		});
+	 	}
+		return this.noUsers;
+	}
+
+	get noUsers() {
+		return (
+			<div class="no-users">
+				<Icon icon="sad"/>
+				<div class="no-users-text">
+					{dict.no_users}
+				</div>
+			</div>
+		)
 	}
 
 	get form() {

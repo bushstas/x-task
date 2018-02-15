@@ -53,6 +53,18 @@ class Board extends React.Component {
 							</div>
 						</div>
 						<div class="right-menu" onClick={this.handleRightMenuClick}>
+							<span class="menu-item $filter=='mine'?active" data-value="mine">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_mine}
+								</span>
+							</span>
+							<span class="menu-item $filter=='spec'?active" data-value="spec">
+								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-inner">
+									{dict.by_spec}
+								</span>
+							</span>
 							<span class="menu-item $filter=='status'?active" data-value="status">
 								<span class="menu-item-bg" style={style}/>
 								<span class="menu-item-inner">

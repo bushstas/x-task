@@ -10,6 +10,7 @@ const init = () => {
     teamFetching: false,
     typeFilter: null,
     statusFilter: null,
+    projectFilter: null,
     usersActiveTab: 'team'
   }
 }
@@ -60,13 +61,16 @@ const changed = (state, users) => {
 }
  
 const load = ({dispatchAsync, state}) => {
-  const {typeFilter, statusFilter} = state;
+  const {typeFilter, statusFilter, projectFilter} = state;
   const params = {};
   if (typeFilter) {
     params.typeFilter = typeFilter;
   }
   if (statusFilter) {
     params.statusFilter = statusFilter;
+  }
+  if (projectFilter) {
+    params.projectFilter = projectFilter;
   }
   dispatchAsync('TEAM_FETCHING');
   get('load_users', params)
@@ -108,7 +112,8 @@ export default {
     names: [
       'usersActiveTab',
       'typeFilter',
-      'statusFilter'
+      'statusFilter',
+      'projectFilter'
     ]
   },
   actions: {

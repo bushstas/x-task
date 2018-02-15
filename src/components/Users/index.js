@@ -14,6 +14,7 @@ class Users extends React.Component {
 	 		<div class=".users">
 				{this.statusFilterTabs}
 				{this.typeFilterTabs}
+				{this.projectFilterTabs}
 				{this.tabs}
 				{this.actionButtons}
 			</div>
@@ -46,7 +47,7 @@ class Users extends React.Component {
 			return (
 				<Tabs 
 					onSelect={this.handleSelectTypeFilterTab}
-					classes="type-filter-tabs"
+					classes="filter-tabs"
 					value={typeFilter}
 					simple
 					optional>
@@ -63,12 +64,28 @@ class Users extends React.Component {
 			return (
 				<Tabs 
 					onSelect={this.handleSelectStatusFilterTab}
-					classes="status-filter-tabs"
+					classes="filter-tabs"
 					value={statusFilter}
 					simple
 					optional>
 					<Tab caption={dict.free} value="free"/>
 					<Tab caption={dict.busy} value="busy"/>
+				</Tabs>
+			)
+		}
+	}
+
+	get projectFilterTabs() {
+		let {usersActiveTab, projectFilter, project} = this.props;
+		if (usersActiveTab == 'team') {
+			return (
+				<Tabs 
+					onSelect={this.handleSelectProjectFilterTab}
+					classes="filter-tabs"
+					value={projectFilter}
+					simple
+					optional>
+					<Tab caption={project.name} value="on"/>
 				</Tabs>
 			)
 		}
@@ -149,6 +166,11 @@ class Users extends React.Component {
 		this.props.doAction('TEAM_LOAD');
 	}
 
+	handleSelectProjectFilterTab = (projectFilter) => {
+		this.props.doAction('TEAM_CHANGE', {projectFilter});	
+		this.props.doAction('TEAM_LOAD');
+	}
+
 	handleAction = (action, data) => {
 		switch (action) {
 			case 'cancel': 
@@ -172,4 +194,4 @@ class Users extends React.Component {
 	}
 }
 
-export default Store.connect(Users, 'app, team');
+export default Store.connect(Users, 'app, team, user:project');

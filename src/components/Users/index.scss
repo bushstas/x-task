@@ -1,8 +1,8 @@
 .self {
-	.type-filter-tabs {
+	.filter-tabs {
 		var .fr.mr10;
-	}
-	.status-filter-tabs {
-		var .fr.mr20;
+		&:nth-child(1) {
+			var .mr20;
+		}
 	}
 }
