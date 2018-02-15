@@ -20,7 +20,7 @@
 	&.checked {
 		.control {
 			background-color: #555;
-			border-color: #555;
+			border-color: #555 !important;
 			color: #fff;
 		}
 	}

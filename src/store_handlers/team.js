@@ -26,7 +26,7 @@ const loaded = (state, data) => {
 }
 
 const form_data_changed = (state, userFormData) => {
-  return {userFormData}
+  return {userFormData: {...userFormData}}
 }
 
 const edit_form_shown = (state, {user, userToken}) => {

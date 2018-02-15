@@ -116,12 +116,12 @@ class Users extends React.Component {
 	}
 
 	get shownButtons() {
-		let {activeTab} = this.props;
+		let {usersActiveTab} = this.props;
 		if (!hasRight('add_user')) {
 			return [];
 		}
-		switch (activeTab) {
-			case 'users': {
+		switch (usersActiveTab) {
+			case 'team': {
 				let {userFormShown} = this.props;
 				if (userFormShown == 'edit') {
 					return ['save_user', 'cancel'];

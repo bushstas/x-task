@@ -317,6 +317,11 @@ class QuickTask extends React.Component {
 				case 'action':
 				let {type} = this.props;
 					switch (type) {
+						case 'sysadm':
+							if (value == 'removing' || value == 'planning' || value == 'remaking') {
+								return;
+							}
+						break;
 						case 'prototype':
 						case 'design':
 							if (value == 'removing' || value == 'repairing' || value == 'debugging') {
