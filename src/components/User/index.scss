@@ -1,5 +1,5 @@
 .self {
-	var .rel.bo-ddd.br3.mb10.p10-15.pl100.pntr.mnh92.box.nowr;
+	var .rel.bo-ddd.br3.mb10.p10-15.pl100.mnh92.box.nowr;
 	&:before {
 		var .cnt.abs.l322.t.b.w1.bc-e9e9e9;
 	}
@@ -12,7 +12,7 @@
 		var .inb.w220.vtop;
 	}
 	.status {
-		var .p2-4.br3.bc-848484.c-fff.fs12.mt5.inb;
+		var .p2-4.br3.bc-848484.c-fff.fs12.mt5.inb.pntr;
 		&.status-6,
 		&.status-1 {
 			var .bc-5cc31b;
@@ -53,6 +53,12 @@
 	}
 	.title {
 		var .lh12.mb6.fs13.p3-6.br3.bc-f1f1f1.inb;
+		&.tasks {
+			var .fr.pntr;
+			span {
+				var .bold.inb.ml6;
+			}
+		}
 	}
 	.name {
 		white-space: normal;

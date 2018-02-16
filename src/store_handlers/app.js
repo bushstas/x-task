@@ -22,7 +22,8 @@ const hide = ({setState}) => {
   setState({shown: null});
 }
 
-const load_dictionary = ({setState}) => {
+const load_dictionary = ({setState, state}) => {
+  console.log(state)
   return get('dictionary')
   .then(data => {
     setState(data);
@@ -36,8 +37,10 @@ export default {
     names: [
       'appActiveTab',
       'accountActiveTab',
-      'shown'
-    ]
+      'shown',
+      'dictionary'
+    ],
+    lifetime: '1hour'
   },
   actions: {
   	change,

@@ -18,7 +18,8 @@ export default class User extends React.Component {
 			task,
 			status,
 			work_status_id,
-			project_name
+			project_name,
+			task_counts
 		}} = this.props;
 
 		if (!projects) {
@@ -71,6 +72,12 @@ export default class User extends React.Component {
 					<div class="projects">
 						<div class="title">
 							{dict.projects}
+						</div>
+						<div class="title tasks">
+							{dict.tasks} 
+							<span>
+								{task_counts.own} / {task_counts.available}
+							</span>
 						</div>
 						<div class="projects-list">
 							{projects}
