@@ -85,8 +85,4 @@ class Modals extends React.Component {
 	}
 }
 
-let params = {
-	has: 'modals',
-	pure: false
-}
-export default Store.connect(Modals, params);
+export default Store.connect(Modals, 'modals');

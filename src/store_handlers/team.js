@@ -20,14 +20,12 @@ const fetching = (state) => {
 }
 
 const loaded = (state, data) => {
-  return {
-    ...data,
-    teamFetching: false
-  }
+  data.teamFetching = false;
+  return data;
 }
 
 const form_data_changed = (state, userFormData) => {
-  return {userFormData: {...userFormData}}
+  return {userFormData}
 }
 
 const edit_form_shown = (state, {user, userToken}) => {
