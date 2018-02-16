@@ -10,11 +10,21 @@ $lang = $_REQUEST['lang'];
 switch ($lang) {
 	case 'eng':
 		$data = array(
-			'by_type' => 'By type',
-			'by_status' => 'By status',
-			'by_importance' => 'By importance',
+			'by_type' => 'Type',
+			'by_status' => 'Status',
+			'by_importance' => 'Importance',
+			'by_author' => 'Author',
+			'by_exec' => 'Executor',
 			'board' => 'Board',
 			'all_projects' => 'All projects',
+			'by_spec' => 'Post',
+			'by_mine' => 'Mine',
+
+			'admins' => 'Admins',
+			'execs' => 'Executors',
+			'free' => 'Without work',
+			'busy' => 'In work',
+
 			'current_task' => 'Current task',
 			'description' => 'Description',
 			'notifications' => 'Notifications',
@@ -65,6 +75,7 @@ switch ($lang) {
 			'registration' => 'Registration',
 			'register' => 'Register',
 			'no_tasks' => 'No tasks found',
+			'no_users' => 'No users found',
 			'open_tasks' => 'Actual tasks',
 			'participants' => 'Participants',
 			'info' => 'My data',
@@ -107,12 +118,14 @@ switch ($lang) {
 			'fullstack' => 'Full-stack',
 			'htmler' => 'HTML coder',
 			'designer' => 'Designer',
+			'sysadmin' => 'SysAdmin',
 
 			'design' => 'Design',
 			'html' => 'HTML',
 			'text' => 'Texts',
 			'txt' => 'Text',
 			'prototype' => 'Prototypes',
+			'sysadm' => 'System administration',
 			'backend' => 'Backend',
 			'frontend' => 'Frontend',
 			'test' => 'Tests',
@@ -217,11 +230,20 @@ switch ($lang) {
 
 	default:	
 		$data = array(
-			'by_type' => 'По типу',
-			'by_status' => 'По статусу',
-			'by_importance' => 'По важности',
+			'by_type' => 'Тип',
+			'by_status' => 'Статус',
+			'by_importance' => 'Важность',
+			'by_author' => 'Автор',
+			'by_exec' => 'Исполнитель',
 			'board' => 'Доска',
+			'by_spec' => 'Должность',
+			'by_mine' => 'Мои',
 			'all_projects' => 'Все проекты',
+
+			'admins' => 'Админы',
+			'execs' => 'Исполнители',
+			'free' => 'Без работы',
+			'busy' => 'В работе',
 			
 			'current_task' => 'Текущая задача',
 			'description' => 'Описание',
@@ -275,6 +297,7 @@ switch ($lang) {
 			'registration' => 'Регистрация',
 			'register' => 'Зарегистрироваться',
 			'no_tasks' => 'Задачи не найдены',
+			'no_users' => 'Пользователи не найдены',
 			'open_tasks' => 'Откр. задачи',
 			'participants' => 'Участники',
 			'info' => 'Мои данные',
@@ -317,12 +340,14 @@ switch ($lang) {
 			'fullstack' => 'Full-stack',
 			'htmler' => 'Верстальщик',
 			'designer' => 'Дизайнер',
+			'sysadmin' => 'Сисадмин',
 
 			'design' => 'Дизайн',
 			'html' => 'Верстка',
 			'text' => 'Тексты',
 			'txt' => 'Текст',
 			'prototype' => 'Макеты',
+			'sysadm' => 'Системное администрирование',
 			'backend' => 'Бэкэнд',
 			'frontend' => 'Фронтэнд',
 			'test' => 'Тесты',
@@ -522,7 +547,8 @@ $icons['task_type'] = array(
 	'backend' => 'storage',	
 	'test' => 'done_all',
 	'page' => 'content_copy',	
-	'project' => 'web'
+	'project' => 'web',
+	'sysadm' => 'settings_input_component' 
 );
 
 // task action material icons

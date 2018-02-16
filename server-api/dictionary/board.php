@@ -21,6 +21,25 @@ switch ($language) {
 			'current' => 'To do',
 			'cant_do' => 'Problematic',
 			'delayed' => 'Deferred',
+
+			'burning' => 'Burning',
+			'urgent' => 'Urgent',
+			'important' => 'Important',
+			'usual' => 'Usual',
+			'insignificant' => 'Insignificant',
+			'future' => 'Future',
+			'to_think' => 'To think',
+
+			'admin' => 'Administrator',
+			'editor' => 'Editor',
+			'analyst' => 'Analyst',
+			'tester' => 'Tester',
+			'designer' => 'Designer',
+			'fullstack' => 'Full-stack',
+			'htmler' => 'HTML coder',
+			'sysadmin' => 'SysAdmin',
+
+			'none' => 'Not assigned'
 		);
 	break;
 
@@ -44,5 +63,24 @@ switch ($language) {
 			'current' => 'Текущие',
 			'cant_do' => 'Проблемные',
 			'delayed' => 'Отложенные',
+
+			'burning' => 'Горящие',
+			'urgent' => 'Срочные',
+			'important' => 'Важные',
+			'usual' => 'Обычные',
+			'insignificant' => 'Незначительные',
+			'future' => 'На будущее',
+			'to_think' => 'На обдумывание',
+
+			'admin' => 'Администратор',
+			'editor' => 'Редактор',
+			'analyst' => 'Аналитик',
+			'tester' => 'Тестировщик',
+			'fullstack' => 'Full-stack',
+			'htmler' => 'Верстальщик',
+			'designer' => 'Дизайнер',
+			'sysadmin' => 'Сисадмин',
+
+			'none' => 'Неназначенные'
 		);
 }

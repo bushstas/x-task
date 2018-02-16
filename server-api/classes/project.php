@@ -1,15 +1,38 @@
 <?php
 
 class Project {
-	static function get($token) {
+	static function get($id) {
 		$sql = '
 			SELECT 
-				p.*
+				p.*,
+				pc.value AS color,
+				r.id AS release_id,
+				r.name AS release_name
 			FROM 
 				projects p 
+			LEFT JOIN 
+				project_colors pc
+				ON p.color_id = pc.id
+			LEFT JOIN 
+				releases r
+				ON p.id = r.project_id
 			WHERE 
-				p.token = ?
+				p.id = ?
 		';
-		return DB::get($sql, array($token));
+		$row = DB::get($sql, array($id));
+
+		return array(
+			'id' => $row['id'],
+			'token' => $row['token'],
+			'name' => $row['name'],
+			'color' => $row['color'],
+			'releaseId' => $row['release_id'],
+			'release' => $row['release_name']
+		);
+	}
+
+	static function getCurrentRelease($user) {
+		$sql = 'SELECT * FROM releases WHERE project_id = ?';
+		return DB::get($sql, array($user['project_id']));
 	}
 }

@@ -402,20 +402,29 @@ function createProject($user) {
 	));
 }
 
-function setCurrentProject($user, $projectToken) {
+function setCurrentProject($user) {
 	global $db;
+	$projectId = $_REQUEST['id'];
 	$userId = $user['id'];
 	$r = $db->prepare('
 		SELECT 
-			id
+			p.*,
+			pc.value AS color
 		FROM 
-			projects
+			projects p
+		LEFT JOIN 
+			project_colors pc
+			ON p.color_id = pc.id
 		WHERE 
-			token = ?
+			p.id = ?
 	');
-	$r->execute(array($projectToken));
+	$r->execute(array($projectId));
 	$row = $r->fetch(PDO::FETCH_ASSOC);
 	if (is_array($row)) {
+		$teamId = $row['team_id'];
+		if ($teamId != $user['team_id']) {
+			noRightsError();
+		}
 		$r = $db->prepare('
 			UPDATE 
 				users
@@ -424,10 +433,18 @@ function setCurrentProject($user, $projectToken) {
 			WHERE 
 				id = ?
 		');
-		$r->execute(array($row['id'], $userId));
-		success();
+		$r->execute(array($projectId, $userId));
+		success(
+			array(
+				'project' => array(
+					'id' => $row['id'],
+					'name' => $row['name'],
+					'color' => $row['color'],
+					'token' => $row['token']
+				)
+			)
+		);
 	}
-	error('При смене проекта произошла ошибка: Проект не найден');
 }
 
 function getRoles() {
@@ -465,6 +482,35 @@ function getRoles() {
 
 function getUsers($user, $refreshing = false) {
 	global $db;
+
+	$r = $db->prepare('SET SESSION group_concat_max_len = 1000000;');
+	$r->execute();
+	
+	$typeFilter = $_REQUEST['typeFilter'];
+	$statusFilter = $_REQUEST['statusFilter'];
+	$projectFilter = $_REQUEST['projectFilter'];
+
+	$typeCondition = '';
+	$statusCondition = '';
+	$projectCondition = '';
+
+	if (!empty($typeFilter)) {
+		if ($typeFilter == 'admins') {
+			$typeCondition = ' AND u.role < 5 ';
+		} else {
+			$typeCondition = ' AND u.role > 4 ';
+		}
+	}
+	if (!empty($statusFilter)) {
+		if ($statusFilter == 'busy') {
+			$statusCondition = ' AND t.title IS NOT NULL ';
+		} else {
+			$statusCondition = ' AND t.title IS NULL ';
+		}
+	}
+	if (!empty($projectFilter)) {
+		$projectCondition = ' AND u.project_id = '.$user['project_id'];
+	}
 	$dict = getDict('work_statuses');
 	$r = $db->prepare('
 		SELECT 
@@ -507,6 +553,9 @@ function getUsers($user, $refreshing = false) {
 			ON ws.user_id = u.id 
 		WHERE 
 			u.team_id = ?
+			'.$typeCondition.'
+			'.$statusCondition.'
+			'.$projectCondition.'
 		GROUP BY u.id
 		ORDER BY 
 			u.role
@@ -541,10 +590,6 @@ function getUsers($user, $refreshing = false) {
 	$r->execute(array($user['team_id']));
 	$row = $r->fetch(PDO::FETCH_ASSOC);
 	$token = $row['token'];
-
-	$r = $db->prepare('SET SESSION group_concat_max_len = 1000000;');
-	$r->execute();
-
 	
 
 	$r = $db->prepare('
@@ -570,6 +615,82 @@ function getUsers($user, $refreshing = false) {
 	');
 	$r->execute(array($user['team_id']));
 	$projects = $r->fetchAll(PDO::FETCH_ASSOC);
+
+
+	$r = $db->prepare('
+		SELECT 
+			id,
+			for_user,
+			changed_by,
+			status_id
+		FROM 
+			tasks
+		WHERE 
+			team_id = ?
+		 AND ( 
+		 	status_id IS NULL 
+		 OR 
+		 	status_id = 2
+		 OR 
+		 	status_id = 3
+		)
+	');
+	$r->execute(array($user['team_id']));
+	$rows = $r->fetchAll(PDO::FETCH_ASSOC);
+	$counts = array();
+	$tasks = array();
+	foreach ($rows as $r) {
+		$uid = 0;
+		if (!empty($r['for_user'])) {
+			$uid = $r['for_user'];
+		} elseif (!empty($r['changed_by'])) {
+			$uid = $r['changed_by'];
+		} elseif (empty($r['status_id'])) {
+			$tasks[] = $r['id'];
+		}
+		if (!empty($uid)) {
+			if (!is_array($counts[$uid])) {
+				$counts[$uid] = array('own' => 0);
+			}
+			$counts[$uid]['own']++;
+		}
+	}
+
+	$r = $db->prepare('
+		SELECT 
+			task_id,
+			user_id
+		FROM 
+			tasks_users
+		WHERE 
+			team_id = ?
+	');
+	$r->execute(array($user['team_id']));
+	$rows = $r->fetchAll(PDO::FETCH_ASSOC);
+	foreach ($rows as $r) {
+		if (in_array($r['task_id'], $tasks)) {
+			if (!is_array($counts[$r['user_id']])) {
+				$counts[$r['user_id']] = array('available' => 0);
+			} else {
+				$counts[$r['user_id']]['available'] = 0;
+			}
+			$counts[$r['user_id']]['available']++;
+		}
+	}
+
+	foreach ($users as &$u) {
+		if (is_array($counts[$u['id']])) {			
+			if (!isset($counts[$u['id']]['own'])) {
+				$counts[$u['id']]['own'] = 0;
+			}
+			if (!isset($counts[$u['id']]['available'])) {
+				$counts[$u['id']]['available'] = 0;
+			}
+			$u['task_counts'] =  $counts[$u['id']];
+		} else {
+			$u['task_counts'] = array('own' => 0, 'available' => 0);
+		}
+	}
 
 	success(array(
 		'users' => $users,
@@ -1074,6 +1195,21 @@ function createInvitation($user) {
 	success();
 }
 
+function loadProjectsList($user) {
+	global $db;
+	$r = $db->prepare('SELECT id, name FROM projects WHERE team_id = ?');
+	$r->execute(array($user['team_id']));
+	$projects = $r->fetchAll(PDO::FETCH_ASSOC);
+	foreach ($projects as &$p) {
+		if ($p['id'] == $user['project_id']) {
+			$p['current'] = true;
+		}
+	}
+	success(array(
+		'projectsList' => $projects
+	));
+}
+
 function loadProjects($user) {
 	global $db;
 	$r = $db->prepare('
@@ -1454,6 +1590,11 @@ function getExecutors($user, $taskType, $taskAction) {
 				$proper[] = $row;
 				continue;
 			}
+		} elseif  ($taskType == 'sysadm') {
+			if ($row['spec'] == 'sysadmin') {
+				$proper[] = $row;
+				continue;
+			}
 		} elseif  ($taskType == 'design') {
 			if ($row['spec'] == 'designer') {
 				$proper[] = $row;
@@ -1531,7 +1672,8 @@ function loadTaskUsers($user) {
 function loadTaskCounts($user) {
 	requireClasses('task');
 	success(array(
-		'counts' => Task::getTasksCounts($user)
+		'counts' => Task::getTasksCounts($user),
+		'progress' => Task::getTasksProgress($user)
 	));
 }
 
@@ -1702,6 +1844,7 @@ function loadTaskInfo($user) {
 		);
 		$lastAction = $a;
 	}
+	$history = array_reverse($history);
 	if (empty($task['status'])) {
 		$task['status'] = 'current';
 	}
@@ -2284,7 +2427,8 @@ function loadWorkStatus($user) {
 	global $db;
 	$r = $db->prepare('
 		SELECT 
-			work_status_id
+			work_status_id,
+			reason
 		FROM 
 			user_work_statuses
 		WHERE 
@@ -2296,17 +2440,24 @@ function loadWorkStatus($user) {
 	$usersDict = getDict('work_statuses');
 	$dict = getDict('work_statuses');
 	$statuses = array();
+	$reasonShown = false;
 	foreach ($dict['statuses'] as $id => $name) {
 		$s = array('id' => $id, 'name' => $name);
 		if (is_array($row) && $row['work_status_id'] == $id) {
 			$s['current'] = true;
+			if ($row['work_status_id'] == 2) {
+				$reasonShown = true;
+			}
 		}
 		$statuses[] = $s;
 	}
-	$dict['statuses'] = $statuses;
+	unset($dict['statuses']);
 	success(
 		array(
-			'statusesDict' => $dict
+			'dict' => $dict,
+			'statuses' => $statuses,
+			'reasonShown' => $reasonShown,
+			'reason' => $row['reason']
 		)
 	);
 }
@@ -2315,14 +2466,16 @@ function saveWorkStatus($user) {
 	global $db;
 	
 	$status = $_REQUEST['status'];
+	$reason = $_REQUEST['reason'];
 	$r = $db->prepare('
 		INSERT INTO
 			user_work_statuses
-		VALUES (?, ?)
+		VALUES (?, ?, ?)
 		ON DUPLICATE KEY UPDATE 
-		work_status_id = ?
+		work_status_id = ?,
+		reason = ?
 	');
-	$r->execute(array($user['id'], $status, $status));
+	$r->execute(array($user['id'], $status, $reason, $status, $reason));
 	success(null, 'Статус успешно изменен');
 }
 
@@ -2967,7 +3120,7 @@ if (!empty($token)) {
 			break;
 
 			case 'set_project':
-				setCurrentProject($user, $_REQUEST['project']);
+				setCurrentProject($user);
 			break;
 
 			case 'load_user':
@@ -3025,6 +3178,11 @@ if (!empty($token)) {
 			case 'load_projects':
 				loadProjects($user);
 			break;
+
+			case 'load_projects_list':
+				loadProjectsList($user);
+			break;
+
 
 			case 'get_project_data':
 				getProjectData();
@@ -3097,7 +3255,6 @@ if (!empty($token)) {
 			case 'load_board':
 				loadBoard($user);
 			break;
-
 		}
 	} else {
 		error('По текущему токену сессии пользователь не найден, авторизуйтесь заново', 'invalid_token');

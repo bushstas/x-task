@@ -15,6 +15,39 @@ class Task {
 		}
 	}
 
+	static function getTasksProgress($user) {
+		requireClasses('project');
+		$currentRelease = Project::getCurrentRelease($user);
+		$releaseId = $currentRelease['id'];
+		$sql = '
+			SELECT 
+				*
+			FROM 
+				tasks
+			WHERE
+				team_id = ?
+			AND 
+				release_id = ?
+		';
+		$rows = DB::select($sql, array($user['team_id'], $releaseId));
+		$all = 0;
+		$undone = 0;
+		$done = 0;
+		foreach ($rows as $row) {
+			$all++;
+			if ($row['status_id'] == 5)	 {
+				$done++;
+			} else {
+				$undone++;
+			}
+		}
+		return array(
+			'all' => $all,
+			'done' => $done,
+			'undone' => $undone
+		);
+	}
+
 	static function getTasksCounts($user) {
 		$counts = array();
 		if ($user['role_id'] > 1) {

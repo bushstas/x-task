@@ -12,7 +12,7 @@ class User {
 				r.id AS role_id,
 				r.code AS role,
 				sp.code AS spec,
-				p.token AS project,
+				p.id AS project_id,
 				p.roots,
 				p.nohashes,
 				p.noparams,
@@ -242,14 +242,12 @@ class User {
 			'user' => $user,
 			'rights' => self::getRights($user['role'])
 		);
-		if (count($projects) > 0) {
-			if (!empty($user['project'])) {
-				$currentProjectToken = $user['project'];
-				$data['project'] = self::getProject($user['project']);
-			}
+		if (!empty($user['project_id'])) {
+			$data['project'] = self::getProject($user['project_id']);
+		}
+		if (count($projects) > 0) {			
 			if (empty($data['project'])) {
-				$currentProjectToken = $projects[0]['token'];
-				$data['project'] = self::getProject($projects[0]['token']);
+				$data['project'] = self::getProject($projects[0]['id']);
 			}		
 			$properProjects = array();
 			foreach ($projects as $project) {
@@ -344,5 +342,17 @@ class User {
 				'token' => $token
 			));
 		}
+	}
+
+	static function setProject($user, $projectId) {
+		$sql = '
+			UPDATE 
+				users
+			SET
+				project_id = ?
+			WHERE 
+				id = ?
+		';
+		DB::execute($sql, array($projectId, $user['id']));
 	}
 }
