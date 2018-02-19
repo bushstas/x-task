@@ -57,7 +57,9 @@ class Modals extends React.Component {
 
 			case 'work_statuses':
 				dialog = (
-					<WorkStatuses key="workstatuses"/>
+					<WorkStatuses 
+						key="workstatuses"
+						id={data.id}/>
 				)
 			break;
 		}

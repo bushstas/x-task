@@ -1,5 +1,6 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
+import {getRoleId} from '../../utils/User';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
 import ActionsButton from '../ActionsButton';
@@ -16,8 +17,6 @@ export default class User extends React.Component {
 			spec,
 			projects,
 			task,
-			status,
-			work_status_id,
 			project_name,
 			task_counts
 		}} = this.props;
@@ -42,7 +41,7 @@ export default class User extends React.Component {
 			}
 		}
 		let userClass = $classy(role, '.role-', ['head', 'admin', 'editor', 'analyst']);
-		let statusClass = $classy(work_status_id, 'status-', [1, 2, 3, 4, 5, 6]);
+		
 
 		if (!task) {
 			task = (
@@ -64,9 +63,7 @@ export default class User extends React.Component {
 					<div class="role">
 						{dict[spec || role]}
 					</div>
-					<div class="status $statusClass">
-						{status}
-					</div>
+					{this.status}
 				</div>
 				{role != 'head' && (
 					<div class="projects">
@@ -106,7 +103,31 @@ export default class User extends React.Component {
 		)
 	}
 
+	get status() {
+		const {data: {status, work_status_id, role_id}} = this.props;
+		let statusClass = $classy(work_status_id, 'status-', [1, 2, 3, 4, 5, 6]);
+		const ownRoleId = getRoleId();
+		if (ownRoleId <= role_id) {
+			return (
+				<div class="status .pointer $statusClass" onClick={this.handleStatusClick} title={dict.edit_status}>
+					{status}
+				</div>
+			)	
+		}
+		return (
+			<div class="status $statusClass">
+				{status}
+			</div>
+		)
+	}
+
 	handleClick = () => {
 		
+	}
+
+	handleStatusClick = (e) => {
+		e.stopPropagation();
+		let {data: {id}} = this.props;
+		this.props.onStatusClick(id);
 	}
 }

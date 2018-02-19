@@ -8,15 +8,19 @@ import Input from '../../ui/Input';
 class WorkStatuses extends React.Component {
 
 	componentDidMount() {
-		this.props.doAction('STATUSES_LOAD');
+		this.props.doAction('STATUSES_LOAD', this.props.id);
+	}
+
+	componentWillUnmount() {
+		this.props.dispatch('STATUSES_INIT');
 	}
 
 	render() {
-		let {statuses} = this.props;
+		let {statuses, fetching} = this.props;
 		return (
 			<div class="self">
 				<div class="mask" onClick={this.handleClose}/>
-				<Loader classes="content">
+				<Loader classes="content" fetching={fetching}>
 					{statuses && this.content}
 				</Loader>
 			</div>
@@ -49,12 +53,16 @@ class WorkStatuses extends React.Component {
 	}
 
 	get users() {
-		const {users, user} = this.props;
+		const {users, user, userId} = this.props;
 		return (
 			<div class="users">
 				{users && users.map(user => {
+					let className;
+					if (userId) {						
+						className = userId == user.id ? $classy('user-active') : $classy('user-inactive');					 
+					}
 					return (
-						<div class="user" key={user.id}>
+						<div class="user $className" key={user.id}>
 							<Avatar 
 								id={user.avatar_id}
 								userName={user.name}

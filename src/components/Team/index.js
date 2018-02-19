@@ -32,7 +32,10 @@ class Team extends React.Component {
 		if (users.length > 0) {
 			return users.map((user) => {
 	 			return (
-	 				<User data={user} key={user.token}/>
+	 				<User 
+	 					data={user}
+	 					key={user.token}
+	 					onStatusClick={this.handleStatusClick}/>
 	 			)
 	 		});
 	 	}
@@ -63,6 +66,10 @@ class Team extends React.Component {
 				this.props.doAction('TEAM_SHOW_EDIT_FORM', user.token);
 			}
 		}
+	}
+
+	handleStatusClick = (id) => {
+		this.props.doAction('MODALS_SHOW', {name: 'work_statuses', props: {id}});
 	}
 }
 

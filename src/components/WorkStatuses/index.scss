@@ -9,7 +9,7 @@
 		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box;
 	}
 	.inner-content {
-		var .flex.flcen;	
+		var .flex;
 	}
 	..button {
 		var .bl.w160.mb5.fs15.lh40;
@@ -31,13 +31,21 @@
 		}
 	}
 	.users {
-		var .mr20.flex.w100;
+		var .mr20.w280;
 		&:empty {
 			var .none;
 		}
-		flex-wrap: wrap;
+	}
+	.user {
+		var .inb.vtop;
+		filter: grayscale(100%);
+		var .o7;
+		&.user-active {
+			filter: none;
+			var .o10;
+		}
 	}
 	..avatar {
-		var .wh45;
+		var .wh50.m3;
 	}
 }
