@@ -74,10 +74,17 @@
     	}
 
 		.added-users {
-			var .abs.t.pt6.l100.b;			
+			var .abs.l100.b.w46p.flex.ovh.h50;
+			align-items: center;
+			justify-content: flex-start;
+			flex-wrap: wrap-reverse;
+			&:hover {
+				var .ovv.ha;
+			}
 		}
 		.reset-users {
-			var .abs.l100p.ml10.t50p.mt-15.bc-555.br50p.wh30.c-fff.cen.pntr;
+			var .rel.mr10.bc-555.br50p.wh30.c-fff.cen.pntr.mb5;
+			order: -1;
 			..icon {
 				var .lh30.rel.z2;
 			}
@@ -89,10 +96,16 @@
 			}
 		}
 		..avatar {
-			var .wh44.inb.mr5.vtop;
+			var .wh44.mr5.mb5;
 		}
 		.users {
-			var .abs.t.r.pt6;
+			var .abs.b.r.w46p.flex.ovh.h50;
+			align-items: center;
+			justify-content: flex-end;
+			flex-wrap: wrap-reverse;
+			&:hover {
+				var .ovv.ha;
+			}
 		}
 	}
 	.outer-content {
@@ -108,8 +121,8 @@
 	    overflow-y: hidden;
 	    position: absolute;
 	    left: 5px;
-	    top: 5;
-	    right: 5;
+	    top: 5px;
+	    right: 5px;
 	    bottom: 55px;
 
 		.column {

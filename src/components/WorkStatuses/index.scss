@@ -30,4 +30,14 @@
 			var .w.h200;
 		}
 	}
+	.users {
+		var .mr20.flex.w100;
+		&:empty {
+			var .none;
+		}
+		flex-wrap: wrap;
+	}
+	..avatar {
+		var .wh45;
+	}
 }

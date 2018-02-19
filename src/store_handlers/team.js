@@ -3,7 +3,7 @@ import {USERS_STORAGE_KEY} from '../consts/storage';
  
 const init = () => {
   return {
-    users: [],
+    users: null,
     userFormShown: null,
     userFormData: {},
     editedUserToken: null,

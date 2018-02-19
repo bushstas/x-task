@@ -68,12 +68,12 @@ const visual_element_changed = (state, data) => {
 
 //===========================================
 
-const change = ({dispatch}, data) => {
-  dispatch('QUICKTASK_PARAM_CHANGED', data);
+const change = ({setState}, data) => {
+  setState(data);
 }
 
-const change_param = ({dispatch, doAction}, data) => {
-  let state = dispatch('QUICKTASK_PARAM_CHANGED', data);
+const change_param = ({setState, doAction}, data) => {
+  let state = setState(data);
   if (
     typeof data.currentElement != 'undefined' || 
     typeof data.layers != 'undefined' || 
@@ -251,48 +251,48 @@ const cancel = ({dispatch, doAction, state, getSavedState}) => {
   dispatch('QUICKTASK_RESET');
 }
 
-const show_url_dialog = ({dispatch}) => {
-  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+const show_url_dialog = ({setState}) => {
+  setState({dialogFetching: true});
   get('load_url_dialog')
   .then((urlDialogData) => {
-    dispatch('QUICKTASK_PARAM_CHANGED', {
+    setState({
       dialogFetching: false,
       urlDialogData
     });
   });
 }
 
-const save = ({dispatch, doAction, state}) => {
+const save = ({and, state}) => {
   post('save_task', {data: JSON.stringify(state)})
   .then(data => {
-    doAction('QUICKTASK_CANCEL');
+    and('CANCEL');
   });
 }
 
-const show_info_form = ({dispatch, state}) => {
-  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+const show_info_form = ({setState, state}) => {
+  setState({dialogFetching: true});
   get('load_info_dialog', {type: state.type || ''})
     .then(({dict}) => {
-      dispatch('QUICKTASK_PARAM_CHANGED', {
+      setState({
         dialogFetching: false,
         taskInfoDict: dict
       });
     });
 }
 
-const show_terms = ({dispatch, state}) => {
-  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+const show_terms = ({setState, state}) => {
+  setState({dialogFetching: true});
   get('load_task_terms')
     .then(({dict}) => {
-      dispatch('QUICKTASK_PARAM_CHANGED', {
+      setState({
         dialogFetching: false,
         termsData: dict
       });
     });   
 }
 
-const show_users = ({dispatch, state}) => {
-  dispatch('QUICKTASK_PARAM_CHANGED', {dialogFetching: true});
+const show_users = ({setState, state}) => {
+  setState({dialogFetching: true});
   let {type = '', action = ''} = state;
   get('load_task_users', {type, taskAction: action})
     .then(({dict}) => {
@@ -306,7 +306,7 @@ const show_users = ({dispatch, state}) => {
           }
         }
       }
-      dispatch('QUICKTASK_PARAM_CHANGED', {
+      setState({
         dialogFetching: false,
         taskUsersDict: dict,
         execs
@@ -314,17 +314,17 @@ const show_users = ({dispatch, state}) => {
     });   
 }
 
-const load_until_date = ({dispatch}, value) => {
+const load_until_date = ({setState}, value) => {
   get('load_until_date', {value})
     .then(({value}) => {
-      dispatch('QUICKTASK_PARAM_CHANGED', {
+      setState({
         dialogFetching: false,
         untilTimeLeft: value
       });
     });
 }
 
-const load_edited_task = ({dispatch, doAction, state}, id) => {
+const load_edited_task = ({setState, dispatch, doAction, state}, id) => {
   dispatch('MASK_CLEARED');
   doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'editmode'});
   get('load_task', {id})
@@ -333,7 +333,7 @@ const load_edited_task = ({dispatch, doAction, state}, id) => {
     if (visualElements instanceof Array) {
         data.visualElements = {};
     }
-    dispatch('QUICKTASK_PARAM_CHANGED', data);
+    setState(data);
     if (visualElements instanceof Object) {
       for (let k in visualElements) {
         let {data} = visualElements[k];
@@ -345,7 +345,7 @@ const load_edited_task = ({dispatch, doAction, state}, id) => {
   });
 }
 
-const assign_user = ({dispatch, state}, {token, assigned, role}) => {
+const assign_user = ({and, state}, {token, assigned, role}) => {
   let key = role == 'exec' ? 'execs' : 'testers';
   let list = state[key] || [];
   if (!assigned) {
@@ -356,7 +356,7 @@ const assign_user = ({dispatch, state}, {token, assigned, role}) => {
   } else {
     list.push(token);
   }
-  dispatch('QUICKTASK_CHANGE', {[key]: list});
+  and('CHANGE', {[key]: list});
 }
 
 const editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);

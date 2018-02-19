@@ -1,6 +1,7 @@
 import React from 'react';
 import Store from 'xstore';
 import Button from '../../ui/Button';
+import Avatar from '../Avatar';
 import Loader from '../../ui/Loader';
 import Input from '../../ui/Input';
 
@@ -26,6 +27,7 @@ class WorkStatuses extends React.Component {
 		let {dict, reasonShown, reason} = this.props;
 		return (
 			<div class="inner-content">
+					{this.users}
 					{this.buttons}
 					{reasonShown && (
 						<div class="reason">
@@ -42,6 +44,25 @@ class WorkStatuses extends React.Component {
 							</div>
 						</div>
 					)}
+			</div>
+		)
+	}
+
+	get users() {
+		const {users, user} = this.props;
+		return (
+			<div class="users">
+				{users && users.map(user => {
+					return (
+						<div class="user" key={user.id}>
+							<Avatar 
+								id={user.avatar_id}
+								userName={user.name}
+								userId={user.id}
+								onClick={this.handleUserClick}/>
+						</div>
+					)
+				})}
 			</div>
 		)
 	}
@@ -82,6 +103,10 @@ class WorkStatuses extends React.Component {
 			this.props.doAction('STATUSES_SAVE', {status, reason});	
 			this.handleClose();
 		}  		
+  	}
+
+  	handleUserClick = ({userId}) => {
+  		this.props.doAction('STATUSES_SELECT_USER', userId);	
   	}
 }
 

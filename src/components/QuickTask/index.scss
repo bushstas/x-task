@@ -126,17 +126,25 @@
 	
 	.prev-element-panel {
 		position: absolute;
-		top: 2px;
+		bottom: 2px;
 		left: -40px;
 		background-color: #555;
 		border-radius: 5px;
 	}
 	.next-element-panel {
 		position: absolute;
-		top: 2px;
+		bottom: 2px;
 		right: -40px;
 		background-color: #555;
 		border-radius: 5px;
+	}
+
+	&.collapsed {
+		.prev-element-panel,
+		.next-element-panel {
+			bottom: auto;
+			top: 0;
+		}
 	}
 
 

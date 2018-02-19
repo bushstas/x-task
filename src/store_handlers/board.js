@@ -20,15 +20,23 @@ const fetched = (state, data) => {
   };
 }
 
-const load = ({then, setState, dispatchAsync, state}, filter) => {
+const load = ({then, setState, dispatchAsync, state, getState}, filter) => {
   dispatchAsync('BOARD_CHANGED', {fetching: true});
   if (filter) {
     setState({filter});
   } else {
    filter = state.filter;
   }
+  const isMine = filter == 'mine';
+  if (isMine) {
+    filter = 'status';
+  }
   const {addedUsers} = state;
-  const users = Object.keys(addedUsers).join(',');
+  let users = Object.keys(addedUsers).join(',');
+  if (isMine) {
+    const user = getState('user.user');
+    users = user.id;
+  }
   get('load_board', {filter, users})
   .then(boardData => {
     dispatchAsync('BOARD_CHANGED', {fetching: false});

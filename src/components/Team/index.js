@@ -16,13 +16,13 @@ class Team extends React.Component {
 	}
 
 	render() {
-		let {userFormShown, teamFetching} = this.props;
+		let {userFormShown, teamFetching, users} = this.props;
 	 	if (userFormShown) {
 	 		return this.form;
 	 	}
 	 	return (
 	 		<Loader classes="self" fetching={teamFetching}>
-	 			{this.users}
+	 			{users && this.users}
 	 		</Loader>
 	 	)
 	}

@@ -12,6 +12,7 @@ import TaskTerms from '../TaskTerms';
 import TaskUsers from '../TaskUsers';
 import MaskModeButton from '../MaskModeButton';
 import TaskUrls from '../TaskUrls';
+import {setScrollTop} from '../../utils';
 
 class QuickTask extends React.Component {
 	render() {
@@ -135,10 +136,11 @@ class QuickTask extends React.Component {
 
 				<div class="element-panel .panel" onClick={this.handleExpandClick}>
 					{this.elementButtons}
-					{this.prevElementButton}
-					{this.nextElementButton}
 					{this.uiElementPanel}
 				</div>
+
+				{this.prevElementButton}
+				{this.nextElementButton}
 
 				<div class="bottom-panel .panel">
 					{!task_inwork && (
@@ -477,7 +479,7 @@ class QuickTask extends React.Component {
 			}
 			currentElement = keys[idx];
 		}
-		this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
+		this.setActiveElement(currentElement);
 	}
 
 	handleNextButtonClick = (e) => {
@@ -498,7 +500,18 @@ class QuickTask extends React.Component {
 			}
 			currentElement = keys[idx];
 		}
-		this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', currentElement);
+		this.setActiveElement(currentElement);
+	}
+
+	setActiveElement(id) {
+		let {visualElements} = this.props;
+		if (visualElements[id] instanceof Object) {
+			let {my} = visualElements[id].data;
+			if (typeof my == 'number') {
+				setScrollTop(my - 100);
+			}
+		}
+		this.props.doAction('QUICKTASK_SET_ELEMENT_ACTIVE', id);
 	}
 
 	handleUrlInputClick = () => {

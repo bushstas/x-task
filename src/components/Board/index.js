@@ -105,44 +105,46 @@ class Board extends React.Component {
 				</div>
 				<div class="footer">
 					<div class="footer-bg" style={style}/>
-					<div class="footer-inner">
-						<div class="added-users">
-							{userKeys.map(userId => {
-								return (
-									<Avatar
-										key={userId}
-										userId={userId}
-										userName={addedUsers[userId].userName}
-										id={addedUsers[userId].avatarId}
-										onClick={this.handleRemoveUserClick}
-									/>
-								)
-							})}
-							{userKeys.length > 1 && (
-								<div class="reset-users" onClick={this.handleResetUsers}>
-									<div class="reset-users-bg" style={style}/>
-									<Icon icon="close"/>
+					{filter != 'mine' && (
+						<div class="footer-inner">
+							<div class="added-users">
+								{userKeys.length > 1 && (
+									<div class="reset-users" onClick={this.handleResetUsers}>
+										<div class="reset-users-bg" style={style}/>
+										<Icon icon="close"/>
+									</div>
+								)}
+								{userKeys.map(userId => {
+									return (
+										<Avatar
+											key={userId}
+											userId={userId}
+											userName={addedUsers[userId].userName}
+											id={addedUsers[userId].avatarId}
+											onClick={this.handleRemoveUserClick}
+										/>
+									)
+								})}
+							</div>
+							{users && (
+								<div class="users">
+									{users.map(user => {
+										if (!addedUsers[user.userId]) {
+											return (
+												<Avatar
+													key={user.userId}
+													userId={user.userId}
+													userName={user.userName}
+													id={user.avatarId}
+													onClick={this.handleAddUserClick}
+												/>
+											)
+										}
+									})}
 								</div>
 							)}
 						</div>
-						{users && (
-							<div class="users">
-								{users.map(user => {
-									if (!addedUsers[user.userId]) {
-										return (
-											<Avatar
-												key={user.userId}
-												userId={user.userId}
-												userName={user.userName}
-												id={user.avatarId}
-												onClick={this.handleAddUserClick}
-											/>
-										)
-									}
-								})}
-							</div>
-						)}
-					</div>
+					)}
 				</div>
 			</div>
 		)
