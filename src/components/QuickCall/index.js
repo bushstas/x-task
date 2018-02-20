@@ -60,7 +60,7 @@ export default class QuickCall extends React.Component {
 	handleKeyUp = ({keyCode}) => {
 		if (keyCode == 13) {
 			const {value} = this.state;
-			Store.doAction('MODALS_SHOW', {name: 'task_info', props: {id: '#' + value}});
+			Store.doAction('MODALS_SHOW', {name: 'task_info', props: {id: ':' + value}});
 			this.handleClose();
 		}
 	}

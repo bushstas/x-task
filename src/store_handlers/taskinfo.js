@@ -18,7 +18,8 @@ const load = ({dispatchAsync, setState, getState}, id) => {
   .then((data) => {
     setState({
       fetching: false,
-      data
+      data,
+      id: data.id
     });
   });
 }

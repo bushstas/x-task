@@ -14,6 +14,10 @@ import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
 
 class TaskInfo extends React.Component {
+	static defaultProps = {
+		store: ''
+	}
+	
 	componentDidMount() {
 		this.load(this.props.id);
 	}
