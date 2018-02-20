@@ -7,6 +7,7 @@ import TaskInfo from '../TaskInfo';
 import TaskActions from '../TaskActions';
 import ProjectsList from '../ProjectsList';
 import WorkStatuses from '../WorkStatuses';
+import QuickCall from '../QuickCall';
 
 class Modals extends React.Component {	
 	render() {
@@ -60,6 +61,12 @@ class Modals extends React.Component {
 					<WorkStatuses 
 						key="workstatuses"
 						id={data.id}/>
+				)
+			break;
+
+			case 'quick_call':
+				dialog = (
+					<QuickCall key="quick_call"/>
 				)
 			break;
 		}

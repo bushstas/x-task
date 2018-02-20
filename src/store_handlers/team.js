@@ -103,6 +103,12 @@ const show_edit_form = ({dispatch}, userToken) => {
 const change = ({setState}, data) => {
   setState(data);
 } 
+
+const update = ({and, state}) => {
+  if (state.users) {
+    and('LOAD');
+  }
+}
  
 export default {
   localStore: {
@@ -119,7 +125,8 @@ export default {
     save,
     refresh,
     show_edit_form,
-    change
+    change,
+    update
   },
   reducers: {
     init,

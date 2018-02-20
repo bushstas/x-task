@@ -23,7 +23,10 @@ const hide = ({setState}) => {
 }
 
 const load_dictionary = ({setState, state}) => {
-  console.log(state)
+  if (state.dict && state.icons) {
+    setDictionary(state);
+    return Promise.resolve();
+  }
   return get('dictionary')
   .then(data => {
     setState(data);
@@ -38,13 +41,14 @@ export default {
       'appActiveTab',
       'accountActiveTab',
       'shown',
-      'dictionary'
+      'dict',
+      'icons'
     ],
     lifetime: '1hour'
   },
   actions: {
   	change,
-    show_board,
+    show_board,    
     hide,
     load_dictionary
   },

@@ -28,11 +28,14 @@ const load = ({dispatchAsync, setState}, id) => {
   		});
 }
 
-const save = ({state}, data) => {
+const save = ({state, doAction}, data) => {
 	if (state.userId) {
 		data.userId = state.userId;
 	}
-  	post('save_work_status', data);
+  	post('save_work_status', data)
+  		.then(() => {
+  			doAction('TEAM_UPDATE');
+  		});
 }
 
 const select_user = ({and, state}, userId) => {

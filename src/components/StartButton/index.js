@@ -26,7 +26,7 @@ class StartButton extends React.Component {
 						<div 
 							class="user"
 							title={dict.work_status}
-							onClick={this.handleStatusClick}>
+							onClick={this.handleNumberClick}>
 							#
 						</div>
 						<div 
@@ -69,6 +69,10 @@ class StartButton extends React.Component {
 
   	handleBoardClick = () => {
   		this.props.doAction('APP_SHOW_BOARD');
+  	}
+
+  	handleNumberClick = () => {
+  		this.props.doAction('MODALS_SHOW', {name: 'quick_call'});	
   	}
 }
 
