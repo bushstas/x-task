@@ -18,6 +18,7 @@ import tooltip from './store_handlers/tooltip';
 import tasks from './store_handlers/tasks';
 import taskinfo from './store_handlers/taskinfo';
 import taskactions from './store_handlers/taskactions';
+import quickcall from './store_handlers/quickcall';
 
 Store.setDefaultParams({
 	flat: true
@@ -36,7 +37,8 @@ Store.addHandlers({
 	tooltip,
 	tasks,
 	taskinfo,
-	taskactions
+	taskactions,
+	quickcall
 });
 
 const box = document.createElement('div');

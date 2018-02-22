@@ -37,11 +37,17 @@ const check_subtask = ({setState, state}, {idx, checked, id}) => {
   setState({listChecked});
   post('check_subtask', {id, idx, checked});
 }
+
+const change = ({setState}, data) => {
+   setState(data);
+}
+
  
 export default {
   actions: {
     load,
-    check_subtask
+    check_subtask,
+    change
   },
   reducers: {
     init,

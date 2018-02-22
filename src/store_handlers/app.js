@@ -1,4 +1,3 @@
-import StoreKeeper from '../utils/StoreKeeper';
 import {APP_STORAGE_KEY, LOCAL_STORAGE_DICTIONARY} from '../consts/storage';
 import {get} from '../utils/Fetcher';
 import {set as setDictionary} from '../utils/Dictionary';

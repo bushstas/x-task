@@ -3,13 +3,7 @@ import Store from 'xstore';
 import {dict} from '../../utils/Dictionary';
 import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
-export default class QuickCall extends React.Component {
-	constructor() {
-		super();
-		this.state = {
-			value: ''
-		}
-	}
+class QuickCall extends React.Component {
 
 	componentDidMount() {
 		addHandler(this.handleClose);
@@ -21,7 +15,7 @@ export default class QuickCall extends React.Component {
 	}
 
 	render() {
-		const {value} = this.state;
+		const {value, notFound} = this.props;
 		return (
 			<div class="self" onClick={this.handleClick}>
 				<div class="mask" onClick={this.handleClose}/>
@@ -30,7 +24,7 @@ export default class QuickCall extends React.Component {
 						{dict.quick_call}
 					</div>
 					<div class="number">
-						#{value}
+						<span class=".gray">#</span>{value}
 						<input 
 							onKeyUp={this.handleKeyUp}
 							ref="input"
@@ -39,6 +33,11 @@ export default class QuickCall extends React.Component {
 							value={value}
 							onChange={this.handleChange}/>
 					</div>
+					{notFound && (
+						<div class="not-found">
+							{dict.no_tasks}
+						</div>
+					)}
 				</div>
 			</div>
 		)
@@ -49,19 +48,19 @@ export default class QuickCall extends React.Component {
 	}
 
 	handleClose = () => {
-		Store.doAction('MODALS_HIDE', 'quick_call');	
+		this.props.doAction('MODALS_HIDE', 'quick_call');
 	}
 
 	handleChange = ({target: {value}}) => {
 		value = value.replace(/[^\d]/, '');
-		this.setState({value});
+		this.props.doAction('QUICKCALL_CHANGE', value);
 	}
 
 	handleKeyUp = ({keyCode}) => {
 		if (keyCode == 13) {
-			const {value} = this.state;
-			Store.doAction('MODALS_SHOW', {name: 'task_info', props: {id: ':' + value}});
-			this.handleClose();
+			this.props.doAction('QUICKCALL_CHECK_TASK');
 		}
 	}
 }
+
+export default Store.connect(QuickCall, 'quickcall');
