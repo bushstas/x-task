@@ -70,27 +70,38 @@ const show_task_info = ({setState, doAction, state}, {id, index, status}) => {
     shownTaskIndex: index,
     showTaskStatus: status
   });
-  doAction('MODALS_SHOW', {name: 'task_info', props: {id, tasksCount, store: 'BOARD', index}});
+  doAction('TASKINFO_CHANGE', {id, tasksCount, store: 'BOARD', index});
+  doAction('MODALS_SHOW', {name: 'task_info'});
 }
 
-const show_prev = ({and, state}) => {  
+const show_prev = ({doAction, setState, state}) => {  
   let {shownTaskIndex, showTaskStatus, tasks} = state;
   tasks = tasks[showTaskStatus];
-  let prev = shownTaskIndex - 1;
-  if (prev < 0) {
-    prev = tasks.length - 1;
+  let index = shownTaskIndex - 1;
+  if (index < 0) {
+    index = tasks.length - 1;
   }
-  and('SHOW_TASK_INFO', {id: tasks[prev].id, index: prev, status: showTaskStatus});
+  const id = tasks[index].id;
+  setState({
+    shownTaskId: id,
+    shownTaskIndex: index,
+  });
+  doAction('TASKINFO_CHANGE', {id, index});
 }
 
-const show_next = ({and, state}) => {
+const show_next = ({doAction, setState, state}) => {
   let {shownTaskIndex, showTaskStatus, tasks} = state;
   tasks = tasks[showTaskStatus];
-  let next = shownTaskIndex + 1;
-  if (next > tasks.length - 1) {
-    next = 0;
+  let index = shownTaskIndex + 1;
+  if (index > tasks.length - 1) {
+    index = 0;
   }
-  and('SHOW_TASK_INFO', {id: tasks[next].id, index: next, status: showTaskStatus});
+  const id = tasks[index].id;
+  setState({
+    shownTaskId: id,
+    shownTaskIndex: index,
+  });
+  doAction('TASKINFO_CHANGE', {id, index});
 }
 
 const load_on_project_set = ({and}) => {

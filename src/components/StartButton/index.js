@@ -72,7 +72,7 @@ class StartButton extends React.Component {
   	}
 
   	handleNumberClick = () => {
-  		this.props.doAction('MODALS_SHOW', {name: 'quick_call'});	
+  		this.props.doAction('MODALS_SHOW', {name: 'quick_call'});
   	}
 }
 

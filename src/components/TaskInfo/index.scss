@@ -29,12 +29,6 @@
 		&..importance-urgent {
 			var .p6-10.br3.bo-d82b3b.bc-ffa3a7.mb12;
 		}
-		.id {
-			var .inb.bold.mr10;
-			span {
-				var .o5;
-			}
-		}
 	}
 	.subtasks {
 		var .mb20.bo-ddd;
@@ -195,9 +189,18 @@
 	.problems {
 		var .pt10;
 	}
+	.actions-panel {
+		var .abs.t.r100p.mr20.rt;
+	}
+	.id {
+		var .inb.mt12.bold.bc-555.br3.fs25.lh36.p0-6.c-fff.pntr;
+		span {
+			var .o5;
+		}
+	}
 	..actions-button,
 	.link {
-		var .abs.t-20.r100p.mr20.bc-fff.wh50.br50p.shad-333-2.cen.pntr.c-555.nosel;
+		var .inb.bc-fff.wh50.br50p.shad-333-2.cen.pntr.c-555.nosel;
 		..icon {
 			var .lh50.fs26;
 		}
@@ -206,7 +209,7 @@
 		}
 	}
 	..actions-button {
-		var .t40.o10!;
+		var .mt12.t40.o10!;
 	}
 	.prev,
 	.next {

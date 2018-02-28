@@ -4,7 +4,8 @@ const init = () => {
   return {
     data: null,
     fetching: false,
-    listChecked: []
+    listChecked: [],
+    widthStyle: {}
   }
 }
 
@@ -19,7 +20,8 @@ const load = ({dispatchAsync, setState, getState}, id) => {
     setState({
       fetching: false,
       data,
-      id: data.id
+      id: data.id,
+      widthStyle: {width: data.task.scale + '%'}
     });
   });
 }

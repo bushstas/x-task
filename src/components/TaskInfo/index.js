@@ -46,18 +46,23 @@ class TaskInfo extends React.Component {
 	}
 
 	get content() {
-		let {data: {task: {urls}, actions}} = this.props;
+		let {data: {task: {urls, idn}, actions}} = this.props;
 		let href = resolveTaskUrl(urls);
 		return (
 			<div class="outer">
-				{actions && (
-					<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
-						<Icon icon="open"/>
-					</a>
-				)}
-				{actions && (
-					<ActionsButton id={this.props.id} loc={this.loc}/>
-				)}
+				<div class="actions-panel">
+					{actions && (
+						<a href={href} class="link" onMouseDown={this.handleLinkMouseDown}>
+							<Icon icon="open"/>
+						</a>
+					)}
+					{actions && (
+						<ActionsButton id={this.props.id} loc={this.loc}/>
+					)}
+					<div class="id" onClick={this.handleNumberClick}>
+						<span>#</span>{idn}
+					</div>
+				</div>
 				{this.buttons}
 				<div class="content">
 					<table cellPadding="0" cellSpacing="0">
@@ -95,10 +100,10 @@ class TaskInfo extends React.Component {
 					type,
 					action,
 					info,
-					changed,
-					idn
+					changed
 				},	
-				taskList
+				taskList,
+				widthStyle
 			}
 		} = this.props;
 
@@ -111,7 +116,6 @@ class TaskInfo extends React.Component {
 		let scaleClass = this.scaleClass;
 		let titleClassName = $classy(importance, '.importance-', ['burning', 'urgent']);
 		let statusClassName = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
-		const widthStyle = {width: scale + '%'};
 		return (
 			<td>
 				<div class="status $statusClassName">
@@ -143,9 +147,6 @@ class TaskInfo extends React.Component {
 					</div>
 				</div>
 				<div class="title $titleClassName">
-					<span class="id">
-						<span>#</span>{idn}
-					</span>
 					{title}
 				</div>
 				<div class="description">
@@ -475,6 +476,10 @@ class TaskInfo extends React.Component {
 	handleNextClick = () => {
 		this.props.doAction(this.props.store + '_SHOW_NEXT');	
 	}
+
+	handleNumberClick = () => {
+  		this.props.doAction('MODALS_SHOW', {name: 'quick_call'});
+  	}
 }
 
 export default Store.connect(TaskInfo, 'taskinfo');
