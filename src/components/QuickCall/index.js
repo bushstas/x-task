@@ -1,18 +1,8 @@
 import React from 'react';
 import Store from 'xstore';
 import {dict} from '../../utils/Dictionary';
-import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
 class QuickCall extends React.Component {
-
-	componentDidMount() {
-		addHandler(this.handleClose);
-		this.handleClick();
-	}
-
-	componentWillUnmount() {
-		removeHandler(this.handleClose);
-	}
 
 	render() {
 		const {value, notFound} = this.props;

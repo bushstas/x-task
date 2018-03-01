@@ -18,7 +18,8 @@ export default class BoardTask extends React.Component {
 			user_id,
 			user_name,
 			changed,
-			actions
+			actions,
+			locked
 		}} = this.props;
 
 		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
@@ -32,6 +33,9 @@ export default class BoardTask extends React.Component {
 						userName={user_name}/>
 
 					<div class="icons">
+						{locked && (
+							<Icon icon="locked" classes="lock"/>
+						)}
 						<span class="id">
 							<span class=".gray">#</span>{idn}
 						</span>

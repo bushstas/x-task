@@ -1,19 +1,10 @@
 import React from 'react';
 import Icon from '../Icon';
 import {dict} from '../../utils/Dictionary';
-import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
 export default class Dialog extends React.Component {
 	static defaultProps = {
 		onClose: () => {}
-	}
-
-	componentDidMount() {
-		addHandler(this.handleClose);
-	}
-
-	componentWillUnmount() {
-		removeHandler(this.handleClose);
 	}
 
 	render() {

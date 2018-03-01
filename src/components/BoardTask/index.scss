@@ -25,12 +25,15 @@
 		}
 	}
 	.id {
-		var .inb.vtop.fs17.mr15.p0-3.bc-333.c-fff.br3.o8;
+		var .inb.vtop.fs17.mr15.p2-3.bc-333.c-fff.br3.o8;
 	}
 	.icons {
 		var .abs.l60.t;
 		..icon {
 			var .inb.fs22.c-000.mr8.o8;
+			&.lock {
+				var .c-d0082d.fl.mt-1;
+			}
 		}
 	}
 

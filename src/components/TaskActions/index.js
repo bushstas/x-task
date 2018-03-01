@@ -3,18 +3,8 @@ import Store from 'xstore';
 import Button from '../../ui/Button';
 import Loader from '../../ui/Loader';
 import Tooltip from '../../ui/Tooltip';
-import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
 class TaskActions extends React.Component {
-
-	componentDidMount() {
-		this.props.doAction('TASKACTIONS_LOAD', this.props.id);
-		addHandler(this.handleClose);
-	}
-
-	componentWillUnmount() {
-		removeHandler(this.handleClose);
-	}
 
 	render() {
 		let {dict} = this.props;

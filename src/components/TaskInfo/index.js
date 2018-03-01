@@ -100,11 +100,12 @@ class TaskInfo extends React.Component {
 					type,
 					action,
 					info,
-					changed
+					changed,
+					locked
 				},	
-				taskList,
-				widthStyle
-			}
+				taskList
+			},
+			widthStyle
 		} = this.props;
 
 		let infoCount = info.length,
@@ -120,6 +121,9 @@ class TaskInfo extends React.Component {
 			<td>
 				<div class="status $statusClassName">
 					<div class="left-side">
+						{locked && (
+							<Icon icon="locked"/>
+						)}
 						{dct[status]}
 						<div class="changed">
 							{changed}
@@ -152,16 +156,18 @@ class TaskInfo extends React.Component {
 				<div class="description">
 					{descr}
 				</div>
-				<div class="time $scale?with-scale $statusClassName">
+				<div class="time $scale?with-scale $statusClassName $?locked">
 					<Icon icon="time"/>
-					{scale && (
+					{!locked && scale && (
 						<div class="scale-outer">
 							<div class="scale $scaleClass" style={widthStyle}/>
 						</div>
 					)}
-					<div class="timepassed">
-						{timepassed}
-					</div>
+					{!locked && 
+						<div class="timepassed">
+							{timepassed}
+						</div>
+					}
 					<div class="timeleft">
 						{timeleft}
 					</div>

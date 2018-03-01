@@ -8,8 +8,17 @@ import TaskActions from '../TaskActions';
 import ProjectsList from '../ProjectsList';
 import WorkStatuses from '../WorkStatuses';
 import QuickCall from '../QuickCall';
+import UserInfo from '../UserInfo';
 
 class Modals extends React.Component {	
+	componentDidMount() {
+		window.addEventListener('keydown', this.handleMouseDown, false);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('keydown', this.handleMouseDown, false);	
+	}
+
 	render() {
 		let {modals} = this.props;
 		return (
@@ -69,6 +78,15 @@ class Modals extends React.Component {
 					<QuickCall key="quick_call"/>
 				)
 			break;
+
+			case 'user_info':
+				dialog = (
+					<UserInfo 
+						key="user_info"
+						id={data.id}
+						name={data.name}/>
+				)
+			break;
 		}
 		return dialog;
 	}
@@ -91,6 +109,18 @@ class Modals extends React.Component {
 
 	handleClose = (name) => {
 		this.props.doAction('MODALS_HIDE', name);
+	}
+
+	
+	handleMouseDown = ({keyCode}) => {
+		if (keyCode == 27) {
+			const {modals} = this.props;
+			const keys = Object.keys(modals);
+			const name = keys[keys.length - 1];
+			if (name) {
+				this.handleClose(name);
+			}
+		}
 	}
 }
 

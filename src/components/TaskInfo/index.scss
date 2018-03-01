@@ -54,6 +54,9 @@
 		var .bc-eaeaea.p10.bo-e7e7e7.fs15.h58.box.rel;
 		.left-side {
 			var .fl.fs16.bold;
+			..icon {
+				var .fl.c-d0082d.mr3.mt-1;
+			}
 		}
 		.changed {
 			var .norm.fs13;
@@ -84,6 +87,9 @@
 		var .rel.p12-15-12-55.m10-0-20-0.bo-ddd;
 		..icon {
 			var .abs.l12.t50p.mt-14.fs28;
+		}
+		&.locked {
+			var .pt12!;
 		}
 		&..status-frozen {
 			.timeleft {	
