@@ -4,6 +4,10 @@ import {dict} from '../../utils/Dictionary';
 
 class QuickCall extends React.Component {
 
+	componentDidMount() {
+		this.handleClick();
+	}
+
 	render() {
 		const {value, notFound} = this.props;
 		return (

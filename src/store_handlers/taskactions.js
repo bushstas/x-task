@@ -33,11 +33,16 @@ const edit = ({state, getState}) => {
   }
 }
 
+const remove = ({setState}, removeClicked) => {
+  setState({removeClicked});
+}
+
 export default {
   actions: {
     load,
     action,
-    edit
+    edit,
+    remove
   },
   reducers: {
     init

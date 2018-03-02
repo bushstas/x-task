@@ -8,11 +8,17 @@
 	.content {
 		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box.flex.flcen;
 	}
+	.button-container {
+		var .mb5.rel;
+	}
 	..button {
-		var .bl.w160.mb5.fs15.lh40;
+		var .bl.w160.fs15.lh40;
 		
 		&:last-child {
 			var .mb;
+		}
+		&.confirm {
+			var .abs.l100p.ml30.t.w50;
 		}
 	}
 	.tooltip {

@@ -3,8 +3,13 @@ import Store from 'xstore';
 import Button from '../../ui/Button';
 import Loader from '../../ui/Loader';
 import Tooltip from '../../ui/Tooltip';
+import {dict as dictionary} from '../../utils/Dictionary';
 
 class TaskActions extends React.Component {
+
+	componentDidMount() {
+		this.props.doAction('TASKACTIONS_LOAD', this.props.id);
+	}
 
 	render() {
 		let {dict} = this.props;
@@ -24,19 +29,28 @@ class TaskActions extends React.Component {
 	}
 
 	get buttons() {
-		let {actions, dict} = this.props;
+		let {actions, dict, removeClicked} = this.props;
 		return (
 			<div class="actions">
 				{actions && actions.map((action) => {
 					let {name, available} = action;
+					const caption = removeClicked && name == 'remove' ? dictionary.no : dict[name];
 					return (
-						<Button 
-							key={name}
-							value={name}
-							onClick={this.handleAction}
-							disabled={!available}>
-							{dict[name]}
-						</Button>
+						<div class="button-container" key={name}>
+							<Button 
+								value={name}
+								onClick={this.handleAction}
+								disabled={!available}>
+								{caption}
+							</Button>
+							{removeClicked && name == 'remove' && (
+								<Button 
+									classes="confirm"
+									onClick={this.handleRemoveAction}>
+									{dictionary.yes}
+								</Button>
+							)}
+						</div>
 					)
 				})}
 			</div>
@@ -44,7 +58,7 @@ class TaskActions extends React.Component {
 	}
 
 	handleAction = (action) => {
-		let {doAction} = this.props;
+		let {doAction, removeClicked} = this.props;
 		switch (action) {
 			case 'edit':
 				doAction('TASKACTIONS_EDIT', action);
@@ -54,10 +68,19 @@ class TaskActions extends React.Component {
 				doAction('TASKACTIONS_ASSIGN', action);
 			break;
 
+			case 'remove':
+				return doAction('TASKACTIONS_REMOVE', !removeClicked);
+
 			default:
 				doAction('TASKACTIONS_ACTION', action)
 				.then(this.handleActionResult);
 		}
+		this.handleClose();
+	}
+
+	handleRemoveAction = () => {
+		this.props.doAction('TASKACTIONS_ACTION', 'remove')
+		.then(this.handleTaskRemove);
 		this.handleClose();
 	}
 
@@ -72,6 +95,11 @@ class TaskActions extends React.Component {
 		if (modals.task_info) {
 			doAction('TASKINFO_LOAD', id);
 		}
+	}
+
+	handleTaskRemove = () => {
+		this.props.doAction('MODALS_HIDE', 'task_info');
+		this.handleActionResult();
 	}
 
 	handleClose = () => {
