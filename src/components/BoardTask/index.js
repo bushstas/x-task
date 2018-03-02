@@ -59,7 +59,10 @@ export default class BoardTask extends React.Component {
 					</div>
 				</div>
 				{actions && (
-					<ActionsButton id={id} loc="board"/>
+					<ActionsButton 
+						id={id} 
+						loc="board"
+						name="task_actions"/>
 				)}
 			</div>
 		)

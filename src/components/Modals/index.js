@@ -5,6 +5,7 @@ import Dialog from '../../ui/Dialog';
 
 import TaskInfo from '../TaskInfo';
 import TaskActions from '../TaskActions';
+import UserActions from '../UserActions';
 import ProjectsList from '../ProjectsList';
 import WorkStatuses from '../WorkStatuses';
 import QuickCall from '../QuickCall';
@@ -54,6 +55,15 @@ class Modals extends React.Component {
 						id={data.id}  
 						loc={data.loc} 
 						key="taskactions"/>
+				)
+			break;
+
+			case 'user_actions':
+				dialog = (
+					<UserActions 
+						id={data.id}  
+						loc={data.loc} 
+						key="useractions"/>
 				)
 			break;
 

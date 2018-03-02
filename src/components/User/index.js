@@ -17,6 +17,7 @@ export default class User extends React.Component {
 			spec,
 			projects,
 			task,
+			task_id,
 			project_name,
 			task_counts
 		}} = this.props;
@@ -43,7 +44,13 @@ export default class User extends React.Component {
 		let userClass = $classy(role, '.role-', ['head', 'admin', 'editor', 'analyst']);
 		
 
-		if (!task) {
+		if (task) {
+			task = (
+				<span class="task-link" onClick={this.handleTaskClick} data-value={task_id}>
+					{task}
+				</span>
+			)
+		} else {
 			task = (
 				<span class=".gray">
 					{dict.none}
@@ -97,7 +104,10 @@ export default class User extends React.Component {
 					</div>
 				)}
 				{true && (
-					<ActionsButton onClick={this.handleActionsClick}/>
+					<ActionsButton 
+						id={id}
+						loc="team"
+						name="user_actions"/>
 				)}
 			</div>
 		)
@@ -123,6 +133,14 @@ export default class User extends React.Component {
 
 	handleClick = () => {
 		
+	}
+
+	handleTaskClick = (e) => {
+		e.stopPropagation();
+		const {target: {dataset: {value}}} = e;
+		if (value) {
+			this.props.onTaskClick(value);
+		}
 	}
 
 	handleStatusClick = (e) => {

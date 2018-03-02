@@ -1,0 +1,33 @@
+.self {
+	var .fix.l.t.r.b.z9999.flex.flcen;
+
+	.mask {
+		var .abs.z1.l.r.t.b.bc-a6a6a6.o9;
+	}
+
+	.content {
+		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box.flex.flcen;
+	}
+	.button-container {
+		var .mb5.rel;
+	}
+	..button {
+		var .bl.w160.fs15.lh40;
+		
+		&:last-child {
+			var .mb;
+		}
+		&.confirm {
+			var .abs.l100p.ml30.t.w50;
+		}
+	}
+	.tooltip {
+		var .abs.t.r.mr-50.wh40.br50p.bc-fff.cen.box.pt6.pl1;
+		..icon {
+			var .fs27.c-555;
+			&:hover {
+				var .c-333;
+			}
+		}
+	}
+}

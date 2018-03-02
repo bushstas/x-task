@@ -35,7 +35,8 @@ class Team extends React.Component {
 	 				<User 
 	 					data={user}
 	 					key={user.token}
-	 					onStatusClick={this.handleStatusClick}/>
+	 					onStatusClick={this.handleStatusClick}
+	 					onTaskClick={this.handleTaskClick}/>
 	 			)
 	 		});
 	 	}
@@ -70,6 +71,11 @@ class Team extends React.Component {
 
 	handleStatusClick = (id) => {
 		this.props.doAction('MODALS_SHOW', {name: 'work_statuses', props: {id}});
+	}
+
+	handleTaskClick = (id) => {
+		this.props.doAction('TASKINFO_CHANGE', {id});
+		this.props.doAction('MODALS_SHOW', {name: 'task_info'});
 	}
 }
 

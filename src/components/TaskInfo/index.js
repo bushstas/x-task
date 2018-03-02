@@ -57,7 +57,10 @@ class TaskInfo extends React.Component {
 						</a>
 					)}
 					{actions && (
-						<ActionsButton id={this.props.id} loc={this.loc}/>
+						<ActionsButton 
+							id={this.props.id} 
+							loc={this.loc}
+							name="task_actions"/>
 					)}
 					<div class="id" onClick={this.handleNumberClick}>
 						<span>#</span>{idn}

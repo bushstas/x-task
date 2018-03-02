@@ -17,7 +17,7 @@ export default class ActionsButton extends React.Component {
 
 	handleClick = (e) => {
 		e.stopPropagation();
-		let {id, loc} = this.props;
-		Store.doAction('MODALS_SHOW', {name: 'task_actions', props: {id, loc}});
+		let {id, loc, name} = this.props;
+		Store.doAction('MODALS_SHOW', {name, props: {id, loc}});
 	}
 }
