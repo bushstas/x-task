@@ -109,9 +109,9 @@ class UserForm extends React.Component {
 
 	handleSubmit = () => {
 		if (this.props.id) {
-			this.props.doAction('TEAM_SAVE', this.props.id);
+			this.props.doAction('TEAM_SAVE_USER', this.props.id);
 		} else {
-			this.props.doAction('TEAM_CREATE');
+			this.props.doAction('TEAM_CREATE_USER');
 		}
 	}
 }

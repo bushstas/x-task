@@ -19,16 +19,18 @@ export default class Checkbox extends React.PureComponent {
 			onChange: this.handleChange
 		}
 		return (
-			<label class="self $classes $?checked $?disabled" onClick={this.handleChange}>
-				<span class="control">
-					{checked && (
-						<Icon icon="checked"/>
-					)}
-				</span>
-				<span class="label">
-					{children}
-				</span>
-			</label>
+			<div class="self $classes $?checked $?disabled">
+				<label class="label" onClick={this.handleChange}>
+					<span class="control">
+						{checked && (
+							<Icon icon="checked"/>
+						)}
+					</span>
+					<span class="label">
+						{children}
+					</span>
+				</label>
+			</div>
 		)
 	}
 

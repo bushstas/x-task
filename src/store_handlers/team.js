@@ -41,15 +41,6 @@ const canceled = (state) => {
   }
 }
 
-const changed = (state, users) => {
-   return {
-    users,
-    editedUserToken: null,
-    userFormData: {},
-    teamFetching: false
-  }
-}
- 
 const load = ({dispatchAsync, state}) => {
   const {typeFilter, statusFilter, projectFilter} = state;
   const params = {};
@@ -69,39 +60,46 @@ const load = ({dispatchAsync, state}) => {
   });
 }
 
-const create = ({dispatch, state, doAction}) => {
+const handleUserSaved = (doAction) => {
+  doAction('MODALS_HIDE', 'user_form');
+  doAction('TEAM_REFRESH');
+}
+
+const create_user = ({state, doAction}) => {
     let {userFormData} = state;
     post('create_user', userFormData)
-    .then(
-        () => doAction('TEAM_REFRESH')
-    );
+      .then(() => handleUserSaved(doAction));
 }
 
-const save = ({dispatch, state, doAction}, userId = null) => {
+const save_user = ({state, doAction}, userId) => {
     let {userFormData} = state;
-    post('save_user', {userId, ...userFormData})
-    .then(
-        () => doAction('TEAM_REFRESH')
-    );
+    userFormData.userId = userId;
+    post('save_user', userFormData)
+      .then(() => handleUserSaved(doAction));
 }
 
-const refresh = ({dispatch, state}) => {
-    dispatch('TEAM_FETCHING');
-    get('refresh_users')
-    .then(({users}) => {
-        dispatch('TEAM_CHANGED', users);
-     });
+const refresh = ({setState}) => {
+  setState({teamFetching: true});
+  get('refresh_users').then(users => {
+    setState({
+      users,
+      userFormData: {},
+      teamFetching: false
+    });
+  });
 }
 
-const show_add_form = ({doAction}) => {
+const show_add_form = ({setState, doAction}) => {
+  setState({userFormData: {}});
   doAction('MODALS_SHOW', {name: 'user_form'});
 }
 
-const show_edit_form = ({dispatch}, userToken) => {
-  post('get_user_data', {userToken})
+const show_edit_form = ({setState}, userId) => {
+  post('get_user_data', {userId})
     .then(({user}) => {
-      dispatch('TEAM_EDIT_FORM_SHOWN', {userToken, user});
-    });   
+      setState({userFormData: user});
+    });
+    doAction('MODALS_SHOW', {name: 'user_form'});
 }
 
 const change = ({setState}, data) => {
@@ -127,8 +125,8 @@ export default {
   },
   actions: {
     load,
-    create,
-    save,
+    create_user,
+    save_user,
     refresh,
     show_add_form,
     show_edit_form,
@@ -141,7 +139,6 @@ export default {
     loaded,
     form_data_changed,
     edit_form_shown,
-    canceled,
-    changed
+    canceled
   }
 } 
