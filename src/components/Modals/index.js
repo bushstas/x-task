@@ -10,6 +10,7 @@ import ProjectsList from '../ProjectsList';
 import WorkStatuses from '../WorkStatuses';
 import QuickCall from '../QuickCall';
 import UserInfo from '../UserInfo';
+import UserForm from '../UserForm';
 
 class Modals extends React.Component {	
 	componentDidMount() {
@@ -36,6 +37,7 @@ class Modals extends React.Component {
 		switch (key) {			
 			case 'task_info':
 				dialog = this.renderThisModal({
+					classes: $classy('.dialog-large .dialog-no-overflow'),
 					name: key,
 					title: dict.task_inf,
 					content: (
@@ -46,6 +48,16 @@ class Modals extends React.Component {
 							store={data.store}
 							key="taskinfo"/>
 					)
+				});
+			break;
+
+			case 'user_form':
+				const {id} = data;
+				dialog = this.renderThisModal({
+					classes: $classy('.dialog-large'),
+					name: key,
+					title: dict[id ? 'user_editing' : 'user_adding'],
+					content: <UserForm/>
 				});
 			break;
 
@@ -102,19 +114,17 @@ class Modals extends React.Component {
 	}
 
 	renderThisModal = (params) => {
-		let {name, title, content} = params;
-		let props = {
+		const {name, title, content, classes} = params;
+		const props = {
+			classes,
 			key: name,
 			name, 
 			title,
 			onClose: this.handleClose,
-			clickMaskToClose: true
+			clickMaskToClose: true,
+			children: content
 		};
-		return (
-			<Dialog classes="~large ~no-overflow" {...props}>
-				{content}
-			</Dialog>
-		)
+		return <Dialog {...props}/>
 	}
 
 	handleClose = (name) => {

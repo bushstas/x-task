@@ -4,7 +4,6 @@ import {USERS_STORAGE_KEY} from '../consts/storage';
 const init = () => {
   return {
     users: null,
-    userFormShown: null,
     userFormData: {},
     editedUserToken: null,
     teamFetching: false,
@@ -31,19 +30,13 @@ const form_data_changed = (state, userFormData) => {
 const edit_form_shown = (state, {user, userToken}) => {
   return {
     editedUserToken: userToken,
-    userFormShown: 'edit',
     userFormData: user
   }
-}
-
-const add_form_shown = (state) => {
-  return {userFormShown: 'add'}
 }
 
 const canceled = (state) => {
    return {
     editedUserToken: null,
-    userFormShown: null,
     userFormData: {}
   }
 }
@@ -52,7 +45,6 @@ const changed = (state, users) => {
    return {
     users,
     editedUserToken: null,
-    userFormShown: null,
     userFormData: {},
     teamFetching: false
   }
@@ -93,6 +85,10 @@ const refresh = ({dispatch, state}) => {
      });
 }
 
+const show_add_form = ({doAction}) => {
+  doAction('MODALS_SHOW', {name: 'user_form'});
+}
+
 const show_edit_form = ({dispatch}, userToken) => {
   post('get_user_data', {userToken})
     .then(({user}) => {
@@ -117,13 +113,15 @@ export default {
       'usersActiveTab',
       'typeFilter',
       'statusFilter',
-      'projectFilter'
+      'projectFilter',
+      'userFormData'
     ]
   },
   actions: {
     load,
     save,
     refresh,
+    show_add_form,
     show_edit_form,
     change,
     update
@@ -133,7 +131,6 @@ export default {
     fetching,
     loaded,
     form_data_changed,
-    add_form_shown,
     edit_form_shown,
     canceled,
     changed

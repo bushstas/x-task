@@ -45,14 +45,12 @@ Store.addHandlers({
 
 const box = document.createElement('div');
 box.className = $classy('.main-box');
+document.body.appendChild(box);
 
 Promise.all([
 	Store.doAction('USER_LOAD'),
 	Store.doAction('APP_LOAD_DICTIONARY')
 ])
-.then(() => {
-	document.body.appendChild(box);
-	render(<App/>, box);
-});
+.then(() => render(<App/>, box));
 	
 export const APP_MAIN_CONTAINER = box;

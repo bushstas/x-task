@@ -2,18 +2,18 @@ import React from 'react';
 import Store from 'xstore';
 import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
-import {hasRight, isAuthorized} from '../../utils/User';
+import {hasRight} from '../../utils/User';
 
 class StartButton extends React.Component {
 	render() {
-		let {shown} = this.props;
+		let {shown, isAuthorized} = this.props;
 		let active = shown == 'main';
 		return (
 			<div class="self $?active">
 				<div class="main" onClick={this.handleStartClick}>
 					<Icon icon="logo"/>
 				</div>
-				{isAuthorized() && (
+				{isAuthorized && (
 					<div class="menu">
 						{shown != 'board' && (
 							<div 
@@ -76,4 +76,4 @@ class StartButton extends React.Component {
   	}
 }
 
-export default Store.connect(StartButton, 'app');
+export default Store.connect(StartButton, 'app, user:isAuthorized');

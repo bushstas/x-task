@@ -21,6 +21,9 @@ const hide = ({setState, state, then}, name = null) => {
 }
 
 export default {
+  localStore: {
+    key: 'modals'
+  },
   actions: {
   	show,
     hide

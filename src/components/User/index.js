@@ -5,8 +5,7 @@ import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
 import ActionsButton from '../ActionsButton';
 
-export default class User extends React.Component {
-	
+export default class User extends React.Component {	
 
 	render() {
 		let {data: {
@@ -19,7 +18,8 @@ export default class User extends React.Component {
 			task,
 			task_id,
 			project_name,
-			task_counts
+			task_counts,
+			actions
 		}} = this.props;
 
 		if (!projects) {
@@ -103,7 +103,7 @@ export default class User extends React.Component {
 						</div>
 					</div>
 				)}
-				{true && (
+				{actions && (
 					<ActionsButton 
 						id={id}
 						loc="team"

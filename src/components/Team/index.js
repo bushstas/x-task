@@ -1,6 +1,5 @@
 import React from 'react';
 import User from '../User';
-import UserForm from '../UserForm';
 import {dict} from '../../utils/Dictionary';
 import Icon from '../../ui/Icon';
 import Store from 'xstore';
@@ -16,10 +15,7 @@ class Team extends React.Component {
 	}
 
 	render() {
-		let {userFormShown, teamFetching, users} = this.props;
-	 	if (userFormShown) {
-	 		return this.form;
-	 	}
+		let { teamFetching, users} = this.props;
 	 	return (
 	 		<Loader classes="self" fetching={teamFetching}>
 	 			{users && this.users}
@@ -52,10 +48,6 @@ class Team extends React.Component {
 				</div>
 			</div>
 		)
-	}
-
-	get form() {
-		return <UserForm/>
 	}
 
 	handleEditUserClick = (e) => {

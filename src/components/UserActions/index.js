@@ -104,7 +104,7 @@ class UserActions extends React.Component {
 
 	handleClose = () => {
 		this.props.dispatch('USERACTIONS_INIT');
-		this.props.doAction('MODALS_HIDE', 'task_actions');	
+		this.props.doAction('MODALS_HIDE', 'user_actions');	
 	}
 }
 

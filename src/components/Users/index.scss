@@ -5,4 +5,13 @@
 			var .mr20;
 		}
 	}
+	.add {
+		var .abs.bc-fff.br50p.wh50.r100p.mr20.t.shad-333-2.cen.pntr.c-555.nosel;
+		..icon {
+			var .lh50.fs26;
+		}
+		&:hover {
+			var .c-333.shad-000-2;		
+		}
+	}
 }
