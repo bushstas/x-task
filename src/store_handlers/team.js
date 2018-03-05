@@ -69,9 +69,9 @@ const load = ({dispatchAsync, state}) => {
   });
 }
 
-const save = ({dispatch, state, doAction}, {token}) => {
+const save = ({dispatch, state, doAction}, id = null) => {
     let {userFormData} = state;
-    post('save_user', {userToken: token, ...userFormData})
+    post('save_user', {id, ...userFormData})
     .then(
         () => doAction('TEAM_REFRESH')
     );

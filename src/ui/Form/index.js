@@ -43,10 +43,10 @@ export default class Form extends React.Component {
 				return this.renderChild(child, i);
 			});
 		}
-		return children;
+		return this.renderChild(children);
 	}
 
-	renderChild(child, i) {
+	renderChild(child, i = 0) {
 		if (React.isValidElement(child)) {
 			let props = {
 				key: i

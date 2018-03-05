@@ -4,6 +4,8 @@ import Input from '../../ui/Input';
 import Select from '../../ui/Select';
 import FormField from '../../ui/FormField';
 import Checkboxes from '../../ui/Checkboxes';
+import FormSubmit from '../../ui/FormSubmit';
+import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
 import {isHead, isCurrentUser} from '../../utils/User';
@@ -16,7 +18,8 @@ class UserForm extends React.Component {
 			<Form 
 				data={data}
 				onChange={this.handleFormChange}
-				classes=".user-form .pt10">
+				onSubmit={this.handleSubmit}
+				classes="self .pt10">
 
 				<FormField caption={dict.login}>
 					<Input name="login" value={data.login}/>
@@ -49,6 +52,12 @@ class UserForm extends React.Component {
 				<FormField caption={dict.projects} classes=".mt15" isPresent={!editingOneself && data.role > 2}>
 					<Checkboxes name="projects" value={data.projects} items={this.projects}/>
 				</FormField>
+
+				<div class="submit">
+					<FormSubmit>
+						<Icon icon="save"/> {dict.save}
+					</FormSubmit>
+				</div>
 			</Form>
 		)
 	}
@@ -96,6 +105,10 @@ class UserForm extends React.Component {
 
 	handleFormChange = (data) => {
 		this.props.dispatch('TEAM_FORM_DATA_CHANGED', data);
+	}
+
+	handleSubmit = () => {
+		this.props.doAction('TEAM_SAVE', this.props.id);
 	}
 }
 
