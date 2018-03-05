@@ -69,9 +69,17 @@ const load = ({dispatchAsync, state}) => {
   });
 }
 
-const save = ({dispatch, state, doAction}, id = null) => {
+const create = ({dispatch, state, doAction}) => {
     let {userFormData} = state;
-    post('save_user', {id, ...userFormData})
+    post('create_user', userFormData)
+    .then(
+        () => doAction('TEAM_REFRESH')
+    );
+}
+
+const save = ({dispatch, state, doAction}, userId = null) => {
+    let {userFormData} = state;
+    post('save_user', {userId, ...userFormData})
     .then(
         () => doAction('TEAM_REFRESH')
     );
@@ -119,6 +127,7 @@ export default {
   },
   actions: {
     load,
+    create,
     save,
     refresh,
     show_add_form,
