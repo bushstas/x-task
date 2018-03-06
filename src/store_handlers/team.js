@@ -94,12 +94,13 @@ const show_add_form = ({setState, doAction}) => {
   doAction('MODALS_SHOW', {name: 'user_form'});
 }
 
-const show_edit_form = ({setState}, userId) => {
-  post('get_user_data', {userId})
+const show_edit_form = ({setState, doAction}, userId) => {
+  setState({userFormData: {}});
+  get('get_user_data', {userId})
     .then(({user}) => {
       setState({userFormData: user});
     });
-    doAction('MODALS_SHOW', {name: 'user_form'});
+    doAction('MODALS_SHOW', {name: 'user_form', props: {id: userId}});
 }
 
 const change = ({setState}, data) => {

@@ -1,22 +1,29 @@
 import React from 'react';
-import {AVATAR_PATH} from '../../consts/avatar';
 import Store from 'xstore';
+import {AVATAR_PATH} from '../../consts/avatar';
+import Icon from '../../ui/Icon';
 
 export default class Avatar extends React.Component {
 	constructor(props) {
 		super();
 		this.style = {
-			backgroundImage: 'url(' + AVATAR_PATH + props.id + '.png)'
+			backgroundImage: props.id ? 'url(' + AVATAR_PATH + props.id + '.png)' : null
 		}
 	}
 
 	render() {
-		let {classes, userId, userName} = this.props;
+		let {classes, userId, userName, id} = this.props;
 		return (
 			<div class="self $classes" title={userName}>
-				<div class="inner" style={this.style} onClick={this.handleClick}/>
+				<div class="inner" style={this.style} onClick={this.handleClick}>
+					{!id && this.icon}
+				</div>
 			</div>
 		)
+	}
+
+	get icon() {
+		return <Icon icon="person"/>
 	}
 
 	handleClick = (e) => {
@@ -24,7 +31,7 @@ export default class Avatar extends React.Component {
 		const {onClick, userId, userName, id} = this.props;
 		if (onClick instanceof Function) {
 			onClick({userId, userName, id});
-		} else {
+		} else if (id) {
 			Store.doAction('MODALS_SHOW', {name: 'user_info', props: {id: userId, name: userName}});
 		}
 	}

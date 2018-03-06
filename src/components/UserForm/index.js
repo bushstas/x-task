@@ -1,5 +1,7 @@
 import React from 'react';
 import Form from '../../ui/Form';
+import Loader from '../../ui/Loader';
+import Avatar from '../../components/Avatar';
 import Input from '../../ui/Input';
 import Select from '../../ui/Select';
 import FormField from '../../ui/FormField';
@@ -12,53 +14,67 @@ import {isHead, isCurrentUser} from '../../utils/User';
 
 class UserForm extends React.Component {
 	render() {
-		let {userFormData: data, editedUserToken} = this.props;
-		let editingOneself = isCurrentUser(editedUserToken);
+		const {userFormData: data, id} = this.props;
+		const fetching = id && !data.login;
 		return (
-			<Form 
-				data={data}
-				onChange={this.handleFormChange}
-				onSubmit={this.handleSubmit}
-				classes="self .pt10">
+			<Loader classes="self .pt10" fetching={fetching}>
+				{!fetching && this.form}
+			</Loader>
+		)
+	}
 
-				<FormField caption={dict.login}>
-					<Input name="login" value={data.login}/>
-				</FormField>
+	get form() {
+		const {userFormData: data} = this.props;
+		return (
+			<div>
+				<Avatar
+					id={data.avatar_id}
+					userName={data.userName}
+					userId={data.id}/>
+				<Form 
+					data={data}
+					onChange={this.handleFormChange}
+					onSubmit={this.handleSubmit}>
 
-				<FormField caption={dict.password} classes=".mt15">
-					<Input type="password" name="password" value={data.password}/>
-				</FormField>
+					<FormField caption={dict.login}>
+						<Input name="login" value={data.login}/>
+					</FormField>
 
-				<FormField caption={dict.password2} classes=".mt15">
-					<Input type="password" name="password2" value={data.password2}/>
-				</FormField>
+					<FormField caption={dict.password} classes=".mt15">
+						<Input type="password" name="password" value={data.password}/>
+					</FormField>
 
-				<FormField caption={dict.name} classes=".mt15">
-					<Input name="userName" value={data.userName}/>
-				</FormField>
+					<FormField caption={dict.password2} classes=".mt15">
+						<Input type="password" name="password2" value={data.password2}/>
+					</FormField>
 
-				<FormField caption={dict.email} classes=".mt15">
-					<Input name="email" value={data.email}/>
-				</FormField>
+					<FormField caption={dict.name} classes=".mt15">
+						<Input name="userName" value={data.userName}/>
+					</FormField>
 
-				<FormField caption={dict.role} classes=".mt15" isPresent={!editingOneself}>
-					<Select name="role" value={data.role} options={this.roles}/>
-				</FormField>
+					<FormField caption={dict.email} classes=".mt15">
+						<Input name="email" value={data.email}/>
+					</FormField>
 
-				<FormField caption={dict.spec} classes=".mt15" isPresent={!editingOneself && data.role == 6}>
-					<Select name="spec" value={data.spec} options={this.specs}/>
-				</FormField>
+					<FormField caption={dict.role} classes=".mt15">
+						<Select name="role" value={data.role} options={this.roles}/>
+					</FormField>
 
-				<FormField caption={dict.projects} classes=".mt15" isPresent={!editingOneself && data.role > 2}>
-					<Checkboxes name="projects" value={data.projects} items={this.projects}/>
-				</FormField>
+					<FormField caption={dict.spec} classes=".mt15">
+						<Select name="spec" value={data.spec} options={this.specs}/>
+					</FormField>
 
-				<div class="submit">
-					<FormSubmit>
-						<Icon icon="save"/> {dict.save}
-					</FormSubmit>
-				</div>
-			</Form>
+					<FormField caption={dict.projects} classes=".mt15">
+						<Checkboxes name="projects" value={data.projects} items={this.projects}/>
+					</FormField>
+
+					<div class="submit">
+						<FormSubmit>
+							<Icon icon="save"/> {dict.save}
+						</FormSubmit>
+					</div>
+				</Form>
+			</div>
 		)
 	}
 

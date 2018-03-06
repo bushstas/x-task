@@ -3,8 +3,16 @@
 	padding-left: 30px;
 	position: relative;
 
-	.label {
+	.label-area {
 		cursor: pointer;
+		&:not(.disabled):hover {
+			.control {
+				border-color: #888;
+			}
+			.label {
+				color: #000;
+			}
+		}
 	}
 	
 	.control {
@@ -33,13 +41,5 @@
 	}
 	&.disabled {
 		cursor: default;
-	}
-	&:not(.disabled):hover {
-		.control {
-			border-color: #888;
-		}
-		.label {
-			color: #000;
-		}
 	}
 }

@@ -57,7 +57,7 @@ class Modals extends React.Component {
 					classes: $classy('.dialog-large'),
 					name: key,
 					title: dict[id ? 'user_editing' : 'user_adding'],
-					content: <UserForm/>
+					content: <UserForm id={id}/>
 				});
 			break;
 
@@ -102,12 +102,12 @@ class Modals extends React.Component {
 			break;
 
 			case 'user_info':
-				dialog = (
-					<UserInfo 
-						key="user_info"
-						id={data.id}
-						name={data.name}/>
-				)
+				dialog = this.renderThisModal({
+					classes: $classy('.dialog-large'),
+					name: key,
+					title: data.name,
+					content: <UserInfo id={data.id}/>
+				});
 			break;
 		}
 		return dialog;

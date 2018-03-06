@@ -61,8 +61,8 @@ class UserActions extends React.Component {
 		let {doAction, removeClicked} = this.props;
 		switch (action) {
 			case 'edit':
-				doAction('USERACTIONS_EDIT', action);
-			break;
+				this.handleClose();
+				return doAction('USERACTIONS_EDIT', action);
 
 			case 'assign':
 				doAction('USERACTIONS_ASSIGN', action);
@@ -103,7 +103,6 @@ class UserActions extends React.Component {
 	}
 
 	handleClose = () => {
-		this.props.dispatch('USERACTIONS_INIT');
 		this.props.doAction('MODALS_HIDE', 'user_actions');	
 	}
 }

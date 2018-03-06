@@ -1,12 +1,15 @@
 .self {
 	var .rel.bc-a0a0a0.br3.box.pntr;
 	.inner {
-		var .cvr.br3.abs.l2.t2.r2.b2;
+		var .cvr.br3.abs.l2.t2.r2.b2.bc-fff.flex.flcen.nosel;
 	}
 	&.large {
 		var .wh90;
 	}
 	&:hover {
 		var .bc-bb9500;
+	}
+	..icon {
+		var .fs70.c-888;
 	}
 }
