@@ -20,13 +20,23 @@ const hide = ({setState, state, then}, name = null) => {
   }
 }
 
+const change = ({setState, state}, {name, props}) => {
+  let {modals} = state;
+  modals[name] = {
+    ...modals[name],
+    ...props
+  };
+  setState({modals});
+}
+
 export default {
   localStore: {
     key: 'modals'
   },
   actions: {
   	show,
-    hide
+    hide,
+    change
   },
   reducers: {
     init

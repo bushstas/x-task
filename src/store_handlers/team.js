@@ -71,16 +71,15 @@ const create_user = ({state, doAction}) => {
       .then(() => handleUserSaved(doAction));
 }
 
-const save_user = ({state, doAction}, userId) => {
+const save_user = ({state, doAction}) => {
     let {userFormData} = state;
-    userFormData.userId = userId;
     post('save_user', userFormData)
       .then(() => handleUserSaved(doAction));
 }
 
 const refresh = ({setState}) => {
   setState({teamFetching: true});
-  get('refresh_users').then(users => {
+  get('refresh_users').then(({users}) => {
     setState({
       users,
       userFormData: {},
@@ -101,6 +100,10 @@ const show_edit_form = ({setState, doAction}, userId) => {
       setState({userFormData: user});
     });
     doAction('MODALS_SHOW', {name: 'user_form', props: {id: userId}});
+}
+
+const show_avatars = ({setState, doAction}) => {
+  doAction('MODALS_SHOW', {name: 'avatars'});
 }
 
 const change = ({setState}, data) => {
@@ -132,7 +135,8 @@ export default {
     show_add_form,
     show_edit_form,
     change,
-    update
+    update,
+    show_avatars
   },
   reducers: {
     init,

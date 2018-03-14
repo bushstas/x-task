@@ -74,36 +74,31 @@ const show_task_info = ({setState, doAction, state}, {id, index}) => {
   	shownTaskId: id,
     shownTaskIndex: index
   });
-  doAction('TASKINFO_CHANGE', {id, tasksCount, store: 'TASKS', index});
-  doAction('MODALS_SHOW', {name: 'task_info'});
+  const props = {
+    id, tasksCount, store: 'TASKS', index
+  }
+  doAction('TASKINFO_CHANGE', props);
+  doAction('MODALS_SHOW', {name: 'task_info', props});
 }
 
-const show_prev = ({state, doAction, setState}) => {  
+const show_prev = ({state, and}) => {  
   let {shownTaskIndex, tasks} = state;
   let index = shownTaskIndex - 1;
   if (index < 0) {
     index = tasks.length - 1;
   }
   const id = tasks[index].id;
-  setState({
-    shownTaskId: id,
-    shownTaskIndex: index
-  });
-  doAction('TASKINFO_CHANGE', {id, index});
+  and('SHOW_TASK_INFO', {id, index});
 }
 
-const show_next = ({state, doAction, setState}) => {
+const show_next = ({state, and}) => {
   let {shownTaskIndex, tasks} = state;
   let index = shownTaskIndex + 1;
   if (index > tasks.length - 1) {
     index = 0;
   }
   const id = tasks[index].id;
-  setState({
-    shownTaskId: id,
-    shownTaskIndex: index
-  });
-  doAction('TASKINFO_CHANGE', {id, index});
+  and('SHOW_TASK_INFO', {id, index});
 }
 
 const load_counts = ({setState}) => {
@@ -132,7 +127,9 @@ export default {
         'filter',
         'status',
         'type',
-        'importance'
+        'importance',
+        'shownTaskIndex',
+        'shownTaskId'
     ],
     timeout: 500
   },

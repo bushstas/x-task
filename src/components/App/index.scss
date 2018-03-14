@@ -88,7 +88,7 @@ body {
 	input[type="text"],
 	input[type="password"],
 	textarea {
-		var .box.bc-fff.p8-12.bo-aaa.br2.ff-Roboto.tra-boc-3.fs14.lh16;
+		var .box.bc-fff.p12.bo-aaa.br2.ff-Roboto.tra-boc-3.fs14.lh16;
 		
 		&:focus {
 			var .ol.shad.boc-222!;
@@ -100,7 +100,7 @@ body {
 	}
 
 	select {
-		var .p7-12;
+		var .p11-12;
 	}
 
 	textarea::placeholder,

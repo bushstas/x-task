@@ -17,7 +17,7 @@ export default class Select extends React.PureComponent {
 			<div class="self $classes">
 				<select 
 					name={name}
-					value={value}
+					value={value || ''}
 					onChange={this.handleChange}>
 					{this.options}
 				</select>

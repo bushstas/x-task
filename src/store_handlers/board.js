@@ -70,38 +70,33 @@ const show_task_info = ({setState, doAction, state}, {id, index, status}) => {
     shownTaskIndex: index,
     showTaskStatus: status
   });
-  doAction('TASKINFO_CHANGE', {id, tasksCount, store: 'BOARD', index});
-  doAction('MODALS_SHOW', {name: 'task_info'});
+  const props = {
+    id, tasksCount, store: 'BOARD', index
+  }
+  doAction('TASKINFO_CHANGE', props);
+  doAction('MODALS_SHOW', {name: 'task_info', props});
 }
 
-const show_prev = ({doAction, setState, state}) => {  
-  let {shownTaskIndex, showTaskStatus, tasks} = state;
-  tasks = tasks[showTaskStatus];
+const show_prev = ({and, state}) => {  
+  let {shownTaskIndex, showTaskStatus: status, tasks} = state;
+  tasks = tasks[status];
   let index = shownTaskIndex - 1;
   if (index < 0) {
     index = tasks.length - 1;
   }
   const id = tasks[index].id;
-  setState({
-    shownTaskId: id,
-    shownTaskIndex: index,
-  });
-  doAction('TASKINFO_CHANGE', {id, index});
+  and('SHOW_TASK_INFO', {id, index, status});
 }
 
-const show_next = ({doAction, setState, state}) => {
-  let {shownTaskIndex, showTaskStatus, tasks} = state;
-  tasks = tasks[showTaskStatus];
+const show_next = ({and, state}) => {
+  let {shownTaskIndex, showTaskStatus: status, tasks} = state;
+  tasks = tasks[status];
   let index = shownTaskIndex + 1;
   if (index > tasks.length - 1) {
     index = 0;
   }
   const id = tasks[index].id;
-  setState({
-    shownTaskId: id,
-    shownTaskIndex: index,
-  });
-  doAction('TASKINFO_CHANGE', {id, index});
+  and('SHOW_TASK_INFO', {id, index, status});
 }
 
 const load_on_project_set = ({and}) => {
@@ -127,7 +122,10 @@ export default {
     key: BOARD_STORAGE_KEY,
     names: [
       'filter',
-      'addedUsers'
+      'addedUsers',
+      'shownTaskId',
+      'shownTaskIndex',
+      'showTaskStatus'
     ],
     shouldSave: (state) => {
       return !!state

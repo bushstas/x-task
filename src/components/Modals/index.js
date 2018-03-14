@@ -11,6 +11,7 @@ import WorkStatuses from '../WorkStatuses';
 import QuickCall from '../QuickCall';
 import UserInfo from '../UserInfo';
 import UserForm from '../UserForm';
+import Avatars from '../Avatars';
 
 class Modals extends React.Component {	
 	componentDidMount() {
@@ -22,10 +23,10 @@ class Modals extends React.Component {
 	}
 
 	render() {
-		let {modals} = this.props;
+		let {modals, isAuthorized} = this.props;
 		return (
 			<div class="self">
-				{Object.keys(modals).map(this.renderModal)}
+				{isAuthorized && Object.keys(modals).map(this.renderModal)}
 			</div>
 		)	
 	}
@@ -109,6 +110,12 @@ class Modals extends React.Component {
 					content: <UserInfo id={data.id}/>
 				});
 			break;
+
+			case 'avatars':
+				dialog = (
+					<Avatars avatars={data.avatars} key="avatars"/>
+				)
+			break;
 		}
 		return dialog;
 	}
@@ -144,4 +151,4 @@ class Modals extends React.Component {
 	}
 }
 
-export default Store.connect(Modals, 'modals');
+export default Store.connect(Modals, 'modals, user:isAuthorized');

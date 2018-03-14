@@ -17,7 +17,7 @@ class UserForm extends React.Component {
 		const {userFormData: data, id} = this.props;
 		const fetching = id && !data.login;
 		return (
-			<Loader classes="self .pt10" fetching={fetching}>
+			<Loader classes="self" fetching={fetching}>
 				{!fetching && this.form}
 			</Loader>
 		)
@@ -30,7 +30,8 @@ class UserForm extends React.Component {
 				<Avatar
 					id={data.avatar_id}
 					userName={data.userName}
-					userId={data.id}/>
+					userId={data.id}
+					onClick={this.handleAvatarClick}/>
 				<Form 
 					data={data}
 					onChange={this.handleFormChange}
@@ -124,11 +125,11 @@ class UserForm extends React.Component {
 	}
 
 	handleSubmit = () => {
-		if (this.props.id) {
-			this.props.doAction('TEAM_SAVE_USER', this.props.id);
-		} else {
-			this.props.doAction('TEAM_CREATE_USER');
-		}
+		this.props.doAction(this.props.id ? 'TEAM_SAVE_USER' : 'TEAM_CREATE_USER');
+	}
+
+	handleAvatarClick = () => {
+		this.props.doAction('TEAM_SHOW_AVATARS');	
 	}
 }
 
