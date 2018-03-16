@@ -6,6 +6,16 @@ import Icon from '../../ui/Icon';
 export default class Avatar extends React.Component {
 	constructor(props) {
 		super();
+		this.initStyle(props);
+	}
+
+	componentWillReceiveProps(props) {
+		if (props.id != this.props.id) {
+			this.initStyle(props);
+		}
+	}
+
+	initStyle(props) {
 		this.style = {
 			backgroundImage: props.id ? 'url(' + AVATAR_PATH + props.id + '.png)' : null
 		}
@@ -31,7 +41,7 @@ export default class Avatar extends React.Component {
 		const {onClick, userId, userName, id} = this.props;
 		if (onClick instanceof Function) {
 			onClick({userId, userName, id});
-		} else if (id) {
+		} else if (userId) {
 			Store.doAction('MODALS_SHOW', {name: 'user_info', props: {id: userId, name: userName}});
 		}
 	}

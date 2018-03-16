@@ -113,7 +113,9 @@ class Modals extends React.Component {
 
 			case 'avatars':
 				dialog = (
-					<Avatars avatars={data.avatars} key="avatars"/>
+					<Avatars 
+						key="avatars"
+						store={data.store}/>
 				)
 			break;
 		}

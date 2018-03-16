@@ -20,6 +20,7 @@ import taskinfo from './store_handlers/taskinfo';
 import taskactions from './store_handlers/taskactions';
 import useractions from './store_handlers/useractions';
 import quickcall from './store_handlers/quickcall';
+import avatars from './store_handlers/avatars';
 
 Store.setDefaultParams({
 	flat: true
@@ -40,7 +41,8 @@ Store.addHandlers({
 	taskinfo,
 	taskactions,
 	useractions,
-	quickcall
+	quickcall,
+	avatars
 });
 
 const box = document.createElement('div');

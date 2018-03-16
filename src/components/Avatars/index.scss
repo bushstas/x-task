@@ -5,9 +5,13 @@
 		var .abs.z1.l.r.t.b.bc-a6a6a6.o9;
 	}
 	.content {
-		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box;
+		var .abs.z2.bc-fff.p20.br5.mnh200.mnw200.box.mxw800;
 	}
 	..avatar {
-		var .wh60.m3;
+		var .wh63.m3.inb;
+		&.unavailable {
+			var .cur-default.o4;
+			filter: grayscale(40%);
+		}
 	}
 }

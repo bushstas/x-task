@@ -1,8 +1,13 @@
 import React from 'react';
+import Store from 'xstore';
 import Avatar from '../Avatar';
 import Loader from '../../ui/Loader';
 
-export default class Avatars extends React.Component {
+class Avatars extends React.Component {
+
+	componentDidMount() {
+		this.props.doAction('AVATARS_LOAD');
+	}
 
 	render() {
 		let {avatars} = this.props;
@@ -18,26 +23,28 @@ export default class Avatars extends React.Component {
 
 	get content() {
 		const {avatars} = this.props;
-		return (
-			<div class="content">
-				{avatars.map(avatar => {
-					return (
-						<Avatar 
-							id={avatar.avatar_id}
-							userName={avatar.name}
-							userId={avatar.id}
-							onClick={this.handleAvatarClick}/>
-					)
-				})}
-			</div>
-		)
+		return avatars.map(avatar => {
+			let className;
+			if (!avatar.available) {
+				className = $classy('unavailable');
+			}
+			return (
+				<Avatar 
+					key={avatar.id}
+					classes="$className"
+					id={avatar.id}
+					onClick={avatar.available ? this.handleAvatarClick : null}/>
+			)
+		});
 	}
 
 	handleClose = () => {
 		this.props.doAction('MODALS_HIDE', 'avatars');
 	}
 
-  	handleAvatarClick = ({userId}) => {
-  		this.props.doAction('STATUSES_SELECT_USER', userId);	
+  	handleAvatarClick = ({id}) => {
+  		this.props.doAction(this.props.store + '_SET_AVATAR', id);
   	}
 }
+
+export default Store.connect(Avatars, 'avatars');

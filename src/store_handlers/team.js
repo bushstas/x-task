@@ -103,12 +103,19 @@ const show_edit_form = ({setState, doAction}, userId) => {
 }
 
 const show_avatars = ({setState, doAction}) => {
-  doAction('MODALS_SHOW', {name: 'avatars'});
+  doAction('MODALS_SHOW', {name: 'avatars', props: {store: 'TEAM'}});
 }
 
 const change = ({setState}, data) => {
   setState(data);
 } 
+
+const set_avatar = ({state, setState, doAction}, id) => {
+  const {userFormData} = state;
+  userFormData.avatar_id = id;
+  setState({userFormData});
+  doAction('MODALS_HIDE', 'avatars');
+}
 
 const update = ({and, state}) => {
   if (state.users) {
@@ -136,7 +143,8 @@ export default {
     show_edit_form,
     change,
     update,
-    show_avatars
+    show_avatars,
+    set_avatar
   },
   reducers: {
     init,
