@@ -1,6 +1,9 @@
 .self {
 	var .rel.bo-ddd.br3.mb10.p10-15.pl155.pr55.pntr.mnh40;
 
+	&.without-avatar {
+		var .pl100;
+	}
 	..avatar {
 		var .abs.l96.t7.wh46;
 	}

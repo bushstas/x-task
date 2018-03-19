@@ -12,6 +12,7 @@ import QuickCall from '../QuickCall';
 import UserInfo from '../UserInfo';
 import UserForm from '../UserForm';
 import Avatars from '../Avatars';
+import UserTasks from '../UserTasks';
 
 class Modals extends React.Component {	
 	componentDidMount() {
@@ -117,6 +118,15 @@ class Modals extends React.Component {
 						key="avatars"
 						store={data.store}/>
 				)
+			break;
+
+			case 'user_tasks':
+				dialog = this.renderThisModal({
+					classes: $classy('.dialog-large'),
+					name: key,
+					title: dict.assign_task,
+					content: <UserTasks/>
+				});
 			break;
 		}
 		return dialog;

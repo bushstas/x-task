@@ -29,8 +29,12 @@ export default class Task extends React.Component {
 			}
 		} = this.props;
 		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
+		let className2;
+		if (!avatar_id) {
+			className2 =  $classy('without-avatar');
+		}
 		return (
-			<div class="self $className" onClick={this.handleClick}>
+			<div class="self $className $className2" onClick={this.handleClick}>
 				<div class="id">
 					<span class=".gray">#</span>{idn}
 				</div>
@@ -47,10 +51,12 @@ export default class Task extends React.Component {
 					</Icon>
 				</div>
 				
-				<Avatar 
-					id={avatar_id}
-					userId={user_id}
-					userName={user_name}/>
+				{avatar_id && 
+					<Avatar 
+						id={avatar_id}
+						userId={user_id}
+						userName={user_name}/>
+				}
 				
 				<div class="title">
 					{locked && (
