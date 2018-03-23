@@ -177,6 +177,7 @@ class Board {
 		} else {
 			$tasks = array(
 				'current' => array(),
+				'locked' => array(),
 				'in_work' => array(),
 				'delayed' => array(),
 				'ready' => array(),
@@ -213,7 +214,7 @@ class Board {
 			}
 		}
 		foreach ($rows as &$row) {
-			
+			$row['locked'] = $row['locked'] == 1;
 			$row['actions'] = false;
 			if ($user['role_id'] < 5 || $row['changed_by'] == $user['id'] || (empty($row['changed_by']) && in_array($user['id'], $userTasks[$row['id']]))) {
 				$row['actions'] = true;

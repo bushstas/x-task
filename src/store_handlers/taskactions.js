@@ -22,11 +22,12 @@ const action = ({state}, name) => {
   return get('task_action', {name, id});
 }
  
-const edit = ({state, getState}) => {
+const edit = ({state, getState, doAction}) => {
   let {taskId} = state;
   let tasks = getState('tasks.tasks');
   for (let t of tasks) {
     if (t.id == taskId) {
+      doAction('APP_SHOW', 'quicktask');
       editTask(taskId, t.data.urls[0]);
       break;
     }

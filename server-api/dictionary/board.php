@@ -21,6 +21,7 @@ switch ($language) {
 			'current' => 'To do',
 			'cant_do' => 'Problematic',
 			'delayed' => 'Deferred',
+			'locked' => 'Locked',
 
 			'burning' => 'Burning',
 			'urgent' => 'Urgent',
@@ -63,6 +64,7 @@ switch ($language) {
 			'current' => 'Текущие',
 			'cant_do' => 'Проблемные',
 			'delayed' => 'Отложенные',
+			'locked' => 'Заблокированные',
 
 			'burning' => 'Горящие',
 			'urgent' => 'Срочные',

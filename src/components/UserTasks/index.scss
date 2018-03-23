@@ -1,3 +1,16 @@
 .self {
 	var .p0-20;
+
+	.title {
+		var .fs18.pb18.pt8;
+	}
+	.block {
+		var .pb15;
+	}
+	..task {
+		var .pr120;
+	}
+	..button {
+		var .abs.r10.t50p.mt-19;
+	}
 }

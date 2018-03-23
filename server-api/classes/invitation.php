@@ -23,4 +23,25 @@ class Invitation {
 		}
 		return $projects;
 	}
+
+	static function get($user, $refreshing) {
+		$sql = '
+			SELECT 
+				i.name,
+				i.token,
+				r.code
+			FROM 
+				invitations i
+			JOIN
+				roles r
+			ON 
+				i.role_id = r.id
+			WHERE 
+				i.team_id = ?
+		';
+		$invitations = DB::select($sql, array($user['team_id']));
+		success(array(
+			'invitations' => $invitations
+		));
+	}
 }

@@ -224,7 +224,9 @@ switch ($lang) {
 				'very hard'
 			),
 			'editmode' => 'Edit task mode',
-			'createmode' => 'Create task mode'
+			'createmode' => 'Create task mode',
+			'edit_status' => 'Change status',
+			'quick_call' => 'Type a task number end press Enter'
 		);
 	break;
 
@@ -271,8 +273,8 @@ switch ($lang) {
 			'spec' => 'Специализация',
 			'email' => 'Эл. почта',
 			'create_user' => 'Создать пользователя',
-			'user_editing' => 'Ред. пользователя',
-			'user_adding' => 'Созд. пользователя',
+			'user_editing' => 'Редактирование пользователя',
+			'user_adding' => 'Создание пользователя',
 			'add' => 'Добавить',
 			'add_task' => 'Добавить задачу',
 			'save_task' => 'Сохранить задачу',
@@ -384,7 +386,8 @@ switch ($lang) {
 			'assign_executors' => 'Назначить исполнителей',
 			'task_info' => 'Заполнить расширенную информацию',
 			'terms' => 'Сложность и сроки задачи',
-
+			'assign_task' => 'Назначение задачи',
+						
 			'importance' => 'Важность',
 			'category' => 'Категория',
 			'action' => 'Действие',
@@ -442,7 +445,9 @@ switch ($lang) {
 				'очень тяжелая'
 			),
 			'editmode' => 'Режим редактирования задачи',
-			'createmode' => 'Режим создания задачи'
+			'createmode' => 'Режим создания задачи',
+			'edit_status' => 'Изменить статус',
+			'quick_call' => 'Введите номер задачи и нажмите Enter'
 		);
 }
 
@@ -462,6 +467,7 @@ $icons = array(
 	'down' => 'keyboard_arrow_down',
 	'info' => 'info',
 	'task_info' => 'insert_comment',
+	'assign_task' => 'Task assignment',
 	'link' => 'link',
 	'mask' => 'invert_colors',
 	'layer' => 'layers',
@@ -486,7 +492,10 @@ $icons = array(
 	'checked' => 'done',
 	'time' => 'schedule',
 	'list' => 'list',
-	'user' => 'free_breakfast'
+	'user' => 'free_breakfast',
+	'add' => 'add',
+	'add_user' => 'person_add',
+	'person' => 'person'
 );
 
 // ui elements icons

@@ -38,6 +38,19 @@ const load_tasks = ({setState, state}) => {
   get('load_user_tasks', {userId}).then(setState);
 }
 
+const show_task_info = ({setState, doAction, state}, props) => {
+  doAction('TASKINFO_CHANGE', props);
+  doAction('MODALS_SHOW', {name: 'task_info', props});
+}
+
+const assign_task = ({setState, state}, id) => {
+  let {userId} = state;
+  post('assign_task', {id, userId})
+    .then(() => {
+        alert(11)
+    });
+}
+
  
 export default {
   localStore: {
@@ -49,7 +62,9 @@ export default {
     action,
     edit,
     assign,
-    load_tasks
+    load_tasks,
+    show_task_info,
+    assign_task
   },
   reducers: {
     init

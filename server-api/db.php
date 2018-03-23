@@ -17,14 +17,18 @@ class DB {
 		return self::$db;
 	}
 
-	static function get($sql, $params = null) {
+	static function get($sql, $params = null, $field = null) {
 		$r = self::$db->prepare($sql);
 		if (is_array($params) && !empty($params)) {
 			$r->execute($params);
 		} else {
 			$r->execute();
 		}
-	 	return $r->fetch(PDO::FETCH_ASSOC);
+		$row = $r->fetch(PDO::FETCH_ASSOC);
+		if (is_string($field) && is_array($row)) {
+			return $row[$field];
+		}
+	 	return $row;
 	}
 
 	static function select($sql, $params = null) {

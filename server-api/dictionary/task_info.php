@@ -27,6 +27,7 @@ switch ($language) {
 			'close' => 'Closed',
 			'closed' => 'Closed',
 			'open' => 'Open',
+			'unblock' => 'Unblocked',
 
 			'subtasks' => 'Subtask list'
 		);
@@ -57,6 +58,7 @@ switch ($language) {
 			'unfreeze' => 'Разморожена',
 			'close' => 'Закрыта',
 			'open' => 'Открыта',
+			'unblock' => 'Разблокирована',
 			'subtasks' => 'Список подзадач'
 		);
 }

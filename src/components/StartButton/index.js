@@ -52,7 +52,7 @@ class StartButton extends React.Component {
 	handleStartClick = () => {
 		let {shown} = this.props;
 		shown = shown != 'main' ? 'main' : null;
-    	this.props.doAction('APP_CHANGE', {shown});
+    	this.props.doAction('APP_SHOW', shown);
   	}
 
   	handleStatusClick = () => {
@@ -64,11 +64,11 @@ class StartButton extends React.Component {
 	}
 
 	handleAddTaskClick = () => {
-		this.props.doAction('APP_CHANGE', {shown: 'quicktask'});
+		this.props.doAction('APP_SHOW', 'quicktask');
   	}
 
   	handleBoardClick = () => {
-  		this.props.doAction('APP_SHOW_BOARD');
+  		this.props.doAction('APP_SHOW', 'board');
   	}
 
   	handleNumberClick = () => {

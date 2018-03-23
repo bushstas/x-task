@@ -244,7 +244,7 @@ const cancel = ({dispatch, doAction, state, getSavedState}) => {
   if (state.task_id) {
     stopEditTask();
     if (getSavedState('quicktask')) {    
-     doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'createmode'});
+      doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'createmode'});
     }
   }
   dispatch('MASK_CLEARED');

@@ -403,7 +403,7 @@ class QuickTask extends React.Component {
 	handleCloseConfirm = (value) => {
 		if (value == 1) {
 			this.props.doAction('QUICKTASK_CANCEL');
-			this.props.doAction('APP_CHANGE', {shown: null});
+			this.props.doAction('APP_HIDE');
 		}
 		this.setState({closeConfirm: false});
 	}

@@ -13,8 +13,8 @@ const change = ({setState}, data) => {
   setState(data);
 }
 
-const show_board = ({setState}) => {
-  setState({shown: 'board'});
+const show = ({setState}, shown) => {
+  setState({shown});
 }
 
 const hide = ({setState}) => {
@@ -47,7 +47,7 @@ export default {
   },
   actions: {
   	change,
-    show_board,    
+    show,
     hide,
     load_dictionary
   },

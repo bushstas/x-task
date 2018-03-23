@@ -29,6 +29,7 @@ export const init = (data) => {
 		let editedTask = StoreKeeper.get(EDITED_TASK_STORAGE_KEY);
 		if (editedTask) {
 			Store.doAction('QUICKTASK_LOAD_EDITED_TASK', editedTask);
+			Store.doAction('APP_SHOW', 'quicktask');
 			return;
 		}
 		let viewedTask = StoreKeeper.get(VIEWED_TASK_STORAGE_KEY);

@@ -26,7 +26,8 @@ export default class Task extends React.Component {
 				actions,
 				id,
 				idn
-			}
+			},
+			classes
 		} = this.props;
 		let className = $classy(status, '.status-', ['ready', 'in_work', 'delayed', 'frozen']);
 		let className2;
@@ -34,7 +35,7 @@ export default class Task extends React.Component {
 			className2 =  $classy('without-avatar');
 		}
 		return (
-			<div class="self $className $className2" onClick={this.handleClick}>
+			<div class="self $classes $className $className2" onClick={this.handleClick}>
 				<div class="id">
 					<span class=".gray">#</span>{idn}
 				</div>
@@ -78,6 +79,7 @@ export default class Task extends React.Component {
 						loc="tasks"
 						name="task_actions"/>
 				)}
+				{this.props.children}
 			</div>
 		)
 	}
