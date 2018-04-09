@@ -73,10 +73,6 @@ export const getRole = () => {
 	return user.role;
 }
 
-export const getRoleId = () => {
-	return user.role_id;
-}
-
 export const getProjectName = () => {
 	return project instanceof Object ? project.name : '';
 }

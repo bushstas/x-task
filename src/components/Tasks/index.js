@@ -1,4 +1,5 @@
 import React from 'react';
+import Store from 'xstore';
 import {dict, icons} from '../../utils/Dictionary';
 import {Tabs, Tab} from '../../ui/Tabs';
 import Dialog from '../../ui/Dialog';
@@ -7,8 +8,7 @@ import Icon from '../../ui/Icon';
 import Button from '../../ui/Button';
 import Task from '../Task';
 import TaskButton from '../TaskButton';
-import Store from 'xstore';
-import {getRoleId} from '../../utils/User';
+import ProjectInfo from '../ProjectInfo';
 
 class Tasks extends React.Component {
 
@@ -45,7 +45,7 @@ class Tasks extends React.Component {
 		} = this.props;
 		return (
 			<div class="tabs">
-				{getRoleId() != 7 && (
+				{this.userRoleId != 7 && (
 			 		<Tabs 
 						classes="main-tabs"
 						onSelect={this.handleSelectTab}
@@ -72,27 +72,11 @@ class Tasks extends React.Component {
 	}
 
 	get projectInfo() {
-		let {project} = this.props;
-		let {progress = {}} = this.props;
 		return (
-			<div class="project-info" style={project.bgStyle}>
-				<div class="project-info-inner">
-					<div class="project-name" style={project.bgStyle} onClick={this.handleProjectClick}>
-						{project.name}
-					</div>
-					<div class="project-release">
-						<div class="project-release-name">
-							Релиз: 2.0.4
-						</div>
-						<div class="project-release-date">
-							Намечен на 12.05.18
-						</div>
-					</div>
-					<div class="project-stat">
-						Завершено задач: {progress.done} / {progress.all}
-					</div>
-				</div>
-			</div>
+			<ProjectInfo 
+				progress={this.props.progress}
+				store="TASKS"
+			/>
 		)
 	}
 
@@ -145,7 +129,6 @@ class Tasks extends React.Component {
 	}
 
 	get statusTabs() {
-		let roleId = getRoleId();
 		let tabs = [];
 		let current = (
 				<Tab caption={dict.status_current} value="current" key="current"/>
@@ -157,7 +140,7 @@ class Tasks extends React.Component {
 				<Tab caption={dict.status_in_work} value="in_work" key="in_work"/>
 			);
 
-		if (roleId < 5) {
+		if (this.userRoleId < 5) {
 			tabs.push(ready, in_work, current);
 		} else {
 			tabs.push(current, in_work, ready);
@@ -172,14 +155,14 @@ class Tasks extends React.Component {
 	}
 
 	get secondTab() {
-		let role = getRoleId();
+		let role = this.userRoleId;
 		let caption = role > 4  ? dict.tasks_for_me : dict.tasks_from_me;
 		let value = role > 4 ? 'forme' : 'fromme';
 		return this.renderTab(caption, value);		
 	}
 
 	get thirdTab() {
-		let role = getRoleId();
+		let role = this.userRoleId;
 		if (role > 5 || role == 1) return;
 		let caption = role < 5  ? dict.tasks_for_me : dict.tasks_from_me;
 		let value = role < 5 ? 'forme' : 'fromme';
@@ -187,9 +170,12 @@ class Tasks extends React.Component {
 	}
 
 	get fourthTab() {
-		let role = getRoleId();
-		if (role == 1) return;
+		if (this.userRoleId == 1) return;
 		return this.renderTab(dict.mine_tasks, 'my');
+	}
+
+	get userRoleId() {
+		return this.props.user.role_id;
 	}
 
 	renderTab(caption, value) {
@@ -262,10 +248,6 @@ class Tasks extends React.Component {
 	handleImportanceSelect = (importance) => {
 		this.props.doAction('TASKS_START_UPDATE', {importance});
 	}
-
-	handleProjectClick = () => {
-		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {store: 'TASKS'}});	
-	}
 }
 
-export default Store.connect(Tasks, 'tasks, user:project');
+export default Store.connect(Tasks, 'tasks, user:project|user');

@@ -1,6 +1,5 @@
 import React from 'react';
 import {dict, icons} from '../../utils/Dictionary';
-import {getRoleId} from '../../utils/User';
 import Icon from '../../ui/Icon';
 import Avatar from '../Avatar';
 import ActionsButton from '../ActionsButton';
@@ -41,8 +40,7 @@ export default class User extends React.Component {
 				);
 			}
 		}
-		let userClass = $classy(role, '.role-', ['head', 'admin', 'editor', 'analyst']);
-		
+		let userClass = $classy(role, '.role-', ['head', 'admin', 'editor', 'analyst']);		
 
 		if (task) {
 			task = (
@@ -114,10 +112,16 @@ export default class User extends React.Component {
 	}
 
 	get status() {
-		const {data: {status, work_status_id, role_id}} = this.props;
+		const {
+			data: {
+				status,
+				work_status_id,
+				role_id,
+				edit_status
+			}
+		} = this.props;
 		let statusClass = $classy(work_status_id, 'status-', [1, 2, 3, 4, 5, 6]);
-		const ownRoleId = getRoleId();
-		if (ownRoleId <= role_id) {
+		if (edit_status) {
 			return (
 				<div class="status .pointer $statusClass" onClick={this.handleStatusClick} title={dict.edit_status}>
 					{status}
