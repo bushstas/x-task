@@ -5,8 +5,8 @@ import Icon from '../../ui/Icon';
 import Loader from '../../ui/Loader';
 import BoardTask from '../BoardTask';
 import Avatar from '../../components/Avatar';
+import ProjectInfo from '../../components/ProjectInfo';
 import {addHandler, removeHandler} from '../../utils/EscapeHandler';
-import {getProjectName, getProjectColor} from '../../utils/User';
 
 class Board extends React.Component {
 
@@ -27,16 +27,15 @@ class Board extends React.Component {
 			users,
 			addedUsers,
 			order,
-			project = {}
+			project: {bgStyle} = {}
 		} = this.props;
 
 		const userKeys = Object.keys(addedUsers);
-		const style = project.bgStyle;
 
 		return (
 			<div class="self">
 				<div class="header">
-					<div class="header-bg" style={style}/>
+					<div class="header-bg" style={bgStyle}/>
 					<div class="header-inner">
 						<Icon icon="close" 
 							onClick={this.handleClose}
@@ -48,49 +47,47 @@ class Board extends React.Component {
 								{dict.logo}
 							</span>
 							{dict.board}
-							<div class="project" style={style} onClick={this.handleProjectClick}>
-								{project.name}
-							</div>
+							<ProjectInfo store="BOARD"/>
 						</div>
 						<div class="right-menu" onClick={this.handleRightMenuClick}>
 							<span class="menu-item $filter=='mine'?active" data-value="mine">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_mine}
 								</span>
 							</span>
 							<span class="menu-item $filter=='spec'?active" data-value="spec">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_spec}
 								</span>
 							</span>
 							<span class="menu-item $filter=='status'?active" data-value="status">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_status}
 								</span>
 							</span>
 							<span class="menu-item $filter=='type'?active" data-value="type">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_type}
 								</span>
 							</span>
 							<span class="menu-item $filter=='importance'?active" data-value="importance">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_importance}
 								</span>
 							</span>
 							<span class="menu-item $filter=='author'?active" data-value="author">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_author}
 								</span>
 							</span>
 							<span class="menu-item $filter=='exec'?active" data-value="exec">
-								<span class="menu-item-bg" style={style}/>
+								<span class="menu-item-bg" style={bgStyle}/>
 								<span class="menu-item-inner">
 									{dict.by_exec}
 								</span>
@@ -104,13 +101,13 @@ class Board extends React.Component {
 					</Loader>
 				</div>
 				<div class="footer">
-					<div class="footer-bg" style={style}/>
+					<div class="footer-bg" style={bgStyle}/>
 					{filter != 'mine' && (
 						<div class="footer-inner">
 							<div class="added-users">
 								{userKeys.length > 1 && (
 									<div class="reset-users" onClick={this.handleResetUsers}>
-										<div class="reset-users-bg" style={style}/>
+										<div class="reset-users-bg" style={bgStyle}/>
 										<Icon icon="close"/>
 									</div>
 								)}
@@ -159,7 +156,7 @@ class Board extends React.Component {
 	}
 
 	renderTasks = (key) => {
-		let {tasks, dict} = this.props;
+		let {tasks, dict, project: {bgStyle}} = this.props;
 		tasks = tasks[key];
 		if (!tasks || !tasks.length) {
 			return;
@@ -167,7 +164,7 @@ class Board extends React.Component {
 		return (
 			<div class="column" key={key}>
 				<div class="tasks">
-					<div class="column-title" style={{backgroundColor: '#' + getProjectColor()}}>
+					<div class="column-title" style={bgStyle}>
 						<div class="column-title-inner">
 							{dict[key]}
 						</div>
@@ -224,10 +221,6 @@ class Board extends React.Component {
 
 	handleResetUsers = () => {
 		this.props.doAction('BOARD_RESET_USERS');
-	}
-
-	handleProjectClick = () => {
-		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {store: 'BOARD'}});	
 	}
 }
 

@@ -1,24 +1,35 @@
 .self {
-	var .p0-20;	
-	.project-name {
+	var .p0-20.rel.bc-e1e1e1;	
+	.name {
 	    var .inb.fs14.vtop.nowr.c-fff.p0-10.pntr.cen.mnw100.box.lh36.br3.ell.mxw200;
 	}
-	.project-release {
+	.release {
 		var .inb.vtop.ml15.fs13.p2-8.bo-909090.br3.pntr.bc-fff.lh15;
-		.project-release-name {
+		.release-name {
 			var .bold;
+			..icon {
+				var .fl.mt-3;
+			}
 		}
-		.project-release-date {
+		.release-date {
 			var .c-676767.lh15;
 		}
 	}
-	.project-stat {
+	.stat {
 		var .fr.mt11.bold;
 	}
-	.project-info-inner {
-		var .rel.z2.p6-0;
+	.inner {
+		var .rel.z2.p4-0;
 	}
-	&:before {
-		var .cnt.bc-fff.o9.abs.rubb;
+	.bg {
+		var .o1.abs.rubb.z1;
 	}	
+	&.inactive {
+		.release-name {
+			var .o5;
+		}
+		.release-date {
+			var .o5;
+		}	
+	}
 }

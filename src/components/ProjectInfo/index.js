@@ -1,6 +1,7 @@
 import React from 'react';
 import Store from 'xstore';
-import {dict} from '../../utils/Dictionary';
+import Icon from '../../ui/Icon';
+import {dict, icons} from '../../utils/Dictionary';
 
 class ProjectInfo extends React.Component {
 	render() {
@@ -12,25 +13,28 @@ class ProjectInfo extends React.Component {
 			}, 
 			progress = {}
 		} = this.props;
+		const {active} = release;
 
 		return (
-			<div class="self" style={bgStyle}>
-				<div class="project-info-inner">
-					<div class="project-name" style={bgStyle} onClick={this.handleProjectClick}>
+			<div class="self !$active?inactive">
+				<div class="bg" style={bgStyle}/>
+				<div class="inner">
+					<div class="name" style={bgStyle} onClick={this.handleProjectClick}>
 						{name}
 					</div>
 					{release.name ? 
-						<div class="project-release">
-							<div class="project-release-name">
+						<div class="release">
+							<div class="release-name">
+								{!active && <Icon icon="checked"/>}
 								{dict.release}: {release.name}
 							</div>
-							<div class="project-release-date">
+							<div class="release-date">
 								{dict.planned} {release.date}
 							</div>
 						</div> : null
 					}
 					{progress.all ? 
-						<div class="project-stat">
+						<div class="stat">
 							{dict.tasks_complete}: {progress.done} / {progress.all}
 						</div> : null
 					}
