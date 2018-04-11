@@ -23,7 +23,7 @@ class ProjectInfo extends React.Component {
 						{name}
 					</div>
 					{release.name ? 
-						<div class="release">
+						<div class="release" onClick={this.handleReleaseClick}>
 							<div class="release-name">
 								{!active && <Icon icon="checked"/>}
 								{dict.release}: {release.name}
@@ -46,6 +46,11 @@ class ProjectInfo extends React.Component {
 	handleProjectClick = () => {
 		const {store} = this.props;
 		this.props.doAction('MODALS_SHOW', {name: 'projects_list', props: {store}});
+	}
+
+	handleReleaseClick = () => {
+		const {store} = this.props;
+		this.props.doAction('MODALS_SHOW', {name: 'releases_list', props: {store}});
 	}
 }
 

@@ -16,7 +16,7 @@ const changed = (state, data) => {
 
 const load = ({dispatchAsync, setState, state}, data = {}) => {
   dispatchAsync('TASKS_CHANGED', {fetching: true});
-  let {filter, status, importance = [], type = []} = state;
+  let {filter, status, importance = [], type = [], release} = state;
   if (data.importance) {
     let idx = importance.indexOf(data.importance);
     if (idx > -1) {
@@ -45,6 +45,10 @@ const load = ({dispatchAsync, setState, state}, data = {}) => {
     status = data.status;
     setState(data);
   }
+  if (data.release) {
+    release = data.release;
+    setState(data);
+  }
   if (data.my) {
     filter = 'my';
   }
@@ -52,7 +56,8 @@ const load = ({dispatchAsync, setState, state}, data = {}) => {
     importance,
     type,
     filter,
-    status
+    status,
+    release
   };
   get('load_tasks', params)
   .then(({tasks, dict}) => {
@@ -101,8 +106,13 @@ const show_next = ({state, and}) => {
   and('SHOW_TASK_INFO', {id, index});
 }
 
-const load_counts = ({setState}) => {
-  get('load_task_counts').then(setState);
+const load_counts = ({setState, state}) => {
+  const {release} = state;
+  let params = null;
+  if (release) {
+    params = {release};
+  }
+  get('load_task_counts', params).then(setState);
 }
 
 let interval;

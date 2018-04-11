@@ -2,17 +2,11 @@ import React from 'react';
 import Store from 'xstore';
 import Button from '../../ui/Button';
 import Loader from '../../ui/Loader';
-import {addHandler, removeHandler} from '../../utils/EscapeHandler';
 
 class ProjectsList extends React.Component {
 
 	componentDidMount() {
 		this.props.doAction('PROJECTS_LOAD_LIST');
-		addHandler(this.handleClose);
-	}
-
-	componentWillUnmount() {
-		removeHandler(this.handleClose);
 	}
 
 	render() {

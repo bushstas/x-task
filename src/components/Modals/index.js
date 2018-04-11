@@ -7,6 +7,7 @@ import TaskInfo from '../TaskInfo';
 import TaskActions from '../TaskActions';
 import UserActions from '../UserActions';
 import ProjectsList from '../ProjectsList';
+import ReleasesList from '../ReleasesList';
 import WorkStatuses from '../WorkStatuses';
 import QuickCall from '../QuickCall';
 import UserInfo from '../UserInfo';
@@ -85,6 +86,14 @@ class Modals extends React.Component {
 				dialog = (
 					<ProjectsList 
 						key="projectslist"
+						store={data.store}/>
+				)
+			break;
+
+			case 'releases_list':
+				dialog = (
+					<ReleasesList 
+						key="releaseslist"
 						store={data.store}/>
 				)
 			break;

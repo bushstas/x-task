@@ -65,8 +65,15 @@ const load_list = ({setState}) => {
   get('load_projects_list').then(setState);
 }
 
+const load_releases = ({setState}) => {
+  get('load_releases_list').then(setState);
+}
+
 const reset_list = ({setState}) => {
-  setState({projectsList: null});
+  setState({
+    projectsList: null,
+    releasesList: null
+  });
 }
 
 const show_edit_form = ({then}, projectToken) => {
@@ -116,7 +123,8 @@ export default {
     request_access,
     activate,
     load_list,
-    reset_list
+    reset_list,
+    load_releases
   },
   reducers: {
     init,
