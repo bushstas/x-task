@@ -11,13 +11,13 @@ class ReleasesList extends React.Component {
 	}
 
 	render() {
-		let {releasesList} = this.props;
+		let {releases} = this.props;
 		return (
 			<div class="self">
 				<div class="mask" onClick={this.handleClose}/>
-				<Loader classes="content" fetching={!releasesList}>
+				<Loader classes="content" fetching={!releases}>
 					<Releases 
-						items={releasesList}
+						items={releases}
 						onSelect={this.handleSelect}
 					/>
 				</Loader>

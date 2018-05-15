@@ -19,8 +19,8 @@ const check_task = ({and, doAction, state, setState}) => {
       setState({value: ''});
       if (props.id) {
         doAction('MODALS_HIDE', 'quick_call');
-        doAction('MODALS_SHOW', {name: 'task_info'});
-        doAction('TASKINFO_CHANGE', {id: props.id});
+        doAction('TASKINFO_CHANGE', props);
+        doAction('MODALS_SHOW', {name: 'task_info', props});
       } else {
         and('SHOW_ERROR');
       }

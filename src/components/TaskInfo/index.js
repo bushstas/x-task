@@ -1,4 +1,5 @@
 import React from 'react';
+import Store from 'xstore';
 import {dict, icons} from '../../utils/Dictionary';
 import StoreKeeper from '../../utils/StoreKeeper';
 import Icon from '../../ui/Icon';
@@ -9,7 +10,6 @@ import Avatar from '../Avatar';
 import TaskComments from '../TaskComments';
 import TaskProblems from '../TaskProblems';
 import ActionsButton from '../ActionsButton';
-import Store from 'xstore';
 import {resolveTaskUrl} from '../../utils/TaskResolver';
 import {parseText} from '../../utils/TextParser';
 

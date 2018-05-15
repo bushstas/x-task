@@ -42,6 +42,7 @@ const add_form_shown = (state) => {
 
 const canceled = (state) => {
    return {
+    releases: null,
     editedProject: null,
     formShown: null,
     formData: {}

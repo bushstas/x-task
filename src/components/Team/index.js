@@ -1,8 +1,8 @@
 import React from 'react';
-import User from '../User';
-import {dict} from '../../utils/Dictionary';
-import Icon from '../../ui/Icon';
 import Store from 'xstore';
+import {dict} from '../../utils/Dictionary';
+import User from '../User';
+import Icon from '../../ui/Icon';
 import Loader from '../../ui/Loader';
 
 class Team extends React.Component {
@@ -32,7 +32,9 @@ class Team extends React.Component {
 	 					data={user}
 	 					key={user.token}
 	 					onStatusClick={this.handleStatusClick}
-	 					onTaskClick={this.handleTaskClick}/>
+	 					onTaskClick={this.handleTaskClick}
+	 					onClick={this.handleUserClick}
+	 				/>
 	 			)
 	 		});
 	 	}
@@ -50,24 +52,18 @@ class Team extends React.Component {
 		)
 	}
 
-	handleEditUserClick = (e) => {
-		let index = e.target.getAttribute('data-index');
-		if (index) {
-			let {users} = this.props;
-			let user = users[index];
-			if (user instanceof Object && user.token) {			
-				this.props.doAction('TEAM_SHOW_EDIT_FORM', user.token);
-			}
-		}
-	}
-
 	handleStatusClick = (id) => {
 		this.props.doAction('MODALS_SHOW', {name: 'work_statuses', props: {id}});
 	}
 
 	handleTaskClick = (id) => {
-		this.props.doAction('TASKINFO_CHANGE', {id});
-		this.props.doAction('MODALS_SHOW', {name: 'task_info'});
+		const props = {id};
+		this.props.doAction('TASKINFO_CHANGE', props);
+		this.props.doAction('MODALS_SHOW', {name: 'task_info', props});
+	}
+
+	handleUserClick = (id, name) => {
+		this.props.doAction('MODALS_SHOW', {name: 'user_info', props: {id, name}});
 	}
 }
 

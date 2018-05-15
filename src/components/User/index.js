@@ -60,7 +60,8 @@ export default class User extends React.Component {
 				<Avatar 
 					id={avatar_id}
 					userId={id}
-					userName={name}/>
+					userName={name}
+				/>
 				<div class="main-info">
 					<div class="name">
 						{name}
@@ -105,7 +106,8 @@ export default class User extends React.Component {
 					<ActionsButton 
 						id={id}
 						loc="team"
-						name="user_actions"/>
+						name="user_actions"
+					/>
 				)}
 			</div>
 		)
@@ -136,7 +138,8 @@ export default class User extends React.Component {
 	}
 
 	handleClick = () => {
-		
+		const {data: {id, name}} = this.props;
+		this.props.onClick(id, name);
 	}
 
 	handleTaskClick = (e) => {
