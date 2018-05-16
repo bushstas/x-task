@@ -58,20 +58,21 @@ function getHelp($name, $language = null) {
 	}
 }
 
-function validateUserIdAndRightsToEditUser($user, $action = null) {
+function validateUserIdAndRightsToEditUser($action = null) {
+	$actor = Actor::get();
 	$userId = $_REQUEST['id'];
 	if (empty($userId)) {
 		error('Ошибка при действии над пользователем');
 	}
 	switch ($action) {
 		case 'block':
-			if ($user['id'] == $userId || ($user['role'] != 'head' && $user['role'] != 'admin')) {
+			if ($actor['id'] == $userId || ($actor['role'] != 'head' && $actor['role'] != 'admin')) {
 				noRightsError();
 			}
 		break;
 
 		default:
-			if ($user['id'] != $userId && $user['role'] != 'head' && $user['role'] != 'admin') {
+			if ($actor['id'] != $userId && $actor['role'] != 'head' && $actor['role'] != 'admin') {
 				noRightsError();
 			}
 	}	
@@ -86,25 +87,27 @@ function validateProjectToken() {
 	return $projectToken;
 }
 
-function validateTokenAndRightsToEditProject($user, $action = null) {
+function validateTokenAndRightsToEditProject($action = null) {
+	$actor = Actor::get();
 	$projectToken = validateProjectToken();
 	switch ($action) {
 		default:
-			if ($user['role'] != 'head' && $user['role'] != 'admin' && $user['role'] != 'editor') {
+			if ($actor['role_id'] > 3) {
 				noRightsError();
 			}
 	}	
 	return $projectToken;
 }
 
-function validateInvitationTokenAndRights($user, $role, $token) {
+function validateInvitationTokenAndRights($role, $token) {
+	$actor = Actor::get();
 	if (empty($token)) {
 		error('Ошибка при действии над приглашением');
 	}
-	if ($user['role'] != 'head' && $user['role'] != 'admin') {
+	if ($actor['role'] != 'head' && $actor['role'] != 'admin') {
 		noRightsError();
 	}
-	if ($user['role'] == 'admin' && $role == 2) {
+	if ($actor['role'] == 'admin' && $role == 2) {
 		noRightsError();	
 	}
 	return $token;
@@ -233,10 +236,9 @@ function validateHomepage($homepage) {
 	return $homepage;
 }
 
-function validateProjectAccess($user, $projectToken) {
-	global $db;
-
-	$r = $db->prepare('
+function validateProjectAccess($projectToken) {
+	$actor = Actor::get();
+	$sql = '
 		SELECT 
 			*
 		FROM 
@@ -245,10 +247,9 @@ function validateProjectAccess($user, $projectToken) {
 			token = ? 
 		AND
 			team_id = ?
-	');
-	$r->execute(array($projectToken, $user['team_id']));
-	$project = $r->fetch(PDO::FETCH_ASSOC);
-	if (!is_array($project)) {
+	';
+	$project = DB::get($sql, array($projectToken, $actor['team_id']));
+	if (empty($project)) {
 		noRightsError();
 	}
 	return $project;
@@ -358,27 +359,25 @@ function getFormattedDate($date, $ago = null) {
     return $str;
 }
  
-function getPhrase( $number, $titles ) {
+function getPhrase($number, $titles) {
     $cases = array( 2, 0, 1, 1, 1, 2 );
  
     return $titles[ ( $number % 100 > 4 && $number % 100 < 20 ) ? 2 : $cases[ min( $number % 10, 5 ) ] ];
 }
 
 function generateUniqueToken($tableName) {
-	global $db;
 	$token = '';
 	while (empty($token)) {
 		$token = generateToken();
-		$r = $db->prepare('
+		$sql = '
 			SELECT 
 				id
 			FROM 
 				'.$tableName.'
 			WHERE 
 				token = ?
-		');
-		$r->execute(array($token));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
+		';
+		$row = DB::get($sql, array($token));
 		if (is_array($row)) {
 			$token = '';
 		} else {
@@ -403,9 +402,8 @@ function decline($number, $keyword) {
   	return $dict[$keyword][ ($number % 100 > 4 && $number % 100 < 20) ? 2 : $cases[min($number % 10, 5)] ];
 }
 
-function getRoles() {
-	global $db;
-	$r = $db->prepare('
+function getRoles() {	
+	$sql = '
 		SELECT 
 			r.id,
 			r.code,
@@ -421,9 +419,8 @@ function getRoles() {
 			ON 
 			rs.id = rr.right_id
 		GROUP BY r.id
-	');
-	$r->execute();
-	$roles = $r->fetchAll(PDO::FETCH_ASSOC);
+	';
+	$roles = DB::select($sql);
 
 	$userRoles = array();
 	foreach ($roles as $role) {
@@ -436,9 +433,9 @@ function getRoles() {
 	return $userRoles;
 }
 
-function getAccessableTaskActions($user, $id) {
-	global $db;
-	$r = $db->prepare('
+function getAccessableTaskActions($id) {
+	$actor = Actor::get();
+	$sql = '
 		SELECT 
 			t.*,
 			u.role AS role_id
@@ -450,18 +447,16 @@ function getAccessableTaskActions($user, $id) {
 			t.id = ?
 		AND 
 			t.team_id = ?
-	');
-	$r->execute(array($id, $user['team_id']));
-	$task = $r->fetch(PDO::FETCH_ASSOC);
-	$changedBy = $task['changed_by'];
-	$status = $task['status_id'];
-	$minRole = $task['min_role'];
-
-	if (!is_array($task)) {
+	';
+	$task = DB::get($sql, array($id, $actor['team_id']));
+	if (empty($task)) {
 		noRightsError();
 	}
+	$changedBy = $task['changed_by'];
+	$status = $task['status_id'];
+	$minRole = $task['min_role'];	
 
-	$r = $db->prepare('
+	$sql = '
 		SELECT 
 			tu.id
 		FROM 
@@ -470,11 +465,10 @@ function getAccessableTaskActions($user, $id) {
 			tu.task_id = ?
 		AND 
 			tu.user_id = ?
-	');
-	$r->execute(array($id, $user['id']));
-	$taskUser = $r->fetch(PDO::FETCH_ASSOC);
+	';
+	$taskUser = DB::get($sql, array($id, $actor['id']));
 	
-	$isUserTask = is_array($taskUser) && ($changedBy == $user['id'] || empty($status) || $status == 4);
+	$isUserTask = is_array($taskUser) && ($changedBy == $actor['id'] || empty($status) || $status == 4);
 	$actions = array();
 	if ($isUserTask) {
 		// in_work
@@ -507,8 +501,8 @@ function getAccessableTaskActions($user, $id) {
 			}
 			$actions[] = 'comment';
 		}
-	} elseif ($user['role_id'] < $minRole) {
-		$hasPower = $user['role_id'] <= $task['role_id'];
+	} elseif ($actor['role_id'] < $minRole) {
+		$hasPower = $actor['role_id'] <= $task['role_id'];
 		$actions[] = 'admin';
 		if ($hasPower && $status != 2 && $task['locked'] == 0) {
 			$actions[] = 'start';
@@ -541,9 +535,9 @@ function getAccessableTaskActions($user, $id) {
 	return $actions;
 }
 
-function getExecutors($user, $taskType, $taskAction) {
-	global $db;
-	$r = $db->prepare('
+function getExecutors($taskType, $taskAction) {
+	$actor = Actor::get();
+	$sql = '
 		SELECT 
 			u.id,
 			u.token,
@@ -569,9 +563,8 @@ function getExecutors($user, $taskType, $taskAction) {
 			u.blocked_by IS NULL
 		ORDER BY 
 			u.role ASC
-	');
-	$r->execute(array($user['team_id'], $user['role_id']));
-	$rows = $r->fetchAll(PDO::FETCH_ASSOC);
+	';
+	$rows = DB::select($sql, array($actor['team_id'], $actor['role_id']));
 	$proper = array();
 	$rest = array();
 	foreach ($rows as $row) {

@@ -99,6 +99,7 @@ switch ($lang) {
 			'create_project' => 'Create project',
 			'create_task' => 'Create task',
 			'work_status' => 'Set status',
+			'quickcall' => 'Quick task search',
 			'activate_project' => 'Switch to this project',
 			'current_project' => 'This is the current project',
 			'request_access' => 'Request an access from administrator',
@@ -146,8 +147,6 @@ switch ($lang) {
 			'important' => 'Important',
 			'usual' => 'Usual',
 			'insignificant' => 'Insignificant',
-			'future' => 'For the future',
-			'to_think' => 'To think',
 
 			'closed' => 'Closed',
 			'deleted' => 'Deleted',
@@ -207,7 +206,9 @@ switch ($lang) {
 
 			'tooltip' => 'Tooltip',
 			'locked' => 'Temporarily locked for work',
-
+			'release' => 'Release',
+			'planned' => 'Scheduled for',
+			'tasks_complete' => 'Tasks progress',
 			'information' => 'Information',
 			'comments' => 'Comments',
 			'problems' => 'Problems',
@@ -323,6 +324,7 @@ switch ($lang) {
 			'create_project' => 'Создать проект',
 			'create_task' => 'Создать задачу',
 			'work_status' => 'Настроить статус',
+			'quickcall' => 'Быстрый поиск задачи',
 			'activate_project' => 'Переключиться на этот проект',
 			'current_project' => 'Это ваш текущий проект',
 			'request_access' => 'Запросить доступ у администраторов',
@@ -370,8 +372,6 @@ switch ($lang) {
 			'important' => 'Важная',
 			'usual' => 'Обычная',
 			'insignificant' => 'Незначительная',
-			'future' => 'На будущее',
-			'to_think' => 'На обдумывание',
 
 			'closed' => 'Закрыта',
 			'deleted' => 'Удалена',
@@ -432,6 +432,9 @@ switch ($lang) {
 			'information' => 'Информация',
 			'comments' => 'Комментарии',
 			'problems' => 'Проблемы',
+			'release' => 'Релиз',
+			'planned' => 'Намечен на',
+			'tasks_complete' => 'Завершено задач',
 			'difficulties' => array(
 				'очень легкая',
 				'довольно легкая',
@@ -540,9 +543,7 @@ $icons['task_imp'] = array(
 	'urgent' => 'flash_on',
 	'important' => 'alarm',
 	'usual' => 'schedule',
-	'insignificant' => 'hourglass_empty',
-	'future' => 'turned_in_not',
-	'to_think' => 'timer_off'
+	'insignificant' => 'hourglass_empty'
 );
 
 // task type material icons

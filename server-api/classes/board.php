@@ -1,15 +1,16 @@
 <?php
 
 class Board {
-	static function getTasks($user) {
+	static function getTasks() {
+		$actor = Actor::get();
 		$filter = $_REQUEST['filter'];
 		$projectId = $_REQUEST['projectId'];
 		$filterUsers = $_REQUEST['users'];
 
 		if (!empty($projectId)) {
-			requireClasses('user');
-			User::setProject($user, $projectId);
-			$user['project_id'] = $projectId;
+			requireClasses('project');
+			Project::set($projectId);
+			$actor['project_id'] = $projectId;
 		}
 
 		if (!empty($filterUsers) && is_string($filterUsers)) {
@@ -39,7 +40,7 @@ class Board {
 			WHERE 
 				tu.project_id = ?
 		';
-		$rows = DB::select($sql, array($user['project_id']));
+		$rows = DB::select($sql, array($actor['project_id']));
 		foreach ($rows as $row) {
 			if (!is_array($userTasks[$row['task_id']])) {
 				$userTasks[$row['task_id']] = array();
@@ -94,7 +95,7 @@ class Board {
 			ORDER BY 
 				t.importance_id
 		';
-		$rows = DB::select($sql, array($user['id'], $user['team_id'], $user['role_id'], $user['project_id']));
+		$rows = DB::select($sql, array($actor['id'], $actor['team_id'], $actor['role_id'], $actor['project_id']));
 
 		$addedUsers = array();
 		$filteredRows = array();
@@ -121,7 +122,6 @@ class Board {
 		if (!empty($filterUsers)) {
 			$rows = $filteredRows;
 		}
-
 		$addedUsers = self::getUsers($addedUsers);
 
 		if ($filter == 'spec') {
@@ -145,7 +145,7 @@ class Board {
 			}
 		} elseif ($filter == 'author') {
 			$sql = 'SELECT id, name FROM users WHERE team_id = ? ORDER BY role ASC';
-			$users = DB::select($sql, array($user['team_id']));
+			$users = DB::select($sql, array($actor['team_id']));
 			$tasksTypes = array();
 			foreach ($users as $u) {
 				$tasksTypes[] = $u['id'];
@@ -186,7 +186,7 @@ class Board {
 		}
 
 		if ($filter != 'status') {
-			if ($user['role_id'] < 5) {
+			if ($actor['role_id'] < 5) {
 				$statuses = array(
 					'ready',
 					'in_work',
@@ -216,12 +216,12 @@ class Board {
 		foreach ($rows as &$row) {
 			$row['locked'] = $row['locked'] == 1;
 			$row['actions'] = false;
-			if ($user['role_id'] < 5 || $row['changed_by'] == $user['id'] || (empty($row['changed_by']) && in_array($user['id'], $userTasks[$row['id']]))) {
+			if ($actor['role_id'] < 5 || $row['changed_by'] == $actor['id'] || (empty($row['changed_by']) && in_array($actor['id'], $userTasks[$row['id']]))) {
 				$row['actions'] = true;
 			}
-			if ($user['role_id'] > 4 && 
+			if ($actor['role_id'] > 4 && 
 				(($filter == 'all' && empty($row['task_user'])) || 
-				!empty($row['changed_by']) && $row['changed_by'] != $user['id'])
+				!empty($row['changed_by']) && $row['changed_by'] != $actor['id'])
 			) {
 				$row['actions'] = false;
 			}
@@ -309,12 +309,12 @@ class Board {
 				$properTasks[$k] = $v;
 			}
 		}
-		return array(
+		success(array(
 			'dict' => $dict,
 			'tasks' => $properTasks,
 			'order' => array_keys($tasks),
 			'users' => $addedUsers
-		);
+		));
 	}
 
 

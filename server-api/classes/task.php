@@ -1,9 +1,11 @@
 <?php
 
 class Task {
-	static function getTasks($user) {
+	static function getTasks() {
+		$actor = Actor::get();
 		$filter = $_REQUEST['filter'];
 		$status = $_REQUEST['status'];
+		$release = $_REQUEST['release'];
 		if ($status[0] == '[') {
 			$status = json_decode($status, true);
 		}
@@ -12,7 +14,7 @@ class Task {
 
 		if (empty($filter)) {
 			$filter = 'fromme';
-			switch ($user['role']) {
+			switch ($actor['role']) {
 				case 'developer':
 				case 'tester':
 					$filter = 'forme';
@@ -60,9 +62,20 @@ class Task {
 			}
 		}		
 		$sqlParams = array(
-			$user['project_id'],
-			$user['role_id']
+			$actor['project_id'],
+			$actor['role_id']
 		);
+		$sqlRelease = '';
+		if (empty($release)) {
+			$release = $actor['release_id'];
+		}
+		if ($release == 'none') {
+			$release = null;
+		}
+		if (!empty($release)) {
+			$sqlRelease = ' AND t.release_id = ?';
+			$sqlParams[] = $release;
+		}
 		$typeSql = '';
 		if (!empty($type)) {
 			$types = '"'.implode(explode(",", $type), '","').'"';
@@ -74,13 +87,13 @@ class Task {
 			$impSql = ' AND importance_id IN (SELECT id FROM task_importance WHERE code IN ('.$importances.')) ';
 		}
 
-		if ($user['role_id'] < 4) {
-			$user['role_id'] = 0;
+		if ($actor['role_id'] < 4) {
+			$actor['role_id'] = 0;
 		}
 
 		switch ($filter) {
 			case 'fromme':
-				array_unshift($sqlParams, $user['id']);
+				array_unshift($sqlParams, $actor['id']);
 				$sql = '
 					SELECT 
 						t.*,
@@ -115,6 +128,7 @@ class Task {
 						t.project_id = ?
 					AND 
 						t.min_role >= ?
+						'.$sqlRelease.'
 						'.$sqlStatus.'
 						'.$typeSql.'
 						'.$impSql.'
@@ -125,6 +139,14 @@ class Task {
 			break;
 
 			case 'my':
+				$sqlParams = array(
+					$actor['id'],
+					$actor['id'],
+					$actor['project_id']
+				);
+				if (!empty($release)) {				
+					$sqlParams[] = $release;
+				}
 				$sql = '
 					SELECT 
 						t.*,
@@ -157,15 +179,16 @@ class Task {
 						(t.changed_by = ? OR t.for_user = ?)
 					AND
 						t.project_id = ?
+					'.$sqlRelease.'
 					'.$sqlStatus.'
 					ORDER BY 
 						t.importance_id ASC
 				';
-				$rows = DB::select($sql, array($user['id'], $user['id'], $user['project_id']));  
+				$rows = DB::select($sql, $sqlParams);  
 			break;
 
 			case 'forme':
-				array_unshift($sqlParams, $user['id']);
+				array_unshift($sqlParams, $actor['id']);
 				$sql = '
 					SELECT 
 						t.*,
@@ -203,6 +226,7 @@ class Task {
 						tu.project_id = ?
 					AND 
 						t.min_role >= ?
+						'.$sqlRelease.'
 						'.$sqlStatus.'
 						'.$typeSql.'
 						'.$impSql.'
@@ -213,7 +237,7 @@ class Task {
 			break;
 			
 			default:
-				array_unshift($sqlParams, $user['id'], $user['team_id']);
+				array_unshift($sqlParams, $actor['id'], $actor['team_id']);
 				$sql = '
 					SELECT 
 						t.*,
@@ -251,6 +275,7 @@ class Task {
 						t.project_id = ?
 					AND 
 						t.min_role >= ?
+						'.$sqlRelease.'
 						'.$sqlStatus.'
 						'.$typeSql.'
 						'.$impSql.'
@@ -262,7 +287,7 @@ class Task {
 		
 		
 		$tasks = array();
-		if ($user['role_id'] < 5) {
+		if ($actor['role_id'] < 5) {
 			$byStatus = array(
 				'ready' => array(),
 				'in_work' => array(),
@@ -286,9 +311,9 @@ class Task {
 		$dict = getDict('task');
 		foreach ($rows as $row) {
 			$row['actions'] = true;
-			if ($user['role_id'] > 4 && 
+			if ($actor['role_id'] > 4 && 
 				(($filter == 'all' && empty($row['task_user'])) || 
-				!empty($row['changed_by']) && $row['changed_by'] != $user['id'])
+				!empty($row['changed_by']) && $row['changed_by'] != $actor['id'])
 			) {
 				$row['actions'] = false;
 			}
@@ -333,7 +358,8 @@ class Task {
 		));
 	}
 
-	static function getTaskForEditing($user) {
+	static function getTaskForEditing() {
+		$actor = Actor::get();
 		$id = $_REQUEST['id'];
 		$sql = '
 			SELECT 
@@ -356,7 +382,7 @@ class Task {
 			AND 
 				t.min_role >= ?
 		';
-		$task = DB::get($sql, array($id, $user['team_id'], $user['role_id']));
+		$task = DB::get($sql, array($id, $actor['team_id'], $actor['role_id']));
 		if (!is_array($task)) {
 			noRightsError();
 		}
@@ -392,9 +418,10 @@ class Task {
 		}
 	}
 
-	static function getTasksProgress($user) {
+	static function getTasksProgress() {
+		$actor = Actor::get();
 		requireClasses('project');
-		$currentRelease = Project::getCurrentRelease($user);
+		$currentRelease = Project::getCurrentRelease();
 		$releaseId = $currentRelease['id'];
 		$sql = '
 			SELECT 
@@ -406,7 +433,7 @@ class Task {
 			AND 
 				release_id = ?
 		';
-		$rows = DB::select($sql, array($user['team_id'], $releaseId));
+		$rows = DB::select($sql, array($actor['team_id'], $releaseId));
 		$all = 0;
 		$undone = 0;
 		$done = 0;
@@ -425,9 +452,26 @@ class Task {
 		);
 	}
 
-	static function getTasksCounts($user) {
+	static function getTasksCounts() {
+		$actor = Actor::get();
+		$release = $_REQUEST['release'];
+		$sqlParams = array(
+			$actor['id'],
+			$actor['project_id']
+		);
+		$sqlRelease = '';
+		if (empty($release)) {
+			$release = $actor['release_id'];
+		}
+		if ($release == 'none') {
+			$release = null;
+		}
+		if (!empty($release)) {
+			$sqlRelease = ' AND t.release_id = ?';
+			$sqlParams[] = $release;
+		}
 		$counts = array();
-		if ($user['role_id'] > 1) {
+		if ($actor['role_id'] > 1) {
 			$sql = '
 				SELECT 
 					COUNT(tu.id) AS count,
@@ -437,67 +481,87 @@ class Task {
 				JOIN tasks t
 					ON t.id = tu.task_id 
 						AND (t.status_id != 5 OR t.status_id IS NULL)
+						'.$sqlRelease.'
 				WHERE
 					tu.user_id = ?
 				AND 
 					tu.project_id = ?
-			';
-			
-			$row = DB::get($sql, array($user['id'], $user['project_id']));
+			';			
+			$row = DB::get($sql, $sqlParams);
 			$counts['forme'] = (int)$row['count'];
 		} else {
 			$counts['forme'] = 0;
 		}
 
-		if ($user['role_id'] < 6) {			
+		if ($actor['role_id'] < 6) {			
 			$sql = '
 				SELECT 
 					COUNT(id) AS count
 				FROM 
-					tasks
+					tasks t
 				WHERE 
-					(status_id < 5 OR status_id IS NULL) 
+					(t.status_id < 5 OR t.status_id IS NULL) 
 				AND 
-					user_id = ?
+					t.user_id = ?
 				AND 
-					project_id = ?
+					t.project_id = ?
+				'.$sqlRelease.'
 			';
-			$row = DB::get($sql, array($user['id'], $user['project_id']));
+			$row = DB::get($sql, $sqlParams);
 			$counts['fromme'] = (int)$row['count'];
 		} else {
 			$counts['fromme'] = 0;
+		}
+		
+		$sqlParams = array(
+			$actor['team_id'],
+			$actor['project_id'],
+			$actor['role_id']
+		);
+		if (!empty($release)) {
+			$sqlParams[] = $release;
 		}
 		$sql = '
 			SELECT
 				COUNT(id) AS count
 			FROM
-				tasks
+				tasks t
 			WHERE
-				(status_id < 5 OR status_id IS NULL)
+				(t.status_id < 5 OR t.status_id IS NULL)
 			AND
-				team_id = ?
+				t.team_id = ?
 			AND 
-				project_id = ?
+				t.project_id = ?
 			AND 
-				min_role >= ?
+				t.min_role >= ?
+			'.$sqlRelease.'
 		';
-		$row = DB::get($sql, array($user['team_id'], $user['project_id'], $user['role_id']));
-		
+		$row = DB::get($sql, $sqlParams);		
 		$counts['all'] = (int)$row['count'];
 
+		
+		$sqlParams = array(
+			$actor['id'],
+			$actor['id'],
+			$actor['project_id']
+		);
+		if (!empty($release)) {
+			$sqlParams[] = $release;
+		}
 		$sql = '
 			SELECT
 				COUNT(id) AS count
 			FROM
-				tasks
+				tasks t
 			WHERE
-				(status_id < 5 OR status_id IS NULL)
+				(t.status_id < 5 OR t.status_id IS NULL)
 			AND
-				(changed_by = ? OR for_user = ?)
+				(t.changed_by = ? OR t.for_user = ?)
 			AND 
-				project_id = ?
+				t.project_id = ?
+			'.$sqlRelease.'
 		';
-		$row = DB::get($sql, array($user['id'], $user['id'], $user['project_id']));
+		$row = DB::get($sql, $sqlParams);
 		$counts['my'] = (int)$row['count'];
 					
 		return $counts;
@@ -521,24 +585,87 @@ class Task {
 	    );
 	}
 
-	private static function getCurrentTaskInWork($user) {
+	private static function getCurrentTaskInWork() {
+		$actor = Actor::get();
 		$sql = 'SELECT id FROM tasks WHERE status_id = 2 AND changed_by = ?';
-		$task = DB::get($sql, array($user['id']));  
+		$task = DB::get($sql, array($actor['id']));  
 		if (is_array($task)) {
 			return $task['id'];
 		}
 	}
 
-	static function assignUserToTask($user) {
+	static function doAction() {
+		$id = $_REQUEST['id'];
+		$name = $_REQUEST['name'];
+		$actions = getAccessableTaskActions($id);
+		if (!in_array($name, $actions)) {
+			noRightsError();
+		}
+		switch ($name) {
+			case 'continue':
+			case 'take':
+				Task::takeTask($id);
+			break;
+
+			case 'delay':
+				Task::logTaskInWorkTime($id);
+				Task::delayTask($id);
+			break;
+
+			case 'complete':
+				Task::logTaskInWorkTime($id);
+				Task::completeTask($id);
+			break;
+
+			case 'resume':
+				Task::resumeTask($id);
+			break;
+
+			case 'refuse':
+				Task::logTaskInWorkTime($id);
+				Task::refuseTask($id);
+			break;
+
+			case 'close':
+				Task::closeTask($id);
+			break;
+
+			case 'unblock':
+				Task::unblockTask($id);
+			break;
+
+			case 'freeze':
+				Task::freezeTask($id);
+			break;
+
+			case 'unfreeze':
+				Task::unfreezeTask($id);
+			break;
+
+			case 'open':
+				Task::openTask($id);
+			break;
+
+			case 'remove':
+				Task::removeTask($id);
+				success();
+			break;
+		}
+		Task::logTaskAction($id, $name);
+		success();
+	}
+
+	static function assignUserToTask() {
+		$actor = Actor::get();
 		$taskId = $_REQUEST['id'];
 		$userId = $_REQUEST['userId'];
 
-		$task = self::getTaskOfTeam($taskId, $user['team_id']);
-		$usr  = User::getUserOfTeam($userId, $user['team_id']);
+		$task = self::getTaskOfTeam($taskId, $actor['team_id']);
+		$usr  = User::getUserOfTeam($userId, $actor['team_id']);
 		if (empty($task['id']) || empty($usr['id'])) {
 			noRightsError();
 		}
-		self::takeTask($usr, $taskId);
+		self::takeTask($taskId, $usr);
 	}
 
 	static function getTaskOfTeam($taskId, $teamId) {
@@ -622,7 +749,10 @@ class Task {
 		DB::execute($sql, array($id));
 	}
 
-	static function takeTask($user, $id) {
+	static function takeTask($id, $user = null) {
+		if (empty($user)) {
+			$user = Actor::get();
+		}
 		$currentTaskId = self::getCurrentTaskInWork($user);
 		if (!empty($currentTaskId)) {
 			self::delayTask($currentTaskId);
@@ -654,12 +784,14 @@ class Task {
 		DB::execute($sql, array($id, $period, $period));
 	}
 
-	static function logTaskAction($id, $name, $user) {
+	static function logTaskAction($id, $name) {
+		$actor = Actor::get();
 		$sql = 'INSERT INTO tasks_history VALUES ("", ?, ?, (SELECT id FROM task_history_actions WHERE code = ?), ?)';
-		DB::execute($sql, array($user['id'], $id, $name, strtotime('now')));
+		DB::execute($sql, array($actor['id'], $id, $name, strtotime('now')));
 	}
 
-	static function getUserTasks($user) {
+	static function getUserTasks() {
+		$actor = Actor::get();
 		$userId = $_REQUEST['userId'];
 		$sql = '
 			SELECT 
@@ -695,11 +827,12 @@ class Task {
 			AND
 				(t.status_id IS NULL OR (t.changed_by = ? AND t.status_id = 3))
 		';
-		$tasks = DB::select($sql, array($userId, $user['team_id'], $userId));		
+		$tasks = DB::select($sql, array($userId, $actor['team_id'], $userId));		
 		return self::initTasks($tasks);
 	}
 
-	static function getAllTasksToDo($user) {
+	static function getAllTasksToDo() {
+		$actor = Actor::get();
 		$sql = '
 			SELECT 
 				t.*,
@@ -729,7 +862,7 @@ class Task {
 			AND
 				(t.status_id IS NULL OR t.status_id = 3)
 		';
-		$tasks = DB::select($sql, array($user['team_id']));
+		$tasks = DB::select($sql, array($actor['team_id']));
 		return self::initTasks($tasks);
 	}
 
@@ -757,5 +890,55 @@ class Task {
 			$task['changed'] = $dict[$task['status']].' '.getFormattedDate(time() - $task['changed'], $ago);
 		}
 		return $tasks;
+	}
+
+	static function loadActions() {
+		$id = $_REQUEST['id'];
+		$accessibleActions = getAccessableTaskActions($id);
+		if (in_array('admin', $accessibleActions)) {
+			$allActions = array(
+				'unblock', 'edit', 'start', 'assign', 'open', 'close', 'freeze', 'unfreeze', 'comment', 'remove'
+			);
+		} else {
+			$allActions = array(
+				'estimate', 'take', 'complete', 'continue', 'delay', 'refuse', 'resume', 'problem', 'comment'
+			);
+		}	
+		
+		$actions = array();
+		$availableActions = array();
+		foreach ($allActions as $a) {
+			if (in_array($a, $accessibleActions)) {
+				$availableActions[] = array('name' => $a, 'available' => true);	
+			} else {
+				$actions[] = array('name' => $a, 'available' => false);
+			}
+		}
+		$data = array(
+			'actions' => array_merge($availableActions, $actions),
+			'dict' => getDict('task_actions'),
+			'task_id' => $id
+		);
+		success($data);
+	}
+
+	static function loadUserTasks() {
+		$userTasks = self::getUserTasks();
+		$allTasks = self::getAllTasksToDo();
+		$ids = array();
+		foreach ($userTasks as $task) {
+			$ids[] = $task['id'];
+		}
+		$otherTasks = array();
+		foreach ($allTasks as $task) {
+			if (!in_array($task['id'], $ids)) {
+				$otherTasks[] = $task;
+			}
+		}
+		success(array(
+			'tasks' => $userTasks,
+			'otherTasks' => $otherTasks,
+			'dict' => getDict('user_tasks')
+		));
 	}
 }

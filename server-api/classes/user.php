@@ -1,50 +1,15 @@
 <?php
 
 class User {
-	static function get($token) {
-		$sql = '
-			SELECT 
-				u.id,
-				u.name,
-				u.token,
-				u.team_id,
-				u.project_id,
-				r.id AS role_id,
-				r.code AS role,
-				sp.code AS spec,
-				p.id AS project_id,
-				p.roots,
-				p.nohashes,
-				p.noparams,
-				p.getparams
-			FROM 
-				sessions s
-			JOIN 
-				users u 
-				ON u.id = s.user_id
-			JOIN 
-				roles r 
-				ON u.role = r.id 
-			LEFT JOIN 
-				specs sp 
-				ON u.spec = sp.id 
-			LEFT JOIN 
-				projects p 
-				ON u.project_id = p.id 
-			WHERE 
-				s.token = ?
-		';
-		return DB::get($sql, array($token));
-	}
-
-	static function logout($user) {
+	static function logout() {
+		$actor = Actor::get();
 		$sql = '
 			DELETE FROM
 				sessions
 			WHERE 
 				token = ?
 		';
-		DB::execute($sql, array($user['token']));
+		DB::execute($sql, array($actor['token']));
 		success();
 	}
 
@@ -76,10 +41,14 @@ class User {
 		error('Неверная связка логин/пароль');
 	}
 
-	static function register($user = null) {
-		$byAdmin = !empty($user);
+	static function createUser() {
+		self::register(Actor::get());
+	}
 
-		if ($byAdmin && $user['role'] != 'head' && $user['role'] != 'admin') {
+	static function register($actor = null) {
+		$byAdmin = !empty($actor);
+
+		if ($byAdmin && $actor['role'] != 'head' && $actor['role'] != 'admin') {
 			noRightsError();
 		}
 
@@ -129,7 +98,7 @@ class User {
 		validateUniqueness($login, $password, $email, $row);
 
 		$token = generateUniqueToken('users');
-		$team = $byAdmin ? $user['team_id'] : null;
+		$team = $byAdmin ? $actor['team_id'] : null;
 		$role = $byAdmin ? $role : 1;
 		$spec = $byAdmin ? $spec : null;
 		if ($byInvitation === true) {
@@ -254,14 +223,15 @@ class User {
 		return DB::select($sql, array($teamId));
 	}
 
-	static function load($user) {
-		$projects = self::getProjects($user['id']);
+	static function load() {
+		$actor = Actor::get();
+		$projects = self::getProjects($actor['id']);
 		$data = array(
-			'user' => $user,
-			'rights' => self::getRights($user['role'])
+			'user' => $actor,
+			'rights' => self::getRights($actor['role'])
 		);
-		if (!empty($user['project_id'])) {
-			$data['project'] = self::getProject($user['project_id']);
+		if (!empty($actor['project_id'])) {
+			$data['project'] = self::getProject($actor['project_id']);
 		}
 		if (count($projects) > 0) {			
 			if (empty($data['project'])) {
@@ -361,19 +331,8 @@ class User {
 		}
 	}
 
-	static function setProject($user, $projectId) {
-		$sql = '
-			UPDATE 
-				users
-			SET
-				project_id = ?
-			WHERE 
-				id = ?
-		';
-		DB::execute($sql, array($projectId, $user['id']));
-	}
-
-	static function getUsers($user, $refreshing) {
+	static function getUsers($refreshing) {
+		$actor = Actor::get();
 		$sql = 'SET SESSION group_concat_max_len = 1000000;';
 		DB::execute($sql);
 		
@@ -400,7 +359,7 @@ class User {
 			}
 		}
 		if (!empty($projectFilter)) {
-			$projectCondition = ' AND u.project_id = '.$user['project_id'];
+			$projectCondition = ' AND u.project_id = '.$actor['project_id'];
 		}
 		$dict = getDict('work_statuses');
 		$sql = '
@@ -453,7 +412,7 @@ class User {
 			ORDER BY 
 				u.role
 		';
-		$users = DB::select($sql, array($user['team_id']));
+		$users = DB::select($sql, array($actor['team_id']));
 
 		foreach ($users as &$u) {
 			if (empty($u['work_status_id'])) {
@@ -473,7 +432,7 @@ class User {
 			WHERE 
 				id = ?
 		';
-		$token = DB::get($sql, array($user['team_id']), 'token');
+		$token = DB::get($sql, array($actor['team_id']), 'token');
 
 		$sql = '
 			SELECT 
@@ -495,7 +454,7 @@ class User {
 				team_id = ?
 				
 		';
-		$projects = DB::select($sql, array($user['team_id']));
+		$projects = DB::select($sql, array($actor['team_id']));
 
 
 		$sql = '
@@ -516,7 +475,7 @@ class User {
 			 	status_id = 3
 			)
 		';
-		$rows = DB::select($sql, array($user['team_id']));
+		$rows = DB::select($sql, array($actor['team_id']));
 		$counts = array();
 		$tasks = array();
 		foreach ($rows as $r) {
@@ -545,7 +504,7 @@ class User {
 			WHERE 
 				team_id = ?
 		';
-		$rows = DB::select($sql, array($user['team_id']));
+		$rows = DB::select($sql, array($actor['team_id']));
 		foreach ($rows as $r) {
 			if (in_array($r['task_id'], $tasks)) {
 				if (!is_array($counts[$r['user_id']])) {
@@ -558,6 +517,7 @@ class User {
 		}
 
 		foreach ($users as &$u) {
+			$u['edit_status'] = false;			
 			if (is_array($counts[$u['id']])) {			
 				if (!isset($counts[$u['id']]['own'])) {
 					$counts[$u['id']]['own'] = 0;
@@ -570,8 +530,9 @@ class User {
 				$u['task_counts'] = array('own' => 0, 'available' => 0);
 			}
 			$u['actions'] = false;
-			if ($user['role_id'] <= 4 && ($user['role_id'] < $u['role_id'])) {
+			if ($actor['role_id'] <= 4 && ($actor['role_id'] < $u['role_id'])) {
 				$u['actions'] = true;
+				$u['edit_status'] = true;
 			}
 		}
 
@@ -589,8 +550,9 @@ class User {
 		));
 	}
 
-	static function save($user) {
-		$userId    = validateUserIdAndRightsToEditUser($user, 'save');
+	static function save() {
+		$actor = Actor::get();
+		$userId    = validateUserIdAndRightsToEditUser('save');
 		$login     = validateLogin($_REQUEST['login']);
 		$password  = validatePassword($_REQUEST['password'], $_REQUEST['password2'], true);
 		$userName  = validateUserName($_REQUEST['userName']);
@@ -733,5 +695,242 @@ class User {
 	static function getUserOfTeam($userId, $teamId) {
 		$sql = 'SELECT * FROM users WHERE id = ? AND team_id = ?';
 		return DB::get($sql, array($userId, $teamId));
+	}
+
+	static function getData() {
+		$actor = Actor::get();
+		$userId = $_REQUEST['userId'];
+		if (empty($userId)) {
+			error('Во время загрузки пользователя возникла ошибка');
+		}
+		$sql = '
+			SELECT 
+				u.id,
+				u.avatar_id,
+				u.login,
+				u.name AS userName,
+				u.email,
+				u.role,
+				u.spec,
+				GROUP_CONCAT(p.token) AS projects
+			FROM 
+				users u
+			LEFT JOIN 
+				users_projects up 
+				ON up.user_id = u.id 
+			LEFT JOIN 
+				projects p 
+				ON up.project_id = p.id 
+			WHERE 
+				u.id = ?
+			AND
+				u.team_id = ?
+			GROUP BY u.id
+		';
+		$user = DB::get($sql, array($userId, $actor['team_id']));
+		if (empty($user)) {
+			noRightsError();
+		}
+		$projects = explode(',', $user['projects']);
+		$properProjects = array();
+		foreach ($projects as $pr) {
+			if (!empty($pr)) {
+				$properProjects[] = $pr;
+			}
+		}
+		$user['projects'] = $properProjects;
+		success(array(
+			'user' => $user
+		));
+	}
+
+	static function loadWorkStatus() {
+		$actor = Actor::get();
+		$userId = $_REQUEST['id'];
+
+		if ($actor['role_id'] < 5) {
+			if (!empty($userId)) {
+				$sql = '
+					SELECT 
+						id,
+						name,
+						avatar_id
+					FROM 
+						users
+					WHERE 
+						team_id = ?
+					AND 
+						id = ?
+					AND 
+						role >= ?
+				';
+				$user = DB::get($sql, array($actor['team_id'], $userId, $actor['role_id']));
+				if (empty($user)) {
+					noRightsError();
+				}
+			}
+			$sql = '
+				SELECT 
+					id,
+					name,
+					avatar_id
+				FROM 
+					users
+				WHERE  
+					team_id = ?
+				AND 
+					role >= ?
+				AND 
+					id != ?
+			';			
+			$users = DB::select($sql, array($actor['team_id'], $actor['role_id'], $actor['id']));
+			if (empty($users)) {
+				$users = null;
+			}
+		} elseif (!empty($userId) && $userId != $actor['id']) {
+			noRightsError();
+		}
+		if (empty($userId)) {
+			$userId = $actor['id'];
+		}
+		$sql = '
+			SELECT 
+				work_status_id,
+				reason
+			FROM 
+				user_work_statuses
+			WHERE 
+				user_id = ?
+		';
+		$row = DB::get($sql, array($userId));
+		if (!empty($row)) {
+			$workStatusId = $row['work_status_id'];
+			$reason = $row['reason'];
+		} else {
+			$workStatusId = 2;
+			$reason = '';
+		}
+
+		$usersDict = getDict('work_statuses');
+		$dict = getDict('work_statuses');
+		$statuses = array();
+		$reasonShown = false;
+		foreach ($dict['statuses'] as $id => $name) {
+			$s = array('id' => $id, 'name' => $name);
+			if ($workStatusId == $id) {
+				$s['current'] = true;
+				if ($workStatusId == 2) {
+					$reasonShown = true;
+				}
+			}
+			$statuses[] = $s;
+		}
+		unset($dict['statuses']);
+		success(
+			array(
+				'dict' => $dict,
+				'statuses' => $statuses,
+				'reasonShown' => $reasonShown,
+				'reason' => $reason,
+				'users' => $users,
+				'userId' => $userId
+			)
+		);
+	}
+
+	static function saveWorkStatus() {
+		$actor = Actor::get();
+		$status = $_REQUEST['status'];
+		$reason = $_REQUEST['reason'];
+		$userId = $_REQUEST['userId'];
+		if (!empty($userId)) {
+			if ($actor['role_id'] > 4) {
+				noRightsError();
+			}
+			$sql = '
+				SELECT 
+					id
+				FROM 
+					users
+				WHERE 
+					id = ?
+				AND 
+					team_id = ?
+				AND 
+					role >= ?
+			';
+			$row = DB::get($sql, array($userId, $actor['team_id'], $actor['role_id']));
+			if (empty($row)) {
+				noRightsError();
+			}
+		} else {
+			$userId = $actor['id'];
+		}
+		$sql = '
+			INSERT INTO
+				user_work_statuses
+			VALUES (?, ?, ?)
+			ON DUPLICATE KEY UPDATE 
+			work_status_id = ?,
+			reason = ?
+		';
+		DB::execute($sql, array($userId, $status, $reason, $status, $reason));
+		success(null, 'Статус успешно изменен');		
+	}
+
+	static function block() {
+		$actor = Actor::get();
+		$userToken = validateUserIdAndRightsToEditUser('block');
+		$sql = '
+			SELECT 
+				blocked_by 
+			FROM 
+				users
+			WHERE 
+				token = ?
+			AND 
+				team_id = ?
+		';
+		$row = DB::get($sql, array($userToken, $actor['team_id']));
+		if (empty($row)) {
+			noRightsError();	
+		}
+		$isBlocked = $row['blocked_by'] != null;
+		$blockedBy = $isBlocked ? null : $actor['id'];
+		$sql = '
+			UPDATE 
+				users
+			SET 
+				blocked_by = ?
+			WHERE 
+				token = ?
+		';
+		DB::execute($sql, array($blockedBy, $userToken));
+		success();
+	}
+
+	static function loadActions() {
+		$id = $_REQUEST['id'];		
+		$actions = array();
+		$accessibleActions = array(
+			'edit', 'assign', 'edit_tasks', 'set_status', 'call', 'review'
+		);
+		$allActions = $accessibleActions;
+
+		$actions = array();
+		$availableActions = array();
+		foreach ($allActions as $a) {
+			if (in_array($a, $accessibleActions)) {
+				$availableActions[] = array('name' => $a, 'available' => true);	
+			} else {
+				$actions[] = array('name' => $a, 'available' => false);
+			}
+		}
+		$data = array(
+			'actions' => array_merge($availableActions, $actions),
+			'dict' => getDict('user_actions'),
+			'user_id' => $id
+		);
+		success($data);
 	}
 }

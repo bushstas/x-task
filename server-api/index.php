@@ -10,21 +10,21 @@ mb_internal_encoding("UTF-8");
 include 'db.php';
 $db = DB::getDb();
 include 'utils.php';
-requireClasses('user');
+requireClasses('actor', 'user');
 
 class XTask {
 
-	static function load_user($user) {
-		User::load($user);
+	static function load_user() {
+		User::load();
 	}
 
-	static function create_user($user) {
-		User::register($user);
+	static function create_user() {
+		User::createUser();
 	}
 
-	static function create_project($user) {
+	static function create_project() {
 		requireClasses('project');
-		Project::create($user);
+		Project::create();
 	}
 
 	static function get_tooltip() {
@@ -49,658 +49,135 @@ class XTask {
 		));
 	}
 
-	static function logout($user) {
-		User::logout($user);
+	static function logout() {
+		User::logout();
 	}
 
-	static function load_users($user, $refreshing = false) {
+	static function load_users($refreshing = false) {
 		User::getUsers($user, $refreshing);
 	}
 
-	static function refresh_users($user) {
-		self::load_users($user, true);
+	static function refresh_users() {
+		self::load_users(true);
 	}
 
-	static function save_user($user) {
-		User::save($user);
+	static function save_user() {
+		User::save();
 	}
 
-	static function load_board($user) {
+	static function load_board() {
 		requireClasses('board');
-		success(Board::getTasks($user));
+		Board::getTasks();
 	}
 
-	static function load_tasks($user) {
+	static function load_tasks() {
 		requireClasses('task');
-		Task::getTasks($user);
+		Task::getTasks();
 	}
 
-	static function load_task($user) {
+	static function load_task() {
 		requireClasses('task');
-		Task::getTaskForEditing($user);
+		Task::getTaskForEditing();
 	}
 
-	static function set_project($user) {
+	static function set_project() {
 		requireClasses('project');
-		Project::set($user);
+		Project::set();
 	}
 
-	static function load_invitations($user) {
+	static function load_invitations() {
 		requireClasses('invitation');
-		Invitation::get($user);
+		Invitation::get();
 	}
 
-	static function load_avatars($user) {
+	static function load_avatars() {
 		requireClasses('avatar');
-		Avatar::getList($user);
+		Avatar::getList();
 	}
 
-	static function assign_task($user) {
+	static function assign_task() {
 		requireClasses('task');
-		Task::assignUserToTask($user);
+		Task::assignUserToTask();
 	}
 
 	static function get_project_data() {
-		global $db;
-		$token = $_REQUEST['projectToken'];
-		if (empty($token)) {
-			error('Во время загрузки проекта возникла ошибка');
-		}
-		$r = $db->prepare('
-			SELECT 
-				p.*
-			FROM 
-				projects p
-			WHERE 
-				p.token = ?
-		');
-		$r->execute(array($token));
-		$project = $r->fetch(PDO::FETCH_ASSOC);
-		success(array(
-			'project' => $project,
-			'dict' => getDict('projects')
-		));
+		requireClasses('project');
+		Project::getData();
 	}
 
 	static function get_user_data() {
-		global $db;
-		$userId = $_REQUEST['userId'];
-		if (empty($userId)) {
-			error('Во время загрузки пользователя возникла ошибка');
-		}
-		$r = $db->prepare('
-			SELECT 
-				u.id,
-				u.avatar_id,
-				u.login,
-				u.name AS userName,
-				u.email,
-				u.role,
-				u.spec,
-				GROUP_CONCAT(p.token) AS projects
-			FROM 
-				users u
-			LEFT JOIN 
-				users_projects up 
-				ON up.user_id = u.id 
-			LEFT JOIN 
-				projects p 
-				ON up.project_id = p.id 
-			WHERE 
-				u.id = ?
-			GROUP BY u.id
-		');
-		$r->execute(array($userId));
-		$user = $r->fetch(PDO::FETCH_ASSOC);
-		if (!is_array($user)) {
-			error('Во время загрузки пользователя возникла ошибка');
-		}
-		$projects = explode(',', $user['projects']);
-		$properProjects = array();
-		foreach ($projects as $pr) {
-			if (!empty($pr)) {
-				$properProjects[] = $pr;
-			}
-		}
-		$user['projects'] = $properProjects;
-		success(array(
-			'user' => $user
-		));
+		User::getData();
 	}
 
 	static function get_invitation_data() {
-		global $db;
-		$token = $_REQUEST['invToken'];
-		if (empty($token)) {
-			error('Во время загрузки приглашения возникла ошибка');
-		}
-		$r = $db->prepare('
-			SELECT 
-				i.name AS name,
-				i.role_id AS role,
-				GROUP_CONCAT(p.token) AS projects
-			FROM 
-				invitations i
-			LEFT JOIN 
-				invitations_projects ip 
-				ON ip.invitation_id = i.id 
-			LEFT JOIN 
-				projects p 
-				ON ip.project_id = p.id 
-			WHERE 
-				i.token = ?
-			GROUP BY i.id
-		');
-		$r->execute(array($token));
-		$invitation = $r->fetch(PDO::FETCH_ASSOC);
-
-		success(array(
-			'invitation' => $invitation
-		));
+		requireClasses('invitation');
+		Invitation::getData();
 	}
 
-	static function save_work_status($user) {
-		global $db;
-		
-		$status = $_REQUEST['status'];
-		$reason = $_REQUEST['reason'];
-		$userId = $_REQUEST['userId'];
-		if (!empty($userId)) {
-			$r = $db->prepare('
-				SELECT 
-					id
-				FROM 
-					users
-				WHERE 
-					id = ?
-				AND 
-					team_id = ?
-				AND 
-					role >= ?
-			');
-			$r->execute(array($userId, $user['team_id'], $user['role_id']));
-			$row = $r->fetch(PDO::FETCH_ASSOC);
-			if (empty($row)) {
-				noRightsError();
-			}
-		} else {
-			$userId = $user['id'];
-		}
-		$r = $db->prepare('
-			INSERT INTO
-				user_work_statuses
-			VALUES (?, ?, ?)
-			ON DUPLICATE KEY UPDATE 
-			work_status_id = ?,
-			reason = ?
-		');
-		$r->execute(array($userId, $status, $reason, $status, $reason));
-		success(null, 'Статус успешно изменен');
+	static function load_work_status() {
+		User::loadWorkStatus();
 	}
 
-	static function activate_project($user) {
-		global $db;
+	static function save_work_status() {
+		User::saveWorkStatus();
+	}
 
-		$projectToken = validateProjectToken();
-		$project = validateProjectAccess($user, $projectToken);
-		$r = $db->prepare('
-			UPDATE 
-				users
-			SET
-				project_id = ?
-			WHERE 
-				id = ? 
-		');
-		$r->execute(array($project['id'], $user['id']));
-
-		success();
+	static function activate_project() {
+		requireClasses('project');
+		Project::activate();
 	}
 	
-	static function request_project_access($user) {
-		global $db;
-
-		$projectToken = validateProjectToken();
-		$project = validateProjectAccess($user, $projectToken);
-
-		$r = $db->prepare('
-			SELECT 
-				id
-			FROM 
-				users_projects
-			WHERE 
-				project_id = ? 
-			AND
-				user_id = ?
-		');
-		$r->execute(array($project['id'], $user['id']));
-		$record = $r->fetch(PDO::FETCH_ASSOC);
-		if (is_array($record)) {
-			error('Вам уже доступен данный проект');
-		}
-		$insertSQL = 'INSERT INTO access_requests VALUES ("", ?, ?)';
-		$r = $db->prepare($insertSQL);
-		$r->execute(array($user['id'], $project['id']));
-		success(
-			null,
-			'Запрос на получение доступа к проекту успешно добавлен'
-		);
-	}
-
-	static function load_work_status($user) {
-		global $db;
-		$userId = $_REQUEST['id'];
-
-		if ($user['role_id'] < 5) {
-			if (!empty($userId)) {
-				$r = $db->prepare('
-					SELECT 
-						id,
-						name,
-						avatar_id
-					FROM 
-						users
-					WHERE 
-						team_id = ?
-					AND 
-						id = ?
-					AND 
-						role >= ?
-				');
-				$r->execute(array($user['team_id'], $userId, $user['role_id']));
-				$u = $r->fetch(PDO::FETCH_ASSOC);
-				if (empty($u)) {
-					noRightsError();
-				}
-			}
-			$r = $db->prepare('
-				SELECT 
-					id,
-					name,
-					avatar_id
-				FROM 
-					users
-				WHERE  
-					team_id = ?
-				AND 
-					role >= ?
-				AND 
-					id != ?
-			');
-			$r->execute(array($user['team_id'], $user['role_id'], $user['id']));
-			
-			$users = $r->fetchAll(PDO::FETCH_ASSOC);
-			if (empty($users)) {
-				$users = null;
-			}
-		} elseif (!empty($userId) && $userId != $user['id']) {
-			noRightsError();
-		}
-		if (empty($userId)) {
-			$userId = $user['id'];
-		}
-		$r = $db->prepare('
-			SELECT 
-				work_status_id,
-				reason
-			FROM 
-				user_work_statuses
-			WHERE 
-				user_id = ?
-		');
-		$r->execute(array($userId));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		if (!empty($row)) {
-			$workStatusId = $row['work_status_id'];
-			$reason = $row['reason'];
-		} else {
-			$workStatusId = 2;
-			$reason = '';
-		}
-
-		$usersDict = getDict('work_statuses');
-		$dict = getDict('work_statuses');
-		$statuses = array();
-		$reasonShown = false;
-		foreach ($dict['statuses'] as $id => $name) {
-			$s = array('id' => $id, 'name' => $name);
-			if ($workStatusId == $id) {
-				$s['current'] = true;
-				if ($workStatusId == 2) {
-					$reasonShown = true;
-				}
-			}
-			$statuses[] = $s;
-		}
-		unset($dict['statuses']);
-		success(
-			array(
-				'dict' => $dict,
-				'statuses' => $statuses,
-				'reasonShown' => $reasonShown,
-				'reason' => $reason,
-				'users' => $users,
-				'userId' => $userId
-			)
-		);
-	}
-
-	static function save_project($user) {
-		global $db;
-		$roots = $_REQUEST['roots'];
-		
-		$rootsArr = preg_split('/,|[\r\n]{1,}/', $roots);
-		foreach ($rootsArr as $url) {
-			$url = preg_replace('/\s/', '', $url);
-			if (empty($url)) {
-				continue;
-			}
-			$origUrl = $url;
-			if (!preg_match('/^https*:\/\//', $url)) {
-				error('Адреса корневых директорий должны начинаться с http(s)://');
-			}
-			$url = preg_replace('/^https*:\/\//', '', $url);
-			if (!preg_match('/^\w/', $url) && !preg_match('/^\*\.\w/i', $url)) {
-				error('Адрес корневой директории \"'.$origUrl.'\" не корректен');
-			}
-		}
-		
-		$projectToken = validateTokenAndRightsToEditProject($user);
-		validateProjectAccess($user, $projectToken);
-		$name  = validateTitle($_REQUEST['name']);
-
-		$r = $db->prepare('
-			SELECT 
-				id
-			FROM 
-				projects
-			WHERE 
-				name = ? 
-			AND
-				team_id = ?
-			AND 
-				token != ?
-		');
-		$r->execute(array($name, $user['team_id'], $projectToken));
-		$record = $r->fetch(PDO::FETCH_ASSOC);
-		if (is_array($record)) {
-			error('Проект с таким именем уже существует');
-		}
-
-		$homepage  = validateHomepage($_REQUEST['homepage']);
-
-		$r = $db->prepare('
-			UPDATE 
-				projects
-			SET
-				name = ?,
-				homepage = ?,
-				roots = ?,
-				nohashes = ?,
-				noparams = ?,
-				getparams = ?,
-				measure = ?
-			WHERE 
-				token = ? 
-		');
-		$r->execute(array(
-			$name,
-			$homepage,
-			$_REQUEST['roots'],
-			$_REQUEST['nohashes'],
-			$_REQUEST['noparams'],
-			$_REQUEST['getparams'],
-			$_REQUEST['measure'],
-			$projectToken
-		));
-		success();
-	}
-
-	static function save_invitation($user) {
-		global $db;
-		
-		$role      = validateRole($_REQUEST['role']);
-		$title     = validateTitle($_REQUEST['name']);
-		$projects  = validateProjects($_REQUEST['projects'], $role);
-		$invToken  = validateInvitationTokenAndRights($user, $role, $_REQUEST['invToken']);	
-
-		$r = $db->prepare('
-			UPDATE 
-				invitations
-			SET
-				name = ?, role_id = ?
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($title, $role, $invToken));
-		success();
-	}
-
-	static function load_task_actions($user) {
-		$id = $_REQUEST['id'];
-		$accessibleActions = getAccessableTaskActions($user, $id);
-		if (in_array('admin', $accessibleActions)) {
-			$allActions = array(
-				'unblock', 'edit', 'start', 'assign', 'open', 'close', 'freeze', 'unfreeze', 'comment', 'remove'
-			);
-		} else {
-			$allActions = array(
-				'estimate', 'take', 'complete', 'continue', 'delay', 'refuse', 'resume', 'problem', 'comment'
-			);
-		}	
-		
-		$actions = array();
-		$availableActions = array();
-		foreach ($allActions as $a) {
-			if (in_array($a, $accessibleActions)) {
-				$availableActions[] = array('name' => $a, 'available' => true);	
-			} else {
-				$actions[] = array('name' => $a, 'available' => false);
-			}
-		}
-		$data = array(
-			'actions' => array_merge($availableActions, $actions),
-			'dict' => getDict('task_actions'),
-			'task_id' => $id
-		);
-		success($data);
-	}
-
-	static function block_user($user) {
-		global $db;	
-		$userToken = validateUserIdAndRightsToEditUser($user, 'block');
-		$r = $db->prepare('SELECT blocked_by FROM users WHERE token = ?');
-		$r->execute(array($userToken));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		if (!is_array($row)) {
-			unknownError();	
-		}
-		$isBlocked = $row['blocked_by'] != null;
-		$blockedBy = $isBlocked ? null : $user['id'];
-		$r = $db->prepare('
-			UPDATE 
-				users
-			SET 
-				blocked_by = ?
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($blockedBy, $userToken));
-		success();
-	}
-
-	static function create_invitation($user) {
-		global $db;
+	static function request_project_access() {
 		requireClasses('project');
-		
-		$title = validateTitle($_REQUEST['name']);
-		$role = validateRole($_REQUEST['role']);
-		$projects = validateProjects($_REQUEST['projects'], $role);
-		$token = generateUniqueToken('invitations');
-		validateInvitationTokenAndRights($user, $role, $token);
-		
-		$r = $db->prepare('
-			INSERT INTO
-				invitations
-			VALUES ("", ?, ?, ?, ?)
-		');
-		$r->execute(array($user['team_id'], $title, $token, $role));
-		$r = $db->prepare('
-			SELECT 
-				id
-			FROM 
-				invitations
-			WHERE 
-				token = ?
-		');
-		$r->execute(array($token));
-		$row = $r->fetch(PDO::FETCH_ASSOC);
-		if (!is_array($row)) {
-			unknownError();
-		}
-		$projects = Project::getProjectsIds($projects);
-		foreach ($projects as $projectId) {
-			$r = $db->prepare('
-				INSERT INTO
-					invitations_projects
-				VALUES ("", ?, ?)
-			');
-			$r->execute(array($row['id'], $projectId));
-		}
-		success();
+		Project::requestAccess();
 	}
 
-	static function load_user_tasks($user) {
+	static function save_project() {
+		requireClasses('project');
+		Project::save();
+	}
+
+	static function create_invitation() {
+		requireClasses('invitation');
+		Invitation::create();
+	}
+
+	static function save_invitation() {
+		requireClasses('invitation');
+		Invitation::save();
+	}
+
+	static function load_task_actions() {
 		requireClasses('task');
-		$userTasks = Task::getUserTasks($user);
-		$allTasks = Task::getAllTasksToDo($user);
-		$ids = array();
-		foreach ($userTasks as $task) {
-			$ids[] = $task['id'];
-		}
-		$otherTasks = array();
-		foreach ($allTasks as $task) {
-			if (!in_array($task['id'], $ids)) {
-				$otherTasks[] = $task;
-			}
-		}
-
-		success(array(
-			'tasks' => $userTasks,
-			'otherTasks' => $otherTasks,
-			'dict' => getDict('user_tasks')
-		));
+		Task::loadActions();
 	}
 
-	static function load_user_actions($user) {
-		$id = $_REQUEST['id'];
-		
-		$actions = array();
-		$accessibleActions = array(
-			'edit', 'assign', 'set_status', 'call', 'review'
-		);
-		if (in_array('edit', $accessibleActions)) {
-			$allActions = array(
-				'edit', 'assign', 'set_status', 'call', 'review'
-			);
-		} else {
-			$allActions = array(
-				''
-			);
-		}
-
-		$actions = array();
-		$availableActions = array();
-		foreach ($allActions as $a) {
-			if (in_array($a, $accessibleActions)) {
-				$availableActions[] = array('name' => $a, 'available' => true);	
-			} else {
-				$actions[] = array('name' => $a, 'available' => false);
-			}
-		}
-		$data = array(
-			'actions' => array_merge($availableActions, $actions),
-			'dict' => getDict('user_actions'),
-			'user_id' => $id
-		);
-		success($data);
+	static function block_user() {
+		User::block();
 	}
 
-	static function task_action($user) {
-		global $db;
+	static function load_releases_list() {
+		requireClasses('release');
+		Release::getList();
+	}
+
+	static function load_user_tasks() {
 		requireClasses('task');
-		$id = $_REQUEST['id'];
-		$name = $_REQUEST['name'];
-		$actions = getAccessableTaskActions($user, $id);
-		if (!in_array($name, $actions)) {
-			noRightsError();
-		}
-		switch ($name) {
-			case 'continue':
-			case 'take':
-				Task::takeTask($user, $id);
-			break;
-
-			case 'delay':
-				Task::logTaskInWorkTime($id);
-				Task::delayTask($id);
-			break;
-
-			case 'complete':
-				Task::logTaskInWorkTime($id);
-				Task::completeTask($id);
-			break;
-
-			case 'resume':
-				Task::resumeTask($id);
-			break;
-
-			case 'refuse':
-				Task::logTaskInWorkTime($id);
-				Task::refuseTask($id);
-			break;
-
-			case 'close':
-				Task::closeTask($id);
-			break;
-
-			case 'unblock':
-				Task::unblockTask($id);
-			break;
-
-			case 'freeze':
-				Task::freezeTask($id);
-			break;
-
-			case 'unfreeze':
-				Task::unfreezeTask($id);
-			break;
-
-			case 'open':
-				Task::openTask($id);
-			break;
-
-			case 'remove':
-				Task::removeTask($id);
-				success();
-			break;
-		}
-		Task::logTaskAction($id, $name, $user);
-		success();
+		Task::loadUserTasks();
 	}
 
-	static function load_projects_list($user) {
-		global $db;
-		$r = $db->prepare('SELECT id, name FROM projects WHERE team_id = ?');
-		$r->execute(array($user['team_id']));
-		$projects = $r->fetchAll(PDO::FETCH_ASSOC);
-		foreach ($projects as &$p) {
-			if ($p['id'] == $user['project_id']) {
-				$p['current'] = true;
-			}
-		}
-		success(array(
-			'projectsList' => $projects
-		));
+	static function load_user_actions() {
+		User::loadActions();
+	}
+
+	static function task_action() {
+		requireClasses('task');
+		Task::doAction();
+	}
+
+	static function load_projects_list() {
+		requireClasses('project');
+		Project::getList();
 	}
 
 	static function load_projects($user) {
@@ -812,7 +289,7 @@ class XTask {
 			}
 
 			if (!is_array($execs) || empty($execs)) {
-				$users = getExecutors($user, $type, $action);
+				$users = getExecutors($type, $action);
 				if (empty($users['proper'])) {
 					error('Назначьте исполнителей задачи');		
 				}
@@ -1031,17 +508,17 @@ class XTask {
 
 	static function load_task_users($user) {
 		$dict = getDict('task_users_dialog');
-		$dict['users'] = getExecutors($user, $_REQUEST['type'], $_REQUEST['taskAction']);
+		$dict['users'] = getExecutors($_REQUEST['type'], $_REQUEST['taskAction']);
 		success(array(
 			'dict' => $dict
 		));
 	}
 
-	static function load_task_counts($user) {
+	static function load_task_counts() {
 		requireClasses('task');
 		success(array(
-			'counts' => Task::getTasksCounts($user),
-			'progress' => Task::getTasksProgress($user)
+			'counts' => Task::getTasksCounts(),
+			'progress' => Task::getTasksProgress()
 		));
 	}
 
@@ -1375,10 +852,10 @@ if ($action == 'dictionary') {
 }
 
 if (!empty($token)) {	
-	$user = User::get($token);
-	if (is_array($user)) {
+	$actor = Actor::init($token);
+	if (is_array($actor)) {
 		if (method_exists(XTask, $action)) {
-			XTask::$action($user);
+			XTask::$action();
 		} else {
 			error('Неизвестное действие');
 		}
