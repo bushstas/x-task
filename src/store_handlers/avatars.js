@@ -7,7 +7,7 @@ const init = () => {
 }
 
 const load = ({setState}) => {
- 	get('load_avatars').then(setState);
+ 	get('avatar_get_list').then(setState);
 }
 
 export default {

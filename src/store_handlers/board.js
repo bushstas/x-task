@@ -37,7 +37,7 @@ const load = ({then, setState, dispatchAsync, state, getState}, filter) => {
     const user = getState('user.user');
     users = user.id;
   }
-  get('load_board', {filter, users})
+  get('board_get_tasks', {filter, users})
   .then(boardData => {
     dispatchAsync('BOARD_CHANGED', {fetching: false});
     setState(boardData);

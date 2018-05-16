@@ -49,5 +49,10 @@ class DB {
 			$r->execute();
 		}
 	}
+
+	static function has($sql, $params = null) {
+		$rows = self::select($sql, $params);
+		return !empty($rows);
+	}
 }
 DB::init();

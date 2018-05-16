@@ -53,17 +53,16 @@ const form_data_changed = (state, formData) => {
   return {formData}
 }
 
-
 const load = ({then, dispatchAsync}) => {
   dispatchAsync('PROJECTS_FETCHING');
-  get('load_projects')
+  get('project_get')
   .then((data) => {
     then('LOADED', data);
   });
 }
 
 const load_list = ({setState}) => {
-  get('load_projects_list').then(setState);
+  get('project_get_list').then(setState);
 }
 
 const load_releases = ({setState}) => {
@@ -78,7 +77,7 @@ const reset_list = ({setState}) => {
 }
 
 const show_edit_form = ({then}, projectToken) => {
-  post('get_project_data', {projectToken})
+  post('project_get_data', {projectToken})
     .then(({project, dict}) => {
       then('EDIT_FORM_SHOWN', {projectToken, project, dict});
     });   
@@ -86,7 +85,7 @@ const show_edit_form = ({then}, projectToken) => {
 
 const save = ({then, state, and}, {token}) => {
     let {formData} = state;
-    post('save_project', {projectToken: token, ...formData})
+    post('project_save', {projectToken: token, ...formData})
     .then(
         () => {
           initTaskResolver(formData);
@@ -97,14 +96,14 @@ const save = ({then, state, and}, {token}) => {
 }
 
 const request_access = ({doAction}, projectToken) => {
-  post('request_project_access', {projectToken})
+  post('project_request_access', {projectToken})
     .then(({message}) => {
       doAction('NOTIFICATIONS_ADD_SUCCESS', message);
     });   
 }
 
 const activate = ({and}, {token, homepage}) => {
-    post('activate_project', {projectToken: token})
+    post('project_activate', {projectToken: token})
     .then(
         () => {
           if (homepage) {

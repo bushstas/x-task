@@ -1,7 +1,256 @@
 <?php
 
 class Task {
-	static function getTasks() {
+	static function getTaskId() {
+		$actor = Actor::get();
+		$idn = $_REQUEST['idn'];
+		$sql = 'SELECT id FROM tasks WHERE team_id = ? AND idn = ?';
+		$task = DB::get($sql, array($actor['team_id'], $idn));
+		if (empty($task)) {
+			noRightsError();
+		}
+		success(array(
+			'id' => $task['id']
+		));
+	}
+
+	static function getTaskInfo() {
+		$actor = Actor::get();
+		$id = $_REQUEST['id'];
+		$sql = '
+			SELECT 
+				t.*,
+				u.name AS user_name,
+				u.avatar_id,
+				ts.code AS status,
+				tt.code AS type,
+				ta.code AS action,
+				ti.code AS importance,
+				tp.period
+			FROM 
+				tasks t
+			JOIN 
+				users u
+				ON u.id = t.user_id
+			LEFT JOIN 
+				task_statuses ts
+				ON t.status_id = ts.id
+			LEFT JOIN 
+				task_types tt
+				ON tt.id = t.type_id
+			LEFT JOIN 
+				task_actions ta
+				ON ta.id = t.action_id
+			LEFT JOIN 
+				task_importance ti
+				ON ti.id = t.importance_id
+			LEFT JOIN 
+				tasks_periods tp 
+				ON t.id = tp.task_id
+			WHERE 
+				t.id = ?
+		';
+		$task = DB::get($sql, array($id));
+		$task['locked'] = $task['locked'] == 1;
+
+		$data = json_decode($task['data'], true);
+		foreach ($data as $k => $v) {
+			if (empty($task[$k])) {
+				$task[$k] = $v;
+			}
+		}
+		unset($task['data']);
+
+		$sql = '
+			SELECT 
+				tu.user_id,
+				u.name AS user_name,
+				u.avatar_id
+			FROM 
+				tasks_users tu
+			JOIN 
+				users u
+				ON u.id = tu.user_id
+			WHERE 
+				tu.task_id = ?
+		';
+		$taskUsers = DB::select($sql, array($id));
+
+		$sql = '
+			SELECT 
+				tt.user_id,
+				u.name AS user_name,
+				u.avatar_id
+			FROM 
+				tasks_testers tt
+			JOIN 
+				users u
+				ON u.id = tt.user_id
+			WHERE 
+				tt.task_id = ?
+		';
+		$taskTesters = DB::select($sql, array($id));
+
+		$users = array(
+			'author' => array('id' => $task['user_id'], 'avatar_id' => $task['avatar_id'], 'name' => $task['user_name']),
+			'executors' => array(),
+			'testers' => array()
+		);
+		$actions = $task['user_id'] == $actor['id'];
+		foreach ($taskUsers as $usr) {
+			if ($usr['user_id'] == $actor['id']) {
+				$actions = true;
+			}
+			if ($usr['user_id'] == $task['changed_by']) {
+				$users['executor'] = array('id' => $usr['user_id'], 'avatar_id' => $usr['avatar_id'], 'name' => $usr['user_name']);
+			} else {
+				$users['executors'][] = array('id' => $usr['user_id'], 'avatar_id' => $usr['avatar_id'], 'name' => $usr['user_name']);
+			}
+		}
+
+		foreach ($taskTesters as $usr) {
+			$users['testers'][] = array('id' => $usr['user_id'], 'avatar_id' => $usr['avatar_id'], 'name' => $usr['user_name']);
+		}
+
+		$history = array(
+			array(
+				'action' => 'publish',
+				'time' => date('d.m.y H:i', $task['added']),
+				'ago' => getFormattedDate(time() - $task['added'], 'ago'),
+				'user_id' => $task['user_id'],
+				'user_name' => $task['user_name'],
+				'avatar_id' => $task['avatar_id']
+			)
+		);
+
+		$sql = '
+			SELECT 
+				th.changed,
+				th.user_id,
+				tha.code,
+				u.name AS user_name,
+				u.avatar_id
+			FROM 
+				tasks_history th
+			JOIN 
+				users u
+				ON th.user_id = u.id
+			JOIN 
+				task_history_actions tha
+				ON tha.id = th.action_id
+			WHERE 
+				th.task_id = ?
+			ORDER BY
+				th.id ASC
+		';
+		$taskActions = DB::select($sql, array($id));
+
+		foreach ($taskActions as $a) {
+			$history[] = array(
+				'action' => $a['code'],
+				'time' => date('d.m.y H:i', $a['changed']),
+				'ago' => getFormattedDate(time() - $a['changed'], 'ago'),
+				'user_id' => $a['user_id'],
+				'user_name' => $a['user_name'],
+				'avatar_id' => $a['avatar_id']
+			);
+			$lastAction = $a;
+		}
+		$history = array_reverse($history);
+		if (empty($task['status'])) {
+			$task['status'] = 'current';
+		}
+		if (empty($users['executors'])) {
+			unset($users['executors']);
+		}
+		if (empty($users['testers'])) {
+			unset($users['testers']);
+		}
+		$sql = '
+			SELECT 
+				*
+			FROM 
+				subtasks
+			WHERE 
+				task_id = ?
+		';
+		$subtasks = DB::select($sql, array($id));
+		$listChecked = array();
+		foreach ($subtasks as $i) {
+			$listChecked[] = (int)$i['idx'];
+		}
+
+
+		if ($task['status_id'] == 2 && !empty($task['period'])) {
+			$task['changed'] -= $task['period'];
+		}
+		$taskDict = getDict('task');
+		$ago = $task['status_id'] != 2 ? 'ago' : '';
+		$task['changed'] = $taskDict[$task['status']].' '.getFormattedDate(time() - $task['changed'], $ago);
+
+		$task['timeleft'] = (int)$task['until_timestamp'];
+		if ($task['status_id'] == 4) {
+			$add = strtotime('now') - $lastAction['changed'];
+			$task['timeleft'] += $add;	
+		}
+		if ($task['status_id'] != 1 && $task['status_id'] != 5) {
+			$allTime = $task['timeleft'] - $task['added'];
+			$percent = $allTime / 100;
+			$passedTime = time() - $task['added'];
+			$task['scale'] = min(100, max(1, round($passedTime / $percent)));
+		}
+		if ($task['status_id'] == 1) {
+			$sql = '
+				SELECT 
+					period
+				FROM 
+					tasks_periods
+				WHERE 
+					task_id = ?
+			';
+			$taskPeriod = DB::get($sql, array($id));
+
+			$task['added'] += strtotime('now') - $lastAction['changed'];
+			$task['timeleft'] = getFormattedDate($taskPeriod['period'], 'in_work');
+			$task['timepassed'] = getFormattedDate(time() - $task['added'] - $taskPeriod['period'], 'waited');
+		} else {
+			extract(Task::getTaskTimeLeft($task['timeleft'], $task['locked'] === true ? $task['added'] : null));
+			$task['timeleft'] = $timeleft;
+			$task['overdue'] = $overdue;
+			if ($task['locked']) {
+				$task['timepassed']	= '';
+			} else {
+				$task['timepassed'] = getFormattedDate(time() - $task['added'], 'passed');
+			}
+		}
+
+		unset($task['added'], $task['status_id'], $task['until_timestamp']);
+		
+		
+		$properInfo = array();
+		if (is_array($task['info'])) {
+			foreach ($task['info'] as $k => $v) {
+				$properInfo[] = array('key' => $k, 'value' => $v);
+			}
+		}
+		$task['info'] = $properInfo;
+		success(array(
+			'id' => $task['id'],
+			'listChecked' => $listChecked,
+			'task' => $task,
+			'users' => $users,
+			'history' => $history,
+			'comments' => array(),
+			'problems' => array(),
+			'actions' => $actions,
+			'status' => $task['status'],
+			'dict' => getDict(array('task_info', 'info_dialog')),
+			'executor' => $task['changed_by'],
+			'own' => $task['changed_by'] == $actor['id'] || $task['user_id'] == $actor['id']
+		));	
+	}
+
+	static function get() {
 		$actor = Actor::get();
 		$filter = $_REQUEST['filter'];
 		$status = $_REQUEST['status'];
@@ -408,16 +657,6 @@ class Task {
 		success($data);
 	}
 
-	static function checkSubtask($taskId, $idx, $checked) {
-		if ($checked) {
-			$sql = 'INSERT INTO subtasks VALUES ("", ?, ?)';
-			DB::execute($sql, array($taskId, $idx));
-		} else {
-			$sql = 'DELETE FROM subtasks WHERE task_id = ? AND idx = ?';
-			DB::execute($sql, array($taskId, $idx));
-		}
-	}
-
 	static function getTasksProgress() {
 		$actor = Actor::get();
 		requireClasses('project');
@@ -452,7 +691,7 @@ class Task {
 		);
 	}
 
-	static function getTasksCounts() {
+	static function getCounts() {
 		$actor = Actor::get();
 		$release = $_REQUEST['release'];
 		$sqlParams = array(
@@ -564,7 +803,10 @@ class Task {
 		$row = DB::get($sql, $sqlParams);
 		$counts['my'] = (int)$row['count'];
 					
-		return $counts;
+		success(array(
+			'counts' => $counts,
+			'progress' => self::getTasksProgress()
+		));
 	}
 
 	static function getTaskTimeLeft($timeleft, $time = null) {
@@ -655,7 +897,7 @@ class Task {
 		success();
 	}
 
-	static function assignUserToTask() {
+	static function assign() {
 		$actor = Actor::get();
 		$taskId = $_REQUEST['id'];
 		$userId = $_REQUEST['userId'];
@@ -940,5 +1182,453 @@ class Task {
 			'otherTasks' => $otherTasks,
 			'dict' => getDict('user_tasks')
 		));
+	}
+
+	static function save() {
+		$data = json_decode($_REQUEST['data'], true);
+		if (!is_array($data)) {
+			unknownError();
+		}
+		extract($data);
+		$isEditing = !empty($task_id);
+
+		Rights::check($isEditing ? 'edit_task' : 'add_task');
+		$actor = Actor::get();		
+		$noExecs = false;
+		if ($isEditing) {
+			$sql = '
+				SELECT 
+					status_id
+				FROM 
+					tasks
+				WHERE 
+					id = ?
+				AND 
+					team_id = ?
+			';
+			$row = DB::get($sql, array($task_id, $actor['team_id']));
+			if (empty($row)) {
+				noRightsError();
+			}
+			if ($row['status_id'] == 2 || $row['status_id'] == 3) {
+				$noExecs = true;
+			}
+		}
+		if (is_array($formData)) {
+			extract($formData);
+		}
+		if (empty($title)) {
+			error('Введите заголовок задачи');
+		}
+		
+		if (!is_array($urls)) {
+			unknownError();
+		}
+		$properUrls = array();
+		foreach ($urls as $url) {
+			$url = preg_replace('/\s/', '', $url);
+			if (!empty($url)) {
+				$properUrls[] = $url;
+			}
+		}
+		if (empty($properUrls)) {
+			error('Не найдено ни одного пути к задаче');
+		}
+		if (!$noExecs) {
+			if (empty($type)) {
+				error('Укажите категорию задачи');
+			}
+			if (empty($action)) {
+				error('Укажите действие задачи');
+			}
+			if (empty($difficulty)) {
+				error('Укажите предполагаемую сложность задачи');
+			}
+			if (empty($termsId)) {
+				error('Укажите предполагаемый срок выполнения задачи');
+			}
+			if (empty($until)) {
+				error('Укажите к какому времени задача должна быть выполнена');
+			}
+
+			if (!is_array($execs) || empty($execs)) {
+				$users = self::getExecutors($type, $action);
+				if (empty($users['proper'])) {
+					error('Назначьте исполнителей задачи');		
+				}
+				$execs = array();
+				foreach ($users['proper'] as $u) {
+					$execs[] = $u['token'];
+				}
+			}
+		}
+		$properInfo = array();
+		if (is_array($info)) {		
+			foreach ($info as $k => $item) {
+				if (preg_replace('/\s/', '', $item) != '') {
+					$properInfo[$k] = $item;
+				}
+			}
+		}
+		if (!is_array($taskList)) {
+			$taskList = array();
+		}
+		$properTaskList = array();
+		foreach ($taskList as $item) {
+			if (!empty($item)) {
+				$properTaskList[] = $item;
+			}
+		}
+		$data = array(
+			'descr' => $description,
+			'urls' => $properUrls,
+			'info' => $properInfo,
+			'elements' => $visualElements,
+			'bent' => $bent,
+			'nohashes' => $nohashes,
+			'noparams' => $noparams,
+			'markElement' => $markElement,
+			'selectionElement' => $selectionElement,
+			'taskList' => $properTaskList
+		);
+		$data = json_encode($data, JSON_UNESCAPED_UNICODE);
+
+
+		if (!$noExecs) {
+			$tokens = '"'.implode('","', $execs).'"';
+			$sql = 'SELECT id, role FROM users WHERE token IN ('.$tokens.')';
+			$userRows = DB::select($sql);
+			$minRole = 0;
+			$forUser = 0;
+			if (count($userRows) == 1) {
+				$forUser = $userRows[0]['id'];
+			}
+			foreach ($userRows as $row) {
+				if ($row['role'] <= $actor['role_id']) {
+					noRightsError();
+				}
+				if ($row['role'] > $minRole) {
+					$minRole = $row['role'];
+				}
+			}	
+			$lockedTask = $lockedTask ? 1 : 0;
+		}
+
+		if (!$isEditing) {
+			requireClasses('project');
+			$currentRelease = Project::getCurrentRelease();
+			$idn = Project::getNextTaskNumber($currentRelease['id']);
+			$taskToken = generateToken(6);
+			$changed = strtotime('now');
+			$untilTimestamp = getUntilTimestamp($until);
+			$sql = '
+				INSERT INTO
+					tasks
+				VALUES (
+					"",
+					?,
+					?,
+					?,
+					?,
+					?,
+					(SELECT id FROM task_types WHERE code = ?),
+					(SELECT id FROM task_actions WHERE code = ?),
+					(SELECT id FROM task_importance WHERE code = ?),
+					?,
+					?,
+					?,
+					null,
+					?,
+					?,
+					?,
+					null,
+					?,
+					?,
+					?,
+					?,
+					?,
+					?
+				)
+			';
+			DB::execute($sql, array(
+				$idn,
+				$actor['team_id'],
+				$actor['id'],
+				$actor['project_id'],
+				$currentRelease['id'],
+				$type,
+				$action,
+				$importance,
+				$title,
+				$data,
+				$taskToken,
+				$minRole,
+				$changed,
+				$changed,
+				$forUser,
+				$difficulty,
+				$termsId,
+				$until,
+				$untilTimestamp,
+				$lockedTask
+			));
+
+			$sql = '
+				SELECT 
+					id
+				FROM 
+					tasks
+				WHERE 
+					token = ?
+				AND 
+					user_id = ?
+				ORDER BY 
+					id DESC
+				LIMIT 1
+			';
+			$row = DB::get($sql, array($taskToken, $actor['id']));
+			if (!is_array($row)) {
+				unknownError();	
+			}
+			$taskId = $row['id'];
+		} else {
+			$taskId = $task_id;
+			if (!$noExecs) {
+				$sql = '
+					UPDATE
+						tasks
+					SET				
+						type_id = (SELECT id FROM task_types WHERE code = ?),
+						action_id = (SELECT id FROM task_actions WHERE code = ?),
+						importance_id = (SELECT id FROM task_importance WHERE code = ?),
+						data = ?,
+						min_role = ?,
+						for_user = ?,
+						difficulty = ?,
+						term_id = ?,
+						until = ?,
+						locked = ?
+					WHERE 
+						id = ?
+				';
+				DB::execute($sql, array(
+					$type,
+					$action,
+					$importance,
+					$data,
+					$minRole,
+					$forUser,
+					$difficulty,
+					$termsId,
+					$until,
+					$lockedTask,
+					$task_id,
+				));
+
+				$sql = 'DELETE FROM tasks_users WHERE task_id = ?';
+				DB::execute($sql, array($taskId));
+				$sql = 'DELETE FROM tasks_testers WHERE task_id = ?';
+				DB::execute($sql, array($taskId));
+			} else {
+				$sql = '
+					UPDATE
+						tasks
+					SET
+						data = ?
+					WHERE 
+						id = ?
+				';
+				DB::execute($sql, array(
+					$data,
+					$task_id
+				));
+			}
+		}
+
+		if (!$noExecs) {
+			$sql = 'INSERT INTO tasks_users VALUES ("", ?, ?, ?, ?)';
+			foreach ($userRows as $row) {
+				DB::execute($sql, array($taskId, $actor['team_id'], $row['id'], $actor['project_id']));
+			}
+
+			if (!empty($testers)) {
+				$tokens = '"'.implode('","', $testers).'"';
+				$sql = 'SELECT id, role FROM users WHERE token IN ('.$tokens.')';
+				$userRows = DB::select($sql);
+				$sql = 'INSERT INTO tasks_testers VALUES ("", ?, ?, ?, ?)';
+				foreach ($userRows as $row) {
+					DB::execute($sql, array($taskId, $actor['team_id'], $row['id'], $actor['project_id']));
+				}
+			}
+		}
+
+		success(null, !$isEditing ? 'Задача успешно добавлена' : 'Задача успешно сохранена');
+	}
+
+	private static function getExecutors($taskType, $taskAction) {
+		$actor = Actor::get();
+		$sql = '
+			SELECT 
+				u.id,
+				u.token,
+				u.name,
+				u.avatar_id,
+				r.code AS role,
+				s.code AS spec
+			FROM 
+				users u
+			LEFT JOIN 
+				roles r
+				ON r.id = u.role
+			LEFT JOIN 
+				specs s
+				ON s.id = u.spec
+			WHERE 
+				u.team_id = ?
+			AND 
+				u.role > ?
+			AND 
+			 	u.role != 7
+			AND 
+				u.blocked_by IS NULL
+			ORDER BY 
+				u.role ASC
+		';
+		$rows = DB::select($sql, array($actor['team_id'], $actor['role_id']));
+		$proper = array();
+		$rest = array();
+		foreach ($rows as $row) {
+			if  ($taskAction == 'planning') {
+				if ($row['role'] == 'admin' || $row['role'] == 'editor' || $row['role'] == 'analyst') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'sysadm') {
+				if ($row['spec'] == 'sysadmin') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'design') {
+				if ($row['spec'] == 'designer') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'prototype') {
+				if ($row['role'] == 'editor' || $row['role'] == 'analyst') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'text') {
+				if ($taskAction == 'developing') {
+					if ($row['role'] == 'editor' || $row['role'] == 'analyst') {
+						$proper[] = $row;
+						continue;
+					}
+				} elseif ($row['spec'] == 'frontend' || $row['spec'] == 'htmler' || $row['spec'] == 'fullstack') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'html' || $taskType == 'style' || $taskType == 'page') {
+				if ($row['spec'] == 'frontend' || $row['spec'] == 'htmler' || $row['spec'] == 'fullstack') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'frontend') {
+				if ($row['spec'] == 'frontend' || $row['spec'] == 'fullstack') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'backend') {
+				if ($row['spec'] == 'backend' || $row['spec'] == 'fullstack') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'test') {
+				if ($row['role'] == 'tester') {
+					$proper[] = $row;
+					continue;
+				}
+			} elseif  ($taskType == 'project') {
+				if ($row['role'] == 'admin' || $row['role'] == 'editor' || $row['role'] == 'analyst') {
+					$proper[] = $row;
+					continue;
+				}
+			}
+			$rest[] = $row;
+		}
+		$testers = null;
+		if ($taskType == 'frontend' || $taskType == 'backend' || $taskType == 'html' || $taskType == 'style') {
+			$testers = array();
+			foreach ($rows as $row) {
+				if  ($row['role'] == 'tester') {
+					$row['tester'] = true;
+					$testers[] = $row;
+				}
+			}
+		}
+		
+		return array(
+			'proper' => $proper,
+			'rest' => $rest,
+			'testers' => $testers
+		);
+	}
+
+	static function getTaskUsers() {
+		$dict = getDict('task_users_dialog');
+		$dict['users'] = self::getExecutors($_REQUEST['type'], $_REQUEST['taskAction']);
+		success(array(
+			'dict' => $dict
+		));
+	}
+
+	static function getTerms() {
+		$dict = getDict('task_terms');
+		$sql = 'SELECT * FROM task_terms ORDER BY id ASC';
+		$terms = DB::select($sql);
+		$properTerms = array();
+		foreach ($terms as $t) {
+			if (!empty($prevCode) && $prevCode != $t['code']) {
+				$properTerms[] = '';
+			}
+			$properTerms[] = array('value' => $t['id'], 'name' => $t['value'].' '.decline($t['value'], $t['code']));
+			$prevCode = $t['code'];
+		}
+		
+		$dict['terms'] = $properTerms;
+		success(array(
+			'dict' => $dict
+		));
+	}
+
+	static function checkSubtask() {
+		$actor = Actor::get();
+		$id = $_REQUEST['id'];
+		$idx = $_REQUEST['idx'];
+		$checked = $_REQUEST['checked'];
+		$sql = '
+			SELECT 
+				id
+			FROM 
+				tasks
+			WHERE
+				id = ?
+			AND 
+				status_id = 2
+			AND 
+				(changed_by = ? OR user_id = ?)
+		';		
+		$row = DB::get($sql, array($id, $actor['id'], $actor['id']));
+		if (!is_array($row)) {
+			noRightsError();
+		}
+		if ($checked) {
+			$sql = 'INSERT INTO subtasks VALUES ("", ?, ?)';
+			DB::execute($sql, array($id, $idx));
+		} else {
+			$sql = 'DELETE FROM subtasks WHERE task_id = ? AND idx = ?';
+			DB::execute($sql, array($id, $idx));
+		}
+		success();
 	}
 }

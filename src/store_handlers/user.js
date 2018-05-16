@@ -32,7 +32,7 @@ const loaded = (state, data) => {
 const load = ({then, state}, filter) => {
   if (StoreKeeper.get(LOCAL_STORAGE_TOKEN)) {
     return (
-      get('load_user')
+      get('user_load')
       .then(
         data => {
           setUser(data);
@@ -47,7 +47,7 @@ const load = ({then, state}, filter) => {
 }
 
 const set_project = ({setState}, id) => {
-  return post('set_project', {id})
+  return post('project_set', {id})
   .then(data => {
     data.project.bgStyle =  {
       backgroundColor: '#' + data.project.color
@@ -58,7 +58,7 @@ const set_project = ({setState}, id) => {
 }
 
 const auth = ({and}, data) => {
-  post('auth', data)
+  post('user_auth', data)
   .then(({token}) => {
     if (token) {
       StoreKeeper.set(LOCAL_STORAGE_TOKEN, token);
@@ -68,7 +68,7 @@ const auth = ({and}, data) => {
 }
 
 const register = ({and}, data) => {
-  post('auth', data)
+  post('user_register', data)
   .then(({token}) => {
     if (token) {
       StoreKeeper.set(LOCAL_STORAGE_TOKEN, token);
@@ -78,7 +78,7 @@ const register = ({and}, data) => {
 }
 
 const logout = ({reset}, data) => {
-  post('logout');
+  post('user_logout');
   StoreKeeper.remove(LOCAL_STORAGE_TOKEN);
   StoreKeeper.remove(APP_STORAGE_KEY);
   StoreKeeper.remove(TASKS_STORAGE_KEY);

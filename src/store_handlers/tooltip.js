@@ -1,4 +1,4 @@
-import {get, post} from '../utils/Fetcher';
+import {get} from '../utils/Fetcher';
  
 const DEFAULT_STATE = {
   tooltips: {},
@@ -49,7 +49,7 @@ const loaded = (state, {data, name}) => {
 
 const load = ({dispatch}, name) => {
   dispatch('TOOLTIP_FETCHING');
-  get('get_tooltip', {name})
+  get('tooltip', {name})
   .then((data) => {
     dispatch('TOOLTIP_LOADED', {data: data.tooltip, name});
   });

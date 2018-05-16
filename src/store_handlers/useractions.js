@@ -13,7 +13,7 @@ const init = (state, userId = null) => {
 
 const load = ({then, setState, getState}, id) => {
   then('INIT', id);
-  get('load_user_actions', {id})
+  get('user_get_actions', {id})
   .then(({actions, dict}) => {
     setState({actions, dict});
   });
@@ -21,7 +21,7 @@ const load = ({then, setState, getState}, id) => {
 
 const action = ({state}, name) => {
   let {userId: id} = state;
-  return get('user_action', {name, id});
+  return post('user_do_action', {name, id});
 }
 
 const edit = ({state, doAction}) => {
@@ -35,7 +35,7 @@ const assign = ({doAction}) => {
 
 const load_tasks = ({setState, state}) => {
   let {userId} = state;
-  get('load_user_tasks', {userId}).then(setState);
+  get('user_get_tasks', {userId}).then(setState);
 }
 
 const show_task_info = ({setState, doAction, state}, props) => {
@@ -45,7 +45,7 @@ const show_task_info = ({setState, doAction, state}, props) => {
 
 const assign_task = ({setState, state}, id) => {
   let {userId} = state;
-  post('assign_task', {id, userId})
+  post('task_assign', {id, userId})
     .then(() => {
         alert(11)
     });

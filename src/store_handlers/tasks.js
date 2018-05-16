@@ -1,5 +1,5 @@
 import {editTask} from '../utils/TaskResolver';
-import {get, post} from '../utils/Fetcher';
+import {get} from '../utils/Fetcher';
 import {TASKS_STORAGE_KEY} from '../consts/storage';
  
 const init = () => {
@@ -59,7 +59,7 @@ const load = ({dispatchAsync, setState, state}, data = {}) => {
     status,
     release
   };
-  get('load_tasks', params)
+  get('task_get', params)
   .then(({tasks, dict}) => {
     dispatchAsync('TASKS_CHANGED', {fetching: false});
     setState({
@@ -112,7 +112,7 @@ const load_counts = ({setState, state}) => {
   if (release) {
     params = {release};
   }
-  get('load_task_counts', params).then(setState);
+  get('task_get_counts', params).then(setState);
 }
 
 let interval;

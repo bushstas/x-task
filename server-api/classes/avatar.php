@@ -2,13 +2,13 @@
 
 class Avatar {
 	static $COUNT = 65;
-
-
-	static function getList($user) {
+	
+	static function getList() {
+		$actor = Actor::get();
 		$avatars = array();
 
 		$sql = 'SELECT avatar_id FROM users WHERE team_id = ?';
-		$rows = DB::select($sql, array($user['team_id']));
+		$rows = DB::select($sql, array($actor['team_id']));
 		
 		$avatarIds = array();
 		foreach ($rows as $row) {

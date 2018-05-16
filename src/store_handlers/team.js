@@ -54,7 +54,7 @@ const load = ({dispatchAsync, state}) => {
     params.projectFilter = projectFilter;
   }
   dispatchAsync('TEAM_FETCHING');
-  get('load_users', params)
+  get('user_get', params)
   .then((data) => {
     dispatchAsync('TEAM_LOADED', data);
   });
@@ -67,19 +67,19 @@ const handleUserSaved = (doAction) => {
 
 const create_user = ({state, doAction}) => {
     let {userFormData} = state;
-    post('create_user', userFormData)
+    post('user_create', userFormData)
       .then(() => handleUserSaved(doAction));
 }
 
 const save_user = ({state, doAction}) => {
     let {userFormData} = state;
-    post('save_user', userFormData)
+    post('user_save', userFormData)
       .then(() => handleUserSaved(doAction));
 }
 
 const refresh = ({setState}) => {
   setState({teamFetching: true});
-  get('refresh_users').then(({users}) => {
+  get('user_refresh').then(({users}) => {
     setState({
       users,
       userFormData: {},
@@ -95,7 +95,7 @@ const show_add_form = ({setState, doAction}) => {
 
 const show_edit_form = ({setState, doAction}, userId) => {
   setState({userFormData: {}});
-  get('get_user_data', {userId})
+  get('user_get_data', {userId})
     .then(({user}) => {
       setState({userFormData: user});
     });

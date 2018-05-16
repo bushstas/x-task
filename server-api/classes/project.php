@@ -1,6 +1,50 @@
 <?php
 
 class Project {
+	static function get() {
+		$actor = Actor::get();
+		$sql = '
+			SELECT 
+				GROUP_CONCAT(u.role) AS roles,
+				p.id,
+				p.name,
+				p.token,
+				p.homepage,
+				IF(ar.id IS NOT NULL , 1, 0) AS requested
+			FROM 
+				users u
+			JOIN 
+				users_projects up 
+				ON up.user_id = u.id
+			JOIN 
+				projects p 
+				ON up.project_id = p.id
+			LEFT JOIN 
+				access_requests ar 
+				ON ar.project_id = p.id
+			WHERE 
+				u.team_id = ?
+			GROUP BY
+				p.token
+		';
+		$projects = DB::select($sql, array($actor['team_id']));
+		foreach ($projects as &$project) {
+			if ($project['id'] == $actor['project_id']) {
+				$project['current'] = true;
+			}
+			if (!empty($project['roles'])) {
+				$roles = explode(',', $project['roles']);
+				$project['users_count'] = count($roles);
+			} else {
+				$project['users_count'] = 0;
+			}
+			unset($project['id'], $project['roles']);
+		}
+		success(array(
+			'projects' => $projects
+		));
+	}
+
 	static function get($id) {
 		$sql = '
 			SELECT 

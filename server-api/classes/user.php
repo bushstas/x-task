@@ -41,7 +41,7 @@ class User {
 		error('Неверная связка логин/пароль');
 	}
 
-	static function createUser() {
+	static function create() {
 		self::register(Actor::get());
 	}
 
@@ -331,7 +331,11 @@ class User {
 		}
 	}
 
-	static function getUsers($refreshing) {
+	static function refresh() {
+		self::get(true);
+	}
+
+	static function get($refreshing = false) {
 		$actor = Actor::get();
 		$sql = 'SET SESSION group_concat_max_len = 1000000;';
 		DB::execute($sql);
@@ -909,7 +913,16 @@ class User {
 		success();
 	}
 
-	static function loadActions() {
+	static function doAction() {
+
+	}
+
+	static function getTasks() {
+		requireClasses('task');
+		Task::loadUserTasks();
+	}
+
+	static function getActions() {
 		$id = $_REQUEST['id'];		
 		$actions = array();
 		$accessibleActions = array(
