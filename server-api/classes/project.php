@@ -45,10 +45,12 @@ class Project {
 		));
 	}
 
-	static function get($id) {
+	static function getProjectData($id) {
+		$actor = Actor::get();
 		$sql = '
 			SELECT 
-				p.*,
+				p.id,
+				p.name,
 				pc.value AS color,
 				r.id AS release_id,
 				r.name AS release_name,
@@ -64,17 +66,17 @@ class Project {
 				ON p.id = r.project_id
 			WHERE 
 				p.id = ?
+			AND
+				p.team_id = ?
 		';
-		$row = DB::get($sql, array($id));
+		$row = DB::get($sql, array($id, $actor['team_id']));
 		if (empty($row)) {
 			return null;
 		}
 		$date = date('d.m.y', strtotime($row['release_date']));
 
 		return array(
-			'team_id' => $row['team_id'],
 			'id' => $row['id'],
-			'token' => $row['token'],
 			'name' => $row['name'],
 			'color' => $row['color'],
 			'release' => array(
@@ -84,6 +86,14 @@ class Project {
 				'active' => $row['release_active'] == 1
 			)
 		);
+	}
+
+	static function getData() {
+		$project = self::getProjectData($_REQUEST['id']);
+		if (empty($project)) {
+			noRightsError();
+		}
+		success($project);
 	}
 
 	static function getCurrentRelease() {
@@ -126,12 +136,13 @@ class Project {
 		return $ids;
 	}
 
-	static function create($user) {
-		if ($user['role'] != 'head' && $user['role'] != 'admin') {
+	static function create() {
+		$actor = Actor::get();
+		if ($actor['role'] != 'head' && $actor['role'] != 'admin') {
 			noRightsError();
 		}
 
-		$userId = $user['id'];
+		$userId = $actor['id'];
 		$name = $_REQUEST['projectName'];
 		if (empty($name)) {
 			error('Введите название проекта');
@@ -210,14 +221,9 @@ class Project {
 		if (empty($projectId)) {
 			$projectId = $_REQUEST['id'];
 		}
-		$userId = $actor['id'];
-		$project = self::get($projectId);
+		$project = self::getProjectData($projectId);
 		
-		if (is_array($project)) {
-			$teamId = $project['team_id'];
-			if ($teamId != $actor['team_id']) {
-				noRightsError();
-			}
+		if (!empty($project)) {
 			$sql = '
 				UPDATE 
 					users
@@ -226,17 +232,19 @@ class Project {
 				WHERE 
 					id = ?
 			';
-			DB::execute($sql, array($projectId, $userId));
+			DB::execute($sql, array($projectId, $actor['id']));
 			success(array('project' => $project));
 		}
+		noRightsError();
 	}
 
-	static function getData($user) {
+	static function getEdited() {
+		$actor = Actor::get();
 		$token = $_REQUEST['projectToken'];
 		if (empty($token)) {
 			error('Во время загрузки проекта возникла ошибка');
 		}
-		if ($user['role_id'] > 4) {
+		if ($actor['role_id'] > 4) {
 			noRightsError();
 		}
 		$sql = '
@@ -249,13 +257,13 @@ class Project {
 			AND 
 				p.team_id = ?
 		';
-		$project = DB::get($sql, array($token, $user['team_id']));
+		$project = DB::get($sql, array($token, $actor['team_id']));
 		if (empty($project)) {
 			noRightsError();
 		}
 		success(array(
 			'project' => $project,
-			'dict' => getDict('projects')
+			'dict' => Dict::getByName('projects')
 		));
 	}
 

@@ -32,7 +32,7 @@ const loaded = (state, data) => {
 const load = ({then, state}, filter) => {
   if (StoreKeeper.get(LOCAL_STORAGE_TOKEN)) {
     return (
-      get('user_load')
+      get('user_init')
       .then(
         data => {
           setUser(data);

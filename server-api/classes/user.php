@@ -223,35 +223,35 @@ class User {
 		return DB::select($sql, array($teamId));
 	}
 
-	static function load() {
+	static function init() {
 		$actor = Actor::get();
-		$projects = self::getProjects($actor['id']);
 		$data = array(
-			'user' => $actor,
-			'rights' => self::getRights($actor['role'])
+			'user' => $actor
 		);
 		if (!empty($actor['project_id'])) {
 			$data['project'] = self::getProject($actor['project_id']);
 		}
-		if (count($projects) > 0) {			
-			if (empty($data['project'])) {
-				$data['project'] = self::getProject($projects[0]['id']);
-			}		
-			$properProjects = array();
-			foreach ($projects as $project) {
-				$properProjects[] = $project['token'];
-			}
-			$data['projects'] = $properProjects;		
-		}
-		requireClasses('task');
 		success($data);
 	}
 
-	private static function getProjects($userId) {
+	private static function getProjects() {
+		$actor = Actor::get();
+		if ($actor['role_id'] < 5) {
+			$sql = '
+				SELECT 
+					id,
+					name					
+				FROM 
+					projects
+				WHERE 
+					team_id = ?
+			';
+			return DB::select($sql, array($actor['team_id']));
+		}
 		$sql = '
 			SELECT 
-				p.name,
-				p.token
+				p.id,
+				p.name
 			FROM 
 				users_projects up 
 			JOIN 
@@ -260,23 +260,17 @@ class User {
 			WHERE 
 				up.user_id = ?
 		';
-		return DB::select($sql, array($userId));
+		return DB::select($sql, array($actor['id']));		
 	}
 
 	private static function getRights($role) {
 		$sql = '
 			SELECT 
-				rs.code
+				code
 			FROM 
-				roles r 
-			JOIN 
-				roles_rights rr 
-				ON r.id = rr.role_id
-			JOIN 
-				rights rs 
-				ON rs.id = rr.right_id
+				rights
 			WHERE 
-				r.code = ?
+				min_role >= ?
 		';
 		$rows = DB::select($sql, array($role));
 		$rights = array();
@@ -286,9 +280,9 @@ class User {
 		return $rights;
 	}
 
-	private static function getProject($token) {
+	private static function getProject($id) {
 		requireClasses('project');
-		return Project::get($token);
+		return Project::getProjectData($id);
 	}
 
 	private static function createSession($userId) {
@@ -365,12 +359,11 @@ class User {
 		if (!empty($projectFilter)) {
 			$projectCondition = ' AND u.project_id = '.$actor['project_id'];
 		}
-		$dict = getDict('work_statuses');
+		$dict = Dict::getByName('work_statuses');
 		$sql = '
 			SELECT 
 				u.id,
 				u.avatar_id,
-				u.token,
 				u.role AS role_id,
 				pr.name AS project_name,
 				u.name,
@@ -437,29 +430,6 @@ class User {
 				id = ?
 		';
 		$token = DB::get($sql, array($actor['team_id']), 'token');
-
-		$sql = '
-			SELECT 
-				id,
-				code
-			FROM 
-				specs
-			ORDER BY id
-		';
-		$specs = DB::select($sql);
-		
-		$sql = '
-			SELECT 
-				token,
-				name
-			FROM 
-				projects
-			WHERE 
-				team_id = ?
-				
-		';
-		$projects = DB::select($sql, array($actor['team_id']));
-
 
 		$sql = '
 			SELECT 
@@ -547,11 +517,35 @@ class User {
 		}
 
 		success(array(
-			'users' => $users,
-			'roles' => getRoles(),
-			'specs' => $specs,
-			'projects' => $projects
+			'users' => $users
 		));
+	}
+
+	private static function getRoles() {
+		$sql = '
+			SELECT 
+				r.id,
+				r.code,
+				GROUP_CONCAT(rs.description ORDER BY rs.id SEPARATOR ";") AS description
+			FROM 
+				roles r
+			JOIN
+				rights rs
+				ON 
+				rs.min_role >= r.id
+			GROUP BY r.id
+		';
+		$roles = DB::select($sql);
+
+		$userRoles = array();
+		foreach ($roles as $role) {
+			$userRoles[] = array(
+				'id' => $role['id'],
+				'code' => $role['code'],
+				'description' => $role['description']
+			);
+		}
+		return $userRoles;
 	}
 
 	static function save() {
@@ -748,7 +742,7 @@ class User {
 		));
 	}
 
-	static function loadWorkStatus() {
+	static function getWorkStatus() {
 		$actor = Actor::get();
 		$userId = $_REQUEST['id'];
 
@@ -815,8 +809,8 @@ class User {
 			$reason = '';
 		}
 
-		$usersDict = getDict('work_statuses');
-		$dict = getDict('work_statuses');
+		$usersDict = Dict::getByName('work_statuses');
+		$dict = Dict::getByName('work_statuses');
 		$statuses = array();
 		$reasonShown = false;
 		foreach ($dict['statuses'] as $id => $name) {
@@ -941,7 +935,7 @@ class User {
 		}
 		$data = array(
 			'actions' => array_merge($availableActions, $actions),
-			'dict' => getDict('user_actions'),
+			'dict' => Dict::getByName('user_actions'),
 			'user_id' => $id
 		);
 		success($data);

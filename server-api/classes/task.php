@@ -1,7 +1,7 @@
 <?php
 
 class Task {
-	static function getTaskId() {
+	static function getId() {
 		$actor = Actor::get();
 		$idn = $_REQUEST['idn'];
 		$sql = 'SELECT id FROM tasks WHERE team_id = ? AND idn = ?';
@@ -14,7 +14,7 @@ class Task {
 		));
 	}
 
-	static function getTaskInfo() {
+	static function getData() {
 		$actor = Actor::get();
 		$id = $_REQUEST['id'];
 		$sql = '
@@ -184,7 +184,7 @@ class Task {
 		if ($task['status_id'] == 2 && !empty($task['period'])) {
 			$task['changed'] -= $task['period'];
 		}
-		$taskDict = getDict('task');
+		$taskDict = Dict::getByName('task');
 		$ago = $task['status_id'] != 2 ? 'ago' : '';
 		$task['changed'] = $taskDict[$task['status']].' '.getFormattedDate(time() - $task['changed'], $ago);
 
@@ -244,7 +244,7 @@ class Task {
 			'problems' => array(),
 			'actions' => $actions,
 			'status' => $task['status'],
-			'dict' => getDict(array('task_info', 'info_dialog')),
+			'dict' => Dict::getByName(array('task_info', 'info_dialog')),
 			'executor' => $task['changed_by'],
 			'own' => $task['changed_by'] == $actor['id'] || $task['user_id'] == $actor['id']
 		));	
@@ -557,7 +557,7 @@ class Task {
 				'rest' => array()
 			);
 		}
-		$dict = getDict('task');
+		$dict = Dict::getByName('task');
 		foreach ($rows as $row) {
 			$row['actions'] = true;
 			if ($actor['role_id'] > 4 && 
@@ -607,7 +607,7 @@ class Task {
 		));
 	}
 
-	static function getTaskForEditing() {
+	static function getEdited() {
 		$actor = Actor::get();
 		$id = $_REQUEST['id'];
 		$sql = '
@@ -1109,7 +1109,7 @@ class Task {
 	}
 
 	private static function initTasks($tasks) {
-		$dict = getDict('task');
+		$dict = Dict::getByName('task');
 		foreach ($tasks as &$task) {
 			$task['locked'] = $task['locked'] == 1;
 			
@@ -1134,7 +1134,7 @@ class Task {
 		return $tasks;
 	}
 
-	static function loadActions() {
+	static function getActions() {
 		$id = $_REQUEST['id'];
 		$accessibleActions = getAccessableTaskActions($id);
 		if (in_array('admin', $accessibleActions)) {
@@ -1158,7 +1158,7 @@ class Task {
 		}
 		$data = array(
 			'actions' => array_merge($availableActions, $actions),
-			'dict' => getDict('task_actions'),
+			'dict' => Dict::getByName('task_actions'),
 			'task_id' => $id
 		);
 		success($data);
@@ -1180,7 +1180,7 @@ class Task {
 		success(array(
 			'tasks' => $userTasks,
 			'otherTasks' => $otherTasks,
-			'dict' => getDict('user_tasks')
+			'dict' => Dict::getByName('user_tasks')
 		));
 	}
 
@@ -1574,8 +1574,8 @@ class Task {
 		);
 	}
 
-	static function getTaskUsers() {
-		$dict = getDict('task_users_dialog');
+	static function getUsers() {
+		$dict = Dict::getByName('task_users_dialog');
 		$dict['users'] = self::getExecutors($_REQUEST['type'], $_REQUEST['taskAction']);
 		success(array(
 			'dict' => $dict
@@ -1583,7 +1583,7 @@ class Task {
 	}
 
 	static function getTerms() {
-		$dict = getDict('task_terms');
+		$dict = Dict::getByName('task_terms');
 		$sql = 'SELECT * FROM task_terms ORDER BY id ASC';
 		$terms = DB::select($sql);
 		$properTerms = array();
@@ -1630,5 +1630,17 @@ class Task {
 			DB::execute($sql, array($id, $idx));
 		}
 		success();
+	}
+
+	static function getUntilDate() {
+		$timestamp = getUntilTimestamp($_REQUEST['value']);
+		$diff = $timestamp - time();
+		$left = 'left';
+	    if ($diff < 0) {
+	    	$diff = -$diff;
+	    	$left = 'overdue';
+	    }
+		$value = getFormattedDate($diff, $left);
+		success(array('value' => $value));
 	}
 }

@@ -15,7 +15,7 @@ const changed = (state, data) => {
 
 const load = ({dispatchAsync, setState, getState}, id) => {
   dispatchAsync('TASKINFO_CHANGED', {fetching: true}); 
-  get('load_task_info', {id})
+  get('task_get_data', {id})
   .then((data) => {
     setState({
       fetching: false,
@@ -37,7 +37,7 @@ const check_subtask = ({setState, state}, {idx, checked, id}) => {
     }
   }
   setState({listChecked});
-  post('check_subtask', {id, idx, checked});
+  post('task_check_subtask', {id, idx, checked});
 }
 
 const change = ({setState}, data) => {

@@ -67,7 +67,7 @@ $items = array(
 	'terms'
 );
 
-switch ($_POST['type']) {
+switch ($_REQUEST['type']) {
 	case 'design':
 		array_push($items, 'prototypes', 'examples');
 	break;
@@ -116,7 +116,7 @@ switch ($_POST['type']) {
 array_push($items, 'before', 'after', 'diff', 'award');
 $dict['captions'] = array();
 
-if (empty($_POST['type'])) {
+if (empty($_REQUEST['type'])) {
 	$items = array_keys($d);
 }
 

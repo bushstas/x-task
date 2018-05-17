@@ -1,4 +1,3 @@
-import {editTask} from '../utils/TaskResolver';
 import {get, post} from '../utils/Fetcher';
 import {USERACTIONS_STORAGE_KEY} from '../consts/storage';
  
@@ -38,12 +37,12 @@ const load_tasks = ({setState, state}) => {
   get('user_get_tasks', {userId}).then(setState);
 }
 
-const show_task_info = ({setState, doAction, state}, props) => {
+const show_task_info = ({doAction}, props) => {
   doAction('TASKINFO_CHANGE', props);
   doAction('MODALS_SHOW', {name: 'task_info', props});
 }
 
-const assign_task = ({setState, state}, id) => {
+const assign_task = ({state}, id) => {
   let {userId} = state;
   post('task_assign', {id, userId})
     .then(() => {

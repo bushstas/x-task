@@ -14,7 +14,7 @@ const check_task = ({and, doAction, state, setState}) => {
   const idn = state.value;
   if (idn) {
     setState({notFound: false});
-    get('get_task', {idn})
+    get('task_get_id', {idn})
     .then(props => {
       setState({value: ''});
       if (props.id) {

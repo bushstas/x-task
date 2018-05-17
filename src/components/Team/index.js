@@ -30,7 +30,7 @@ class Team extends React.Component {
 	 			return (
 	 				<User 
 	 					data={user}
-	 					key={user.token}
+	 					key={user.id}
 	 					onStatusClick={this.handleStatusClick}
 	 					onTaskClick={this.handleTaskClick}
 	 					onClick={this.handleUserClick}

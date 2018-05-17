@@ -21,7 +21,7 @@ const load = ({dispatchAsync, setState}, id) => {
 	if (id) {
 		data = {id};
 	}
-  	get('load_work_status', data)
+  	get('user_get_work_status', data)
   		.then(data => {
   			setState(data);
   			dispatchAsync('STATUSES_CHANGED', {fetching: false});
@@ -32,7 +32,7 @@ const save = ({state, doAction}, data) => {
 	if (state.userId) {
 		data.userId = state.userId;
 	}
-  	post('save_work_status', data)
+  	post('user_save_work_status', data)
   		.then(() => {
   			doAction('TEAM_UPDATE');
   		});

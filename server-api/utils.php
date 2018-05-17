@@ -14,50 +14,6 @@ function requireClasses() {
 	}
 }
 
-function getLang($language = null) {
-	if (empty($language)) {
-		$language = $_GET['lang'];
-	}
-	if (empty($language)) {
-		$language = 'ru';
-	}
-	return $language;
-}
-
-function getDict($names, $language = null) {
-	$language = getLang($language);
-	$dicts = array();
-	if (!is_array($names)) {
-		$names = array($names);
-	}
-	foreach ($names as $name) {
-		$path = './dictionary/'.$name.'.php';
-		if (file_exists($path)) {
-			include $path;
-			if (is_array($dict)) {
-				$dicts = array_merge($dicts, $dict);
-			}
-		}
-	}
-	return $dicts;
-}
-
-function getHelp($name, $language = null) {
-	if (empty($language)) {
-		$language = $_GET['lang'];
-	}
-	if (empty($language)) {
-		$language = 'ru';
-	}
-	$path = './dictionary/help/'.$name.'.php';
-	if (file_exists($path)) {
-		include $path;
-		if (is_array($help)) {
-			return array($name => $help);
-		}
-	}
-}
-
 function validateUserIdAndRightsToEditUser($action = null) {
 	$actor = Actor::get();
 	$userId = $_REQUEST['id'];
@@ -287,8 +243,9 @@ function success($params = null, $message = null) {
 }
 
 function getFormattedDate($date, $ago = null) {
-	$language = getLang();
-	$dict = getDict('time'); 
+	requireClasses('dict');
+	$language = Dict::getLang();
+	$dict = Dict::getByName('time'); 
  	
  	if ($ago == 'waited' && $language == 'ru') {
  		$dict['second'] = $dict['_second'];
@@ -397,40 +354,9 @@ function generateToken($length = 20) {
 }
 
 function decline($number, $keyword) {
-	$dict = getDict('declined');
+	$dict = Dict::getByName('declined');
   	$cases = array (2, 0, 1, 1, 1, 2);
   	return $dict[$keyword][ ($number % 100 > 4 && $number % 100 < 20) ? 2 : $cases[min($number % 10, 5)] ];
-}
-
-function getRoles() {	
-	$sql = '
-		SELECT 
-			r.id,
-			r.code,
-			GROUP_CONCAT(rs.description ORDER BY rs.id SEPARATOR ";") AS description
-		FROM 
-			roles r
-		JOIN
-			roles_rights rr
-			ON 
-			r.id = rr.role_id
-		JOIN
-			rights rs
-			ON 
-			rs.id = rr.right_id
-		GROUP BY r.id
-	';
-	$roles = DB::select($sql);
-
-	$userRoles = array();
-	foreach ($roles as $role) {
-		$userRoles[] = array(
-			'id' => $role['id'],
-			'code' => $role['code'],
-			'description' => $role['description']
-		);
-	}
-	return $userRoles;
 }
 
 function getAccessableTaskActions($id) {

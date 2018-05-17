@@ -51,8 +51,8 @@ class Board {
 		}
 
 
-		$dict = getDict('board');
-		$tasksDict = getDict('task');
+		$dict = Dict::getByName('board');
+		$tasksDict = Dict::getByName('task');
 		$sql = '
 			SELECT 
 				t.*,

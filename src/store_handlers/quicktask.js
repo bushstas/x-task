@@ -253,7 +253,7 @@ const cancel = ({dispatch, doAction, state, getSavedState}) => {
 
 const show_url_dialog = ({setState}) => {
   setState({dialogFetching: true});
-  get('load_url_dialog')
+  get('dict_get_dictionary', {name: 'url_dialog'})
   .then((urlDialogData) => {
     setState({
       dialogFetching: false,
@@ -263,15 +263,16 @@ const show_url_dialog = ({setState}) => {
 }
 
 const save = ({and, state}) => {
-  post('save_task', {data: JSON.stringify(state)})
+  post('task_save', {data: JSON.stringify(state)})
   .then(data => {
     and('CANCEL');
   });
 }
 
 const show_info_form = ({setState, state}) => {
+  const {type = ''} = state;
   setState({dialogFetching: true});
-  get('load_info_dialog', {type: state.type || ''})
+  get('dict_get_dictionary', {name: 'info_dialog', type})
     .then(({dict}) => {
       setState({
         dialogFetching: false,
@@ -282,7 +283,7 @@ const show_info_form = ({setState, state}) => {
 
 const show_terms = ({setState, state}) => {
   setState({dialogFetching: true});
-  get('load_task_terms')
+  get('task_get_terms')
     .then(({dict}) => {
       setState({
         dialogFetching: false,
@@ -294,7 +295,7 @@ const show_terms = ({setState, state}) => {
 const show_users = ({setState, state}) => {
   setState({dialogFetching: true});
   let {type = '', action = ''} = state;
-  get('load_task_users', {type, taskAction: action})
+  get('task_get_users', {type, taskAction: action})
     .then(({dict}) => {
       let {users} = dict;
       let {execs} = state;
@@ -315,7 +316,7 @@ const show_users = ({setState, state}) => {
 }
 
 const load_until_date = ({setState}, value) => {
-  get('load_until_date', {value})
+  get('task_get_until_date', {value})
     .then(({value}) => {
       setState({
         dialogFetching: false,
@@ -327,7 +328,7 @@ const load_until_date = ({setState}, value) => {
 const load_edited_task = ({setState, dispatch, doAction, state}, id) => {
   dispatch('MASK_CLEARED');
   doAction('NOTIFICATIONS_ADD_SPECIAL', {messageFromDict: 'editmode'});
-  get('load_task', {id})
+  get('task_get_edited', {id})
   .then(data => {
   let {visualElements} = data;
     if (visualElements instanceof Array) {

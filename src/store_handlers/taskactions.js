@@ -11,7 +11,7 @@ const init = (state, taskId = null) => {
 
 const load = ({then, setState}, id) => {
   then('INIT', id);
-  get('load_task_actions', {id})
+  get('task_get_actions', {id})
   .then(({actions, dict}) => {
     setState({actions, dict});
   });
@@ -19,7 +19,7 @@ const load = ({then, setState}, id) => {
 
 const action = ({state}, name) => {
   let {taskId: id} = state;
-  return get('task_action', {name, id});
+  return post('task_do_action', {name, id});
 }
  
 const edit = ({state, getState, doAction}) => {

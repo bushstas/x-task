@@ -66,7 +66,7 @@ const load_list = ({setState}) => {
 }
 
 const load_releases = ({setState}) => {
-  get('load_releases_list').then(setState);
+  get('release_get_list').then(setState);
 }
 
 const reset_list = ({setState}) => {
@@ -77,7 +77,7 @@ const reset_list = ({setState}) => {
 }
 
 const show_edit_form = ({then}, projectToken) => {
-  post('project_get_data', {projectToken})
+  get('project_get_edited', {projectToken})
     .then(({project, dict}) => {
       then('EDIT_FORM_SHOWN', {projectToken, project, dict});
     });   

@@ -49,7 +49,7 @@ const loaded = (state, {data, name}) => {
 
 const load = ({dispatch}, name) => {
   dispatch('TOOLTIP_FETCHING');
-  get('tooltip', {name})
+  get('dict_get_tooltip', {name})
   .then((data) => {
     dispatch('TOOLTIP_LOADED', {data: data.tooltip, name});
   });

@@ -26,7 +26,7 @@ const load_dictionary = ({setState, state}) => {
     setDictionary(state);
     return Promise.resolve();
   }
-  return get('dictionary')
+  return get('dict_get')
   .then(data => {
     setState(data);
     setDictionary(data);
