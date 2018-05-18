@@ -92,16 +92,20 @@ class Users extends React.Component {
 	}
 
 	get addButton() {
-		let {usersActiveTab} = this.props;
-		if (usersActiveTab == 'team') {
-			if (hasRight('add_user')) {
-				return (
-					<div class="add" onClick={this.handleAddUserClick}>
-						<Icon icon="add_user"/>
-					</div>
-				)
-			}
+		let {usersActiveTab, canCreateUser} = this.props;
+		let result = null;
+		switch (usersActiveTab) {
+			case 'team':
+				if (canCreateUser) {
+					result = (
+						<div class="add" onClick={this.handleAddUserClick}>
+							<Icon icon="add_user"/>
+						</div>
+					)
+				}
+			break;
 		}
+		return result;
 	}
 
 	handleSelectTab = (usersActiveTab) => {
@@ -128,4 +132,4 @@ class Users extends React.Component {
 	}
 }
 
-export default Store.connect(Users, 'app, team, user:project');
+export default Store.connect(Users, 'app, team, user:project|canCreateUser');

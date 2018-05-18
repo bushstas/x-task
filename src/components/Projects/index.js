@@ -6,7 +6,6 @@ import Table from '../../ui/Table';
 import Button from '../../ui/Button';
 import Icon from '../../ui/Icon';
 import ProjectForm from '../ProjectForm';
-import {hasRight, inProject} from '../../utils/User';
 import ActionButtons from '../ActionButtons';
 
 class Projects extends React.Component {
@@ -51,7 +50,7 @@ class Projects extends React.Component {
 			dict.main_page,
 			dict.title			
 		];
-		if (hasRight('add_project')) {
+		if (this.props.canCreateProject) {
 			headers.push('');
 		}
 		headers.reverse();
@@ -59,20 +58,20 @@ class Projects extends React.Component {
 	}
 
 	get widths() {
-		if (hasRight('add_project')) {
+		if (this.props.canCreateProject) {
 			return [4, 40, 32, 12, 12];
 		}
 		return [40, 36, 12, 12];
 	}
 
 	get rows() {
-		let {projects} = this.props;
+		let {projects, canCreateProject} = this.props;
 		const rows = [];
 		let name, row;
 		let index = 0;
 		for (let p of projects) {
 			row = [];
-			if (hasRight('add_project')) {
+			if (canCreateProject) {
 				row.push(
 					<Icon 
 						icon="edit"
@@ -108,7 +107,7 @@ class Projects extends React.Component {
 				style={{opacity: 0.2}}
 				title={dict.current_project}/>
 		) : (
-		inProject(data.token) ? (
+		data.available ? (
 			<Icon 
 				icon="activate"
 				classes="icon::activate icon::button"
@@ -166,8 +165,8 @@ class Projects extends React.Component {
 	}
 
 	get shownButtons() {
-		let {formShown} = this.props;
-		if (!hasRight('add_project')) {
+		let {formShown, canCreateProject} = this.props;
+		if (!canCreateProject) {
 			return [];
 		}
 		if (formShown == 'edit') {
@@ -232,4 +231,4 @@ class Projects extends React.Component {
 	}
 }
 
-export default Store.connect(Projects, 'projects');
+export default Store.connect(Projects, 'projects, user:canCreateProject');

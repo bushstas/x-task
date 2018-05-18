@@ -20,10 +20,6 @@ export const set = (data) => {
 	}
 }
 
-export const isAuthorized = () => {
-	return user instanceof Object;
-}
-
 export const isCurrentUser = (u) => {
 	const userToken = getToken();
 	if (userToken) {
@@ -40,10 +36,6 @@ export const getToken = () => {
 		return user.token;
 	}
 } 
-
-export const hasRight = (code) => {
-	return rights.indexOf(code) > -1;
-}
 
 export const isAdmin = () => {
 	return isAuthorized() && user.role == 'admin';

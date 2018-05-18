@@ -2,7 +2,6 @@ import React from 'react';
 import Store from 'xstore';
 import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
-import {hasRight} from '../../utils/User';
 
 class StartButton extends React.Component {
 	render() {
@@ -48,7 +47,8 @@ class StartButton extends React.Component {
   	}
 
 	get hasCreateButton() {
-		return !this.props.quicktaskMode && hasRight('add_dev_task');
+		const {quicktaskMode, canCreateTask} = this.props;
+		return !quicktaskMode && canCreateTask;
 	}
 
 	handleAddTaskClick = () => {
@@ -64,4 +64,4 @@ class StartButton extends React.Component {
   	}
 }
 
-export default Store.connect(StartButton, 'app, user:isAuthorized');
+export default Store.connect(StartButton, 'app, user:isAuthorized|canCreateTask');

@@ -8,7 +8,6 @@ const init = () => {
   return {
     user: null,
     project: null,
-    rights: [],
     isAuthorized: false
   };
 }
@@ -36,7 +35,7 @@ const load = ({then, state}, filter) => {
       .then(
         data => {
           setUser(data);
-          initTaskResolver(data.user);
+          initTaskResolver(data.project);
           then('LOADED', data);
         },
         () => StoreKeeper.remove(LOCAL_STORAGE_TOKEN)
