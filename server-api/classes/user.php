@@ -52,19 +52,32 @@ class User {
 			noRightsError();
 		}
 
-		$login    = validateLogin($_POST['login']);
-		$password = validatePassword($_POST['password'], $_POST['password2']);
-		$userName = validateUserName($_POST['userName']);
-		$email    = validateEmail($_POST['email']);
-		$code     = validateInvitationCode($_POST['code']);
+		$login    = self::validateLogin($_POST['login']);
+		$password = self::validatePassword($_POST['password'], $_POST['password2']);
+		$userName = self::validateUserName($_POST['userName']);
+		$email    = self::validateEmail($_POST['email']);
+		$code     = self::validateInvitationCode($_POST['code']);
+
+		$sql = '
+			SELECT 
+				* 
+			FROM 
+				users 
+			WHERE 
+				login = ? OR
+				password = ? OR 
+				email = ?
+		';
+		$row = DB::get($sql, array($login, $password, $email));
+		self::validateUniqueness($login, $password, $email, $row);
 
 		$invitationRole = null;
 		$invitationTeam = null;
 		$byInvitation = false;
 		if ($byAdmin) {
-			$role     = validateRole($_POST['role']);
-			$spec     = validateSpec($_POST['spec'], $role);
-			$projects = validateProjects($_POST['projects'], $role);
+			$role     = self::validateRole($_POST['role']);
+			$spec     = self::validateSpec($_POST['spec'], $role);
+			$projects = self::validateProjects($_POST['projects'], $role);
 		} elseif (!empty($code)) {
 			$sql = '
 				SELECT 
@@ -83,19 +96,6 @@ class User {
 			$invitationRole = $row['role_id'];
 			$invitationTeam = $row['team_id'];
 		}
-		
-		$sql = '
-			SELECT 
-				* 
-			FROM 
-				users 
-			WHERE 
-				login = ? OR
-				password = ? OR 
-				email = ?
-		';
-		$row = DB::get($sql, array($login, $password, $email));
-		validateUniqueness($login, $password, $email, $row);
 
 		$token = generateUniqueToken('users');
 		$team = $byAdmin ? $actor['team_id'] : null;
@@ -225,28 +225,47 @@ class User {
 
 	static function init() {
 		$actor = Actor::get();
-		$data = array(
-			'user' => $actor
-		);
 		if (!empty($actor['project_id'])) {
-			$data['project'] = self::getProject($actor['project_id']);
+			$project = self::getProject($actor['project_id']);
 		}
+		unset(
+			$actor['team_id'],
+			$actor['project_id'],
+			$actor['release_id'],
+			$actor['role_id']
+		);
+		if (empty($actor['spec'])) {
+			unset($actor['spec']);
+		}
+		$rights = Rights::getRights();
+		$data = array(
+			'user' => $actor,
+			'project' => $project,
+			'canCreateUser' => in_array('create_user', $rights),
+			'canCreateProject' => in_array('create_project', $rights),
+			'canCreateTask' => in_array('create_task', $rights)
+		);		
 		success($data);
+	}
+
+	private static function getTeamProjects() {
+		$actor = Actor::get();
+		$sql = '
+			SELECT 
+				id,
+				name					
+			FROM 
+				projects
+			WHERE 
+				team_id = ?
+		';
+		return DB::select($sql, array($actor['team_id']));
 	}
 
 	private static function getProjects() {
 		$actor = Actor::get();
 		if ($actor['role_id'] < 5) {
-			$sql = '
-				SELECT 
-					id,
-					name					
-				FROM 
-					projects
-				WHERE 
-					team_id = ?
-			';
-			return DB::select($sql, array($actor['team_id']));
+			return self::getTeamProjects();
 		}
 		$sql = '
 			SELECT 
@@ -529,7 +548,7 @@ class User {
 				GROUP_CONCAT(rs.description ORDER BY rs.id SEPARATOR ";") AS description
 			FROM 
 				roles r
-			JOIN
+			LEFT JOIN
 				rights rs
 				ON 
 				rs.min_role >= r.id
@@ -548,16 +567,21 @@ class User {
 		return $userRoles;
 	}
 
+	private static function getSpecs() {
+		$sql = 'SELECT * FROM specs';
+		return DB::select($sql);
+	}
+
 	static function save() {
 		$actor = Actor::get();
-		$userId    = validateUserIdAndRightsToEditUser('save');
-		$login     = validateLogin($_REQUEST['login']);
-		$password  = validatePassword($_REQUEST['password'], $_REQUEST['password2'], true);
-		$userName  = validateUserName($_REQUEST['userName']);
-		$email     = validateEmail($_REQUEST['email']);
-		$role      = validateRole($_REQUEST['role']);
-		$spec      = validateSpec($_REQUEST['spec'], $role);
-		$projects  = validateProjects($_REQUEST['projects'], $role);
+		$userId    = self::validateUserIdAndRightsToEditUser('save');
+		$login     = self::validateLogin($_REQUEST['login']);
+		$password  = self::validatePassword($_REQUEST['password'], $_REQUEST['password2'], true);
+		$userName  = self::validateUserName($_REQUEST['userName']);
+		$email     = self::validateEmail($_REQUEST['email']);
+		$role      = self::validateRole($_REQUEST['role']);
+		$spec      = self::validateSpec($_REQUEST['spec'], $role);
+		$projects  = self::validateProjects($_REQUEST['projects'], $role);
 		$avatarId  = $_REQUEST['avatar_id'];
 
 		$sql = '
@@ -678,7 +702,7 @@ class User {
 			if (!empty($whereParams)) {
 				$sql = 'SELECT * FROM users WHERE '.implode(' OR ', $where);
 				$row = DB::get($sql, $whereParams);
-				validateUniqueness($login, $password, $email, $row);
+				self::validateUniqueness($login, $password, $email, $row);
 			}
 
 			$setParams[] = $userId;
@@ -695,12 +719,49 @@ class User {
 		return DB::get($sql, array($userId, $teamId));
 	}
 
-	static function getData() {
-		$actor = Actor::get();
+	static function getForm() {
 		$userId = $_REQUEST['userId'];
-		if (empty($userId)) {
-			error('Во время загрузки пользователя возникла ошибка');
+		Rights::check(empty($userId) ? 'create_user' : 'edit_user');
+		$actor = Actor::get();
+		$dict = Dict::getDict();		
+		
+		$roles = self::getRoles();
+		$properRoles = array(
+			array('value' => '', 'name' => $dict['pick_role'])
+		);		
+		foreach ($roles as $role) {
+			if ($role['id'] > $actor['role_id']) {
+				$properRoles[] = array('name' => $dict[$role['code']], 'value' => $role['id']);
+			}
 		}
+		
+		$specs = self::getSpecs();
+		$properSpecs = array(
+			array('value' => '', 'name' => $dict['pick_spec'])
+		);
+		foreach ($specs as $spec) {
+			$properSpecs[] = array('name' => $dict[$spec['code']], 'value' => $spec['id']);
+		}
+
+		$projects = self::getTeamProjects();
+		$properProjects = array();
+		foreach ($projects as $project) {
+			$properProjects[] = array('label' => $project['name'], 'value' => $project['id']);
+		}	
+
+		$data = array(
+			'roles' => $properRoles,
+			'specs' => $properSpecs,
+			'projects' => $properProjects
+		);
+		if (!empty($userId)) {
+			$data['data'] = self::getData($userId);
+		}
+		success($data);
+	}
+
+	static function getData($userId) {
+		$actor = Actor::get();
 		$sql = '
 			SELECT 
 				u.id,
@@ -737,9 +798,7 @@ class User {
 			}
 		}
 		$user['projects'] = $properProjects;
-		success(array(
-			'user' => $user
-		));
+		return $user;
 	}
 
 	static function getWorkStatus() {
@@ -878,7 +937,7 @@ class User {
 
 	static function block() {
 		$actor = Actor::get();
-		$userToken = validateUserIdAndRightsToEditUser('block');
+		$userToken = self::validateUserIdAndRightsToEditUser('block');
 		$sql = '
 			SELECT 
 				blocked_by 
@@ -939,5 +998,131 @@ class User {
 			'user_id' => $id
 		);
 		success($data);
+	}
+
+	private static function validateUniqueness($l, $p, $e, $r) {
+		if (is_array($r)) {
+			if ($r['login'] == $l) {
+				error('Пользователь с таким логином уже существует');
+			}
+			if ($r['password'] == $p) {
+				error('Пользователь с таким паролем уже существует');
+			}
+			if ($r['email'] == $e) {
+				error('Пользователь с таким email уже существует');
+			}
+		}
+	}
+
+	private static function validateLogin($login) {
+		if (empty($login)) {
+			error('Введите логин');
+		}
+		if (strlen($login) < 5) {
+			error('Логин должен содержать не менее 5-ти символов');
+		}
+		if (!preg_match('/^[\w]+$/', $login)) {
+			$symbols = preg_replace('/[\w]/', '', $login);
+			error('Логин содержит некорректные символы: '.$symbols);
+		}
+		return $login;
+	}
+
+	private static function validatePassword($password, $password2, $saving = false) {
+		if (!$saving && empty($password)) {
+			error('Введите пароль');
+		}
+		if (strlen($password) > 1 && strlen($password) < 5) {
+			error('Пароль должен содержать не менее 5-ти символов');
+		}	
+		if (preg_match('/[а-я]/usi', $password)) {
+			$symbols = preg_replace('/[^а-я]/usi', '', $password);
+			error('Пароль содержит кириллические символы: '.$symbols);
+		}
+		if (empty($password2)) {
+			if (!$saving || !empty($password)) {
+				error('Повторите пароль');
+			}
+		} elseif ($saving && empty($password)) {
+			error('Введите пароль');
+		}
+		if ($password != $password2) {
+			error('Пароли не совпадают');
+		}
+		return $password;
+	}
+
+	private static function validateUserName($userName) {
+		if (empty($userName)) {
+			error('Введите имя пользователя');
+		}
+		if (!preg_match('/^[a-zа-я ]+$/usi', $userName)) {
+			$symbols = preg_replace('/[a-zа-я ]/usi', '', $userName);
+			error('Имя содержит некорректные символы: '.$symbols);
+		}
+		return $userName;
+	}
+
+	private static function validateEmail($email) {
+		if (empty($email)) {
+			error('Введите email');
+		}
+		if (!preg_match('/^[\w]+@[\w]+\.[a-z]{2,10}$/', $email)) {
+			error('Введите корректный email');
+		}
+		return $email;
+	}
+
+	private static function validateInvitationCode($code) {
+		if (strlen($code) > 0 && strlen($code) != 20) {
+			error('Некорректный код приглашения');
+		}
+		return $code;
+	}
+
+	private static function validateUserIdAndRightsToEditUser($action = null) {
+		$actor = Actor::get();
+		$userId = $_REQUEST['id'];
+		if (empty($userId)) {
+			error('Ошибка при действии над пользователем');
+		}
+		switch ($action) {
+			case 'block':
+				if ($actor['id'] == $userId || ($actor['role'] != 'head' && $actor['role'] != 'admin')) {
+					noRightsError();
+				}
+			break;
+
+			default:
+				if ($actor['id'] != $userId && $actor['role'] != 'head' && $actor['role'] != 'admin') {
+					noRightsError();
+				}
+		}	
+		return $userId;
+	}
+
+	private static function validateRole($role) {
+		if (empty($role)) {
+			error('Укажите роль пользователя');
+		}
+		return $role;
+	}
+
+	private static function validateSpec($spec, $role) {
+		if ($role == 6) {
+			if (empty($spec)) {
+				error('Укажите специализацию разработчика');
+			}
+			return $spec;
+		} 
+		return null;
+	}
+
+	private static function validateProjects($projects, $role) {
+		$projects = json_decode($projects, true);
+		if ($role > 2 && empty($projects)) {
+			error('Укажите хотя бы один проект');
+		}
+		return $projects;
 	}
 }

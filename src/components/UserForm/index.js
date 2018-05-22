@@ -10,12 +10,20 @@ import FormSubmit from '../../ui/FormSubmit';
 import Icon from '../../ui/Icon';
 import {dict} from '../../utils/Dictionary';
 import Store from 'xstore';
-import {isHead, isCurrentUser} from '../../utils/User';
+import {isHead} from '../../utils/User';
 
 class UserForm extends React.Component {
+	
+	componentDidMount() {
+		this.props.doAction('USERFORM_LOAD', this.props.id);
+	}
+
+	componentWillUnmount() {
+		this.props.doAction('USERFORM_DISPOSE');
+	}
+
 	render() {
-		const {userFormData: data, id} = this.props;
-		const fetching = id && !data.login;
+		const {fetching} = this.props;
 		return (
 			<Loader classes="self" fetching={fetching}>
 				{!fetching && this.form}
@@ -24,7 +32,7 @@ class UserForm extends React.Component {
 	}
 
 	get form() {
-		const {userFormData: data} = this.props;
+		const {data, roles, specs, projects} = this.props;
 		return (
 			<div>
 				<Avatar
@@ -58,15 +66,15 @@ class UserForm extends React.Component {
 					</FormField>
 
 					<FormField caption={dict.role} classes=".mt15">
-						<Select name="role" value={data.role} options={this.roles}/>
+						<Select name="role" value={data.role} options={roles}/>
 					</FormField>
 
-					<FormField caption={dict.spec} classes=".mt15">
-						<Select name="spec" value={data.spec} options={this.specs}/>
+					<FormField caption={dict.spec} classes=".mt15" hidden={data.role != 6}>
+						<Select name="spec" value={data.spec} options={specs}/>
 					</FormField>
 
-					<FormField caption={dict.projects} classes=".mt15">
-						<Checkboxes name="projects" value={data.projects} items={this.projects}/>
+					<FormField caption={dict.projects} classes=".mt15" hidden={!data.role || data.role < 4}>
+						<Checkboxes name="projects" value={data.projects} items={projects}/>
 					</FormField>
 
 					<div class="submit">
@@ -79,58 +87,17 @@ class UserForm extends React.Component {
 		)
 	}
 
-	get roles() {
-		const options = [
-			{value: '', name: dict.pick_role}
-		];
-		let {roles} = this.props;
-		if (roles instanceof Array) {
-			let idx = 0;
-			for (let role of roles) {
-				if (idx > 1 || (idx == 1 && isHead())) {
-					options.push({value: role.id, name: dict[role.code]});
-				}
-				idx++;
-			}
-		}
-		return options;
-	}
-
-	get projects() {
-		const items = [];
-		let {projects} = this.props;
-		if (projects instanceof Array) {
-			for (let p of projects) {
-				items.push({value: p.token, label: p.name});
-			}
-		}
-		return items;
-	}
-
-	get specs() {
-		const options = [
-			{value: '', name: dict.pick_spec}
-		];
-		let {specs} = this.props;
-		if (specs instanceof Array) {
-			for (let spec of specs) {
-				options.push({value: spec.id, name: dict[spec.code]});
-			}
-		}
-		return options;
-	}
-
 	handleFormChange = (data) => {
-		this.props.dispatch('TEAM_FORM_DATA_CHANGED', data);
-	}
-
-	handleSubmit = () => {
-		this.props.doAction(this.props.id ? 'TEAM_SAVE_USER' : 'TEAM_CREATE_USER');
+		this.props.doAction('USERFORM_CHANGE', {data});
 	}
 
 	handleAvatarClick = () => {
-		this.props.doAction('TEAM_SHOW_AVATARS');	
+		this.props.doAction('USERFORM_SHOW_AVATARS');	
+	}
+
+	handleSubmit = () => {
+		this.props.doAction(this.props.id ? 'USERFORM_SAVE_USER' : 'USERFORM_CREATE_USER');
 	}
 }
 
-export default Store.connect(UserForm, 'team');
+export default Store.connect(UserForm, 'userform');

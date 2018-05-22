@@ -13,7 +13,20 @@ class Dict {
 	}
 
 	static function get() {
+		success(self::getDictMap());
+	}
+
+	static function getDictMap() {
 		include __DIR__.'/dictionary/index.php';
+		return $dictionary;
+	}
+
+	static function getDict() {
+		return self::getDictMap()['dict'];
+	}
+
+	static function getIcons() {
+		return self::getDictMap()['icons'];
 	}
 
 	static function getTooltip() {

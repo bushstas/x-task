@@ -8,17 +8,11 @@ class Actor {
 			SELECT 
 				u.id,
 				u.name,
-				u.token,
 				u.team_id,
 				u.project_id,
 				r.id AS role_id,
 				r.code AS role,
 				sp.code AS spec,
-				p.id AS project_id,
-				p.roots,
-				p.nohashes,
-				p.noparams,
-				p.getparams,
 				rl.id AS release_id
 			FROM 
 				sessions s
@@ -32,11 +26,8 @@ class Actor {
 				specs sp 
 				ON u.spec = sp.id 
 			LEFT JOIN 
-				projects p 
-				ON u.project_id = p.id 
-			LEFT JOIN 
 				releases rl 
-				ON p.id = rl.project_id AND rl.active = 1 
+				ON u.project_id = rl.project_id AND rl.active = 1 
 			WHERE 
 				s.token = ?
 		';

@@ -85,11 +85,11 @@ class Invitation {
 		requireClasses('project');
 		$actor = Actor::get();
 		
-		$title = validateTitle($_REQUEST['name']);
-		$role = validateRole($_REQUEST['role']);
-		$projects = Project::getProjectsIds(validateProjects($_REQUEST['projects'], $role));
+		$title = self::validateTitle($_REQUEST['name']);
+		$role = self::validateRole($_REQUEST['role']);
+		$projects = Project::getProjectsIds(self::validateProjects($_REQUEST['projects'], $role));
 		$token = generateUniqueToken('invitations');
-		validateInvitationTokenAndRights($role, $token);
+		self::validateInvitationTokenAndRights($role, $token);
 		
 		$sql = '
 			INSERT INTO
@@ -122,10 +122,10 @@ class Invitation {
 	}
 
 	static function save() {
-		$role      = validateRole($_REQUEST['role']);
-		$title     = validateTitle($_REQUEST['name']);
-		$projects  = Project::getProjectsIds(validateProjects($_REQUEST['projects'], $role));
-		$invToken  = validateInvitationTokenAndRights($role, $_REQUEST['invToken']);	
+		$role      = self::validateRole($_REQUEST['role']);
+		$title     = self::validateTitle($_REQUEST['name']);
+		$projects  = Project::getProjectsIds(self::validateProjects($_REQUEST['projects'], $role));
+		$invToken  = self::validateInvitationTokenAndRights($role, $_REQUEST['invToken']);	
 
 		$sql = '
 			UPDATE 
@@ -139,5 +139,45 @@ class Invitation {
 
 		$sql = 'DELETE FROM invitations_projects WHERE ';
 		success();
+	}
+
+	private static function validateTitle($title) {
+		if (empty($title)) {
+			error('Введите название');
+		}
+		if (!preg_match('/^[a-zа-я ]+$/usi', $title)) {
+			$symbols = preg_replace('/[a-zа-я ]/usi', '', $title);
+			error('Название содержит некорректные символы: '.$symbols);
+		}
+		return $title;
+	}
+
+	private static function validateRole($role) {
+		if (empty($role)) {
+			error('Укажите роль пользователя');
+		}
+		return $role;
+	}
+
+	private static function validateProjects($projects, $role) {
+		$projects = json_decode($projects, true);
+		if ($role > 2 && empty($projects)) {
+			error('Укажите хотя бы один проект');
+		}
+		return $projects;
+	}
+
+	private static function validateInvitationTokenAndRights($role, $token) {
+		$actor = Actor::get();
+		if (empty($token)) {
+			error('Ошибка при действии над приглашением');
+		}
+		if ($actor['role'] != 'head' && $actor['role'] != 'admin') {
+			noRightsError();
+		}
+		if ($actor['role'] == 'admin' && $role == 2) {
+			noRightsError();	
+		}
+		return $token;
 	}
 }

@@ -31,14 +31,22 @@ class DB {
 	 	return $row;
 	}
 
-	static function select($sql, $params = null) {
+	static function select($sql, $params = null, $field = null) {
 		$r = self::$db->prepare($sql);
 		if (is_array($params) && !empty($params)) {
 			$r->execute($params);
 		} else {
 			$r->execute();
 		}
-	 	return $r->fetchAll(PDO::FETCH_ASSOC);
+		$rows = $r->fetchAll(PDO::FETCH_ASSOC); 
+	 	if (!empty($field) && is_string($field) && isset($rows[0])  && isset($rows[0][$field])) {
+	 		$list = array();
+	 		foreach ($rows as $row) {
+	 			$list[] = $row[$field];
+	 		}
+	 		return $list;
+	 	}
+	 	return $rows;
 	}
 
 	static function execute($sql, $params = null) {

@@ -15,16 +15,16 @@ class Team extends React.Component {
 	}
 
 	render() {
-		let { teamFetching, users} = this.props;
+		const {fetching, users} = this.props;
 	 	return (
-	 		<Loader classes="self" fetching={teamFetching}>
+	 		<Loader classes="self" fetching={fetching}>
 	 			{users && this.users}
 	 		</Loader>
 	 	)
 	}
 
 	get users() {
-		let {users} = this.props;
+		const {users} = this.props;
 		if (users.length > 0) {
 			return users.map((user) => {
 	 			return (

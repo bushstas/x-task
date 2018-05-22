@@ -1,7 +1,7 @@
 import React from 'react';
 import Checkbox from '../Checkbox';
 
-export default class Checkboxes extends React.PureComponent {
+export default class Checkboxes extends React.Component {
 	static defaultProps = {
 		onChange: () => {},
 		onDispose: () => {}

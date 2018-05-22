@@ -2,6 +2,12 @@
 
 class Rights {
 	static function check($rightCode) {
+		if (!self::isAvailable($rightCode)) {
+			noRightsError();
+		}
+	}
+
+	static function isAvailable($rightCode) {
 		$actor = Actor::get();
 		$sql = '
 			SELECT 
@@ -11,10 +17,21 @@ class Rights {
 			WHERE 
 				code = ?
 			AND
-				min_role <= ?
+				min_role >= ?
 		';
-		if (!DB::has($sql, array($rightCode, $actor['role_id']))) {
-			noRightsError();
-		}
+		return DB::has($sql, array($rightCode, $actor['role_id']));		
+	}
+
+	static function getRights() {
+		$actor = Actor::get();
+		$sql = '
+			SELECT 
+				code
+			FROM 
+				rights
+			WHERE 
+				min_role >= ?
+		';
+		return DB::select($sql, array($actor['role_id']), 'code');
 	}
 }

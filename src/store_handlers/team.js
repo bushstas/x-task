@@ -4,41 +4,20 @@ import {USERS_STORAGE_KEY} from '../consts/storage';
 const init = () => {
   return {
     users: null,
-    userFormData: {},
-    editedUserToken: null,
-    teamFetching: false,
+    fetching: false,
     typeFilter: null,
     statusFilter: null,
-    projectFilter: null,
-    usersActiveTab: 'team'
+    projectFilter: null
   }
-}
-
-const fetching = (state) => {
-  return {teamFetching: true}
 }
 
 const loaded = (state, data) => {
-  data.teamFetching = false;
+  data.fetching = false;
   return data;
 }
 
-const form_data_changed = (state, userFormData) => {
-  return {userFormData}
-}
-
-const edit_form_shown = (state, {user, userToken}) => {
-  return {
-    editedUserToken: userToken,
-    userFormData: user
-  }
-}
-
-const canceled = (state) => {
-   return {
-    editedUserToken: null,
-    userFormData: {}
-  }
+const fetching = (state) => {
+  return {fetching: true}
 }
 
 const load = ({dispatchAsync, state}) => {
@@ -60,62 +39,27 @@ const load = ({dispatchAsync, state}) => {
   });
 }
 
-const handleUserSaved = (doAction) => {
-  doAction('MODALS_HIDE', 'user_form');
-  doAction('TEAM_REFRESH');
-}
-
-const create_user = ({state, doAction}) => {
-    let {userFormData} = state;
-    post('user_create', userFormData)
-      .then(() => handleUserSaved(doAction));
-}
-
-const save_user = ({state, doAction}) => {
-    let {userFormData} = state;
-    post('user_save', userFormData)
-      .then(() => handleUserSaved(doAction));
-}
-
 const refresh = ({setState}) => {
-  setState({teamFetching: true});
+  setState({fetching: true});
   get('user_refresh').then(({users}) => {
     setState({
       users,
-      userFormData: {},
-      teamFetching: false
+      fetching: false
     });
   });
 }
 
 const show_add_form = ({setState, doAction}) => {
-  setState({userFormData: {}});
   doAction('MODALS_SHOW', {name: 'user_form'});
 }
 
 const show_edit_form = ({setState, doAction}, userId) => {
-  setState({userFormData: {}});
-  get('user_get_data', {userId})
-    .then(({user}) => {
-      setState({userFormData: user});
-    });
-    doAction('MODALS_SHOW', {name: 'user_form', props: {id: userId}});
-}
-
-const show_avatars = ({setState, doAction}) => {
-  doAction('MODALS_SHOW', {name: 'avatars', props: {store: 'TEAM'}});
+  doAction('MODALS_SHOW', {name: 'user_form', props: {id: userId}});
 }
 
 const change = ({setState}, data) => {
   setState(data);
 } 
-
-const set_avatar = ({state, setState, doAction}, id) => {
-  const {userFormData} = state;
-  userFormData.avatar_id = id;
-  setState({userFormData});
-  doAction('MODALS_HIDE', 'avatars');
-}
 
 const update = ({and, state}) => {
   if (state.users) {
@@ -127,31 +71,22 @@ export default {
   localStore: {
     key: USERS_STORAGE_KEY,
     names: [
-      'usersActiveTab',
       'typeFilter',
       'statusFilter',
-      'projectFilter',
-      'userFormData'
+      'projectFilter'
     ]
   },
   actions: {
     load,
-    create_user,
-    save_user,
     refresh,
     show_add_form,
     show_edit_form,
     change,
-    update,
-    show_avatars,
-    set_avatar
+    update
   },
   reducers: {
     init,
-    fetching,
     loaded,
-    form_data_changed,
-    edit_form_shown,
-    canceled
+    fetching
   }
 } 

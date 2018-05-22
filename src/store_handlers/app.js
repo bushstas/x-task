@@ -5,7 +5,8 @@ import {set as setDictionary} from '../utils/Dictionary';
 const init = () => {
   return {
       appActiveTab: 'tasks',
-      accountActiveTab: 'home'
+      accountActiveTab: 'home',
+      usersActiveTab: 'team'
   };
 }
  
@@ -39,6 +40,7 @@ export default {
     names: [
       'appActiveTab',
       'accountActiveTab',
+      'usersActiveTab',
       'shown',
       'dict',
       'icons'

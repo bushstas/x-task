@@ -581,4 +581,4 @@ $icons['menu'] = array(
 	'logout' => 'exit_to_app'
 );
 
-die(json_encode(array('success' => true, 'body' => array('dict' => $data, 'icons' => $icons))));
+$dictionary = array('dict' => $data, 'icons' => $icons);

@@ -51,6 +51,10 @@ class Project {
 			SELECT 
 				p.id,
 				p.name,
+				p.roots,
+				p.nohashes,
+				p.noparams,
+				p.getparams,
 				pc.value AS color,
 				r.id AS release_id,
 				r.name AS release_name,
@@ -79,6 +83,10 @@ class Project {
 			'id' => $row['id'],
 			'name' => $row['name'],
 			'color' => $row['color'],
+			'roots' => $row['roots'],
+			'nohashes' => $row['nohashes'] == 1,
+			'noparams' => $row['noparams'] == 1,
+			'getparams' => $row['getparams'],
 			'release' => array(
 				'id' => $row['release_id'],			
 				'name' => $row['release_name'],
@@ -269,8 +277,8 @@ class Project {
 
 	static function activate() {
 		$actor = Actor::get();
-		$projectToken = validateProjectToken();
-		$project = validateProjectAccess($projectToken);
+		$projectToken = self::validateProjectToken();
+		$project = self::validateProjectAccess($projectToken);
 		$sql = '
 			UPDATE 
 				users
@@ -285,8 +293,8 @@ class Project {
 
 	static function requestAccess() {
 		$actor = Actor::get();
-		$projectToken = validateProjectToken();
-		$project = validateProjectAccess($projectToken);
+		$projectToken = self::validateProjectToken();
+		$project = self::validateProjectAccess($projectToken);
 
 		$sql = '
 			SELECT 
@@ -330,9 +338,9 @@ class Project {
 			}
 		}
 		
-		$projectToken = validateTokenAndRightsToEditProject();
-		validateProjectAccess($projectToken);
-		$name  = validateTitle($_REQUEST['name']);
+		$projectToken = self::validateTokenAndRightsToEditProject();
+		self::validateProjectAccess($projectToken);
+		$name  = self::validateTitle($_REQUEST['name']);
 
 		$sql = '
 			SELECT 
@@ -351,7 +359,7 @@ class Project {
 			error('Проект с таким именем уже существует');
 		}
 
-		$homepage  = validateHomepage($_REQUEST['homepage']);
+		$homepage  = self::validateHomepage($_REQUEST['homepage']);
 		$sql = '
 			UPDATE 
 				projects
@@ -392,4 +400,62 @@ class Project {
 			'projectsList' => $projects
 		));
 	}
+
+	private static function validateProjectToken() {
+		$projectToken = $_REQUEST['projectToken'];
+		if (empty($projectToken)) {
+			error('Ошибка при действии над проектом');
+		}
+		return $projectToken;
+	}
+
+	private static function validateTokenAndRightsToEditProject($action = null) {
+		$actor = Actor::get();
+		$projectToken = self::validateProjectToken();
+		switch ($action) {
+			default:
+				if ($actor['role_id'] > 3) {
+					noRightsError();
+				}
+		}	
+		return $projectToken;
+	}
+
+	private static function validateTitle($title) {
+		if (empty($title)) {
+			error('Введите название');
+		}
+		if (!preg_match('/^[a-zа-я ]+$/usi', $title)) {
+			$symbols = preg_replace('/[a-zа-я ]/usi', '', $title);
+			error('Название содержит некорректные символы: '.$symbols);
+		}
+		return $title;
+	}
+
+	private static function validateHomepage($homepage) {
+		if (!empty($homepage) && !preg_match('/https*:\/\/[\w\-\.]{2,}/', $homepage)) {
+			error('Введите корректный URL главной страницы');
+		}
+		return $homepage;
+	}
+
+	private static function validateProjectAccess($projectToken) {
+		$actor = Actor::get();
+		$sql = '
+			SELECT 
+				*
+			FROM 
+				projects
+			WHERE 
+				token = ? 
+			AND
+				team_id = ?
+		';
+		$project = DB::get($sql, array($projectToken, $actor['team_id']));
+		if (empty($project)) {
+			noRightsError();
+		}
+		return $project;
+	}
+
 }

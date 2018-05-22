@@ -22,7 +22,7 @@ class Users extends React.Component {
 	}
 
 	get tabs() {
-		let {usersActiveTab} = this.props;
+		const {usersActiveTab} = this.props;
 		return (
 			<Tabs 
 				onSelect={this.handleSelectTab}
@@ -42,7 +42,7 @@ class Users extends React.Component {
 	}
 
 	get typeFilterTabs() {
-		let {usersActiveTab, typeFilter} = this.props;
+		const {usersActiveTab, typeFilter} = this.props;
 		if (usersActiveTab == 'team') {
 			return (
 				<Tabs 
@@ -59,7 +59,7 @@ class Users extends React.Component {
 	}
 
 	get statusFilterTabs() {
-		let {usersActiveTab, statusFilter} = this.props;
+		const {usersActiveTab, statusFilter} = this.props;
 		if (usersActiveTab == 'team') {
 			return (
 				<Tabs 
@@ -76,7 +76,7 @@ class Users extends React.Component {
 	}
 
 	get projectFilterTabs() {
-		let {usersActiveTab, projectFilter, project} = this.props;
+		const {usersActiveTab, projectFilter, project} = this.props;
 		if (usersActiveTab == 'team') {
 			return (
 				<Tabs 
@@ -92,7 +92,7 @@ class Users extends React.Component {
 	}
 
 	get addButton() {
-		let {usersActiveTab, canCreateUser} = this.props;
+		const {usersActiveTab, canCreateUser} = this.props;
 		let result = null;
 		switch (usersActiveTab) {
 			case 'team':
@@ -109,7 +109,7 @@ class Users extends React.Component {
 	}
 
 	handleSelectTab = (usersActiveTab) => {
-		this.props.doAction('TEAM_CHANGE', {usersActiveTab});
+		this.props.doAction('APP_CHANGE', {usersActiveTab});
 	}
 
 	handleSelectTypeFilterTab = (typeFilter) => {
@@ -132,4 +132,4 @@ class Users extends React.Component {
 	}
 }
 
-export default Store.connect(Users, 'app, team, user:project|canCreateUser');
+export default Store.connect(Users, 'team, app:usersActiveTab, user:project|canCreateUser');

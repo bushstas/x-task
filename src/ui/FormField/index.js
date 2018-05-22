@@ -25,7 +25,10 @@ export default class FormField extends React.PureComponent {
 	}
 
 	render() {
-		let {classes} = this.props;
+		let {classes, hidden} = this.props;
+		if (hidden) {
+			return null;
+		}
 		return (
 			<div class="self $classes">
 				{this.caption}
